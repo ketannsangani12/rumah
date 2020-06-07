@@ -1,6 +1,5 @@
 # phpstorm project files
 .idea
-/vendor
 /config
 /assets
 /uploads

@@ -10,6 +10,17 @@ use dlds\metronic\Metronic;
 $asset = Metronic::registerThemeAsset($this);
 //echo "<pre>";print_r($asset);exit;
 $directoryAsset = Yii::$app->assetManager->getPublishedUrl($asset->sourcePath);
+if (Yii::$app->controller->action->id === 'login') {
+    /**
+     * Do not use this code in your template. Remove it.
+     * Instead, use the code  $this->layout = '//main-login'; in your controller.
+     */
+    echo $this->render(
+        'main-login',
+        ['content' => $content]
+    );
+} else {
+
 ?>
 <?php $this->beginPage() ?>
     <!--[if IE 8]> <html lang="<?= Yii::$app->language ?>" class="ie8 no-js"> <![endif]-->
@@ -53,3 +64,4 @@ $directoryAsset = Yii::$app->assetManager->getPublishedUrl($asset->sourcePath);
     </body>
     </html>
 <?php $this->endPage() ?>
+<?php } ?>
