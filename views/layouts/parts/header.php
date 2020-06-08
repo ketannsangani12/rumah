@@ -12,18 +12,17 @@ use dlds\metronic\widgets\Badge;
 
 
 
-
 echo Nav::widget(
     [
     'items' => [
 
           [
-              'label' => 'Dropdown',
+              'label' => Yii::$app->user->identity->username,
               'items' => [
-                   ['label' => 'Level 1 - Dropdown A', 'url' => '#'],
-                   '<li class="divider"></li>',
-                   '<li class="dropdown-header">Dropdown Header</li>',
-                   ['label' => 'Level 1 - Dropdown B', 'url' => '#'],
+                   ['label' => 'Logout', 'url' => '/site/logout'],
+//                   '<li class="divider"></li>',
+//                   '<li class="dropdown-header">Dropdown Header</li>',
+//                   ['label' => 'Level 1 - Dropdown B', 'url' => '#'],
               ],
           ],
       ],

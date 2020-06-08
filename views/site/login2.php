@@ -28,7 +28,7 @@ use dlds\metronic\Metronic;
                 <button class="close" data-close="alert"></button>
                 <span> Enter any username and password. </span>
             </div>
-        <?= $form->field($model, 'username')->textInput(['placeholder'=>'Username','autofocus' => true])->label(false); ?>
+        <?= $form->field($model, 'email')->textInput(['placeholder'=>'Email','autofocus' => true])->label(false); ?>
 
         <?= $form->field($model, 'password')->passwordInput(['placeholder'=>'Password'])->label(false) ?>
 

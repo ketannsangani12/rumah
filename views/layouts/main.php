@@ -60,7 +60,23 @@ if (Yii::$app->controller->action->id === 'login') {
     <?= $this->render('parts/footer.php', ['directoryAsset' => $directoryAsset]) ?>
     </div>
     <?php $this->endBody() ?>
+    <?php
 
+
+    $this->registerJs('
+$(document).ready(function()  {
+            $("#role").change(function()  {
+                var val = $("#role option:selected").val();
+                if(val=="Cleaner" || val=="Mover"){
+                    $("#companydetails").show();
+                }else{
+                    $("#companydetails").hide();
+                }
+            });
+           
+        });
+');
+    ?>
     </body>
     </html>
 <?php $this->endPage() ?>
