@@ -19,6 +19,7 @@ echo Nav::widget(
           [
               'label' => Yii::$app->user->identity->username,
               'items' => [
+                  ['label' => 'Change Password', 'url' => '/site/changepassword'],
                    ['label' => 'Logout', 'url' => '/site/logout'],
 //                   '<li class="divider"></li>',
 //                   '<li class="dropdown-header">Dropdown Header</li>',

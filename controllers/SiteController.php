@@ -87,7 +87,35 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+    public function actionChangepassword()
+    {
+        $model = new Users();
+        $model->scenario = 'changepassword';
+        // print_r($model);exit;
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->validate()) {
+                $userdetails = Users::findOne(['id'=>Yii::$app->user->id]);
+                // var_dump($_POST);exit;
+                //print_r(Yii::$app->request->post('password'));exit;
+                $userdetails->password = md5($_POST['Users']['password']);
+                if($userdetails->save()){
+                    Yii::$app->session->setFlash('success', "You have changed password successfully.");
 
+                    return $this->redirect(['changepassword']);
+                }
+                //  Yii::$app->session->setFlash('contactFormSubmitted');
+            }else{
+                return $this->render('changepassword', [
+                    'model' => $model,
+                ]);
+            }
+
+            // return $this->refresh();
+        }
+        return $this->render('changepassword', [
+            'model' => $model,
+        ]);
+    }
 
 
     /**

@@ -60,7 +60,9 @@ if (Yii::$app->controller->action->id === 'login') {
     <?= $this->render('parts/footer.php', ['directoryAsset' => $directoryAsset]) ?>
     </div>
     <?php $this->endBody() ?>
+
     <?php
+    $this->registerCssFile("/web/css/site.css");
 
 
     $this->registerJs('
