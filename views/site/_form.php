@@ -11,23 +11,27 @@ use kartik\money\MaskMoney;
 ?>
 <div class="row">
     <div class="col-md-6">
-        <div class="categories-form box box-primary">
-            <?php $form = ActiveForm::begin(); ?>
-            <div class="box-body table-responsive">
-                <?= $form->field($model, 'oldpassword')->passwordInput(['maxlength' => true]) ?>
+
+<div class="packages-form box box-primary">
+    <?php $form = ActiveForm::begin(); ?>
+    <div class="box-body table-responsive">
 
 
-                <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
 
-            </div>
+        <?= $form->field($model, 'oldpassword')->passwordInput(['maxlength' => true]) ?>
 
 
-            </div>
-            <div class="box-footer">
-                <?= Html::submitButton('Save', ['class' => 'btn btn-circle btn-info btn-flat']) ?>
-            </div>
-            <?php ActiveForm::end(); ?>
-        </div>
+        <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
+
+
+
+
+
     </div>
-
-
+    <div class="box-footer">
+        <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
+    </div>
+    <?php ActiveForm::end(); ?>
+</div>
+</div>
+    </div>

@@ -29,44 +29,45 @@ $config = [
             'class' => 'yii\rbac\DbManager',
             'defaultRoles' => ['guest', 'user'],
         ],
-        'metronic'=>[
-            'class'=>'dlds\metronic\Metronic',
-            'resources'=>'Macintosh HD/Users/ketansangani/work/yii2metronic/web/metronic/theme/assets',
-            'version'=>\dlds\metronic\Metronic::VERSION_4,
-            'style'=>\dlds\metronic\Metronic::STYLE_SQUARE,
-            'theme'=>\dlds\metronic\Metronic::THEME_DARK,
-            'layoutOption'=>\dlds\metronic\Metronic::LAYOUT_FLUID,
-            //'headerOption'=>\dlds\metronic\Metronic::HEADER_FIXED,
-            'sidebarPosition'=>\dlds\metronic\Metronic::SIDEBAR_POSITION_LEFT,
-            'sidebarOption'=>\dlds\metronic\Metronic::SIDEBAR_MENU_ACCORDION,
-            //'footerOption'=>\dlds\metronic\Metronic::FOOTER_FIXED,
 
-        ],
-        'assetManager' => [
-            'linkAssets' => true,
-            'bundles' => [
-                'yii\web\JqueryAsset' => [
-                    'sourcePath' => null,   // do not publish the bundle
-                    'js' => [
-                        '//code.jquery.com/jquery-1.11.2.min.js',  // use custom jquery
-                    ]
-                ],
-
-                'dlds\metronic\bundles\ThemeAsset' => [
-                    'addons'=>[
-                        'default/login'=>[
-                            'css'=>[
-                                'pages/css/login-4.min.css',
-                            ],
-                            'js'=>[
-                                'global/plugins/backstretch/jquery.backstretch.min.js',
-
-                            ]
-                        ],
-                    ]
-                ],
-            ],
-        ],
+//        'metronic'=>[
+//            'class'=>'dlds\metronic\Metronic',
+//            'resources'=>'@webroot/metronic/theme/assets',
+//            'version'=>\dlds\metronic\Metronic::VERSION_4,
+//            'style'=>\dlds\metronic\Metronic::STYLE_SQUARE,
+//            'theme'=>\dlds\metronic\Metronic::THEME_DARK,
+//            'layoutOption'=>\dlds\metronic\Metronic::LAYOUT_FLUID,
+//            //'headerOption'=>\dlds\metronic\Metronic::HEADER_FIXED,
+//            'sidebarPosition'=>\dlds\metronic\Metronic::SIDEBAR_POSITION_LEFT,
+//            'sidebarOption'=>\dlds\metronic\Metronic::SIDEBAR_MENU_ACCORDION,
+//            //'footerOption'=>\dlds\metronic\Metronic::FOOTER_FIXED,
+//
+//        ],
+//        'assetManager' => [
+//            'linkAssets' => false,
+//            'bundles' => [
+//                'yii\web\JqueryAsset' => [
+//                    'sourcePath' => null,   // do not publish the bundle
+//                    'js' => [
+//                        '//code.jquery.com/jquery-1.11.2.min.js',  // use custom jquery
+//                    ]
+//                ],
+//
+//                'dlds\metronic\bundles\ThemeAsset' => [
+//                    'addons'=>[
+//                        'default/login'=>[
+//                            'css'=>[
+//                                'pages/css/login-4.min.css',
+//                            ],
+//                            'js'=>[
+//                                'global/plugins/backstretch/jquery.backstretch.min.js',
+//
+//                            ]
+//                        ],
+//                    ]
+//                ],
+//            ],
+//        ],
 
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -129,6 +130,14 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
+        'generators' => [ // HERE
+            'crud' => [
+                'class' => 'yii\gii\generators\crud\Generator',
+                'templates' => [
+                    'adminlte' => '@vendor/dmstr/yii2-adminlte-asset/gii/templates/crud/simple',
+                ]
+            ]
+        ],
         // uncomment the following to add your IP if you are not connecting from localhost.
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];

@@ -34,15 +34,21 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'email') ?>
 
-    <?php // echo $form->field($model, 'country_of_residence') ?>
+    <?php // echo $form->field($model, 'company_name') ?>
 
     <?php // echo $form->field($model, 'hp_no') ?>
 
-    <?php // echo $form->field($model, 'address') ?>
+    <?php // echo $form->field($model, 'company_address') ?>
 
-    <?php // echo $form->field($model, 'state') ?>
+    <?php // echo $form->field($model, 'company_state') ?>
 
-    <?php // echo $form->field($model, 'postcode') ?>
+    <?php // echo $form->field($model, 'registration_no') ?>
+
+    <?php // echo $form->field($model, 'bank_account_name') ?>
+
+    <?php // echo $form->field($model, 'bank_account_no') ?>
+
+    <?php // echo $form->field($model, 'bank_name') ?>
 
     <?php // echo $form->field($model, 'image') ?>
 
@@ -70,7 +76,7 @@ use yii\widgets\ActiveForm;
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+        <?= Html::resetButton('Reset', ['class' => 'btn btn-default']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

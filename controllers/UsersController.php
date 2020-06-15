@@ -68,7 +68,7 @@ class UsersController extends Controller
         $model->scenario = 'adduser';
 
         if ($model->load(Yii::$app->request->post()) ) {
-           // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
+            // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
             if($model->validate()) {
                 $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 $password = substr(str_shuffle($chars),0,6);
@@ -76,7 +76,7 @@ class UsersController extends Controller
                 $model->created_at = date('Y-m-d h:i:s');
                 if($model->save()){
                     Yii::$app->mailer->compose('adduser',
-                    ['password'=>$password]) // a view rendering result becomes the message body here
+                        ['password'=>$password]) // a view rendering result becomes the message body here
                     ->setFrom('tlssocietyapps@gmail.com')
                         ->setTo($model->email)
                         ->setSubject('Account Created')
@@ -142,7 +142,7 @@ class UsersController extends Controller
         $model = $this->findModel($id);
         $model->status = 3;
         $model->save();
-       // $this->findModel($id)->delete();
+        // $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
