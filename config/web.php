@@ -11,7 +11,24 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
-    'components' => [
+    'modules' => [
+        'rbac' => [
+            'class' => 'yii2mod\rbac\Module',
+        ],
+    ],
+    'components' => ['i18n' => [
+        'translations' => [
+            'yii2mod.rbac' => [
+                'class' => 'yii\i18n\PhpMessageSource',
+                'basePath' => '@yii2mod/rbac/messages',
+            ],
+            // ...
+        ],
+    ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+            'defaultRoles' => ['guest', 'user'],
+        ],
         'metronic'=>[
             'class'=>'dlds\metronic\Metronic',
             'resources'=>'Macintosh HD/Users/ketansangani/work/yii2metronic/web/metronic/theme/assets',
@@ -50,6 +67,7 @@ $config = [
                 ],
             ],
         ],
+
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'Xh3Opf8DjgFq3xMGcushTBaRaVNV77Kg',

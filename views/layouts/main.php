@@ -36,7 +36,15 @@ if (Yii::$app->controller->action->id === 'login') {
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
-    <body <?= Layout::getHtmlOptions('body',['class'=>'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-content-white'],true) ?>>
+    <?php
+    //print_r(Yii::$app->controller);exit;
+    if ((Yii::$app->controller->id=='site' && Yii::$app->controller->action->id === 'index') || Yii::$app->controller->id=='') {
+        $class = 'page-container-bg-solid';
+
+    }else{
+        $class = '';
+    }?>
+    <body <?= Layout::getHtmlOptions('body',['class'=>'page-header-fixed page-sidebar-closed-hide-logo '.$class.' page-content-white'],true) ?>>
     <?php $this->beginBody() ?>
     <div class="page-wrapper">
         <?php

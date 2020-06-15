@@ -110,8 +110,19 @@ class UsersController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) ) {
+            // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
+            if($model->validate()) {
+                $model->updated_at = date('Y-m-d h:i:s');
+                if($model->save()) {
+                    return $this->redirect(['index']);
+                }
+            }else{
+                return $this->render('update', [
+                    'model' => $model
+                ]);
+            }
+
         }
 
         return $this->render('update', [

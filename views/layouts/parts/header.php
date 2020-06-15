@@ -11,7 +11,7 @@ use dlds\metronic\Metronic;
 use dlds\metronic\widgets\Badge;
 
 
-
+echo "<div class='top-menu'>";
 echo Nav::widget(
     [
     'items' => [
@@ -31,6 +31,7 @@ echo Nav::widget(
 ]);
 NavBar::end();
 ?>
+</div>
 <?=
 (Metronic::getComponent() && Metronic::getComponent()->layoutOption == Metronic::LAYOUT_BOXED) ?
     Html::beginTag('div', ['class' => 'container']) : '';
