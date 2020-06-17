@@ -11,7 +11,7 @@ $userdetails = app\models\Users::find()
 ?>
 <header class="main-header">
 
-    <?= Html::a('<span class="logo-mini">Rumah</span><span class="logo-lg" style="color: #0a0a0a;">Rumah</span>', Yii::$app->homeUrl, ['class' => 'logo','style'=>'background-color: #ecf0f5;']) ?>
+    <?= Html::a('<span class="logo-mini" style="color: #0a0a0a;">Rumah</span><span class="logo-lg" >'.Html::img('@web/Rumahlogo.png',['height'=>100,'width'=>150]).'</span>', Yii::$app->homeUrl, ['class' => 'logo','style'=>'background-color: #ecf0f5;']) ?>
 
     <nav class="navbar navbar-static-top" role="navigation">
 

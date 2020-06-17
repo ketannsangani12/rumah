@@ -17,11 +17,13 @@ $fieldOptions2 = [
     'options' => ['class' => 'form-group has-feedback'],
     'inputTemplate' => "{input}<span class='glyphicon glyphicon-lock form-control-feedback'></span>"
 ];
-?>
 
+?>
 <div class="login-box">
     <div class="login-logo">
-        <a href="#"><b><img src="<?php echo $directoryAsset;?>/img/TLS-Society-Logo.png" height="100" width="375" style="display: none;"> </b></a>
+        <a href="#"><b><?php echo Html::img('@web/Rumahlogo.png',['height'=>100,'width'=>150]) ?>
+
+            </b></a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
