@@ -22,7 +22,10 @@ dmstr\web\AdminLteAsset::register($this);
 
     <?= $content ?>
 
-<?php $this->endBody() ?>
+<?php
+$this->registerCssFile("@web/web/css/site.css");
+
+$this->endBody() ?>
 </body>
 </html>
 <?php $this->endPage() ?>

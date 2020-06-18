@@ -63,6 +63,8 @@ if (Yii::$app->controller->action->id === 'login') {
 
     <?php $this->endBody() ?>
     <?php
+    $this->registerCssFile("@web/web/css/site.css");
+
 
 
     $this->registerJs('
