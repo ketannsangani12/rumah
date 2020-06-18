@@ -11,24 +11,9 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset'
     ],
-    'modules' => [
-        'rbac' => [
-            'class' => 'yii2mod\rbac\Module',
-        ],
-    ],
-    'components' => ['i18n' => [
-        'translations' => [
-            'yii2mod.rbac' => [
-                'class' => 'yii\i18n\PhpMessageSource',
-                'basePath' => '@yii2mod/rbac/messages',
-            ],
-            // ...
-        ],
-    ],
-        'authManager' => [
-            'class' => 'yii\rbac\DbManager',
-            'defaultRoles' => ['guest', 'user'],
-        ],
+
+    'components' => [
+
 
 //        'metronic'=>[
 //            'class'=>'dlds\metronic\Metronic',
