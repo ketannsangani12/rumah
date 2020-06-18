@@ -11,7 +11,7 @@ $userdetails = app\models\Users::find()
 ?>
 <header class="main-header">
 
-    <?= Html::a('<span class="logo-mini" style="color: #0a0a0a;">Rumah</span><span class="logo-lg" >'.Html::img('@web/Rumahlogo.png',['height'=>100,'width'=>150]).'</span>', Yii::$app->homeUrl, ['class' => 'logo','style'=>'background-color: #ecf0f5;']) ?>
+    <?= Html::a('<span class="logo-mini" style="color: #0a0a0a;">'.Html::img('@web/icon.png').'</span><span class="logo-lg" >'.Html::img('@web/Rumahlogoinner.png').'</span>', Yii::$app->homeUrl, ['class' => 'logo','style'=>'background-color: #ecf0f5;']) ?>
 
     <nav class="navbar navbar-static-top" role="navigation">
 
@@ -232,51 +232,11 @@ $userdetails = app\models\Users::find()
                 <!-- User Account: style can be found in dropdown.less -->
 
                 <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="<?php echo $directoryAsset;?>/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                        <span class="hidden-xs"><?php echo $userdetails->first_name;?></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <!-- User image -->
-                        <li class="user-header">
-                            <img src="<?php echo $directoryAsset;?>/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
-                            <p>
-                                <?php echo $userdetails->first_name;?>
-                            </p>
-                        </li>
-                          <!-- Menu Body -->
-                       <!-- <li class="user-body">
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Followers</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Sales</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Friends</a>
-                            </div>
-                        </li>-->
-                        <!-- Menu Footer-->
-                        <li class="user-footer">
-                            <div class="pull-left">
-                                <?= Html::a(
-                                    'Change Password',
-                                    ['/site/changepassword'],
-                                    ['class' => 'btn btn-default btn-flat']
-                                ) ?>
-
-                            </div>
-                            <div class="pull-right">
-                                <?= Html::a(
-                                    'Sign out',
-                                    ['/site/logout'],
-                                    ['data-method' => 'post', 'class' => 'btn btn-default btn-flat']
-                                ) ?>
-                            </div>
-                        </li>
-                    </ul>
-
+                    <?= Html::a(
+                        '',
+                        ['/site/logout'],
+                        ['data-method' => 'post', 'class' => 'fa fa-sign-out', 'style' => 'font-size: 20px;']
+                    ) ?>
                 </li>
 
 

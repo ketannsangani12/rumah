@@ -64,11 +64,8 @@ if (Yii::$app->controller->action->id === 'login') {
     <?php $this->endBody() ?>
     <?php
     $this->registerCssFile("@web/web/css/site.css");
-
-
-
     $this->registerJs('
-$(document).ready(function()  {
+        $(document).ready(function()  {
             $("#role").change(function()  {
                 var val = $("#role option:selected").val();
                 if(val=="Cleaner" || val=="Mover"){
@@ -79,7 +76,7 @@ $(document).ready(function()  {
             });
            
         });
-');
+    ');
     ?>
     </body>
     </html>

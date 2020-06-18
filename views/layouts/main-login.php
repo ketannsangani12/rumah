@@ -16,7 +16,7 @@ dmstr\web\AdminLteAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body class="login-page" style="background: #3a4e77;">
+<body class="login-page" style="background: #fff;">
 
 <?php $this->beginBody() ?>
 

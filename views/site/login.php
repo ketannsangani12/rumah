@@ -21,9 +21,7 @@ $fieldOptions2 = [
 ?>
 <div class="login-box">
     <div class="login-logo">
-        <a href="#"><b><?php echo \yii\bootstrap\Html::img('@web/Rumahlogo.png',['height'=>100,'width'=>150]) ?>
-
-            </b></a>
+        <a href="#"><b><?php echo \yii\bootstrap\Html::img('@web/Rumahlogo.png') ?></b></a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">

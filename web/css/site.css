@@ -1,0 +1,57 @@
+.login-logo img{
+    height: 100px !important;
+}
+.login-box{
+    padding: 40px;
+    width: 450px;
+    -webkit-box-shadow: 7px 7px 14px 0px rgba(191,44,47,0.35);
+    box-shadow: 7px 7px 14px 0px rgba(191,44,47,0.35);
+    border-radius: 10px;
+}
+.btn{
+    border-radius: 25px !important;
+}
+.btn-primary{
+    background-color: #BF2C2F !important;
+    border-color: #BF2C2F !important;
+}
+.btn-primary:active{
+    background-color: #972a2d !important;
+    border-color: #972a2d !important;
+}
+*:focus {outline:none !important}
+.skin-red-light .main-header .navbar {
+    background-color: #BF2C2F !important;
+}
+.skin-red-light .main-sidebar {
+    background:  #fff !important;
+}
+.skin-red-light .main-header .logo {
+    background: #fff !important;
+    border-right: 2px solid #d2d6de;
+}
+.sidebar-menu>li>a>.fa{
+    font-size: 22px;
+    width: 25px;
+    text-align: center;
+}
+.sidebar-menu a span{
+    font-size: 16px;
+    padding-left: 10px;
+}
+.sidebar-menu>li>a {
+    padding: 12px 5px 12px 10px;
+}
+.skin-red-light .sidebar-menu>li.active>a {
+    background-color: #BF2C2F !important;
+    color: #fff;
+}
+.box.box-primary{
+    border-top-color: #BF2C2F;
+}
+.box-body, .box-footer, .box-header {
+    padding: 20px;
+}
+.font-20{
+    font-size: 20px !important;
+}
