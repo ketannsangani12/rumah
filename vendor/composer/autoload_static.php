@@ -49,18 +49,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         array (
             'phpDocumentor\\Reflection\\' => 25,
         ),
-        'k' => 
-        array (
-            'kartik\\grid\\' => 12,
-            'kartik\\dialog\\' => 14,
-            'kartik\\bs4dropdown\\' => 19,
-            'kartik\\base\\' => 12,
-        ),
         'd' => 
         array (
             'dosamigos\\arrayquery\\' => 21,
             'dmstr\\' => 6,
-            'dlds\\metronic\\' => 14,
         ),
         'c' => 
         array (
@@ -180,22 +172,6 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
-        'kartik\\grid\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/kartik-v/yii2-grid/src',
-        ),
-        'kartik\\dialog\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/kartik-v/yii2-dialog/src',
-        ),
-        'kartik\\bs4dropdown\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/kartik-v/yii2-bootstrap4-dropdown/src',
-        ),
-        'kartik\\base\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/kartik-v/yii2-krajee-base/src',
-        ),
         'dosamigos\\arrayquery\\' => 
         array (
             0 => __DIR__ . '/..' . '/2amigos/yii2-arrayquery-component/src',
@@ -203,10 +179,6 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         'dmstr\\' => 
         array (
             0 => __DIR__ . '/..' . '/dmstr/yii2-adminlte-asset',
-        ),
-        'dlds\\metronic\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dlds/yii2-metronic',
         ),
         'cebe\\markdown\\' => 
         array (
@@ -322,7 +294,7 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         ),
         'Egulias\\EmailValidator\\' => 
         array (
-            0 => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator',
+            0 => __DIR__ . '/..' . '/egulias/email-validator/src',
         ),
         'Doctrine\\Instantiator\\' => 
         array (

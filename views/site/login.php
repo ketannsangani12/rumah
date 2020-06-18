@@ -1,5 +1,5 @@
 <?php
-use yii\helpers\Html;
+//use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -21,7 +21,7 @@ $fieldOptions2 = [
 ?>
 <div class="login-box">
     <div class="login-logo">
-        <a href="#"><b><?php echo Html::img('@web/Rumahlogo.png',['height'=>100,'width'=>150]) ?>
+        <a href="#"><b><?php echo \yii\helpers\Html::img('@web/Rumahlogo.png',['height'=>100,'width'=>150]) ?>
 
             </b></a>
     </div>
