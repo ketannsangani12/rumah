@@ -1,5 +1,5 @@
 # phpstorm project files
-.idea
+/.idea
 /config
 /assets
 /uploads
