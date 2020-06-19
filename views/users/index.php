@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="box-header with-border">
         <?= Html::a('Create Users', ['create'], ['class' => 'btn bg-purple btn-flat']) ?>
     </div>
-    <div class="box-body table-responsive no-padding">
+    <div class="box-body table-responsive">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
         <?= GridView::widget([
             'tableOptions' => [

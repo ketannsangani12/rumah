@@ -11,8 +11,10 @@ use yii\widgets\ActiveForm;
     <div class="col-md-6">
 <div class="users-form box box-primary">
     <?php $form = ActiveForm::begin(); ?>
-    <div class="box-body table-responsive">
-        <?= $form->field($model, 'role')->dropDownList(['Superadmin'=>'Superadmin','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover'], ['id'=>'role']); ?>
+    <div class="box-body table-responsive ">
+        <div class="row">
+         <div class="col-md-8">
+        <?= $form->field($model, 'role')->dropDownList(['Superadmin'=>'Superadmin','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry'], ['id'=>'role']); ?>
 
         <?= $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
         <?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
@@ -28,10 +30,16 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'bank_account_name')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'bank_account_no')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'bank_name')->textInput(['maxlength' => true]) ?>
+        </div>
+         </div>
 </div>
         </div>
     <div class="box-footer">
+        <div class="row">
+        <div class="col-md-8">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
+            </div>
+            </div>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
