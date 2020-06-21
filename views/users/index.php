@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="users-index box box-primary">
     <?php Pjax::begin(); ?>
     <div class="box-header with-border">
-        <?= Html::a('Create Users', ['create'], ['class' => 'btn bg-purple btn-flat']) ?>
+        <?= Html::a('Create Users', ['create'], ['class' => 'btn btn-primary btn-flat']) ?>
     </div>
     <div class="box-body table-responsive">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

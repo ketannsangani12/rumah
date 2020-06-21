@@ -37,7 +37,7 @@ use yii\widgets\ActiveForm;
     <div class="box-footer">
         <div class="row">
         <div class="col-md-8">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
+        <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-flat']) ?>
             </div>
             </div>
     </div>

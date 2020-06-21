@@ -68,6 +68,11 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'common' => [
+
+            'class' => 'app\components\Common',
+
+        ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             'transport' => [
