@@ -71,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return Html::a('<i class="fa fa-eye" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/view', 'id' => $model->id])], [
 
                                 'title' => 'View',
-                                'class'=>'btn btn-sm btn-primary datatable-operation-btn'
+                                'class'=>'btn btn-sm bg-purple datatable-operation-btn'
 
                             ]);
 

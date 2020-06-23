@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * PropertiesController implements the CRUD actions for Properties model.
  */
-class PropertiesController extends Controller
+class ManagedpropertiesController extends Controller
 {
     /**
      * @inheritdoc
@@ -36,12 +36,12 @@ class PropertiesController extends Controller
     public function actionIndex()
     {
         $searchModel = new PropertiesSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,true);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'managedlisting'=>false
+            'managedlisting'=>true
         ]);
     }
 
@@ -75,6 +75,33 @@ class PropertiesController extends Controller
      * @return mixed
      */
     public function actionCreate()
+    {
+        $model = new Properties();
+        $model->scenario = 'create';
+        if ($model->load(Yii::$app->request->post())) {
+            $model->amenities = implode(',',$_POST['Properties']['amenities']);
+            $model->commute = implode(',',$_POST['Properties']['commute']);
+            if($model->validate()) {
+                $model->availability = date('Y-m-d',strtotime($model->availability));
+                $model->created_at = date('Y-m-d');
+                if($model->save()) {
+                    return $this->redirect(['index']);
+                }
+
+            }else{
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+
+    public function actionAdd()
     {
         $model = new Properties();
         $model->scenario = 'create';

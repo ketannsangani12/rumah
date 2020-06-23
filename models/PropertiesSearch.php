@@ -40,10 +40,12 @@ class PropertiesSearch extends Properties
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params,$managedlisting=false)
     {
         $query = Properties::find();
-
+        if(!$managedlisting){
+            $query->where(['pe_userid'=>NULL]);
+        }
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

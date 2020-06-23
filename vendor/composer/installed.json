@@ -232,6 +232,29 @@
         ]
     },
     {
+        "name": "bower-asset/jquery-geocomplete",
+        "version": "1.7.0",
+        "version_normalized": "1.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:ubilabs/geocomplete.git",
+            "reference": "4124db86be0c9cf0ebc2861ec6d97c1c2f3c7209"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ubilabs/geocomplete/zipball/4124db86be0c9cf0ebc2861ec6d97c1c2f3c7209",
+            "reference": "4124db86be0c9cf0ebc2861ec6d97c1c2f3c7209"
+        },
+        "require": {
+            "bower-asset/jquery": ">=1.9.0"
+        },
+        "type": "bower-asset",
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ]
+    },
+    {
         "name": "bower-asset/jquery-ui",
         "version": "1.12.1",
         "version_normalized": "1.12.1.0",
@@ -1205,6 +1228,44 @@
         "keywords": [
             "html"
         ]
+    },
+    {
+        "name": "flaviovs/yii2-geocomplete",
+        "version": "2.1.1",
+        "version_normalized": "2.1.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/flaviovs/yii2-geocomplete.git",
+            "reference": "61f766f024b086bfc5c50f668a9ad66df0a4b1cd"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/flaviovs/yii2-geocomplete/zipball/61f766f024b086bfc5c50f668a9ad66df0a4b1cd",
+            "reference": "61f766f024b086bfc5c50f668a9ad66df0a4b1cd",
+            "shasum": ""
+        },
+        "require": {
+            "bower-asset/jquery-geocomplete": "^1.7"
+        },
+        "time": "2019-01-17T19:42:39+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "fv\\yii\\geocomplete\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Flávio Veloso",
+                "email": "flaviovs@magnux.com"
+            }
+        ],
+        "description": "jQuery Geocomplete widget for Yii2"
     },
     {
         "name": "fortawesome/font-awesome",

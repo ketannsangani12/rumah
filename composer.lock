@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "47d88975d0ceb8780eb9a8ffe80cd9f2",
+    "content-hash": "e20f8a7909c101a5ce9089b441f54f1d",
     "packages": [
         {
             "name": "2amigos/yii2-arrayquery-component",
@@ -161,6 +161,27 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/jquery/jquery-dist/zipball/15bc73803f76bc53b654b9fdbbbc096f56d7c03d",
                 "reference": "15bc73803f76bc53b654b9fdbbbc096f56d7c03d"
+            },
+            "type": "bower-asset",
+            "license": [
+                "MIT"
+            ]
+        },
+        {
+            "name": "bower-asset/jquery-geocomplete",
+            "version": "1.7.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ubilabs/geocomplete.git",
+                "reference": "4124db86be0c9cf0ebc2861ec6d97c1c2f3c7209"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ubilabs/geocomplete/zipball/4124db86be0c9cf0ebc2861ec6d97c1c2f3c7209",
+                "reference": "4124db86be0c9cf0ebc2861ec6d97c1c2f3c7209"
+            },
+            "require": {
+                "bower-asset/jquery": ">=1.9.0"
             },
             "type": "bower-asset",
             "license": [
@@ -553,6 +574,42 @@
                 "html"
             ],
             "time": "2019-10-28T03:44:26+00:00"
+        },
+        {
+            "name": "flaviovs/yii2-geocomplete",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flaviovs/yii2-geocomplete.git",
+                "reference": "61f766f024b086bfc5c50f668a9ad66df0a4b1cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flaviovs/yii2-geocomplete/zipball/61f766f024b086bfc5c50f668a9ad66df0a4b1cd",
+                "reference": "61f766f024b086bfc5c50f668a9ad66df0a4b1cd",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/jquery-geocomplete": "^1.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "fv\\yii\\geocomplete\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Flávio Veloso",
+                    "email": "flaviovs@magnux.com"
+                }
+            ],
+            "description": "jQuery Geocomplete widget for Yii2",
+            "time": "2019-01-17T19:42:39+00:00"
         },
         {
             "name": "fortawesome/font-awesome",

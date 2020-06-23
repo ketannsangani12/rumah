@@ -56,6 +56,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
             'kartik\\date\\' => 12,
             'kartik\\base\\' => 12,
         ),
+        'f' => 
+        array (
+            'fv\\yii\\geocomplete\\' => 19,
+        ),
         'd' => 
         array (
             'dosamigos\\arrayquery\\' => 21,
@@ -194,6 +198,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         'kartik\\base\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-krajee-base/src',
+        ),
+        'fv\\yii\\geocomplete\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/flaviovs/yii2-geocomplete/src',
         ),
         'dosamigos\\arrayquery\\' => 
         array (

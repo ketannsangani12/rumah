@@ -7,7 +7,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\PropertiesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Properties';
+$this->title = 'Managed Properties';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="properties-index box box-primary">
@@ -78,13 +78,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{managedlisting} {gallery} {update} {delete}',
-                    'visibleButtons' => [
-                        'managedlisting' => function ($model,$managedlisting) {
-                            return $managedlisting==false;
-                        },
+                    'template'=>'{gallery} {update} {delete}',
 
-                    ],
                     'buttons'=>[
 //
 //                        'view' => function ($url, $model) {
@@ -98,18 +93,9 @@ $this->params['breadcrumbs'][] = $this->title;
 //
 //                        },
 
-                        'managedlisting' => function ($url, $model,$managedlisting) {
-
-                            return Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/addtomanagelisting', 'id' => $model->id])], [
-
-                                'title' => 'Add to Managed Listing',
-                                'class'=>'btn btn-sm bg-navy datatable-operation-btn'
-                            ]);
-
-                        },
                         'gallery' => function ($url, $model) {
 
-                            return Html::a('<i class="fa fa-picture-o" aria-hidden="true"></i>', ['images/create','id'=>$model->id], [
+                            return Html::a('<i class="fa fa-picture-o" aria-hidden="true"></i>', ['images/add','id'=>$model->id], [
 
                                 'title' => 'Images',
                                 'class'=>'btn btn-sm bg-olive datatable-operation-btn'

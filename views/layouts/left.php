@@ -22,7 +22,10 @@
         <!-- search form -->
 
         <!-- /.search form -->
-
+        <?php
+        $item = Yii::$app->controller->id;
+        $action = Yii::$app->controller->action->id;
+?>
         <?= dmstr\widgets\Menu::widget(
             [
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
@@ -82,9 +85,14 @@
 //
 //                        ]
 //                    ],
-                    ['label' => 'Users', 'icon' => ' fa-user', 'url' => ['/users']],
+                    ['label' => 'Users', 'icon' => ' fa-user', 'url' => ['/users'],'active'=>($item == 'users')
+                    ],
 
                     ['label' => 'Packages', 'icon' => ' fa-cube', 'url' => ['/packages'],'visible'=>false],
+                    ['label' => 'Properties', 'icon' => ' fa-cube', 'url' => ['/properties'],'active'=>($item == 'properties' || ($item=='images' && $action=='create'))],
+                    ['label' => 'Managed Properties', 'icon' => ' fa-cube', 'url' => ['/managedproperties'],'active'=>($item == 'managedproperties' || ($item=='images' && $action='add'))],
+
+
 
                 ],
             ]

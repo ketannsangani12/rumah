@@ -22,6 +22,7 @@ return array(
     'kartik\\file\\' => array($vendorDir . '/kartik-v/yii2-widget-fileinput/src'),
     'kartik\\date\\' => array($vendorDir . '/kartik-v/yii2-widget-datepicker/src'),
     'kartik\\base\\' => array($vendorDir . '/kartik-v/yii2-krajee-base/src'),
+    'fv\\yii\\geocomplete\\' => array($vendorDir . '/flaviovs/yii2-geocomplete/src'),
     'dosamigos\\arrayquery\\' => array($vendorDir . '/2amigos/yii2-arrayquery-component/src'),
     'dmstr\\' => array($vendorDir . '/dmstr/yii2-adminlte-asset'),
     'cebe\\markdown\\' => array($vendorDir . '/cebe/markdown'),

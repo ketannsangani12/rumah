@@ -140,6 +140,36 @@ class ImagesController extends Controller
             ]);
         }
     }
+
+    public function actionAdd($id)
+    {
+        $merchantmodel = Properties::findOne($id);
+
+        $model = new Images();
+        if (isset($model->images_array) && count($model->images_array) > 0) {
+            $images_array = explode(',', $model->images_array);
+            if (!empty($images_array) && $model->images_array != '') {
+                foreach ($images_array as $image) {
+                    $file = Yii::$app->basePath . '/uploads/properties/temp/' . $image;
+                    $rename_file = Yii::$app->basePath . '/uploads/properties/' . $image;
+                    rename($file, $rename_file);
+                    $productsImages = new Images();
+                    $productsImages->property_id = $id;
+                    $productsImages->image = 'uploads/properties/' . $image;
+                    $productsImages->created_at = time();
+                    $productsImages->save();
+                }
+            }
+
+        } else {
+            $images = Images::find()->where(['property_id'=>$id])->all();
+            return $this->render('create', [
+                'model' => $model,
+                'merchantmodel'=>$merchantmodel,
+                'images'=>$images
+            ]);
+        }
+    }
     public function actionDeleteImage() {
         $key = $_POST['key'];
         if (is_numeric($key)) {

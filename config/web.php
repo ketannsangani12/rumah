@@ -14,7 +14,13 @@ $config = [
 
     'components' => [
 
-
+        'assetManager' => [
+            'bundles' => [
+                fv\yii\geocomplete\Asset::class => [
+                    'mapsApiKey' => 'AIzaSyDLNgqZ8balGvcruWJIavSvKijHI7k6jQA',
+                ]
+            ]
+        ],
 //        'metronic'=>[
 //            'class'=>'dlds\metronic\Metronic',
 //            'resources'=>'@webroot/metronic/theme/assets',

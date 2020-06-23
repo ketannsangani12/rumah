@@ -22,7 +22,8 @@
         "yiisoft/yii2-bootstrap4": "^2.0",
         "dmstr/yii2-adminlte-asset": "^2.1",
         "kartik-v/yii2-widget-datepicker": "@dev",
-        "kartik-v/yii2-widget-fileinput": "@dev"
+        "kartik-v/yii2-widget-fileinput": "@dev",
+        "flaviovs/yii2-geocomplete": "^2.1"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
