@@ -13,7 +13,7 @@
                 ->one();
             ?>
             <div class="pull-left info">
-                <p><?php echo $userdetails->first_name;?></p>
+                <p><?php echo $userdetails->full_name;?></p>
 
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
@@ -37,41 +37,42 @@
                         'label' => 'Settings',
                         'icon' => ' fa-life-buoy',
                         'url' => '#',
-                        'visible'=>false,
+                        'visible'=>true,
                         'items' => [
-                            ['label' => 'Topup Wallet', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/create']],
-                            ['label' => 'Platform Fees', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/platformfees']],
-                            ['label' => 'Withdrawal Fees', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/withdrawalfees']],
-
-                            ['label' => 'Customer Referral Points', 'icon' => ' fa-adjust', 'url' => ['/customerreffererpoints/']],
-                            ['label' => 'Merchant Referral Points', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/merchantreffererpoints']],
-                            ['label' => 'Cashback Percentage', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/cashback']],
-                            ['label' => 'Referral Transfer Percentage', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/refferaltransfer']],
-                            //['label' => 'Cashback Percentage', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/cashback']],
-                            ['label' => 'In-App Push Notifications ',
-                              'icon' => 'circle-o',
-                                'url' => '#',
-                              'items' => [
-                                    ['label' => 'Global Announcements', 'icon' => 'circle-o', 'url' => '/announcements/create',],
-                                  ['label' => 'Announcement History', 'icon' => 'circle-o', 'url' => '/announcements',],
-
-                                ],
-                            ],
-                            ['label' => 'TLS Banners', 'icon' => ' fa-adjust', 'url' => ['/banners'],],
-                            ['label' => 'TLS CMS', 'icon' => ' fa-adjust', 'url' => ['/cms'],],
-                            ['label' => 'Product Categories', 'icon' => ' fa-adjust', 'url' => ['/categories'],],
-                            ['label' => 'Category Row Control', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/categorycontrol'],],
-                            ['label' => 'Locations', 'icon' => ' fa-adjust', 'url' => ['/locations'],],
-                            ['label' => 'Management',
-                                'icon' => 'circle-o',
-                                'url' => '#',
-                                'items' => [
-                                    ['label' => 'Account List', 'icon' => ' fa-user', 'url' => '/admins',],
-                                    ['label' => 'User Roles', 'icon' => ' fa-user', 'url' => '/rbac/role',],
-                                    ['label' => 'Email Templates', 'icon' => 'circle-o', 'url' => '/emailtemplates',],
-
-                                ],
-                            ]
+                            ['label' => 'Agreement Templates', 'icon' => ' fa-adjust', 'url' => ['/agreementtemplates']],
+                            ['label' => 'Packages', 'icon' => ' fa-adjust', 'url' => ['/packages']],
+//                            ['label' => 'Platform Fees', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/platformfees']],
+//                            ['label' => 'Withdrawal Fees', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/withdrawalfees']],
+//
+//                            ['label' => 'Customer Referral Points', 'icon' => ' fa-adjust', 'url' => ['/customerreffererpoints/']],
+//                            ['label' => 'Merchant Referral Points', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/merchantreffererpoints']],
+//                            ['label' => 'Cashback Percentage', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/cashback']],
+//                            ['label' => 'Referral Transfer Percentage', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/refferaltransfer']],
+//                            //['label' => 'Cashback Percentage', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/cashback']],
+//                            ['label' => 'In-App Push Notifications ',
+//                              'icon' => 'circle-o',
+//                                'url' => '#',
+//                              'items' => [
+//                                    ['label' => 'Global Announcements', 'icon' => 'circle-o', 'url' => '/announcements/create',],
+//                                  ['label' => 'Announcement History', 'icon' => 'circle-o', 'url' => '/announcements',],
+//
+//                                ],
+//                            ],
+//                            ['label' => 'TLS Banners', 'icon' => ' fa-adjust', 'url' => ['/banners'],],
+//                            ['label' => 'TLS CMS', 'icon' => ' fa-adjust', 'url' => ['/cms'],],
+//                            ['label' => 'Product Categories', 'icon' => ' fa-adjust', 'url' => ['/categories'],],
+//                            ['label' => 'Category Row Control', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/categorycontrol'],],
+//                            ['label' => 'Locations', 'icon' => ' fa-adjust', 'url' => ['/locations'],],
+//                            ['label' => 'Management',
+//                                'icon' => 'circle-o',
+//                                'url' => '#',
+//                                'items' => [
+//                                    ['label' => 'Account List', 'icon' => ' fa-user', 'url' => '/admins',],
+//                                    ['label' => 'User Roles', 'icon' => ' fa-user', 'url' => '/rbac/role',],
+//                                    ['label' => 'Email Templates', 'icon' => 'circle-o', 'url' => '/emailtemplates',],
+//
+//                                ],
+//                            ]
                             ]
                         ],
 //                    [
@@ -91,6 +92,7 @@
                     ['label' => 'Packages', 'icon' => ' fa-cube', 'url' => ['/packages'],'visible'=>false],
                     ['label' => 'Properties', 'icon' => ' fa-cube', 'url' => ['/properties'],'active'=>($item == 'properties' || ($item=='images' && $action=='create'))],
                     ['label' => 'Managed Properties', 'icon' => ' fa-cube', 'url' => ['/managedproperties'],'active'=>($item == 'managedproperties' || ($item=='images' && $action='add'))],
+                    ['label' => 'Booking Requests', 'icon' => '  fa-shield', 'url' => ['/bookingrequests'],'active'=>($item == 'bookingrequests')],
 
 
 

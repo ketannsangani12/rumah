@@ -19,7 +19,7 @@ class UsersSearch extends Users
     {
         return [
             [['id', 'referred_by', 'status'], 'integer'],
-            [['username', 'role', 'first_name', 'last_name', 'contact_no', 'email', 'company_name', 'hp_no', 'company_address', 'company_state', 'registration_no', 'bank_account_name', 'bank_account_no', 'bank_name', 'image', 'password', 'secondary_password', 'token', 'verify_token', 'reset_token', 'firebase_token', 'device_token', 'created_at', 'updated_at'], 'safe'],
+            [['username', 'role', 'full_name', 'contact_no', 'email', 'company_name', 'hp_no', 'company_address', 'company_state', 'registration_no', 'bank_account_name', 'bank_account_no', 'bank_name', 'image', 'password', 'secondary_password', 'token', 'verify_token', 'reset_token', 'firebase_token', 'device_token', 'created_at', 'updated_at'], 'safe'],
             [['wallet_balance'], 'number'],
         ];
     }
@@ -71,7 +71,7 @@ class UsersSearch extends Users
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'role', $this->role])
-            ->andFilterWhere(['like', 'first_name', $this->first_name])
+            ->andFilterWhere(['like', 'full_name', $this->full_name])
             ->andFilterWhere(['like', 'last_name', $this->last_name])
             ->andFilterWhere(['like', 'contact_no', $this->contact_no])
             ->andFilterWhere(['like', 'email', $this->email])

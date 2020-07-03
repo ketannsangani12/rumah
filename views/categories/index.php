@@ -80,7 +80,8 @@ $this->title = 'Categories';
 
 
                 ],
-            ],        ],
+            ],
+        ],
     ]); ?>
 
     <?php Pjax::end(); ?>

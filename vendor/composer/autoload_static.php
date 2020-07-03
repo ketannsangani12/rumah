@@ -41,17 +41,24 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
             'yii\\' => 4,
             'yii2mod\\rbac\\' => 13,
         ),
+        's' => 
+        array (
+            'setasign\\Fpdi\\' => 14,
+        ),
         'r' => 
         array (
             'rmrevin\\yii\\fontawesome\\' => 24,
         ),
         'p' => 
         array (
+            'phpnt\\summernote\\' => 17,
+            'phpnt\\fontAwesome\\' => 18,
             'phpDocumentor\\Reflection\\' => 25,
         ),
         'k' => 
         array (
             'kartik\\plugins\\fileinput\\' => 25,
+            'kartik\\mpdf\\' => 12,
             'kartik\\file\\' => 12,
             'kartik\\date\\' => 12,
             'kartik\\base\\' => 12,
@@ -97,6 +104,7 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
@@ -105,6 +113,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         'O' => 
         array (
             'Opis\\Closure\\' => 13,
+        ),
+        'M' => 
+        array (
+            'Mpdf\\' => 5,
         ),
         'G' => 
         array (
@@ -173,9 +185,21 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         array (
             0 => __DIR__ . '/..' . '/yii2mod/yii2-rbac',
         ),
+        'setasign\\Fpdi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/setasign/fpdi/src',
+        ),
         'rmrevin\\yii\\fontawesome\\' => 
         array (
             0 => __DIR__ . '/..' . '/rmrevin/yii2-fontawesome',
+        ),
+        'phpnt\\summernote\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpnt/yii2-summernote',
+        ),
+        'phpnt\\fontAwesome\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpnt/font-awesome',
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
@@ -186,6 +210,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         'kartik\\plugins\\fileinput\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/bootstrap-fileinput',
+        ),
+        'kartik\\mpdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-mpdf/src',
         ),
         'kartik\\file\\' => 
         array (
@@ -295,6 +323,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         array (
             0 => __DIR__ . '/..' . '/symfony/browser-kit',
         ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
@@ -314,6 +346,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         'Opis\\Closure\\' => 
         array (
             0 => __DIR__ . '/..' . '/opis/closure/src',
+        ),
+        'Mpdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mpdf/mpdf/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (

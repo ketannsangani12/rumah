@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Packages */
+/* @var $model app\models\AgreementTemplates */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Packages', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Agreement Templates', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="packages-view box box-primary">
+<div class="agreement-templates-view box box-primary">
     <div class="box-header">
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -27,9 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributes' => [
                 'id',
                 'name',
-                'price',
-                'quantity',
-                'status',
+                'document',
                 'created_at:datetime',
                 'updated_at:datetime',
             ],

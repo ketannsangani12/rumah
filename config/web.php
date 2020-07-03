@@ -13,7 +13,10 @@ $config = [
     ],
 
     'components' => [
-
+        'formatter' => [
+            'thousandSeparator' => ',',
+            'currencyCode' => 'MYR',
+        ],
         'assetManager' => [
             'bundles' => [
                 fv\yii\geocomplete\Asset::class => [

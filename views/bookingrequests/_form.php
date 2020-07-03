@@ -4,31 +4,26 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Packages */
+/* @var $model app\models\BookingRequests */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 <div class="row">
     <div class="col-md-6">
-
-<div class="packages-form box box-primary">
+<div class="booking-requests-form box box-primary">
     <?php $form = ActiveForm::begin(); ?>
     <div class="box-body table-responsive">
         <div class="row">
-            <div class="col-md-8">
-        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-        <?= $form->field($model, 'price')->textInput() ?>
-
-        <?= $form->field($model, 'quantity')->textInput() ?>
-
-</div>
-            </div>
+            <div class="col-md-10">
+           <?= $form->field($model, 'credit_score')->textInput() ?>
+           <?= $form->field($model, 'report')->fileInput() ?>
 
     </div>
+            </div>
+        </div>
     <div class="box-footer">
         <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-flat']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
 </div>
-</div>
+    </div>

@@ -34,8 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter'=>array('Superadmin'=>'Superadmin','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover'),
 
                 ],
-                'first_name',
-                'last_name',
+                'full_name',
                 'company_name',
                 'registration_no',
                 // 'wallet_balance',

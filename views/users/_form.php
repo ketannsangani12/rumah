@@ -14,10 +14,9 @@ use yii\widgets\ActiveForm;
     <div class="box-body table-responsive ">
         <div class="row">
          <div class="col-md-8">
-        <?= $form->field($model, 'role')->dropDownList(['Superadmin'=>'Superadmin','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry'], ['id'=>'role']); ?>
+        <?= $form->field($model, 'role')->dropDownList(['Superadmin'=>'Superadmin','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry','Handyman'=>'Handyman'], ['id'=>'role']); ?>
 
-        <?= $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
-        <?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
         <div id="companydetails" style="<?php echo ($model->role=='Cleaner' || $model->role=='Mover')?"display: block;":"display: none;"?>">

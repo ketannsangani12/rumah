@@ -35,7 +35,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['role', 'first_name','last_name','email'], 'required','on' => 'adduser'],
+            [['role', 'full_name','email'], 'required','on' => 'adduser'],
             [['contact_no','company_name','company_address','company_state','bank_account_name','bank_account_no','bank_name'], 'required','when' => function ($model) {
                 return ($model->role == 'Cleaner' || $model->role == 'Mover');
             }, 'whenClient' => "function (attribute, value) {
@@ -64,7 +64,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return [
             'id' => 'ID',
-            'first_name'=>'First Name',
+            'full_name'=>'Full Name',
             'last_name'=>'Last Name',
             'username' => 'Username',
             'password' => 'Password',

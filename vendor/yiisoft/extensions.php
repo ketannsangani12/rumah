@@ -138,4 +138,31 @@ return array (
       '@kartik/file' => $vendorDir . '/kartik-v/yii2-widget-fileinput/src',
     ),
   ),
+  'phpnt/font-awesome' => 
+  array (
+    'name' => 'phpnt/font-awesome',
+    'version' => '0.0.2.0',
+    'alias' => 
+    array (
+      '@phpnt/fontAwesome' => $vendorDir . '/phpnt/font-awesome',
+    ),
+  ),
+  'phpnt/yii2-summernote' => 
+  array (
+    'name' => 'phpnt/yii2-summernote',
+    'version' => '0.0.4.0',
+    'alias' => 
+    array (
+      '@phpnt/summernote' => $vendorDir . '/phpnt/yii2-summernote',
+    ),
+  ),
+  'kartik-v/yii2-mpdf' => 
+  array (
+    'name' => 'kartik-v/yii2-mpdf',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@kartik/mpdf' => $vendorDir . '/kartik-v/yii2-mpdf/src',
+    ),
+  ),
 );

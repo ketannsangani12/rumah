@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Packages;
+use app\models\AgreementTemplates;
 
 /**
- * PackagesSearch represents the model behind the search form of `app\models\Packages`.
+ * AgreementTemplatesSearch represents the model behind the search form of `app\models\AgreementTemplates`.
  */
-class PackagesSearch extends Packages
+class AgreementTemplatesSearch extends AgreementTemplates
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class PackagesSearch extends Packages
     public function rules()
     {
         return [
-            [['id', 'price', 'quantity', 'status'], 'integer'],
-            [['name', 'created_at', 'updated_at'], 'safe'],
+            [['id'], 'integer'],
+            [['name', 'document', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class PackagesSearch extends Packages
      */
     public function search($params)
     {
-        $query = Packages::find();
+        $query = AgreementTemplates::find();
 
         // add conditions that should always apply here
 
@@ -61,14 +61,12 @@ class PackagesSearch extends Packages
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'price' => $this->price,
-            'quantity' => $this->quantity,
-            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'document', $this->document]);
 
         return $dataProvider;
     }

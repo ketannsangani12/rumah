@@ -26,9 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'user_id',
 
-                    'value' => 'user.first_name',
+                    'value' => 'user.full_name',
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->asArray()->all(), 'id', function($model) {
-                        return $model['first_name']." ".$model['last_name'];
+                        return $model['full_name'];
                     }),
 
                     //'filter'=>false

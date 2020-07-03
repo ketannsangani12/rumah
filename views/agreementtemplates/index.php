@@ -4,16 +4,16 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\PackagesSearch */
+/* @var $searchModel app\models\AgreementTemplatesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Packages';
+$this->title = 'Agreement Templates';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="packages-index box box-primary">
+<div class="agreement-templates-index box box-primary">
     <?php Pjax::begin(); ?>
     <div class="box-header with-border">
-        <?= Html::a('Create Packages', ['create'], ['class' => 'btn btn-primary btn-flat']) ?>
+        <?= Html::a('Create Agreement Templates', ['create'], ['class' => 'btn btn-primary btn-flat']) ?>
     </div>
     <div class="box-body table-responsive">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -26,22 +26,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 //'id',
                 'name',
-                'price',
-                'quantity',
-                //'status',
-                // 'created_at',
-                // 'updated_at',
+                //'document',
+                //'created_at',
+                //'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{view} {update}',
+                    'template'=>'{update}',
 
                     'buttons'=>[
 
                         'view' => function ($url, $model) {
 
-                            return Html::a('<i class="fa fa-eye" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/view', 'id' => $model->id])], [
+                            return Html::a('<i class="fa fa-download" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/download', 'id' => $model->id])], [
 
-                                'title' => 'View',
+                                'title' => 'Download',
                                 'class'=>'btn btn-sm bg-purple datatable-operation-btn'
 
                             ]);
@@ -57,7 +55,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
 
                         },
-
 
 
 

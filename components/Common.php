@@ -51,4 +51,11 @@ class Common extends Component
 
 
     }
+    public function replaceLetterContent($content,$model){
+        $content = str_replace("#tenantname#",$model->user->full_name,$content);
+        $content = str_replace("#landlordname#",$model->landlord->full_name,$content);
+        $content = str_replace("@property@",$model->property->title,$content);
+
+        return $content;
+    }
 }
