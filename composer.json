@@ -25,7 +25,9 @@
         "kartik-v/yii2-widget-fileinput": "@dev",
         "flaviovs/yii2-geocomplete": "^2.1",
         "phpnt/yii2-summernote": "^0.0.4",
-        "kartik-v/yii2-mpdf": "dev-master"
+        "kartik-v/yii2-mpdf": "dev-master",
+        "wbraganca/yii2-dynamicform": "*",
+        "kartik-v/yii2-widget-select2": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

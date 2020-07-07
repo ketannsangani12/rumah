@@ -58,4 +58,49 @@ class Common extends Component
 
         return $content;
     }
+    public function getStatus($status)
+    {
+        switch ($status){
+            case "New";
+                return "<span class='btn btn-warning btn-xs'>New</span>";
+                break;
+            case "Pending";
+                return "<span class='btn btn-warning btn-xs'>Pending</span>";
+
+                break;
+            case "Approved";
+                return "<span class='btn bg-green btn-xs'>Approved</span>";
+                break;
+            case "Agreement Processed";
+                return "<span class='btn bg-orange btn-xs'>Agreement Processed</span>";
+                break;
+            case "Work In Progress";
+                return "<span class='btn bg-orange btn-xs'>Work In Progress</span>";
+                break;
+            case "Declined";
+                return "<span class='btn btn-danger btn-xs'>Declined</span>";
+                break;
+            case "Rejected";
+                return "<span class='btn btn-danger btn-xs'>Rejected</span>";
+                break;
+            case "Unpaid";
+                return "<span class='btn btn-danger btn-xs'>Unpaid</span>";
+                break;
+            case "Paid";
+                return "<span class='btn bg-green btn-xs'>Paid</span>";
+                break;
+            case "Payment Requested";
+                return "<span class='btn bg-blue btn-xs'>Payment Requested</span>";
+                break;
+            case "Rented";
+                return "<span class='btn bg-green btn-xs'>Rented</span>";
+                break;
+            case "Terminated";
+                return "<span class='btn btn-danger btn-xs'>Suspended</span>";
+                break;
+            case "Incompleted";
+                return "<span class='btn btn-danger btn-xs'>Incompleted</span>";
+                break;
+        }
+    }
 }

@@ -93,6 +93,7 @@
                     ['label' => 'Properties', 'icon' => ' fa-cube', 'url' => ['/properties'],'active'=>($item == 'properties' || ($item=='images' && $action=='create'))],
                     ['label' => 'Managed Properties', 'icon' => ' fa-cube', 'url' => ['/managedproperties'],'active'=>($item == 'managedproperties' || ($item=='images' && $action='add'))],
                     ['label' => 'Booking Requests', 'icon' => '  fa-shield', 'url' => ['/bookingrequests'],'active'=>($item == 'bookingrequests')],
+                    ['label' => 'Renovation Quotes', 'icon' => ' fa-recycle', 'url' => ['/renovationquotes'],'active'=>($item == 'renovationquotes')],
 
 
 

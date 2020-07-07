@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute'=>'status',
                     'format'=>'raw',
                     'value'=> function($model){
-                        return $model->getStatus($model->status);
+                        return Yii::$app->common->getStatus($model->status);
                     },
                     'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Payment Requested"=>"Payment Requested","Rented"=>"Rented"),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
@@ -86,14 +86,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
-                    'headerOptions' => ['style' => 'width:17%'],
-                    'template'=>'{view} {update} {choosetemplate} {uploadagreement} {uploadmoveout}',
+                    'headerOptions' => ['style' => 'width:18%'],
+                    'template'=>'{view} {update} {choosetemplate} {uploadagreement} {uploadmoveout} {moveoutinvoice}',
                     'visibleButtons' => [
                         'choosetemplate' => function ($model) {
                             return ($model->status=='Approved' || $model->status=='Agreement Processed');
                         },
                         'uploadagreement' => function ($model) {
-                            return ($model->status=='Agreement Processed' || $model->status=='Payment Requested');
+                            return ($model->status=='Agreement Processed' || $model->status=='Payment Requested' || $model->status=='Rented');
+                        },
+                        'uploadmoveout' => function ($model) {
+                            return ($model->status=='Rented');
+                        },
+                        'moveoutinvoice' => function ($model){
+                            return ($model->status=='Rented' && $model->moveout_document!='');
                         },
                     ],
                     'buttons'=>[
@@ -159,7 +165,21 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
 
                         },
+                        'moveoutinvoice' => function ($url, $model) {
+                            $requestexist = \app\models\TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Moveout Refund','status'=>'Pending'])->one();
+                            if(!empty($requestexist)){
+                                $url = \yii\helpers\Url::to([Yii::$app->controller->id.'/moveoutinvoiceupdate', 'id' => $model->id]);
+                            }else{
+                                $url = \yii\helpers\Url::to([Yii::$app->controller->id.'/moveoutinvoice', 'id' => $model->id]);
+                            }
+                            return Html::a('<i class="fa fa-money" aria-hidden="true"></i>', [$url], [
 
+                                'title' => 'Move Out Invoice',
+                                'class' =>'btn btn-sm bg-blue datatable-operation-btn'
+
+                            ]);
+
+                        },
                         'delete' => function ($url, $model) {
 
                             return Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/delete', 'id' => $model->id])], [

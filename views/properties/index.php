@@ -78,7 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{managedlisting} {gallery} {update} {delete}',
+                    'template'=>'{view} {managedlisting} {gallery} {update} {delete}',
                     'visibleButtons' => [
                         'managedlisting' => function ($model,$managedlisting) {
                             return $managedlisting==false;
@@ -87,16 +87,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'buttons'=>[
 //
-//                        'view' => function ($url, $model) {
-//
-//                            return Html::a('<i class="fa fa-eye" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/view', 'id' => $model->id])], [
-//
-//                                'title' => 'View',
-//                                'class'=>'btn btn-sm btn-primary datatable-operation-btn'
-//
-//                            ]);
-//
-//                        },
+                        'view' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-eye" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/view', 'id' => $model->id])], [
+
+                                'title' => 'View',
+                                'class'=>'btn btn-sm bg-olive datatable-operation-btn'
+
+                            ]);
+
+                        },
 
                         'managedlisting' => function ($url, $model,$managedlisting) {
 
@@ -112,7 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return Html::a('<i class="fa fa-picture-o" aria-hidden="true"></i>', ['images/create','id'=>$model->id], [
 
                                 'title' => 'Images',
-                                'class'=>'btn btn-sm bg-olive datatable-operation-btn'
+                                'class'=>'btn btn-sm bg-blue datatable-operation-btn'
 
                             ]);
 

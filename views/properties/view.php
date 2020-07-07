@@ -12,22 +12,23 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="properties-view box box-primary">
     <div class="box-header">
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger btn-flat',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+       <h3>Property Details - <?php echo $model->title;?></h3>
     </div>
-    <div class="box-body table-responsive no-padding">
+    <div class="box-body table-responsive">
+        <div class="row">
+            <div class="col-md-6">
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id',
-                'user_id',
-                'pe_userid',
+                [
+                    'label'=>'Landlord Or Agent',
+
+                    'value'=>function($model){
+                        return (isset($model->user->full_name))?$model->user->full_name:'';
+                    }
+                ],
+                ///'user_id',
+                //'pe_userid',
                 'title:ntext',
                 'description:ntext',
                 'location:ntext',
@@ -36,22 +37,50 @@ $this->params['breadcrumbs'][] = $this->title;
                 'property_type',
                 'room_type',
                 'preference',
-                'availability',
-                'bedroom',
-                'bathroom',
-                'carparks',
-                'furnished_status',
-                'size_of_area',
-                'price',
-                'amenities:ntext',
-                'commute',
-                'digital_tenancy',
-                'auto_rental',
-                'insurance',
-                'status',
-                'created_at:datetime',
-                'updated_at:datetime',
+                'availability:date',
+
             ],
         ]) ?>
+                </div>
+            <div class="col-md-6">
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'attributes' => [
+                        'bedroom',
+                        'bathroom',
+                        'carparks',
+                        'furnished_status',
+                        'size_of_area',
+                        'price:currency',
+                        'amenities:ntext',
+                        'commute',
+                        [
+                            'label'=>'Digital Tenancy',
+
+                            'value'=>function($model){
+                                return ($model->digital_tenancy==1)?"Yes":"No";
+                            }
+                        ],
+                        [
+                            'label'=>'Auto Rental',
+
+                            'value'=>function($model){
+                                return ($model->auto_rental==1)?"Yes":"No";
+                            }
+                        ],
+                        [
+                            'label'=>'Insurance',
+
+                            'value'=>function($model){
+                                return ($model->insurance==1)?"Yes":"No";
+                            }
+                        ],
+                        'status',
+                        //'created_at:datetime',
+                        //'updated_at:datetime',
+                    ],
+                ]) ?>
+            </div>
+            </div>
     </div>
 </div>

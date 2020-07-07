@@ -177,8 +177,14 @@ class BookingRequests extends \yii\db\ActiveRecord
             case "Agreement Processed";
                 return "<span class='btn bg-orange btn-xs'>Agreement Processed</span>";
                 break;
+            case "Work In Progress	";
+                return "<span class='btn bg-orange btn-xs'>Work In Progress</span>";
+                break;
             case "Declined";
                 return "<span class='btn btn-danger btn-xs'>Declined</span>";
+                break;
+            case "Rejected";
+                return "<span class='btn btn-danger btn-xs'>Rejected</span>";
                 break;
             case "Payment Requested";
                 return "<span class='btn bg-blue btn-xs'>Payment Requested</span>";

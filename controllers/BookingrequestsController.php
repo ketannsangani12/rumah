@@ -3,13 +3,20 @@
 namespace app\controllers;
 
 use app\models\AgreementTemplates;
+use app\models\TodoItems;
+use app\models\TodoList;
 use kartik\mpdf\Pdf;
 use Yii;
 use app\models\BookingRequests;
 use app\models\BookingRequestsSearch;
+use yii\base\Exception;
+use yii\base\Model;
+use yii\base\Response;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\widgets\ActiveForm;
 
 /**
  * BookingrequestsController implements the CRUD actions for BookingRequests model.
@@ -236,7 +243,6 @@ class BookingrequestsController extends Controller
         $model = $this->findModel($id);
         if($model->status!='Rented'){
             return $this->redirect(['index']);
-
         }
         $model->scenario = 'uploadmoveout';
         if ($model->load(Yii::$app->request->post())) {
@@ -266,6 +272,131 @@ class BookingrequestsController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+    public function actionMoveoutinvoice($id)
+    {
+
+        $model = $this->findModel($id);
+        if($model->status!='Rented'){
+            return $this->redirect(['index']);
+        }
+        $modelCustomer = new TodoList();
+        $modelsAddress = [new TodoItems()];
+        if (!empty($_POST)) {
+
+            $modelsAddress = Model::createMultiple(TodoItems::classname());
+            Model::loadMultiple($modelsAddress, Yii::$app->request->post());
+
+            // ajax validation
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ArrayHelper::merge(
+                    ActiveForm::validateMultiple($modelsAddress),
+                    ActiveForm::validate($modelCustomer)
+                );
+            }
+
+            // validate all models
+            $valid = $modelCustomer->validate();
+            $valid = Model::validateMultiple($modelsAddress) && $valid;
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    $modelCustomer->property_id = $model->property_id;
+                    $modelCustomer->request_id = $id;
+                    $modelCustomer->user_id = $model->user_id;
+                    $modelCustomer->reftype = "Moveout Refund";
+                    $modelCustomer->status = "Pending";
+                    $modelCustomer->created_at = date('Y-m-d H:i:s');
+                    if ($flag = $modelCustomer->save(false)) {
+                        foreach ($modelsAddress as $modelAddress) {
+                            $modelAddress->todo_id = $modelCustomer->id;
+                            $modelAddress->created_at = date('Y-m-d H:i:s');
+                            if (! ($flag = $modelAddress->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                    }
+                    if ($flag) {
+                        $transaction->commit();
+                        return $this->redirect(['index']);
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            }
+        }else {
+            return $this->render('uploadmoveoutinvoice', [
+                'model' => $model,
+                'modelCustomer' => $modelCustomer,
+                'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress
+            ]);
+        }
+
+    }
+    public function actionMoveoutinvoiceupdate($id)
+    {
+
+        $model = $this->findModel($id);
+        if($model->status!='Rented'){
+            return $this->redirect(['index']);
+        }
+        $modelCustomer = TodoList::find()->where(['request_id'=>$id,'reftype'=>'Moveout Refund','status'=>'Pending'])->one();
+        $modelsAddress = $modelCustomer->todoItems;
+
+        if (!empty($_POST)) {
+
+            $oldIDs = ArrayHelper::map($modelsAddress, 'id', 'id');
+            $modelsAddress = Model::createMultiple(TodoItems::classname(), $modelsAddress);
+            Model::loadMultiple($modelsAddress, Yii::$app->request->post());
+            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($modelsAddress, 'id', 'id')));
+
+            // ajax validation
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ArrayHelper::merge(
+                    ActiveForm::validateMultiple($modelsAddress),
+                    ActiveForm::validate($modelCustomer)
+                );
+            }
+
+            // validate all models
+            $valid = $modelCustomer->validate();
+            $valid = Model::validateMultiple($modelsAddress) && $valid;
+
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    if ($flag = $modelCustomer->save(false)) {
+                        if (! empty($deletedIDs)) {
+                            TodoItems::deleteAll(['id' => $deletedIDs]);
+                        }
+                        foreach ($modelsAddress as $modelAddress) {
+                            $modelAddress->todo_id = $modelCustomer->id;
+                            $modelAddress->created_at = date('Y-m-d H:i:s');
+                            if (! ($flag = $modelAddress->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                    }
+                    if ($flag) {
+                        $transaction->commit();
+                        return $this->redirect(['view', 'id' => $modelCustomer->id]);
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            }
+        }else {
+            return $this->render('uploadmoveoutinvoice', [
+                'model' => $model,
+                'modelCustomer' => $modelCustomer,
+                'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress
+            ]);
+        }
+
     }
     /**
      * Deletes an existing BookingRequests model.
