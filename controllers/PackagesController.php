@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Packages;
 use app\models\PackagesSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -20,6 +21,18 @@ class PackagesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','view','update','create'],
+                'rules' => [
+                    [
+                        'actions' => ['index','view','update','create'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

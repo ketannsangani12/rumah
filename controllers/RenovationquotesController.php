@@ -12,6 +12,7 @@ use app\models\RenovationQuotesSearch;
 use yii\base\Exception;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -29,6 +30,17 @@ class RenovationquotesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','create','delete','update','view','milestones','createmilestone','updatemilestone','viewmilestone','uploadmilestonedocument'],
+                'rules' => [
+                    [
+                        'actions' => ['index','delete','create','update','view','createmilestone','updatemilestone','viewmilestone','uploadmilestonedocument'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

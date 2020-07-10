@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Properties;
 use app\models\PropertiesSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -20,6 +21,17 @@ class PropertiesController extends Controller
     public function behaviors()
     {
         return [
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'only' => ['index','create','delete','update','view','addtomanagelisting'],
+                    'rules' => [
+                        [
+                            'actions' => ['index','delete','create','update','view','addtomanagelisting'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -152,6 +164,7 @@ class PropertiesController extends Controller
     {
         $model = $this->findModel($id);
         $model->pe_userid = Yii::$app->user->identity->getId();
+        $model->is_managed = 1;
         $model->save(false);
         return $this->redirect(['index']);
     }

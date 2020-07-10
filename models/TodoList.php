@@ -43,6 +43,9 @@ class TodoList extends \yii\db\ActiveRecord
     {
         return [
             [['title'], 'required','on'=>'addmilestone'],
+            [['property_id'], 'required','on'=>'addinsurance'],
+            [['pay_from'], 'required','on'=>'adddefectquote'],
+            ['property_id', 'checkhavealreadyrequest','on' => 'addinsurance'],
             [['request_id', 'property_id', 'user_id', 'landlord_id', 'vendor_id'], 'integer'],
             [['reftype', 'status'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
@@ -62,11 +65,14 @@ class TodoList extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'title' => 'Title',
+            'description'=>'Description',
             'request_id' => 'Request ID',
             'property_id' => 'Property',
-            'user_id' => 'User',
+            'user_id' => 'Tenant',
             'landlord_id' => 'Landlord',
-            'title' => 'Title',
+            'pay_from'=>'Payment From',
+            //'title' => 'Title',
             'vendor_id' => 'Vendor ID',
             'document' => 'Document',
             'reftype' => 'Reftype',
@@ -134,5 +140,17 @@ class TodoList extends \yii\db\ActiveRecord
     public function getVendor()
     {
         return $this->hasOne(Users::className(), ['id' => 'vendor_id']);
+    }
+
+
+    public function checkhavealreadyrequest($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            $request = TodoList::find()->where(['in', 'status', ['Unpaid','Paid']])->count();
+
+            if ($request>0) {
+                $this->addError($attribute, 'You already submitted Insurance Quote for this Property.');
+            }
+        }
     }
 }

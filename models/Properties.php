@@ -74,6 +74,7 @@ class Properties extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User',
+            'property_no'=>'Property No.',
             'pe_userid' => 'Pe Userid',
             'title' => 'Title',
             'description' => 'Description',

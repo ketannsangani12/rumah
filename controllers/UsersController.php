@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -20,6 +21,17 @@ class UsersController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','create','delete','update','view'],
+                'rules' => [
+                    [
+                        'actions' => ['index','delete','create','update','view'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     'value' => 'property.title',
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Properties::find()->where(['digital_tenancy'=>1])->asArray()->all(), 'id', function($model) {
-                        return $model['title'];
+                        return $model['property_no']." - ".$model['title'];
                     }),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 

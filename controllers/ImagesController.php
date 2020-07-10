@@ -8,6 +8,7 @@ use Yii;
 use app\models\Images;
 use app\models\ImagesSearch;
 use yii\base\Response;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -23,6 +24,17 @@ class ImagesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','create','deleteimage','upload','add','update'],
+                'rules' => [
+                    [
+                        'actions' => ['index','deleteimage','upload','create','add','update'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

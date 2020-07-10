@@ -33,6 +33,7 @@ class TodoItems extends \yii\db\ActiveRecord
     {
         return [
             [['description','price'], 'required'],
+            [['price'], 'required','on'=>'defectquote'],
             [['todo_id'], 'integer'],
             [['description'], 'string'],
             [['price'], 'number'],

@@ -12,6 +12,7 @@ use app\models\BookingRequestsSearch;
 use yii\base\Exception;
 use yii\base\Model;
 use yii\base\Response;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -29,6 +30,17 @@ class BookingrequestsController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+            'class' => AccessControl::className(),
+            'only' => ['index','view','update','choosetemplate','printagreement','uploadagreement','uploadmoveout','moveoutinvoice','moveoutinvoiceupdate'],
+            'rules' => [
+                [
+                    'actions' => ['index','view','update','choosetemplate','printagreement','uploadagreement','uploadmoveout','moveoutinvoice','moveoutinvoiceupdate'],
+                    'allow' => true,
+                    'roles' => ['@'],
+                ],
+            ],
+        ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

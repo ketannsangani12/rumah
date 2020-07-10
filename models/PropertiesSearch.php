@@ -18,7 +18,7 @@ class PropertiesSearch extends Properties
     public function rules()
     {
         return [
-            [['id', 'user_id', 'pe_userid', 'bedroom', 'bathroom', 'carparks', 'digital_tenancy', 'auto_rental', 'insurance'], 'integer'],
+            [['id', 'user_id', 'pe_userid', 'bedroom', 'bathroom', 'carparks', 'digital_tenancy', 'auto_rental', 'insurance','property_no'], 'integer'],
             [['title', 'description', 'location', 'property_type', 'room_type', 'preference', 'availability', 'furnished_status', 'amenities', 'commute', 'status', 'created_at', 'updated_at'], 'safe'],
             [['latitude', 'longitude', 'size_of_area', 'price'], 'number'],
         ];
@@ -44,7 +44,7 @@ class PropertiesSearch extends Properties
     {
         $query = Properties::find();
         if(!$managedlisting){
-            $query->where(['pe_userid'=>NULL]);
+            $query->where(['is_managed'=>0]);
         }
         // add conditions that should always apply here
 
@@ -65,6 +65,7 @@ class PropertiesSearch extends Properties
         $query->andFilterWhere([
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'property_no' => $this->property_no,
             'pe_userid' => $this->pe_userid,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
