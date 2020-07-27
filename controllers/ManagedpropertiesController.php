@@ -48,7 +48,7 @@ class ManagedpropertiesController extends Controller
     public function actionIndex()
     {
         $searchModel = new PropertiesSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,true);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,false);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
