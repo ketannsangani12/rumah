@@ -36,7 +36,7 @@ class TodoItems extends \yii\db\ActiveRecord
             [['price'], 'required','on'=>'defectquote'],
             [['todo_id'], 'integer'],
             [['description'], 'string'],
-            [['price'], 'number'],
+            [['price','platform_deductible'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['todo_id'], 'exist', 'skipOnError' => true, 'targetClass' => TodoList::className(), 'targetAttribute' => ['todo_id' => 'id']],
         ];
@@ -52,6 +52,7 @@ class TodoItems extends \yii\db\ActiveRecord
             'todo_id' => 'Todo ID',
             'description' => 'Description',
             'price' => 'Price',
+            'platform_deductible'=>'Platform Deductible',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

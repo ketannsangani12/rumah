@@ -19,6 +19,11 @@ use yii\widgets\ActiveForm;
                 <div class="row">
                     <div class="col-md-10">
                         <?= $form->field($model, 'moveout')->fileInput() ?>
+                        <?php
+                        if($model->moveout_date!=''){
+                            $model->moveout_date = date('d-m-Y',strtotime($model->moveout_date));
+                        }
+                        ?>
                         <?= $form->field($model, 'moveout_date')->widget(
                             \kartik\date\DatePicker::className(), [
                             // inline too, not bad

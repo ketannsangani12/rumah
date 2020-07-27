@@ -132,4 +132,14 @@ class Properties extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'user_id']);
     }
+
+    /**
+     * Gets query for [[Images]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRequest()
+    {
+        return $this->hasOne(BookingRequests::className(), ['id' => 'request_id']);
+    }
 }

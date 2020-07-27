@@ -12,6 +12,7 @@ use app\models\BookingRequestsSearch;
 use yii\base\Exception;
 use yii\base\Model;
 use yii\base\Response;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -56,6 +57,7 @@ class BookingrequestsController extends Controller
      */
     public function actionIndex()
     {
+
         $searchModel = new BookingRequestsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -72,11 +74,34 @@ class BookingrequestsController extends Controller
      */
     public function actionView($id)
     {
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
+    public function actionViewcancelbooking($id)
+    {
 
+        $query = TodoItems::find()->where(['todo_id'=>$id]);
+        $model = TodoList::find()->where(['id'=>$id,'reftype'=>'Cancellation Refund'])->one();
+        if ($model == null) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
+        ]);
+        //$milestones = ;
+
+        return $this->render('viewcancelbooking', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+
+        ]);
+
+    }
     /**
      * Creates a new BookingRequests model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -342,7 +367,8 @@ class BookingrequestsController extends Controller
             return $this->render('uploadmoveoutinvoice', [
                 'model' => $model,
                 'modelCustomer' => $modelCustomer,
-                'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress
+                'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress,
+                'type'=>'moveoutinvoice'
             ]);
         }
 
@@ -405,7 +431,74 @@ class BookingrequestsController extends Controller
             return $this->render('uploadmoveoutinvoice', [
                 'model' => $model,
                 'modelCustomer' => $modelCustomer,
-                'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress
+                'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress,
+                'type'=>'moveoutinvoice'
+            ]);
+        }
+
+    }
+    public function actionCancelbooking($id)
+    {
+
+        $model = $this->findModel($id);
+        if($model->status!='Agreement Processed'){
+            return $this->redirect(['index']);
+        }
+        $modelCustomer = new TodoList();
+        $modelsAddress = [new TodoItems()];
+        if (!empty($_POST)) {
+
+            $modelsAddress = Model::createMultiple(TodoItems::classname());
+            Model::loadMultiple($modelsAddress, Yii::$app->request->post());
+
+            // ajax validation
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ArrayHelper::merge(
+                    ActiveForm::validateMultiple($modelsAddress),
+                    ActiveForm::validate($modelCustomer)
+                );
+            }
+
+            // validate all models
+            $valid = $modelCustomer->validate();
+            $valid = Model::validateMultiple($modelsAddress) && $valid;
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    $model->status = 'Cancelled';
+                    $model->updated_at = date('Y-m-d H:i:s');
+                    $model->save(false);
+                    $modelCustomer->property_id = $model->property_id;
+                    $modelCustomer->request_id = $id;
+                    $modelCustomer->user_id = $model->user_id;
+                    $modelCustomer->reftype = "Cancellation Refund";
+                    $modelCustomer->status = "Pending";
+                    $modelCustomer->created_at = date('Y-m-d H:i:s');
+                    if ($flag = $modelCustomer->save(false)) {
+                        foreach ($modelsAddress as $modelAddress) {
+                            $modelAddress->todo_id = $modelCustomer->id;
+                            $modelAddress->created_at = date('Y-m-d H:i:s');
+                            if (! ($flag = $modelAddress->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                    }
+                    if ($flag) {
+                        $transaction->commit();
+                        return $this->redirect(['index']);
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            }
+        }else {
+            return $this->render('uploadmoveoutinvoice', [
+                'model' => $model,
+                'modelCustomer' => $modelCustomer,
+                'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress,
+                'type'=>'cancelbooking'
             ]);
         }
 

@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
     <div class="col-md-8">
         <div class="booking-requests-form box box-primary">
             <div class="box-header with-border">
-                <h4>Move Out Invoice - <?php echo $model->reference_no;?></h4>
+                <h4><?php echo $this->title;?></h4>
             </div>
 
             <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
@@ -52,12 +52,15 @@ use yii\widgets\ActiveForm;
                                 }
                                 ?>
                                 <div class="row">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
                                         <?= $form->field($modelAddress, "[{$i}]description")->textInput(['maxlength' => true]) ?>
 
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
                                         <?= $form->field($modelAddress, "[{$i}]price")->textInput(['maxlength' => true]) ?>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <?= $form->field($modelAddress, "[{$i}]platform_deductible")->textInput(['maxlength' => true]) ?>
                                     </div>
 
 

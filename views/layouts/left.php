@@ -41,6 +41,7 @@
                         'items' => [
                             ['label' => 'Agreement Templates', 'icon' => ' fa-adjust', 'url' => ['/agreementtemplates']],
                             ['label' => 'Packages', 'icon' => ' fa-adjust', 'url' => ['/packages']],
+                            ['label' => 'Platform Fees', 'icon' => ' fa-adjust', 'url' => ['/platformfees']],
 //                            ['label' => 'Platform Fees', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/platformfees']],
 //                            ['label' => 'Withdrawal Fees', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/withdrawalfees']],
 //
@@ -90,12 +91,14 @@
                     ],
 
                     ['label' => 'Packages', 'icon' => ' fa-cube', 'url' => ['/packages'],'visible'=>false],
-                    ['label' => 'Properties', 'icon' => ' fa-cube', 'url' => ['/properties'],'active'=>($item == 'properties' || ($item=='images' && $action=='create'))],
+                    ['label' => 'Properties', 'icon' => ' fa-home', 'url' => ['/properties'],'active'=>($item == 'properties' || ($item=='images' && $action=='create'))],
                     ['label' => 'Managed Properties', 'icon' => ' fa-cube', 'url' => ['/managedproperties'],'active'=>($item == 'managedproperties' || ($item=='images' && $action='add'))],
                     ['label' => 'Booking Requests', 'icon' => '  fa-database', 'url' => ['/bookingrequests'],'active'=>($item == 'bookingrequests')],
                     ['label' => 'Renovation Quotes', 'icon' => ' fa-recycle', 'url' => ['/renovationquotes'],'active'=>($item == 'renovationquotes')],
                     ['label' => 'Insurances', 'icon' => ' fa-shield', 'url' => ['/insurances'],'active'=>($item == 'insurances')],
                     ['label' => 'Defect Reports', 'icon' => ' fa-bug', 'url' => ['/defectreports'],'active'=>($item == 'defectreports')],
+                    ['label' => 'Auto Rental Collection', 'icon' => '  fa-ticket', 'url' => ['/autorentalcollections'],'active'=>($item == 'autorentalcollections')],
+                    ['label' => 'General Invoices', 'icon' => '   fa-money', 'url' => ['/invoices'],'active'=>($item == 'invoices')],
 
 
 

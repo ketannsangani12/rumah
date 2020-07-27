@@ -86,6 +86,9 @@ class Common extends Component
             case "Rejected";
                 return "<span class='btn btn-danger btn-xs'>Rejected</span>";
                 break;
+            case "Cancelled";
+                return "<span class='btn btn-danger btn-xs'>Cancelled</span>";
+                break;
             case "Unpaid";
                 return "<span class='btn btn-danger btn-xs'>Unpaid</span>";
                 break;

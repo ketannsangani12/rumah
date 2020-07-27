@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
 /**
  * RenovationquotesController implements the CRUD actions for RenovationQuotes model.
  */
-class InsurancesController extends Controller
+class AutorentalcollectionsController extends Controller
 {
     /**
      * @inheritdoc
@@ -57,11 +57,15 @@ class InsurancesController extends Controller
      */
     public function actionIndex()
     {
+        $daterange = (isset($_POST['daterange']))?$_POST['daterange']:'';
+        $model = new TodoList();
         $searchModel = new TodoListSearch();
-        $type = "Insurance";
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$type);
+        $type = "Monthly Rental";
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$type,$daterange);
 
         return $this->render('index', [
+            'daterange'=>$daterange,
+            'model'=>$model,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -151,64 +155,26 @@ class InsurancesController extends Controller
     public function actionUpdate($id)
     {
 
+        $model = $this->findModel($id);
 
-        $modelCustomer = TodoList::find()->where(['id'=>$id,'reftype'=>'Insurance','status'=>'Unpaid'])->one();
-        if ($modelCustomer == null) {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-        $modelsAddress = $modelCustomer->todoItems;
-
-        if (!empty($_POST)) {
-
-            $oldIDs = ArrayHelper::map($modelsAddress, 'id', 'id');
-            $modelsAddress = Model::createMultiple(TodoItems::classname(), $modelsAddress);
-            Model::loadMultiple($modelsAddress, Yii::$app->request->post());
-            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($modelsAddress, 'id', 'id')));
-
-            // ajax validation
-            if (Yii::$app->request->isAjax) {
-                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return ArrayHelper::merge(
-                    ActiveForm::validateMultiple($modelsAddress),
-                    ActiveForm::validate($modelCustomer)
-                );
-            }
-
-            // validate all models
-            $valid = $modelCustomer->validate();
-            $valid = Model::validateMultiple($modelsAddress) && $valid;
-
-            if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-                    if ($flag = $modelCustomer->save(false)) {
-                        if (! empty($deletedIDs)) {
-                            TodoItems::deleteAll(['id' => $deletedIDs]);
-                        }
-                        foreach ($modelsAddress as $modelAddress) {
-                            $modelAddress->todo_id = $modelCustomer->id;
-                            $modelAddress->created_at = date('Y-m-d H:i:s');
-                            if (! ($flag = $modelAddress->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                    }
-                    if ($flag) {
-                        $transaction->commit();
-                        return $this->redirect(['index']);
-                    }
-                } catch (Exception $e) {
-                    $transaction->rollBack();
+        if ($model->load(Yii::$app->request->post()) ) {
+            // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
+            if($model->validate()) {
+                $model->updated_at = date('Y-m-d h:i:s');
+                if($model->save()) {
+                    return $this->redirect(['index']);
                 }
+            }else{
+                return $this->render('update', [
+                    'model' => $model
+                ]);
             }
-        }else {
-            return $this->render('update', [
-                //'model' => $model,
-                'modelCustomer' => $modelCustomer,
-                'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress
-            ]);
+
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
 
     }
 
@@ -217,7 +183,7 @@ class InsurancesController extends Controller
     {
 
 
-        $model = $this->findModel($id);
+        $model = TodoList::find()->where(['id'=>$id,'reftype'=>'Insurance'])->one();
         $modeldocument1 = TodoDocuments::find()->where(['todo_id'=>$id])->one();
         $modeldocument = (!empty($modeldocument1))?$modeldocument1:new TodoDocuments();
         if ($modeldocument->load(Yii::$app->request->post())) {
@@ -253,7 +219,7 @@ class InsurancesController extends Controller
                 //'model' => $model,
                 'model' => $model,
                 'modeldocument'=>$modeldocument
-              //  'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress
+                //  'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress
             ]);
         }
 
@@ -261,26 +227,8 @@ class InsurancesController extends Controller
 
     public function actionView($id)
     {
-        $query = TodoItems::find()->where(['todo_id'=>$id]);
-        $query2 = TodoDocuments::find()->where(['todo_id'=>$id]);
-        $model = $this->findModel($id);
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
-        ]);
-        $dataProvider2 = new ActiveDataProvider([
-            'query' => $query2,
-            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
-        ]);
-        //$milestones = ;
-
         return $this->render('view', [
-            'model' => $model,
-            'dataProvider' => $dataProvider,
-            'dataProvider2' => $dataProvider2,
-
+            'model' => $this->findModel($id),
         ]);
 
     }
@@ -307,7 +255,7 @@ class InsurancesController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = TodoList::find()->where(['id'=>$id,'reftype'=>'Insurance'])->one()) !== null) {
+        if (($model = TodoList::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

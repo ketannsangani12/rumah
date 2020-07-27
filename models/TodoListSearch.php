@@ -19,7 +19,7 @@ class TodoListSearch extends TodoList
     {
         return [
             [['id', 'request_id', 'renovation_quote_id', 'property_id', 'user_id', 'landlord_id', 'vendor_id'], 'integer'],
-            [['title','description', 'document', 'reftype', 'status', 'created_at', 'updated_at'], 'safe'],
+            [['title','description', 'document', 'reftype', 'status', 'created_at', 'updated_at','pay_from'], 'safe'],
         ];
     }
 
@@ -39,7 +39,7 @@ class TodoListSearch extends TodoList
      *
      * @return ActiveDataProvider
      */
-    public function search($params,$type='')
+    public function search($params,$type='',$daterange='')
     {
 
         $query = TodoList::find();
@@ -60,7 +60,16 @@ class TodoListSearch extends TodoList
             // $query->where('0=1');
             return $dataProvider;
         }
+        if($daterange!=''){
+            $daterange = explode("-",$daterange);
+            //print_r($daterange);exit;
+            $startdate = date('Y-m-d',strtotime(str_replace('/', '-', $daterange[0])));
+            $enddate = date('Y-m-d',strtotime(str_replace('/', '-', $daterange[1])));
+            $query->andFilterWhere(['>=', 'rent_enddate', $startdate])
 
+                ->andFilterWhere(['<=', 'rent_enddate', $enddate]);
+
+        }
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -77,6 +86,7 @@ class TodoListSearch extends TodoList
         $query->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'reftype', $this->reftype])
+            ->andFilterWhere(['like', 'pay_from', $this->pay_from])
             ->andFilterWhere(['like', 'status', $this->status]);
 
         return $dataProvider;

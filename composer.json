@@ -27,7 +27,9 @@
         "phpnt/yii2-summernote": "^0.0.4",
         "kartik-v/yii2-mpdf": "dev-master",
         "wbraganca/yii2-dynamicform": "*",
-        "kartik-v/yii2-widget-select2": "dev-master"
+        "kartik-v/yii2-widget-select2": "dev-master",
+        "bburim/daterangepicker": "dev-master",
+        "kartik-v/yii2-export": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

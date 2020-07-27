@@ -44,9 +44,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'bank_account_name',
             'bank_account_no',
             'bank_name',
-            'image',
-            'created_at',
-            'updated_at',
+            //'image',
+            //'created_at',
+            //'updated_at',
         ],
     ]) ?>
 

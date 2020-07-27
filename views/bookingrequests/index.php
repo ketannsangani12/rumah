@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value'=> function($model){
                         return Yii::$app->common->getStatus($model->status);
                     },
-                    'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Payment Requested"=>"Payment Requested","Rented"=>"Rented"),
+                    'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Cancelled"=>"Cancelled","Payment Requested"=>"Payment Requested","Rented"=>"Rented"),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 
                 ],
@@ -87,7 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 ['class' => 'yii\grid\ActionColumn',
                     'headerOptions' => ['style' => 'width:18%'],
-                    'template'=>'{view} {update} {choosetemplate} {uploadagreement} {uploadmoveout} {moveoutinvoice}',
+                    'template'=>'{view} {update} {choosetemplate} {uploadagreement} {uploadmoveout} {moveoutinvoice} {cancel}',
                     'visibleButtons' => [
                         'choosetemplate' => function ($model) {
                             return ($model->status=='Approved' || $model->status=='Agreement Processed');
@@ -100,6 +100,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'moveoutinvoice' => function ($model){
                             return ($model->status=='Rented' && $model->moveout_document!='');
+                        },
+                        'cancel' => function ($model){
+                            return ($model->status=='Agreement Processed' || $model->status=='Cancelled');
                         },
                     ],
                     'buttons'=>[
@@ -176,6 +179,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                 'title' => 'Move Out Invoice',
                                 'class' =>'btn btn-sm bg-blue datatable-operation-btn'
+
+                            ]);
+
+                        },
+                        'cancel' => function ($url, $model) {
+                            $requestexist = \app\models\TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Cancellation Refund'])->one();
+                            if(!empty($requestexist)){
+                                $url = \yii\helpers\Url::to([Yii::$app->controller->id.'/viewcancelbooking', 'id' => $requestexist->id]);
+                            }else{
+                                $url = \yii\helpers\Url::to([Yii::$app->controller->id.'/cancelbooking', 'id' => $model->id]);
+                            }
+                            return Html::a('<i class="fa fa-times-circle" aria-hidden="true"></i>', [$url], [
+
+                                'title' => 'Cancel Booking',
+                                'class' =>'btn btn-sm bg-red datatable-operation-btn'
 
                             ]);
 

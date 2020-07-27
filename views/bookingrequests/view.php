@@ -182,6 +182,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ]) ?>
                 </div>
+            <div class="col-md-6">
+
+            </div>
             </div>
     </div>
 </div>

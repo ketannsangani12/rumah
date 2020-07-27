@@ -35,7 +35,7 @@ class RenovationquotesController extends Controller
                 'only' => ['index','create','delete','update','view','milestones','createmilestone','updatemilestone','viewmilestone','uploadmilestonedocument'],
                 'rules' => [
                     [
-                        'actions' => ['index','delete','create','update','view','createmilestone','updatemilestone','viewmilestone','uploadmilestonedocument'],
+                        'actions' => ['index','delete','create','update','view','milestones','createmilestone','updatemilestone','viewmilestone','uploadmilestonedocument'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
