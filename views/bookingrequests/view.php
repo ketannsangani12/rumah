@@ -102,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'label' => 'Agreement document(Non - Stamped)',
                         'value' => function ($model) {
-                            return Html::a('Print', \yii\helpers\Url::to([Yii::$app->controller->id.'/printagreement', 'id' => $model->id]));
+                            return ($model->document_content!='')?Html::a('Print', \yii\helpers\Url::to([Yii::$app->controller->id.'/printagreement', 'id' => $model->id])):'Not Uploaded';
                         },
                         'format' => 'raw',
                     ],
@@ -110,7 +110,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'agreement_document',
                         'label' => 'Agreement document(Stamped)',
                         'value' => function ($model) {
-                            return Html::a('Print', Yii::$app->homeUrl.'uploads/agreements/'.$model->agreement_document);
+                            return ($model->agreement_document!='')?Html::a('Print', Yii::$app->homeUrl.'uploads/agreements/'.$model->agreement_document):'Not Uploaded';
                         },
                         'format' => 'raw',
                     ],
@@ -132,7 +132,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'label' => 'Credit Score Reports',
                             'value' => function ($model,$documentstenants) {
-                                return (!empty($model) && isset($model->credit_score_report))?Html::a('Download', Yii::$app->homeUrl.'uploads/creditscorereports/'.$model->credit_score_report):'Not Uploaded';
+                                return (!empty($model) && isset($model->credit_score_report) && $model->credit_score_report!='')?Html::a('Download', Yii::$app->homeUrl.'uploads/creditscorereports/'.$model->credit_score_report):'Not Uploaded';
                             },
                             'format' => 'raw',
                         ],
