@@ -347,6 +347,7 @@ class BookingrequestsController extends Controller
                     $modelCustomer->created_at = date('Y-m-d H:i:s');
                     if ($flag = $modelCustomer->save(false)) {
                         foreach ($modelsAddress as $modelAddress) {
+                            $modelAddress->reftype = "Refund";
                             $modelAddress->todo_id = $modelCustomer->id;
                             $modelAddress->created_at = date('Y-m-d H:i:s');
                             if (! ($flag = $modelAddress->save(false))) {
@@ -411,6 +412,7 @@ class BookingrequestsController extends Controller
                             TodoItems::deleteAll(['id' => $deletedIDs]);
                         }
                         foreach ($modelsAddress as $modelAddress) {
+                            $modelAddress->reftype = "Refund";
                             $modelAddress->todo_id = $modelCustomer->id;
                             $modelAddress->created_at = date('Y-m-d H:i:s');
                             if (! ($flag = $modelAddress->save(false))) {
@@ -466,7 +468,7 @@ class BookingrequestsController extends Controller
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
-                    $model->status = 'Cancelled';
+                    $model->status = 'Refund Requested';
                     $model->updated_at = date('Y-m-d H:i:s');
                     $model->save(false);
                     $modelCustomer->property_id = $model->property_id;
@@ -478,6 +480,7 @@ class BookingrequestsController extends Controller
                     if ($flag = $modelCustomer->save(false)) {
                         foreach ($modelsAddress as $modelAddress) {
                             $modelAddress->todo_id = $modelCustomer->id;
+                            $modelAddress->reftype = "Refund";
                             $modelAddress->created_at = date('Y-m-d H:i:s');
                             if (! ($flag = $modelAddress->save(false))) {
                                 $transaction->rollBack();

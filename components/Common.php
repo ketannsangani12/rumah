@@ -58,6 +58,25 @@ class Common extends Component
 
         return $content;
     }
+    public function getReftype($status)
+    {
+        switch ($status){
+            case "Cleaner";
+                return "<span class='btn bg-purple btn-xs'>Cleaner</span>";
+                break;
+            case "Laundry";
+                return "<span class='btn bg-green btn-xs'>Laundry</span>";
+                break;
+            case "Handyman";
+                return "<span class='btn btn-danger btn-xs'>Handyman</span>";
+                break;
+            case "Mover";
+                return "<span class='btn bg-blue btn-xs'>Mover</span>";
+                break;
+
+        }
+    }
+
     public function getStatus($status)
     {
         switch ($status){
@@ -71,14 +90,26 @@ class Common extends Component
             case "Approved";
                 return "<span class='btn bg-green btn-xs'>Approved</span>";
                 break;
+            case "Accepted";
+                return "<span class='btn bg-green btn-xs'>Accepted</span>";
+                break;
             case "Completed";
                 return "<span class='btn bg-green btn-xs'>Completed</span>";
                 break;
             case "Agreement Processed";
                 return "<span class='btn bg-orange btn-xs'>Agreement Processed</span>";
                 break;
+            case "Refund Requested";
+                return "<span class='btn bg-orange btn-xs'>Refund Requested</span>";
+                break;
+            case "Confirmed";
+                return "<span class='btn bg-orange btn-xs'>Confirmed</span>";
+                break;
             case "Work In Progress";
                 return "<span class='btn bg-orange btn-xs'>Work In Progress</span>";
+                break;
+            case "Picked Up";
+                return "<span class='btn bg-orange btn-xs'>Picked Up</span>";
                 break;
             case "Declined";
                 return "<span class='btn btn-danger btn-xs'>Declined</span>";
@@ -97,6 +128,9 @@ class Common extends Component
                 break;
             case "Payment Requested";
                 return "<span class='btn bg-blue btn-xs'>Payment Requested</span>";
+                break;
+            case "Out For Delivey";
+                return "<span class='btn bg-blue btn-xs'>Out For Delivey</span>";
                 break;
             case "Rented";
                 return "<span class='btn bg-green btn-xs'>Rented</span>";

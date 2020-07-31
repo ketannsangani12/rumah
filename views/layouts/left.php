@@ -99,6 +99,7 @@
                     ['label' => 'Defect Reports', 'icon' => ' fa-bug', 'url' => ['/defectreports'],'active'=>($item == 'defectreports')],
                     ['label' => 'Auto Rental Collection', 'icon' => '  fa-ticket', 'url' => ['/autorentalcollections'],'active'=>($item == 'autorentalcollections')],
                     ['label' => 'General Invoices', 'icon' => '   fa-money', 'url' => ['/invoices'],'active'=>($item == 'invoices')],
+                    ['label' => 'Service Requests', 'icon' => '   fa-gear', 'url' => ['/servicerequests'],'active'=>($item == 'servicerequests')],
 
 
 
