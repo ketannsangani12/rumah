@@ -10,7 +10,7 @@ use app\models\ServiceRequests;
 /**
  * ServicerequestsSearch represents the model behind the search form of `app\models\ServiceRequests`.
  */
-class ServicerequestsSearch extends ServiceRequests
+class ServiceRequestsSearch extends ServiceRequests
 {
     /**
      * @inheritdoc

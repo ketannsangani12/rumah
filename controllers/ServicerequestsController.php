@@ -43,7 +43,7 @@ class ServicerequestsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ServicerequestsSearch();
+        $searchModel = new ServiceRequestsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
