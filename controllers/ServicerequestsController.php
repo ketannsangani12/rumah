@@ -7,7 +7,7 @@ use app\models\TodoItems;
 use app\models\TodoList;
 use Yii;
 use app\models\ServiceRequests;
-use app\models\ServicerequestsSearch;
+use app\models\ServiceRequestsSearch;
 use yii\base\Exception;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
