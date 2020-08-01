@@ -20,7 +20,7 @@ class ServiceRequestsSearch extends ServiceRequests
         return [
             [['id', 'property_id', 'vendor_id', 'user_id', 'todo_id'], 'integer'],
             [['reference_no', 'type', 'date', 'time', 'hours', 'description', 'pickup_location', 'dropoff_location', 'truck_size', 'document', 'reftype', 'status', 'booked_at', 'created_at', 'updated_at'], 'safe'],
-            [['amount', 'subtotal', 'sst', 'total_amount'], 'number'],
+            [['amount', 'subtotal', 'sst', 'total_amount','reference_no'], 'number'],
         ];
     }
 
