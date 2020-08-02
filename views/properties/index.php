@@ -127,6 +127,17 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
 
                         },
+                        'ratings' => function ($url, $model) {
+
+
+                            return Html::a('<i class="fa fa-star" aria-hidden="true"></i>', [\yii\helpers\Url::to(['propetyratings/index', 'id' => $model->id])], [
+
+                                'title' => 'Ratings',
+                                'class' =>'btn btn-sm bg-olive datatable-operation-btn'
+
+                            ]);
+
+                        },
 
                         'delete' => function ($url, $model) {
 

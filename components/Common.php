@@ -55,6 +55,9 @@ class Common extends Component
         $content = str_replace("#tenantname#",$model->user->full_name,$content);
         $content = str_replace("#landlordname#",$model->landlord->full_name,$content);
         $content = str_replace("@property@",$model->property->title,$content);
+        $content = str_replace("#landlordid#",$model->landlord->document_no,$content);
+        $content = str_replace("#tenantid#",$model->user->document_no,$content);
+
 
         return $content;
     }

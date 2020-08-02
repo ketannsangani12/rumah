@@ -100,6 +100,7 @@ class Properties extends \yii\db\ActiveRecord
             'type' => 'Type',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'deleted_at'=>'Deleted At'
         ];
     }
 

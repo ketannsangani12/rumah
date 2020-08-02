@@ -155,7 +155,9 @@ class PropertiesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->deleted_at = date('Y-m-d H:i:s');
+            $model->save();
 
         return $this->redirect(['index']);
     }

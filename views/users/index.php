@@ -61,8 +61,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'created_at',
                 // 'updated_at',
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{view} {update} {delete}',
-
+                    'template'=>'{view} {update} {ratings}',
+                    'visibleButtons' => [
+                        'ratings' => function ($model) {
+                            return ($model->role=='Agent' || $model->role=='Cleaner' || $model->role=='Mover' || $model->role=='Laundry' || $model->role=='Handyman');
+                        },
+                    ],
                     'buttons'=>[
 
                         'view' => function ($url, $model) {
@@ -81,6 +85,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                 'title' => 'Update',
                                 'class' =>'btn btn-sm btn-warning datatable-operation-btn'
+
+                            ]);
+
+                        },
+                        'ratings' => function ($url, $model) {
+                            if($model->role=='Agent'){
+                                $url = 'agentratings';
+                            }else if($model->role=='Cleaner' || $model->role=='Mover' || $model->role=='Laundry' || $model->role=='Handyman'){
+                                $url = 'vendorratings';
+                            }
+
+                            return Html::a('<i class="fa fa-star" aria-hidden="true"></i>', [\yii\helpers\Url::to([$url.'/index', 'id' => $model->id])], [
+
+                                'title' => 'Ratings',
+                                'class' =>'btn btn-sm bg-olive datatable-operation-btn'
 
                             ]);
 
