@@ -80,6 +80,28 @@ class Common extends Component
         }
     }
 
+    public function getGolcointype($status)
+    {
+        switch ($status){
+            case "Rental On Time";
+                return "<span class='btn bg-purple btn-xs'>Rental On Time</span>";
+                break;
+            case "In App Purchase";
+                return "<span class='btn bg-green btn-xs'>In App Purchase</span>";
+                break;
+            case "Onboarding";
+                return "<span class='btn btn-danger btn-xs'>Onboarding</span>";
+                break;
+            case "Tenancy signed";
+                return "<span class='btn bg-blue btn-xs'>Tenancy signed</span>";
+                break;
+            case "1st Rent Listed";
+                return "<span class='btn bg-orange btn-xs'>1st Rent Listed</span>";
+                break;
+
+        }
+    }
+
     public function getStatus($status)
     {
         switch ($status){
@@ -114,6 +136,9 @@ class Common extends Component
             case "Picked Up";
                 return "<span class='btn bg-orange btn-xs'>Picked Up</span>";
                 break;
+            case "In Progress";
+                return "<span class='btn bg-orange btn-xs'>In Progress</span>";
+                break;
             case "Declined";
                 return "<span class='btn btn-danger btn-xs'>Declined</span>";
                 break;
@@ -122,6 +147,9 @@ class Common extends Component
                 break;
             case "Cancelled";
                 return "<span class='btn btn-danger btn-xs'>Cancelled</span>";
+                break;
+            case "Closed";
+                return "<span class='btn btn-danger btn-xs'>Closed</span>";
                 break;
             case "Unpaid";
                 return "<span class='btn btn-danger btn-xs'>Unpaid</span>";

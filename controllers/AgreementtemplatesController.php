@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\AgreementTemplates;
 use app\models\AgreementTemplatesSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -20,6 +21,17 @@ class AgreementtemplatesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','view','update','download','delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index','view','update','download','delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

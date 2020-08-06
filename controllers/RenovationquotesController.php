@@ -272,7 +272,7 @@ class RenovationquotesController extends Controller
                     }
                     if ($flag) {
                         $transaction->commit();
-                        return $this->redirect(['milestones','id'=>$id]);
+                        return $this->redirect(['milestones','id'=>$modelCustomer->renovation_quote_id]);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();

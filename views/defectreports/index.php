@@ -61,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value'=> function($model){
                         return Yii::$app->common->getStatus($model->status);
                     },
-                    'filter'=>array("Pending"=>"Pending","Unpaid"=>"Unpaid","Paid"=>"Paid","Completed"=>"Completed"),
+                    'filter'=>array("New"=>"New","Pending"=>"Pending","Unpaid"=>"Unpaid","Paid"=>"Paid","Completed"=>"Completed"),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 
                 ],
@@ -70,14 +70,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{view} {updatequote}',
+                    'template'=>'{view} {update} {uploadquote} {updatequote}',
                     'visibleButtons' => [
-//                        'update' => function ($model) {
-//                            return ($model->status=='Unpaid');
-//                        },
-//                        'uploaddocument' => function ($model) {
-//                            return ($model->status=='Paid' || $model->status=='Completed');
-//                        }
+                        'update' => function ($model) {
+                            return ($model->status=='In Progress');
+                        },
+                        'uploadquote' => function ($model) {
+                            return ($model->status=='New');
+                        },
+                        'updatequote' => function ($model) {
+                            return ($model->status=='Accepted');
+                        },
                     ],
                     'buttons'=>[
                         'view' => function ($url, $model) {
@@ -86,6 +89,26 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                 'title' => 'View Defect Report Detail',
                                 'class'=>'btn btn-sm bg-olive datatable-operation-btn'
+
+                            ]);
+
+                        },
+                        'update' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/updatestatus', 'id' => $model->id])], [
+
+                                'title' => 'Update Status',
+                                'class' =>'btn btn-sm btn-warning datatable-operation-btn'
+
+                            ]);
+
+                        },
+                        'uploadquote' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-file" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadquote', 'id' => $model->id])], [
+
+                                'title' => 'Upload Quote',
+                                'class' =>'btn btn-sm bg-purple datatable-operation-btn'
 
                             ]);
 

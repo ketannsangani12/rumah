@@ -39,7 +39,9 @@ use yii\widgets\ActiveForm;
                     ]); ?>
 
                     <div class="container-items"><!-- widgetContainer -->
-                        <?php foreach ($modelsAddress as $i => $modelAddress): ?>
+                        <?php
+                        $total = 0;
+                        foreach ($modelsAddress as $i => $modelAddress): ?>
                             <div class="item panel panel-default"><!-- widgetBody -->
                                 <div class="panel-heading">
                                     <h3 class="panel-title pull-left">Renovation Quote Items</h3>
@@ -53,7 +55,9 @@ use yii\widgets\ActiveForm;
                                     <?php
                                     // necessary for update action.
                                     if (! $modelAddress->isNewRecord) {
+                                            $total += $modelAddress->price;
                                         echo Html::activeHiddenInput($modelAddress, "[{$i}]id");
+
                                     }
                                     ?>
                                     <div class="row">
@@ -62,7 +66,7 @@ use yii\widgets\ActiveForm;
 
                                         </div>
                                         <div class="col-sm-6">
-                                            <?= $form->field($modelAddress, "[{$i}]price")->textInput(['maxlength' => true]) ?>
+                                            <?= $form->field($modelAddress, "[{$i}]price")->textInput(['maxlength' => true,'class'=>'form-control price']) ?>
                                         </div>
 
 
@@ -73,6 +77,8 @@ use yii\widgets\ActiveForm;
                         <?php endforeach; ?>
                     </div>
                     <?php \wbraganca\dynamicform\DynamicFormWidget::end(); ?>
+                    <p  style="font-weight: bold;">Total : <span id="total"><?php echo $total; ?></span></p>
+
                 </div>
                 <div class="box-footer">
                     <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-flat']) ?>
@@ -84,13 +90,7 @@ use yii\widgets\ActiveForm;
 <?php
 
 $this->registerJs('
-        $(".dynamicform_wrapper").on("beforeInsert", function(e, item) {
-    console.log("beforeInsert");
-});
-
-$(".dynamicform_wrapper").on("afterInsert", function(e, item) {
-    console.log("afterInsert");
-});
+        
 
 $(".dynamicform_wrapper").on("beforeDelete", function(e, item) {
     if (! confirm("Are you sure you want to delete this item?")) {
@@ -100,11 +100,20 @@ $(".dynamicform_wrapper").on("beforeDelete", function(e, item) {
 });
 
 $(".dynamicform_wrapper").on("afterDelete", function(e) {
+var sum = 0;
+    $(".price").each(function(){
+        sum += +$(this).val();
+    });
+    $("#total").text(sum);
     console.log("Deleted item!");
 });
 
-$(".dynamicform_wrapper").on("limitReached", function(e, item) {
-    alert("Limit reached");
+$(document).on("change", ".price", function() {
+    var sum = 0;
+    $(".price").each(function(){
+        sum += +$(this).val();
+    });
+    $("#total").text(sum);
 });
     ');
 

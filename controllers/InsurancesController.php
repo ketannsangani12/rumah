@@ -33,10 +33,10 @@ class InsurancesController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index','create','delete','update','view'],
+                'only' => ['index','create','delete','update','view','uploadcovernote'],
                 'rules' => [
                     [
-                        'actions' => ['index','delete','create','update','view'],
+                        'actions' => ['index','delete','create','update','view','uploadcovernote'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

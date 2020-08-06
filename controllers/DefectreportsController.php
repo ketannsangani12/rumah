@@ -33,10 +33,10 @@ class DefectreportsController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index','create','delete','update','view'],
+                'only' => ['index','create','delete','update','view','createquote','updatequote','updatestatus'],
                 'rules' => [
                     [
-                        'actions' => ['index','delete','create','update','view'],
+                        'actions' => ['index','delete','create','update','view','createquote','updatequote','updatestatus'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -67,7 +67,40 @@ class DefectreportsController extends Controller
         ]);
     }
 
+    public function actionUploadquote($id)
+    {
+        $model = TodoList::find()->where(['id'=>$id])->one();
+        $model->scenario = 'uploadquote';
+        if ($model->load(Yii::$app->request->post())) {
+            $model->quote = \yii\web\UploadedFile::getInstance($model, 'quote');
+            if($model->validate()) {
+                $newFileName = \Yii::$app->security
+                        ->generateRandomString().'.'.$model->quote->extension;
+                $model->document = $newFileName;
+                if($model->status=='New'){
+                    $model->status = 'Pending';
+                }
+                $model->updated_at = date('Y-m-d H:i:s');
+                if($model->save()){
+                    $model->quote->saveAs('uploads/tododocuments/' . $newFileName);
+                    return $this->redirect(['index']);
 
+                }else{
+                    return $this->render('uploadquote', [
+                        'model' => $model,
+                    ]);
+                }
+            }else{
+                return $this->render('uploadquote', [
+                    'model' => $model,
+                ]);
+            }
+        } else {
+            return $this->render('uploadquote', [
+                'model' => $model,
+            ]);
+        }
+    }
 
     /**
      * Creates a new RenovationQuotes model.
@@ -180,6 +213,8 @@ class DefectreportsController extends Controller
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
+                    $modelCustomer->status = "Unpaid";
+                    $modelCustomer->updated_at = date('Y-m-d H:i:s');
                     if ($flag = $modelCustomer->save(false)) {
                         if (! empty($deletedIDs)) {
                             TodoItems::deleteAll(['id' => $deletedIDs]);
@@ -211,51 +246,33 @@ class DefectreportsController extends Controller
 
     }
 
-
-    public function actionUploadcovernote($id)
+    public function actionUpdatestatus($id)
     {
+        $model = TodoList::find()->where(['id'=>$id])->one();;
+        if(($model->status!='In Progress' )){
+            throw new NotFoundHttpException('The requested page does not exist.');
 
+        }
+            $model->scenario = 'changestatus';
 
-        $model = TodoList::find()->where(['id'=>$id,'reftype'=>'Insurance'])->one();
-        $modeldocument1 = TodoDocuments::find()->where(['todo_id'=>$id])->one();
-        $modeldocument = (!empty($modeldocument1))?$modeldocument1:new TodoDocuments();
-        if ($modeldocument->load(Yii::$app->request->post())) {
-            $modeldocument->description = 'Insurance Cover Note';
-            $modeldocument->document_pdf = \yii\web\UploadedFile::getInstance($modeldocument, 'document_pdf');
+        if ($model->load(Yii::$app->request->post()) ) {
+            // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
             if($model->validate()) {
-                $newFileName1 = \Yii::$app->security
-                        ->generateRandomString().'.'.$modeldocument->document_pdf->extension;
-                $modeldocument->todo_id = $id;
-                $modeldocument->document = $newFileName1;
-                $modeldocument->created_at = date('Y-m-d H:i:s');
-                if($modeldocument->save()){
-                    $model->status = "Completed";
-                    $model->updated_at = date('Y-m-d H:i:s');
-                    $model->save(false);
-                    $modeldocument->document_pdf->saveAs('uploads/tododocuments/' . $newFileName1);
+                if($model->save(false)) {
                     return $this->redirect(['index']);
-
-                }else{
-                    return $this->render('uploadcovernote', [
-                        'model' => $model,
-                        'modeldocument'=>$modeldocument
-                    ]);
                 }
+
             }else{
-                return $this->render('uploadcovernote', [
-                    'model' => $model,
-                    'modeldocument'=>$modeldocument
+                return $this->render('updatestatus', [
+                    'model' => $model
                 ]);
             }
         }else {
-            return $this->render('uploadcovernote', [
-                //'model' => $model,
-                'model' => $model,
-                'modeldocument'=>$modeldocument
-                //  'modelsAddress' => (empty($modelsAddress)) ? [new TodoItems()] : $modelsAddress
+            return $this->render('updatestatus', [
+                'model' => $model
             ]);
-        }
 
+        }
     }
 
     public function actionView($id)

@@ -29,6 +29,7 @@ use Yii;
 class TodoList extends \yii\db\ActiveRecord
 {
     public $datetime_range;
+    public $quote;
     /**
      * {@inheritdoc}
      */
@@ -46,6 +47,10 @@ class TodoList extends \yii\db\ActiveRecord
             [['title'], 'required','on'=>'addmilestone'],
             [['property_id'], 'required','on'=>'addinsurance'],
             [['pay_from'], 'required','on'=>'adddefectquote'],
+            [['pay_from','quote'], 'required','on'=>'uploadquote'],
+            [['status'], 'required','on'=>'changestatus'],
+
+            [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             ['property_id', 'checkhavealreadyrequest','on' => 'addinsurance'],
             [['title','property_id','pay_from','due_date'], 'required','on'=>'addinvoice'],
             [['request_id', 'property_id', 'user_id', 'landlord_id', 'vendor_id'], 'integer'],
@@ -76,6 +81,7 @@ class TodoList extends \yii\db\ActiveRecord
             'pay_from'=>'Payment From',
             'due_date' => 'Due Date',
             'datetime_range'=>'Date Range',
+            'quote' => 'Quote',
             //'title' => 'Title',
             'vendor_id' => 'Vendor ID',
             'document' => 'Document',

@@ -11,6 +11,7 @@ use app\models\ServiceRequestsSearch;
 use yii\base\Exception;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,6 +29,17 @@ class ServicerequestsController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','create','uploadquote','issueinvoice','issueinvoiceupdate','updatestatus','refund'],
+                'rules' => [
+                    [
+                        'actions' => ['index','uploadquote','issueinvoice','issueinvoiceupdate','updatestatus','refund'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
