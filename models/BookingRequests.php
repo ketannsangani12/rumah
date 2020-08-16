@@ -39,6 +39,11 @@ class BookingRequests extends \yii\db\ActiveRecord
     public $report;
     public $movein;
     public $moveout;
+    public $tenant_id;
+    public $full_name;
+    public $identification_no;
+    public $kyc_document;
+    public $spa_document;
     /**
      * {@inheritdoc}
      */
@@ -53,6 +58,12 @@ class BookingRequests extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['tenant_id','property_id','booking_fees','rental_deposit','utilities_deposit','commencement_date','tenancy_period'], 'required','on' => 'bookfirststep'],
+            [['full_name','identification_no'], 'required','on' => 'bookconfirm'],
+            [['status','identification_no','full_name','commencement_date','tenancy_period','monthly_rental','rental_deposit','utilities_deposit','keycard_deposit','booking_fees','kyc_document','spa_document'], 'required','on' => 'bookingprocessfirststepapprove'],
+            [['status'], 'required','on' => 'bookingprocessfirststepreject'],
+            [['identification_no','full_name','kyc_document','spa_document'], 'required','on' => 'bookingprocesssecondstep'],
+
             [['credit_score','report'], 'required','on' => 'updatecreditscore'],
             [['agreement','movein'], 'required','on' => 'uploadagreement'],
             [['moveout_date','moveout'], 'required','on' => 'uploadmoveout'],
@@ -82,6 +93,7 @@ class BookingRequests extends \yii\db\ActiveRecord
             'reference_no'=>'Reference No.',
             'landlord_id' => 'Landlord',
             'template_id' => 'Template',
+            'tenant_id'=>'Tenant',
             'credit_score' => 'Credit Score',
             'booking_fees' => 'Booking Fees',
             'tenancy_fees' => 'Tenancy Fees',
@@ -109,6 +121,10 @@ class BookingRequests extends \yii\db\ActiveRecord
             'report'=>'Credit Score Report',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'full_name'=>'Full Name',
+            'identification_no'=>'Identification No.',
+            'spa_document'=> 'Supporting Document',
+            'kyc_document'=>'EKYC Document'
         ];
     }
 

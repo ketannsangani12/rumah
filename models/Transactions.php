@@ -17,6 +17,13 @@ use Yii;
  * @property float|null $amount
  * @property float|null $discount
  * @property int|null $coins
+ * @property float|null $total_amount
+ * @property float|null $olduserbalance
+ * @property float|null $oldlandlordbalance
+ * @property float|null $oldvendorbalance
+ * @property float|null $newuserbalance
+ * @property float|null $newlandlordbalance
+ * @property float|null $newvendorcbalance
  * @property string|null $reftype
  * @property string $status
  * @property string|null $created_at
@@ -44,7 +51,7 @@ class Transactions extends \yii\db\ActiveRecord
     {
         return [
             [['reference_no', 'property_id', 'user_id', 'landlord_id', 'promo_code', 'request_id', 'coins'], 'integer'],
-            [['amount', 'discount'], 'number'],
+            [['amount', 'discount', 'total_amount', 'olduserbalance', 'oldlandlordbalance', 'oldvendorbalance', 'newuserbalance', 'newlandlordbalance', 'newvendorcbalance'], 'number'],
             [['reftype', 'status'], 'string'],
             [['status'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
@@ -71,6 +78,13 @@ class Transactions extends \yii\db\ActiveRecord
             'amount' => 'Amount',
             'discount' => 'Discount',
             'coins' => 'Coins',
+            'total_amount' => 'Total Amount',
+            'olduserbalance' => 'Olduserbalance',
+            'oldlandlordbalance' => 'Oldlandlordbalance',
+            'oldvendorbalance' => 'Oldvendorbalance',
+            'newuserbalance' => 'Newuserbalance',
+            'newlandlordbalance' => 'Newlandlordbalance',
+            'newvendorcbalance' => 'Newvendorcbalance',
             'reftype' => 'Reftype',
             'status' => 'Status',
             'created_at' => 'Created At',

@@ -133,6 +133,11 @@ class BookingrequestsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->report = \yii\web\UploadedFile::getInstance($model, 'report');
             if($model->validate()){
+                $todomodel = TodoList::find()->where(['request_id'=>$id,'reftype'=>'Booking','status'=>'New'])->one();
+                if(empty($todomodel)){
+                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');exit;
+
+                }
                 $newFileName = \Yii::$app->security
                         ->generateRandomString().'.'.$model->report->extension;
                $model->credit_score_report = $newFileName;
@@ -141,6 +146,8 @@ class BookingrequestsController extends Controller
                }
                $model->updated_at = date('Y-m-d H:i:s');
                if($model->save()){
+                   $todomodel->status = 'Pending';
+                   $todomodel->save();
                    $model->report->saveAs('uploads/creditscorereports/' . $newFileName);
                    return $this->redirect(['index']);
 
@@ -238,6 +245,7 @@ class BookingrequestsController extends Controller
     public function actionUploadagreement($id)
     {
         $model = $this->findModel($id);
+        $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking'])->one();
         $model->scenario = 'uploadagreement';
         if ($model->load(Yii::$app->request->post())) {
             $model->agreement = \yii\web\UploadedFile::getInstance($model, 'agreement');
@@ -254,6 +262,9 @@ class BookingrequestsController extends Controller
                 }
                 $model->updated_at = date('Y-m-d H:i:s');
                 if($model->save()){
+                    $todomodel->status = 'Unpaid';
+                    $todomodel->updated_at = date('Y-m-d H:i:s');
+                    $todomodel->save(false);
                     $model->agreement->saveAs('uploads/agreements/' . $newFileName);
                     $model->movein->saveAs('uploads/moveinout/' . $newFileName1);
                     return $this->redirect(['index']);
@@ -346,7 +357,9 @@ class BookingrequestsController extends Controller
                     $modelCustomer->status = "Pending";
                     $modelCustomer->created_at = date('Y-m-d H:i:s');
                     if ($flag = $modelCustomer->save(false)) {
+                        $total = 0;
                         foreach ($modelsAddress as $modelAddress) {
+                            $total+=$modelAddress->price+$modelAddress->platform_deductible;
                             $modelAddress->reftype = "Refund";
                             $modelAddress->todo_id = $modelCustomer->id;
                             $modelAddress->created_at = date('Y-m-d H:i:s');
@@ -354,7 +367,15 @@ class BookingrequestsController extends Controller
                                 $transaction->rollBack();
                                 break;
                             }
+
                         }
+                        $sst = Yii::$app->common->calculatesst($total);
+                        $grandtotal = $total+$sst;
+                        $modelCustomer->subtotal = $total;
+                        $modelCustomer->sst = $sst;
+                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->save(false);
+
                     }
                     if ($flag) {
                         $transaction->commit();
@@ -411,7 +432,10 @@ class BookingrequestsController extends Controller
                         if (! empty($deletedIDs)) {
                             TodoItems::deleteAll(['id' => $deletedIDs]);
                         }
+                        $total = 0;
                         foreach ($modelsAddress as $modelAddress) {
+                            $total+=$modelAddress->price+$modelAddress->platform_deductible;
+
                             $modelAddress->reftype = "Refund";
                             $modelAddress->todo_id = $modelCustomer->id;
                             $modelAddress->created_at = date('Y-m-d H:i:s');
@@ -420,6 +444,13 @@ class BookingrequestsController extends Controller
                                 break;
                             }
                         }
+                        $sst = Yii::$app->common->calculatesst($total);
+                        $grandtotal = $total+$sst;
+                        $modelCustomer->subtotal = $total;
+                        $modelCustomer->sst = $sst;
+                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->save(false);
+
                     }
                     if ($flag) {
                         $transaction->commit();

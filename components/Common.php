@@ -2,6 +2,7 @@
 namespace app\components;
 
 
+use app\models\Users;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -173,5 +174,65 @@ class Common extends Component
                 return "<span class='btn btn-danger btn-xs'>Incompleted</span>";
                 break;
         }
+    }
+    public function processBase64($data){
+        if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+            $data = substr($data, strpos($data, ',') + 1);
+            $type = strtolower($type[1]); // jpg, png, gif
+
+            if (!in_array($type, [ 'jpg', 'jpeg', 'gif', 'png' ])) {
+                throw new \Exception('invalid image type');
+            }
+
+            $data = base64_decode($data);
+
+            if ($data === false) {
+                throw new \Exception('base64_decode failed');
+            }
+
+            return ['data'=>$data, 'type'=>$type];
+        } else {
+            throw new \Exception('did not match data URI with image data');
+        }
+    }
+
+    public function generatereferencenumber($id)
+    {
+        if ($id && $id != null && $id != '' && is_numeric($id)) {
+            $encrypted = (((((($id * 2) + 383) * 8) + 1048) - 157) - 28) * 3;
+            return $encrypted;
+        } else {
+            return null;
+        }
+
+    }
+    public function calculatesst($amount)
+    {
+        $total_fees = number_format($amount * 6 / 100, 2, '.', '');
+        return $total_fees;
+
+
+    }
+    public function getsystemaccount()
+    {
+        $systemaccount = Users::find()->where(['role'=>'Systemaccount'])->one();
+        return $systemaccount;
+
+
+    }
+    public function getuserbalance($id)
+    {
+        $systemaccount = Users::find()->where(['role'=>'Systemaccount'])->one();
+        return $systemaccount;
+
+
+    }
+
+    public function maketransaction($id)
+    {
+        $systemaccount = Users::find()->where(['role'=>'Systemaccount'])->one();
+        return $systemaccount;
+
+
     }
 }

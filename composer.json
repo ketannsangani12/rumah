@@ -29,7 +29,8 @@
         "wbraganca/yii2-dynamicform": "*",
         "kartik-v/yii2-widget-select2": "dev-master",
         "bburim/daterangepicker": "dev-master",
-        "kartik-v/yii2-export": "dev-master"
+        "kartik-v/yii2-export": "dev-master",
+        "sizeg/yii2-jwt": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

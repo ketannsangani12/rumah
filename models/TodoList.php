@@ -57,11 +57,13 @@ class TodoList extends \yii\db\ActiveRecord
             [['reftype', 'status'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['document'], 'string', 'max' => 255],
-            [['landlord_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['landlord_id' => 'id']],
-            [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Properties::className(), 'targetAttribute' => ['property_id' => 'id']],
-            [['request_id'], 'exist', 'skipOnError' => true, 'targetClass' => BookingRequests::className(), 'targetAttribute' => ['request_id' => 'id']],
+            [['landlord_id'], 'exist', 'skipOnError' => false, 'targetClass' => Users::className(), 'targetAttribute' => ['landlord_id' => 'id']],
+            [['property_id'], 'exist', 'skipOnError' => false, 'targetClass' => Properties::className(), 'targetAttribute' => ['property_id' => 'id']],
+            [['request_id'], 'exist', 'skipOnError' => false, 'targetClass' => BookingRequests::className(), 'targetAttribute' => ['request_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['vendor_id' => 'id']],
+            [['renovation_quote_id'], 'exist', 'skipOnError' => false, 'targetClass' => RenovationQuotes::className(), 'targetAttribute' => ['renovation_quote_id' => 'id']],
+
         ];
     }
 
@@ -97,9 +99,24 @@ class TodoList extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+
     public function getTodoItems()
     {
         return $this->hasMany(TodoItems::className(), ['todo_id' => 'id']);
+    }
+
+    public function getTodoItems1()
+    {
+        return $this->hasMany(TodoItems::className(), ['todo_id' => 'id']);
+    }
+    /**
+     * Gets query for [[TodoItems]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDocuments()
+    {
+        return $this->hasMany(TodoDocuments::className(), ['todo_id' => 'id']);
     }
 
     /**
@@ -152,6 +169,19 @@ class TodoList extends \yii\db\ActiveRecord
         return $this->hasOne(Users::className(), ['id' => 'vendor_id']);
     }
 
+    public function getAgent()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'agent_id']);
+    }
+    /**
+     * Gets query for [[Request]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRenovationquote()
+    {
+        return $this->hasOne(RenovationQuotes::className(), ['id' => 'renovation_quote_id']);
+    }
 
     public function checkhavealreadyrequest($attribute, $params)
     {

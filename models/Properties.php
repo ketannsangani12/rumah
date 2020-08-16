@@ -40,6 +40,7 @@ use Yii;
  */
 class Properties extends \yii\db\ActiveRecord
 {
+    public $pictures;
     /**
      * {@inheritdoc}
      */
@@ -55,6 +56,8 @@ class Properties extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'description', 'location','property_type', 'room_type', 'preference' ,'bedroom', 'bathroom', 'carparks','type','furnished_status','availability','size_of_area','price','amenities','commute','status'], 'required','on'=>'create'],
+            [['title', 'description', 'location','latitude','longitude','property_type', 'room_type', 'preference' ,'bedroom', 'bathroom', 'carparks','type','furnished_status','availability','size_of_area','price','amenities','commute','pictures'], 'required','on'=>'addproperty'],
+           // [['pictures'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 10, 'extensions' => 'png, jpg,jpeg','on'=>'addproperty'],
             [['user_id', 'pe_userid', 'bedroom', 'bathroom', 'carparks', 'digital_tenancy', 'auto_rental', 'insurance'], 'integer'],
             [['title', 'description', 'location', 'status'], 'string'],
             [['latitude', 'longitude', 'size_of_area', 'price'], 'number'],
@@ -98,6 +101,7 @@ class Properties extends \yii\db\ActiveRecord
             'insurance' => 'Insurance',
             'status' => 'Status',
             'type' => 'Type',
+            'pictures'=>'Pictures',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'deleted_at'=>'Deleted At'
@@ -114,6 +118,11 @@ class Properties extends \yii\db\ActiveRecord
         return $this->hasMany(Images::className(), ['property_id' => 'id']);
     }
 
+
+    public function getPictures()
+    {
+        return $this->hasOne(Images::className(), ['property_id' => 'id'])->orderBy(['id'=>SORT_ASC]);
+    }
     /**
      * Gets query for [[PeUser]].
      *
@@ -134,6 +143,10 @@ class Properties extends \yii\db\ActiveRecord
         return $this->hasOne(Users::className(), ['id' => 'user_id']);
     }
 
+    public function getAgent()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'user_id']);
+    }
     /**
      * Gets query for [[Images]].
      *

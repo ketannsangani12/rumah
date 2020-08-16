@@ -24,6 +24,10 @@ $config = [
                 ]
             ]
         ],
+        'jwt' => [
+            'class' => \sizeg\jwt\Jwt::class,
+            'key'   => 'secret',
+        ],
 //        'metronic'=>[
 //            'class'=>'dlds\metronic\Metronic',
 //            'resources'=>'@webroot/metronic/theme/assets',

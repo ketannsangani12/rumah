@@ -40,6 +40,7 @@ class AgentRatings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['request_id','user_id','appearance','attitude','knowledge'], 'required','on'=>'addrating'],
             [['request_id', 'property_id', 'user_id', 'agent_id'], 'integer'],
             [['message'], 'string'],
             [['created_at', 'updated_at'], 'safe'],

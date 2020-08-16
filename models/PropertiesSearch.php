@@ -42,7 +42,7 @@ class PropertiesSearch extends Properties
      */
     public function search($params,$managedlisting=false)
     {
-        $query = Properties::find()->where(['=','deleted_at',NULL]);
+        $query = Properties::find()->where(['deleted_at'=>null]);
         if($managedlisting){
             $query->andWhere(['is_managed'=>1]);
         }else{

@@ -107,6 +107,7 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         ),
         's' => 
         array (
+            'sizeg\\jwt\\' => 10,
             'setasign\\Fpdi\\' => 14,
         ),
         'r' => 
@@ -199,6 +200,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
             'Mpdf\\' => 5,
             'Matrix\\' => 7,
         ),
+        'L' => 
+        array (
+            'Lcobucci\\JWT\\' => 13,
+        ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -272,6 +277,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         'wbraganca\\dynamicform\\' => 
         array (
             0 => __DIR__ . '/..' . '/wbraganca/yii2-dynamicform',
+        ),
+        'sizeg\\jwt\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sizeg/yii2-jwt',
         ),
         'setasign\\Fpdi\\' => 
         array (
@@ -494,6 +503,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
+        ),
+        'Lcobucci\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (

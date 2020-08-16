@@ -255,4 +255,13 @@ return array (
       '@kartik/export' => $vendorDir . '/kartik-v/yii2-export/src',
     ),
   ),
+  'sizeg/yii2-jwt' => 
+  array (
+    'name' => 'sizeg/yii2-jwt',
+    'version' => '2.0.1.0',
+    'alias' => 
+    array (
+      '@sizeg/jwt' => $vendorDir . '/sizeg/yii2-jwt',
+    ),
+  ),
 );
