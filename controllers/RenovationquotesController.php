@@ -193,7 +193,9 @@ class RenovationquotesController extends Controller
                     if ($flag = $modelCustomer->save(false)) {
                         $model->status = 'Work In Progress';
                         $model->save(false);
+                        $total = 0;
                         foreach ($modelsAddress as $modelAddress) {
+                            $total+=$modelAddress->price+$modelAddress->platform_deductible;
                             $modelAddress->todo_id = $modelCustomer->id;
                             $modelAddress->created_at = date('Y-m-d H:i:s');
                             if (! ($flag = $modelAddress->save(false))) {
@@ -201,6 +203,12 @@ class RenovationquotesController extends Controller
                                 break;
                             }
                         }
+                        $sst = Yii::$app->common->calculatesst($total);
+                        $grandtotal = $total+$sst;
+                        $modelCustomer->subtotal = $total;
+                        $modelCustomer->sst = $sst;
+                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->save(false);
                     }
                     if ($flag) {
                         $transaction->commit();
@@ -261,7 +269,9 @@ class RenovationquotesController extends Controller
                         if (! empty($deletedIDs)) {
                             TodoItems::deleteAll(['id' => $deletedIDs]);
                         }
+                        $total = 0;
                         foreach ($modelsAddress as $modelAddress) {
+                            $total+=$modelAddress->price;
                             $modelAddress->todo_id = $modelCustomer->id;
                             $modelAddress->created_at = date('Y-m-d H:i:s');
                             if (! ($flag = $modelAddress->save(false))) {
@@ -269,6 +279,12 @@ class RenovationquotesController extends Controller
                                 break;
                             }
                         }
+                        $sst = Yii::$app->common->calculatesst($total);
+                        $grandtotal = $total+$sst;
+                        $modelCustomer->subtotal = $total;
+                        $modelCustomer->sst = $sst;
+                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->save(false);
                     }
                     if ($flag) {
                         $transaction->commit();

@@ -82,12 +82,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'layout' => "{items}\n{summary}\n{pager}",
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
-                        'description',
+                        //'description',
                         [
                             'attribute' => 'document',
                             'label' => 'Document',
                             'value' => function ($model) {
-                                return Html::a('Download', Yii::$app->homeUrl.'uploads/tododocuments/'.$model->document);
+                                return Html::a('Download', Yii::$app->homeUrl.'uploads/tododocuments/'.$model->document,['target'=>'_blank','data-pjax'=>"0"]);
                             },
                             'format' => 'raw',
                         ],

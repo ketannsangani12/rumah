@@ -220,19 +220,12 @@ class Common extends Component
 
 
     }
-    public function getuserbalance($id)
-    {
-        $systemaccount = Users::find()->where(['role'=>'Systemaccount'])->one();
-        return $systemaccount;
+    public function validatesecondarypassword($user_id,$password){
+        $userdetails = Users::findOne($user_id);
+
+        return ($userdetails->secondary_password==md5($password))?true:false;
 
 
     }
 
-    public function maketransaction($id)
-    {
-        $systemaccount = Users::find()->where(['role'=>'Systemaccount'])->one();
-        return $systemaccount;
-
-
-    }
 }

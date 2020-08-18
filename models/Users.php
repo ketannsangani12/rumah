@@ -329,6 +329,12 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         $userdetails = Users::findOne($user_id);
         return $userdetails->wallet_balance;
     }
+
+    public static function getcoinsbalance($user_id)
+    {
+        $userdetails = Users::findOne($user_id);
+        return $userdetails->coins;
+    }
     public static function updatebalance($walletbalance,$user_id)
     {
         $usermodel = Users::findOne($user_id);
@@ -341,7 +347,18 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
         //return true;
     }
+    public static function updatecoinsbalance($walletbalance,$user_id)
+    {
+        $usermodel = Users::findOne($user_id);
+        $usermodel->coins=$walletbalance;
+        if($usermodel->save(false)){
+            return true;
+        }else{
+            return false;
+        }
 
+        //return true;
+    }
     public function checkReferralcode($attribute, $params)
     {
         $referall_id = $this->getUserIdFromReferralCode($this->referral_code);
