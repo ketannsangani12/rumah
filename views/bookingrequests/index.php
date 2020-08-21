@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'user_id',
 
                     'value' => 'user.full_name',
-                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>'Tenant'])->asArray()->all(), 'id', function($model) {
+                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>'User'])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],

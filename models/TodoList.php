@@ -52,6 +52,7 @@ class TodoList extends \yii\db\ActiveRecord
             [['status'], 'required','on'=>'changestatus'],
             [['property_id','landlord_id','user_id','receive_via','commission'], 'required','on'=>'addinsurance'],
             [['description','property_id','user_id','photo'], 'required','on'=>'reportdefect'],
+            [['appointment_date','property_id','user_id','appointment_time'], 'required','on'=>'appointment'],
 
             [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             ['property_id', 'checkhavealreadyrequest','on' => 'addinsurance'],
@@ -87,6 +88,8 @@ class TodoList extends \yii\db\ActiveRecord
             'due_date' => 'Due Date',
             'datetime_range'=>'Date Range',
             'quote' => 'Quote',
+            'appointment_date'=>'Appointment Date',
+            'appointment_time'=>'Appointment Time',
             //'title' => 'Title',
             'vendor_id' => 'Vendor ID',
             'document' => 'Document',

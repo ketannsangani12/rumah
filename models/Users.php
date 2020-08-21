@@ -42,7 +42,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return [
             [['email','password'], 'required','on' => 'login'],
             [['role', 'full_name','email'], 'required','on' => 'adduser'],
-            [['full_name','email','password','contact_no','role'], 'required','on' => 'register'],
+            [['full_name','email','password','contact_no'], 'required','on' => 'register'],
             ['referral_code', 'checkReferralcode'],
             [['contact_no','company_name','company_address','company_state','bank_account_name','bank_account_no','bank_name'], 'required','when' => function ($model) {
                 return ($model->role == 'Cleaner' || $model->role == 'Mover');
