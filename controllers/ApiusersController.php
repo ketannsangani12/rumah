@@ -746,13 +746,15 @@ class ApiusersController extends ActiveController
             if(!empty($_POST)){
                 $propertymodel = new Properties();
                 $propertymodel->scenario = 'addproperty';
+                $propertymodel->attributes = Yii::$app->request->post();
                 //$propertymodel->pictures = $uploads = UploadedFile::getInstances('images');
                 if($propertymodel->validate()){
                     $pictures = $propertymodel->pictures;
                     $propertymodel->pictures = null;
+                    $propertymodel->user_id = $this->user_id;
                     $propertymodel->created_at = date('Y-m-d H:i:s');
                     $propertymodel->status = 'Active';
-                    if($propertymodel->save()){
+                    if($propertymodel->save(false)){
                         $property_id = $propertymodel->id;
                         if(!empty($pictures)){
                             foreach ($pictures as $picture){
@@ -777,7 +779,7 @@ class ApiusersController extends ActiveController
 
 
                     }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        return array('status' => 0, 'message' => $propertymodel->getErrors());
 
                     }
 
