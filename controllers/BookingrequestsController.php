@@ -135,7 +135,7 @@ class BookingrequestsController extends Controller
             if($model->validate()){
                 $todomodel = TodoList::find()->where(['request_id'=>$id,'reftype'=>'Booking','status'=>'New'])->one();
                 if(empty($todomodel)){
-                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');exit;
+                    throw new NotFoundHttpException('The requested page does not exist.');
 
                 }
                 $newFileName = \Yii::$app->security

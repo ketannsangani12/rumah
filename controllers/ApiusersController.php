@@ -293,7 +293,25 @@ class ApiusersController extends ActiveController
 
 
     }
+    public function actionMyproperties()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
 
+            $user_id = $this->user_id;
+            $vacantproperties = Properties::find()->where(['user_id'=>$user_id,'status'=>'Active'])->asArray()->all();
+            $rentedproperties = Properties::find()->where(['user_id'=>$user_id,'status'=>'Rented'])->asArray()->all();
+            $data['vacant'] = $vacantproperties;
+            $data['rented'] = $rentedproperties;
+            return array('status' => 1, 'data' => $data);
+
+
+        }
+
+
+    }
     public function actionChangepassword()
     {
 
@@ -1370,6 +1388,7 @@ class ApiusersController extends ActiveController
                                         $todomodel->status = 'Paid';
                                         $todomodel->save(false);
                                         $model->property->status = 'Rented';
+                                        $model->property->request_id = $model->id;
                                         if($model->property->save()){
                                             if($goldcoins>0){
                                                 $usercoinsbalance = Users::getcoinsbalance($model->user_id);
