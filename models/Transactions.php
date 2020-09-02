@@ -122,6 +122,12 @@ class Transactions extends \yii\db\ActiveRecord
         return $this->hasOne(BookingRequests::className(), ['id' => 'request_id']);
     }
 
+
+    public function getTodo()
+    {
+        return $this->hasOne(TodoList::className(), ['id' => 'todo_id']);
+    }
+
     /**
      * Gets query for [[User]].
      *
@@ -130,5 +136,9 @@ class Transactions extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(Users::className(), ['id' => 'user_id']);
+    }
+    public function getTransactionitems()
+    {
+        return $this->hasMany(TransactionsItems::className(), ['transaction_id' => 'id']);
     }
 }

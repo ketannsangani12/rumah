@@ -153,7 +153,7 @@ class ApiusersController extends ActiveController
                     $userexist = Users::find()->where([
                         'email' => $model->email,
                         'password' => md5($model->password)
-                    ])->andWhere(['in','role',['Landlord','Tenant']])->asArray()->one();
+                    ])->andWhere(['in','role',['User']])->asArray()->one();
 
                     if(!empty($userexist)){
                         $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
@@ -1363,9 +1363,9 @@ class ApiusersController extends ActiveController
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $systemaccount->id;
                                         $transactionitems->oldsenderbalance = $senderbalance;
-                                        $transactionitems->newsenderbalance = $senderbalance-$model->utilities_deposit;
+                                        $transactionitems->newsenderbalance = $senderbalance-$model->stamp_duty;
                                         $transactionitems->oldreceiverbalance = $systemaccountbalance;
-                                        $transactionitems->newreceiverbalance = $systemaccountbalance+$model->utilities_deposit;
+                                        $transactionitems->newreceiverbalance = $systemaccountbalance+$model->stamp_duty;
                                         $transactionitems->description = 'Stamp Duty';
                                         $transactionitems->created_at = date('Y-m-d H:i:s');
                                         $transactionitems->save(false);
@@ -2888,5 +2888,146 @@ class ApiusersController extends ActiveController
             }
         }
     }
+    public function actionTransactions()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+                $user_id = $this->user_id;
+                $fromdate = (isset($_POST['fromdate']) && !empty($_POST['fromdate']))?(date('Y-m-d 00:00:00',strtotime($_POST['fromdate']))):'';
+                $todate = (isset($_POST['todate']) && !empty($_POST['todate']))?(date('Y-m-d 11:59:59',strtotime($_POST['todate']))):'';
+                $query = Transactions::find()->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id]);
+                if($fromdate!='' && $todate!=''){
+                    // $start = Yii::$app->formatter->asTimestamp($fromdate);
+                    //$end = Yii::$app->formatter->asTimestamp($todate);
+                    //$query->andWhere(['between', 'date', $start, $end]);
+
+                    $query->andWhere(['>=','DATE(created_at)', $fromdate])->andWhere(['<=','DATE(created_at)', $todate]);
+                }
+                $transactions = $query->orderBy([
+                    'created_at' => SORT_DESC
+                ])->all();
+                //echo $transactions->createCommand()->getRawSql();exit;
+
+                //->all();
+                //echo "<pre>";print_r($transactions);exit;
+                $mytransactions = array();
+                if(!empty($transactions)){
+                    foreach ($transactions as $key=>$transaction){
+                        $transactionitems = $transaction->transactionitems;
+                        //echo "<pre>";print_r($transactionitems);exit;
+                        switch ($transaction->reftype) {
+                            case "Monthly Rental";
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = ($user_id==$transaction->landlord_id)?1:0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                break;
+                            case "Booking Payment";
+                                //$amountarray['rental_deposit']
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = ($user_id==$transaction->landlord_id)?1:0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                $items = array();
+                                if(!empty($transactionitems)){
+                                   foreach ($transactionitems as $k=>$transactionitem){
+                                       $items[$k]['description'] = $transactionitem->description;
+                                       $items[$k]['amount'] = $transactionitem->total_amount;
+                                       if($user_id==$transaction->landlord_id && ($transactionitem->description=='Booking Fees' || $transactionitem->description == 'Deposit' || $transactionitem->description == 'Keycard Deposit'|| $transactionitem->description == 'Utilities Deposit')){
+                                        $items[$k]['incoming'] = 1;
+                                       }else if($user_id==$transaction->user_id && ($transactionitem->description=='Booking Fees' || $transactionitem->description == 'Deposit' || $transactionitem->description == 'Keycard Deposit'|| $transactionitem->description == 'Utilities Deposit' || $transactionitem->description=='Stamp Duty' || $transactionitem->description == 'Tenancy Fees')){
+                                        $items[$k]['incoming'] = 0;
+                                       }
+                                   }
+                                }
+                                $mytransactions[$key]['items'] = $items;
+                                break;
+                            case "Renovation Payment";
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype." - ".$transaction->todo->title;
+                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = ($user_id==$transaction->landlord_id)?1:0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                break;
+                            case "Insurance";
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = 0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                break;
+                            case "Defect Report";
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = 0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                break;
+                            case "General";
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = 0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                break;
+                            case "Other";
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = 0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                break;
+                            case "Moveout Refund";
+                                $items = array();
+                                if(!empty($transactionitems)){
+                                    $totalamount = 0;
+                                    foreach ($transactionitems as $k=>$transactionitem){
+                                        $items[$k]['description'] = $transactionitem->description;
+                                        $items[$k]['amount'] = $transactionitem->total_amount;
+
+                                        if($transactionitem->receiver_id==$user_id){
+                                            $items[$k]['incoming'] = 1;
+
+                                        }else if($transactionitem->sender_id==$user_id){
+                                            $items[$k]['incoming'] = 0;
+                                        }
+                                        $items[$k]['refund'] = 1;
+
+                                    }
+                                }
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = ($user_id==$transaction->user_id)?1:0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                $mytransactions[$key]['items'] = $items;
+
+                                break;
+                        }
+
+                    }
+                }
+                return array('status' => 1, 'data' => $mytransactions);
+
+
+
+
+        }
+
+
+    }
+
 
 }
