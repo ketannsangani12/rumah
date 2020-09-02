@@ -104,22 +104,28 @@ class ApiusersController extends ActiveController
         if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal') {
             $headers = Yii::$app->request->headers;
             if(!empty($headers) && isset($headers['token']) && $headers['token']!=''){
-                $token = Yii::$app->jwt->getParser()->parse((string) $headers['token']);
-                $data = Yii::$app->jwt->getValidationData(); // It will use the current time to validate (iat, nbf and exp)
-                $data->setIssuer(\Yii::$app->params[ 'hostInfo' ]);
-                $data->setAudience(\Yii::$app->params[ 'hostInfo' ]);
-                $data->setId('4f1g23a12aa');
-               // $data->setCurrentTime(time() + 61);
-                if($token->validate($data)){
-                    $userdata = $token->getClaim('uid');
-                    $this->user_id = $userdata->id;
-                    return true;
+                try{
+                    $token = Yii::$app->jwt->getParser()->parse((string) $headers['token']);
+                    $data = Yii::$app->jwt->getValidationData(); // It will use the current time to validate (iat, nbf and exp)
+                    $data->setIssuer(\Yii::$app->params[ 'hostInfo' ]);
+                    $data->setAudience(\Yii::$app->params[ 'hostInfo' ]);
+                    $data->setId('4f1g23a12aa');
+                    // $data->setCurrentTime(time() + 61);
+                    if($token->validate($data)){
+                        $userdata = $token->getClaim('uid');
+                        $this->user_id = $userdata->id;
+                        return true;
 
 
-                }else{
+                    }else{
+                        echo json_encode(array('status' => 0, 'message' => 'Authentication Failed.'));exit;
+
+                    }
+                }catch (Exception $e) {
                     echo json_encode(array('status' => 0, 'message' => 'Authentication Failed.'));exit;
 
                 }
+
                 //var_dump($token->validate($data));exit;
 
                 //return true;
