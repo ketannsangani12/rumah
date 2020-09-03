@@ -19,6 +19,7 @@ use app\models\Transactions;
 use app\models\TransactionsItems;
 use app\models\UsersDocuments;
 use app\models\Withdrawals;
+use Da\QrCode\QrCode;
 use sizeg\jwt\JwtHttpBearerAuth;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
@@ -289,10 +290,62 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
 
-                $userdetails = Users::find()->select(['*', new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where(['id'=>$this->user_id])->asArray()->one();
+            $userdetails = Users::find()->select(['*', new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where(['id'=>$this->user_id])->asArray()->one();
             $userdetails['referral_code'] = Users::getReferralCode($userdetails['id']);
-
+            $qrCode = (new QrCode($userdetails['referral_code']))
+                ->setSize(250)
+                ->setMargin(5)
+                ->useForegroundColor(0,0,0);
+            $qrCode->writeFile(__DIR__ . '/../vendor/2amigos/code.png');
+            $userdetails['qrcode'] = $qrCode->writeDataUri();
             return array('status' => 1, 'data' => $userdetails);
+
+
+        }
+
+
+    }
+
+    public function actionUpdateprofile()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+           $model = Users::findOne($this->user_id);
+            $model->scenario = 'updateprofileuser';
+            $model->attributes = Yii::$app->request->post();
+            if($model->validate()){
+               $model->dob = date('Y-m-d',strtotime($model->dob));
+               $model->updated_at = date('Y-m-d h:i:s');
+               if($model->save(false)){
+                   return array('status' => 1, 'message' => 'You have updated your profile successfully.');
+
+               }else{
+                   return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+               }
+            }else{
+                return array('status' => 0, 'message' => $model->getErrors());
+
+            }
+
+
+        }
+
+
+    }
+    public function actionGoldtransactions()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+
+            $userdetails = Users::find()->select(['id','image','full_name', 'coins',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where(['id'=>$this->user_id])->asArray()->one();
+            $transactions = GoldTransactions::find()->where(['user_id'=>$this->user_id])->orWhere(['refferer_id'=>$this->user_id])->andWhere(['status'=>'Completed'])->asArray()->all();
+
+            return array('status' => 1, 'userdetails' => $userdetails,'data'=>$transactions);
 
 
         }
