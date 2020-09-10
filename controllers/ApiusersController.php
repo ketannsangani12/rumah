@@ -824,6 +824,8 @@ class ApiusersController extends ActiveController
                 $propertymodel = new Properties();
                 $propertymodel->scenario = 'addproperty';
                 $propertymodel->attributes = Yii::$app->request->post();
+                $propertymodel->amenities = implode(',',$propertymodel->amenities);
+                $propertymodel->commute = implode(',',$propertymodel->commute);
                 //$propertymodel->pictures = $uploads = UploadedFile::getInstances('images');
                 if($propertymodel->validate()){
                     $pictures = $propertymodel->pictures;
