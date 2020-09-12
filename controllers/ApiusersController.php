@@ -888,12 +888,15 @@ class ApiusersController extends ActiveController
                 $long = (isset($_POST['long']) && $_POST['long']!='')?$_POST['long']:'';
                 $furnished_status = (isset($_POST['furnished_status']) && $_POST['furnished_status']!='')?$_POST['furnished_status']:'';
 
-                $property_type = (isset($_POST['property_type']) && $_POST['property_type']!='')?explode(",",$_POST['property_type']):'';
-                $room_type = (isset($_POST['room_type']) && $_POST['room_type']!='')?explode(",",$_POST['room_type']):'';
-                $preference = (isset($_POST['preference']) && $_POST['preference']!='')?explode(",",$_POST['preference']):'';
-                $price = (isset($_POST['price']) && $_POST['price']!='')?$_POST['price']:'';
+                $property_type = (isset($_POST['property_type']) && $_POST['property_type']!='')?$_POST['property_type']:'';
+                $room_type = (isset($_POST['room_type']) && $_POST['room_type']!='')?$_POST['room_type']:'';
+                $preference = (isset($_POST['preference']) && $_POST['preference']!='')?$_POST['preference']:'';
+                $price = (isset($_POST['price']) && $_POST['price']!='')?explode(",",$_POST['price']):'';
+                $distance = (isset($_POST['distance']) && $_POST['distance']!='')?$_POST['distance']:'';
                 $commute = (isset($_POST['commute']) && $_POST['commute']!='')?explode(",",$_POST['commute']):'';
                 $amenities = (isset($_POST['amenities']) && $_POST['amenities']!='')?explode(",",$_POST['amenities']):'';
+                $rooms = (isset($_POST['rooms']) && $_POST['rooms']!='')?$_POST['rooms']:'';
+                $size = (isset($_POST['size']) && $_POST['size']!='')?$_POST['size']:'';
 
                 // $searchword = $_POST['search'];
 
@@ -902,15 +905,72 @@ class ApiusersController extends ActiveController
                 $harvesformula1 = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
 
                 $query1 = Properties::find()
-                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price')
+                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,'.$harvesformula)
                 ->with([
                     'pictures'=>function ($query) {
                         $query->select('id,property_id,image')->one();
                     },
                 ]);
+                if(!empty($commute)){
+                    foreach ($commute as $key=>$item){
+                        if($key==0) {
+                            $query1->andWhere(new \yii\db\Expression('FIND_IN_SET("'.$item.'",commute)'));
+                            // $query1->andWhere(['like', 'commute', $item]);
+                        }else{
+                            $query1->orWhere(new \yii\db\Expression('FIND_IN_SET("'.$item.'",commute)'));//->addParams([':commute_to_find' => $item]);
+
+                        }
+
+                    }
+                }
+                if(!empty($amenities)){
+                    foreach ($amenities as $key=>$amenity){
+                        if($key==0) {
+                            $query1->andWhere(new \yii\db\Expression('FIND_IN_SET("'.$amenity.'",amenities)'));
+
+                        }else{
+                            $query1->orWhere(new \yii\db\Expression('FIND_IN_SET("'.$amenity.'",amenities)'));//->addParams([':commute_to_find' => $item]);
+
+
+                        }
+
+                    }
+                }
+                if ($property_type!=''){
+                    $query1->where(['property_type'=>$property_type]);
+                }
+                if($room_type!=''){
+                    $query1->andWhere(['room_type'=>$room_type]);
+                }
+                if($preference!=''){
+                    $query1->andWhere(['preference'=>$preference]);
+                }
+                if($distance!=''){
+                    $query1->andWhere(['<=', $harvesformula1, $distance]);
+
+                }
+                if($furnished_status!=''){
+                   $query1->andWhere(['furnished_status'=>$furnished_status]);
+                }
+                if($rooms!=''){
+                    $query1->andWhere(['<=', 'bedroom', $rooms]);
+
+                }
+                if($size!=''){
+                    $query1->andWhere(['>=', 'size_of_area', $size]);
+
+                }
+                if(!empty($price)){
+                    $query1->andWhere(["between", "price", $price[0], $price[1]]);
+
+                }
+
+
+
                 if($lat!='' && $long!=''){
                     $query1->orderBy(['distance'=>SORT_ASC]);
                 }
+
 
                 $properties =  $query1->asArray()->all();
                 return array('status' => 1, 'data' => $properties,'total'=>count($properties));
@@ -1810,6 +1870,7 @@ class ApiusersController extends ActiveController
                 $todorequestexist->status = 'Accepted';
                 $todorequestexist->updated_at = date('Y-m-d H:i:s');
                 if($todorequestexist->save()){
+                    $todorequestexist->property->user_id = $user_id;
                     $todorequestexist->property->auto_rental = $auto_rental;
                     $todorequestexist->property->insurance = $insurance;
                     $todorequestexist->property->save(false);   

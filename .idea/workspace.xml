@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Rumahlogoinner.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,16 +24,18 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="844" column="28" selection-start-line="844" selection-start-column="28" selection-end-line="844" selection-end-column="28" />
+            <state relative-caret-position="-289">
+              <caret line="635" column="32" selection-start-line="635" selection-start-column="26" selection-end-line="635" selection-end-column="32" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
-                <element signature="e#80333#82797#0#PHP" expanded="false" />
-                <element signature="e#107076#107231#0#PHP" expanded="false" />
-                <marker date="1599741627765" expanded="true" signature="38216:38244" ph="..." />
+                <element signature="e#82704#85168#0#PHP" expanded="false" />
+                <element signature="e#109516#109671#0#PHP" expanded="false" />
+                <marker date="1599904050532" expanded="true" signature="40587:40615" ph="..." />
+                <marker date="1599904050532" expanded="true" signature="82544:82721" ph="..." />
+                <marker date="1599904050532" expanded="true" signature="86765:86930" ph="..." />
               </folding>
             </state>
           </provider>
@@ -59,20 +61,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Rumahlogo.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Rumahlogo.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Rumahlogoinner.png" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Rumahlogoinner.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="web.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/web.php">
           <provider selected="true" editor-type-id="text-editor">
@@ -86,7 +74,7 @@
       <file leaf-file-name="Jwt.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/sizeg/yii2-jwt/Jwt.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1785">
+            <state relative-caret-position="1620">
               <caret line="119" column="29" selection-start-line="119" selection-start-column="20" selection-end-line="119" selection-end-column="29" />
               <folding>
                 <element signature="e#29#54#0#PHP" expanded="true" />
@@ -98,7 +86,7 @@
       <file leaf-file-name="Parser.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/lcobucci/jwt/src/Parser.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1275">
+            <state relative-caret-position="1245">
               <caret line="89" column="18" selection-start-line="89" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
               <folding>
                 <element signature="e#189#218#0#PHP" expanded="true" />
@@ -279,7 +267,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../tls" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../homes" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
@@ -439,24 +427,26 @@
       <workItem from="1599045898323" duration="591000" />
       <workItem from="1599047477572" duration="4445000" />
       <workItem from="1599109077325" duration="3684000" />
-      <workItem from="1599742270284" duration="422000" />
+      <workItem from="1599742270284" duration="622000" />
+      <workItem from="1599831133526" duration="169000" />
+      <workItem from="1599883554977" duration="5605000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="399221000" />
+    <option name="totallyTimeSpent" value="405195000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="836" extended-state="6" />
-    <editor active="false" />
+    <frame x="0" y="23" width="1440" height="836" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24248926" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42876345" sideWeight="0.5028612" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293011" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -518,12 +508,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>1906</line>
+          <line>1967</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>1732</line>
+          <line>1792</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
@@ -717,14 +707,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="561" column="17" selection-start-line="561" selection-start-column="17" selection-end-line="561" selection-end-column="17" />
-          <folding>
-            <element signature="e#35#63#0#PHP" expanded="false" />
-            <element signature="e#58327#64203#0#PHP" expanded="false" />
-            <element signature="e#61495#63959#0#PHP" expanded="false" />
-            <element signature="e#77160#88599#0#PHP" expanded="false" />
-            <element signature="e#88441#88599#0#PHP" expanded="false" />
-            <element signature="e#105860#115049#0#PHP" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -784,7 +766,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="35" column="17" selection-start-line="35" selection-start-column="17" selection-end-line="35" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -807,7 +788,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="13" column="27" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -853,7 +833,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/sizeg/yii2-jwt/Jwt.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1785">
+        <state relative-caret-position="1620">
           <caret line="119" column="29" selection-start-line="119" selection-start-column="20" selection-end-line="119" selection-end-column="29" />
           <folding>
             <element signature="e#29#54#0#PHP" expanded="true" />
@@ -863,7 +843,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/lcobucci/jwt/src/Parser.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1275">
+        <state relative-caret-position="1245">
           <caret line="89" column="18" selection-start-line="89" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
           <folding>
             <element signature="e#189#218#0#PHP" expanded="true" />
@@ -887,25 +867,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="844" column="28" selection-start-line="844" selection-start-column="28" selection-end-line="844" selection-end-column="28" />
-          <folding>
-            <element signature="e#35#63#0#PHP" expanded="true" />
-            <element signature="e#80333#82797#0#PHP" expanded="false" />
-            <element signature="e#107076#107231#0#PHP" expanded="false" />
-            <marker date="1599741627765" expanded="true" signature="38216:38244" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/db.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Rumahlogoinner.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Rumahlogo.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
@@ -916,14 +893,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Rumahlogo.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Rumahlogoinner.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-289">
+          <caret line="635" column="32" selection-start-line="635" selection-start-column="26" selection-end-line="635" selection-end-column="32" />
+          <folding>
+            <element signature="e#35#63#0#PHP" expanded="true" />
+            <element signature="e#82704#85168#0#PHP" expanded="false" />
+            <element signature="e#109516#109671#0#PHP" expanded="false" />
+            <marker date="1599904050532" expanded="true" signature="40587:40615" ph="..." />
+            <marker date="1599904050532" expanded="true" signature="82544:82721" ph="..." />
+            <marker date="1599904050532" expanded="true" signature="86765:86930" ph="..." />
+          </folding>
+        </state>
       </provider>
     </entry>
   </component>
