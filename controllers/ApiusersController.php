@@ -885,7 +885,7 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if (!empty($_POST)) {
+            if (!empty($_POST) && isset($_POST['lat']) && $_POST['lat']!='' && isset($_POST['long']) && $_POST['long']!='') {
                 $lat = (isset($_POST['lat']) && $_POST['lat']!='')?$_POST['lat']:'';
                 $long = (isset($_POST['long']) && $_POST['long']!='')?$_POST['long']:'';
                 $furnished_status = (isset($_POST['furnished_status']) && $_POST['furnished_status']!='')?$_POST['furnished_status']:'';
@@ -977,6 +977,9 @@ class ApiusersController extends ActiveController
                 $properties =  $query1->asArray()->all();
                 return array('status' => 1, 'data' => $properties,'total'=>count($properties));
 
+
+            }else{
+                return array('status' => 0, 'message' => 'Please allow location access to search property nearby.');
 
             }
         }
