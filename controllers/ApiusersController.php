@@ -11,6 +11,8 @@ use app\models\Images;
 use app\models\PromoCodes;
 use app\models\Properties;
 use app\models\PropertyRatings;
+use app\models\ServicerequestImages;
+use app\models\ServiceRequests;
 use app\models\TodoDocuments;
 use app\models\TodoItems;
 use app\models\TodoList;
@@ -901,7 +903,7 @@ class ApiusersController extends ActiveController
                 // $searchword = $_POST['search'];
 
                 $baseurl = $this->baseurl;
-                $harvesformula = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance' : '';
+                $harvesformula = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance': '';
                 $harvesformula1 = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
 
                 $query1 = Properties::find()
@@ -945,7 +947,7 @@ class ApiusersController extends ActiveController
                 if($preference!=''){
                     $query1->andWhere(['preference'=>$preference]);
                 }
-                if($distance!=''){
+                if($distance!='' && $lat!='' && $long!=''){
                     $query1->andWhere(['<=', $harvesformula1, $distance]);
 
                 }
@@ -1597,6 +1599,9 @@ class ApiusersController extends ActiveController
                     'request'=>function ($query) {
                         $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                     },
+                    'servicerequest'=>function ($query) {
+                        $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst']);
+                    },
                     'property'=>function($query){
                         $query->select('id,property_no,title');
                     },
@@ -1623,6 +1628,7 @@ class ApiusersController extends ActiveController
                         $query->select(['id','todo_id','description','platform_deductible','price','reftype']);
 
                     },
+
                 ])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->asArray()->all();
 
             $data = array();
@@ -1682,6 +1688,11 @@ class ApiusersController extends ActiveController
                                 $data[] = $todolist;
                             }
                         break;
+                        case "Service";
+                            if($todolist['status']=='Pending' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                $data[] = $todolist;
+                            }
+                            break;
 
                     }
                 }
@@ -1705,6 +1716,9 @@ class ApiusersController extends ActiveController
                     ->with([
                         'request' => function ($query) {
                             $query->select(['id', 'booking_fees', 'credit_score', 'monthly_rental', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'rental_deposit', 'utilities_deposit', 'subtotal', 'total', 'commencement_date', 'tenancy_period', 'security_deposit', new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
+                        },
+                        'servicerequest'=>function ($query) {
+                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst']);
                         },
                         'property' => function ($query) {
                             $query->select('id,property_no,title');
@@ -1782,6 +1796,11 @@ class ApiusersController extends ActiveController
                                 break;
                             case "Monthly Rental";
                                 if ($todolist['status'] == 'Unpaid') {
+                                    $data[] = $todolist;
+                                }
+                                break;
+                            case "Service";
+                                if($todolist['status']=='Pending' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
                                     $data[] = $todolist;
                                 }
                                 break;
@@ -2047,6 +2066,7 @@ class ApiusersController extends ActiveController
             }
         }
     }
+
 
     public function actionPayinsurance()
     {
@@ -2848,6 +2868,28 @@ class ApiusersController extends ActiveController
                }
 
                break;
+           case "Service";
+           if(($todomodel->service_type=='Handyman' || $todomodel->service_type=='Mover') && $todomodel->status=='Pending'){
+                if($status=='Accepted'){
+                   $todomodel->status = 'Accepted';
+                   $todomodel->updated_at = date("Y-m-d H:i:s");
+                   if($todomodel->save(false)){
+                     $todomodel->servicerequest->status ='Accepted';
+                     $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                     if($todomodel->servicerequest->save(false)){
+                         return array('status' => 1, 'message' => 'You have accepted request successfully.');
+
+                     }
+                   }else{
+                       return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                   }
+
+                }else if($status=='Rejected'){
+
+                }
+           }
+           break;
 
        }
 
@@ -3008,6 +3050,131 @@ class ApiusersController extends ActiveController
                 return array('status' => 0, 'message' => $model->getErrors());
 
             }
+        }
+    }
+    public function actionBookservice(){
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST) && isset($_POST['service_type']) && $_POST['service_type']!='') {
+                $user_id = $this->user_id;
+                $type = $_POST['service_type'];
+                $model = new ServiceRequests();
+                switch ($type) {
+                    case "Handyman";
+
+                        $model->scenario = 'bookhandyman';
+                        $model->attributes = Yii::$app->request->post();
+                        $model->pictures = $_POST['pictures'];
+                        if($model->validate()){
+                            $model->user_id = $user_id;
+                            $model->reftype = $type;
+
+                            $pictures = $model->pictures;
+                            $descriptions = $model->descriptions;
+                            $model->pictures = null;
+                            $model->descriptions = null;
+                            $model->date = date('Y-m-d',strtotime($model->date));
+                            $model->status = 'New';
+                            $model->created_at = date("Y-m-d H:i:s");
+                            if($model->save(false)) {
+                                $request_id = $model->id;
+                                $reference_no = Yii::$app->common->generatereferencenumber($request_id);
+
+                                if (!empty($pictures)) {
+                                    foreach ($pictures as $key=>$picture) {
+                                        $filename = uniqid();
+
+                                        $data = Yii::$app->common->processBase64($picture);
+
+                                        file_put_contents('uploads/servicerequestimages/' . $filename . '.' . $data['type'], $data['data']);
+                                        $servicerequestimages = new ServicerequestImages();
+                                        $servicerequestimages->description = (isset($descriptions[$key]) && $descriptions[$key]!='')?$descriptions[$key]:'';
+                                        $servicerequestimages->service_request_id = $request_id;
+                                        $servicerequestimages->reftype = 'useruploadedphotos';
+                                        $servicerequestimages->image = 'uploads/servicerequestimages/' . $filename . '.' . $data['type'];
+                                        $servicerequestimages->created_at = date('Y-m-d H:i:s');
+                                        $servicerequestimages->save(false);
+                                    }
+                                }
+                                $model->reference_no = $reference_no;
+                                if($model->save(false)){
+                                   $todolist = new TodoList();
+                                   $todolist->user_id = $user_id;
+                                   $todolist->service_request_id = $request_id;
+                                   $todolist->property_id = $model->property_id;
+                                   $todolist->reftype = 'Service';
+                                   $todolist->service_type = $type;
+                                   $todolist->created_at =  date("Y-m-d H:i:s");
+                                   $todolist->status = 'New';
+                                   if($todolist->save()){
+                                       return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
+
+                                   }else{
+                                       return array('status' => 0, 'message' => $todolist->getErrors());
+
+                                   }
+                                }
+                            }else{
+                                return array('status' => 0, 'message' => $model->getErrors());
+
+                            }
+
+                        }else{
+                            return array('status' => 0, 'message' => $model->getErrors());
+
+                        }
+
+                    break;
+                    case "Mover";
+                        $model->attributes = Yii::$app->request->post();
+                        $model->user_id = $user_id;
+                        $model->reftype = $type;
+                        $model->scenario = 'bookmover';
+                        if($model->validate()){
+                            $model->date = date('Y-m-d',strtotime($model->date));
+                            $model->status = 'New';
+                            $model->created_at = date("Y-m-d H:i:s");
+                            if($model->save()) {
+                                $request_id = $model->id;
+                                $reference_no = Yii::$app->common->generatereferencenumber($request_id);
+                                $model->reference_no = $reference_no;
+                                if($model->save(false)){
+                                    $todolist = new TodoList();
+                                    $todolist->user_id = $user_id;
+                                    $todolist->service_request_id = $request_id;
+                                    $todolist->property_id = $model->property_id;
+                                    $todolist->reftype = 'Service';
+                                    $todolist->service_type = $type;
+                                    $todolist->created_at =  date("Y-m-d H:i:s");
+                                    $todolist->status = 'New';
+                                    if($todolist->save()){
+                                        return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
+
+                                    }else{
+                                        return array('status' => 0, 'message' => $todolist->getErrors());
+
+                                    }
+                                }
+                            }else{
+                                return array('status' => 0, 'message' => $model->getErrors());
+
+                            }
+
+                        }else{
+                            return array('status' => 0, 'message' => $model->getErrors());
+
+                        }
+
+                        break;
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+
         }
     }
     public function actionTransactions()

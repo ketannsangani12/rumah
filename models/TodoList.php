@@ -158,6 +158,11 @@ class TodoList extends \yii\db\ActiveRecord
         return $this->hasOne(BookingRequests::className(), ['id' => 'request_id']);
     }
 
+
+    public function getServicerequest()
+    {
+        return $this->hasOne(ServiceRequests::className(), ['id' => 'service_request_id']);
+    }
     /**
      * Gets query for [[User]].
      *

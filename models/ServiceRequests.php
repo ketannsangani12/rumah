@@ -42,6 +42,8 @@ use Yii;
 class ServiceRequests extends \yii\db\ActiveRecord
 {
     public $quote;
+    public $descriptions;
+    public $pictures;
     /**
      * {@inheritdoc}
      */
@@ -58,6 +60,8 @@ class ServiceRequests extends \yii\db\ActiveRecord
         return [
             [['status'], 'required','on' => 'changestatus'],
             [['property_id', 'vendor_id', 'user_id', 'todo_id'], 'integer'],
+            [['property_id' , 'date' , 'time' , 'type'], 'required','on'=>'bookhandyman'],
+            [['user_id' , 'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'bookmover'],
             [['quote',], 'required','on' => 'uploadquote'],
             [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             [['date', 'booked_at', 'created_at', 'updated_at'], 'safe'],
@@ -90,6 +94,8 @@ class ServiceRequests extends \yii\db\ActiveRecord
             'time' => 'Time',
             'hours' => 'Hours',
             'description' => 'Description',
+            'descriptions'=>'Description',
+            'pictures'=>'Images',
             'pickup_location' => 'Pickup Location',
             'dropoff_location' => 'Dropoff Location',
             'truck_size' => 'Truck Size',
