@@ -24,16 +24,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="311">
-              <caret line="982" column="0" selection-start-line="982" selection-start-column="0" selection-end-line="982" selection-end-column="0" />
+            <state relative-caret-position="151">
+              <caret line="825" column="40" selection-start-line="825" selection-start-column="40" selection-end-line="825" selection-end-column="40" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
-                <element signature="e#110971#111126#0#PHP" expanded="false" />
-                <marker date="1600233780033" expanded="true" signature="40772:40800" ph="..." />
+                <element signature="e#110767#110922#0#PHP" expanded="false" />
+                <marker date="1600233911330" expanded="true" signature="40680:40708" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Properties.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/models/Properties.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="123">
+              <caret line="58" column="246" selection-start-line="58" selection-start-column="246" selection-end-line="58" selection-end-column="246" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -152,7 +162,6 @@
         <option value="$PROJECT_DIR$/components/JwtValidationData.php" />
         <option value="$PROJECT_DIR$/config/web.php" />
         <option value="$PROJECT_DIR$/models/PropertiesSearch.php" />
-        <option value="$PROJECT_DIR$/models/Properties.php" />
         <option value="$PROJECT_DIR$/models/BookingRequests.php" />
         <option value="$PROJECT_DIR$/models/AgentRatings.php" />
         <option value="$PROJECT_DIR$/models/PropertyRatings.php" />
@@ -181,6 +190,7 @@
         <option value="$PROJECT_DIR$/models/ServiceRequests.php" />
         <option value="$PROJECT_DIR$/models/TodoList.php" />
         <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
+        <option value="$PROJECT_DIR$/models/Properties.php" />
       </list>
     </option>
   </component>
@@ -472,12 +482,12 @@
       <workItem from="1600076188322" duration="8793000" />
       <workItem from="1600143832026" duration="5278000" />
       <workItem from="1600230308952" duration="398000" />
-      <workItem from="1600231896139" duration="1303000" />
+      <workItem from="1600231896139" duration="1468000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="421216000" />
+    <option name="totallyTimeSpent" value="421381000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -551,12 +561,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>1989</line>
+          <line>1986</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>1814</line>
+          <line>1811</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
@@ -841,13 +851,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/Properties.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="885">
-          <caret line="59" column="25" selection-start-line="59" selection-start-column="17" selection-end-line="59" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/PropertiesSearch.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -920,13 +923,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="311">
-          <caret line="982" column="0" selection-start-line="982" selection-start-column="0" selection-end-line="982" selection-end-column="0" />
+        <state relative-caret-position="151">
+          <caret line="825" column="40" selection-start-line="825" selection-start-column="40" selection-end-line="825" selection-end-column="40" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
-            <element signature="e#110971#111126#0#PHP" expanded="false" />
-            <marker date="1600233780033" expanded="true" signature="40772:40800" ph="..." />
+            <element signature="e#110767#110922#0#PHP" expanded="false" />
+            <marker date="1600233911330" expanded="true" signature="40680:40708" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Properties.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="58" column="246" selection-start-line="58" selection-start-column="246" selection-end-line="58" selection-end-column="246" />
+          <folding />
         </state>
       </provider>
     </entry>
