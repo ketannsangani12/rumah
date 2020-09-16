@@ -6,6 +6,7 @@ use app\models\AgentRatings;
 use app\models\BankAccounts;
 use app\models\BookingRequests;
 use app\models\Chats;
+use app\models\FavouriteProperties;
 use app\models\GoldTransactions;
 use app\models\Images;
 use app\models\PromoCodes;
@@ -337,6 +338,100 @@ class ApiusersController extends ActiveController
 
 
     }
+    public function actionAddtofavourite()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST)){
+                $model = new FavouriteProperties();
+                $model->scenario = 'addfavourite';
+                $model->attributes = Yii::$app->request->post();
+                $model->user_id = $this->user_id;
+                if($model->validate()){
+                    $favouritexists = FavouriteProperties::findOne(['property_id'=>$model->property_id,'user_id'=>$model->user_id]);
+                    if(!empty($favouritexists)){
+                        return array('status' => 0, 'message' => 'You already added this property as favourite');exit;
+                    }
+                    $model->created_at = date('Y-m-d h:i:s');
+                    $model->save();
+                    return array('status' => 1, 'message' => 'Property added as favourite successfully.');
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+
+        }
+
+
+    }
+    public function actionRemovefavourite()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST)){
+                $model = new FavouriteProperties();
+                $model->scenario = 'removefavourite';
+                $model->attributes = Yii::$app->request->post();
+                $model->user_id = $this->user_id;
+                if($model->validate()){
+                    $favouritexists = FavouriteProperties::findOne(['property_id'=>$model->property_id,'user_id'=>$model->user_id]);
+                    $favouritexists->delete();
+                    return array('status' => 1, 'message' => 'Property removed successfully.');
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+
+        }
+
+
+    }
+    public function actionFavourites()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && isset($_POST['lat']) && $_POST['lat'] != '' && isset($_POST['long']) && $_POST['long'] != '') {
+
+                $userid = $this->user_id;
+
+                $lat = (isset($_POST['lat']) && $_POST['lat'] != '') ? $_POST['lat'] : '';
+                $long = (isset($_POST['long']) && $_POST['long'] != '') ? $_POST['long'] : '';
+                $harvesformula = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance' : '';
+
+                $favouritemerchants = FavouriteProperties::find()->with([
+                    'property' => function ($query) use ($harvesformula) {
+                        $query->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,' . $harvesformula);
+                    },
+                    'property.pictures' => function ($query) {
+                        $query->select(['id', 'property_id', new \yii\db\Expression("CONCAT('/uploads/properties/', '', `image`) as image")])->one();
+                    },
+                ])->where(['user_id' => $userid])->asArray()->all();
+
+                return array('status' => 1, 'data' => $favouritemerchants);
+
+            }else{
+
+                return array('status' => 0, 'message' => 'Please allow location access to search property nearby.');
+
+            }
+        }
+
+
+
+
+    }
     public function actionGoldtransactions()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -504,137 +599,6 @@ class ApiusersController extends ActiveController
 
     }
 
-    public function actionGetchatlist()
-    {
-        $baseurl = $this->baseurl;
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            $user_id = $this->user_id;
-            $query = Chats::find()
-                ->orderBy([
-                    'rumah_chats.created_at' => SORT_DESC
-                ])
-                ->joinWith([
-                    'sender'=>function($q) use ($baseurl){
-                        return $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
-                    },
-                    'receiver'=>function($q1) use ($baseurl){
-                        return $q1->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
-                    }
-                ]);
-                $query->where(['user_id'=>$user_id])->orWhere(['receiver_id'=>$user_id])
-                    ->where('rumah_chats.id in (select MAX(tc.id) from rumah_chats as tc where tc.user_id = '.$user_id.' or tc.receiver_id = '.$user_id.')');
-
-
-            if(isset($_POST['offset'])){
-                $query->offset($_POST['offset']);
-            }
-
-            $data = $query->limit(20)->asArray()->all();
-
-            return array('status' => 1, 'data' => $data);
-        }
-    }
-
-    public function actionSendchatmsgs()
-    {
-        $baseurl = $this->baseurl;
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if(!empty($_POST)){
-                $model = new Chats();
-                $model->attributes = Yii::$app->request->post();
-                if($_POST['msg_type'] == 'image') {
-                    try{
-                        $filename = uniqid();
-                        $data = Yii::$app->common->processBase64($_POST['msg']);
-                        file_put_contents('uploads/chat/'.$filename.'.'.$data['type'], $data['data']);
-                        $model->msg = $baseurl.'/uploads/chat/'.$filename . '.' . $data['type'];
-                    }catch (Exception $e) {
-                        return array('status' => 0, 'message' => $e);
-                    }
-                }
-                if ($model->validate()) {
-                    $model->created_at =date('Y-m-d H:i:s');
-                    if($model->save(false)){
-                        //print_r($model->merchant);exit;
-
-                        $lastmessage = Chats::find()
-                            ->orderBy([
-                                'rumah_chats.id' => SORT_DESC
-                            ])
-                            ->joinWith(['sender'=>function($q) use ($baseurl){
-                                $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
-                            }])
-                            ->joinWith(['receiver'=>function($q) use ($baseurl){
-                                $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
-                            }])->where(['rumah_users.id'=>$model->id])->asArray()->one();
-                        return array('status' => 1, 'message' => 'You have added chat msg successfully.','data'=>$lastmessage);
-                    }else{
-                        return array('status' => 0, 'message' => $model->getErrors());
-                    }
-
-                } else {
-                    return array('status' => 0, 'message' => $model->getErrors());
-                }
-            } else {
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-            }
-        }
-    }
-
-    public function actionGetchatmsgs()
-    {
-        $baseurl = $this->baseurl;
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            $user_id = $this->user_id;
-
-            if(!isset($_POST['user_id'])){
-                echo json_encode(array('status' => 0, 'message' => 'User id is required'));exit;
-            }
-
-            $query = Chats::find()
-                ->orderBy([
-                    'rumah_chats.id' => SORT_DESC
-                ])
-                ->joinWith(['sender'=>function($q) use ($baseurl){
-                    $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
-                }])
-                ->joinWith(['receiver'=>function($q) use ($baseurl){
-                    $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
-                }]);
-
-            if($user_id != null){
-                $query->where(['sender_id'=>$user_id])->andWhere(['receiver_id'=>$_POST['user_id']]);
-                $query->where(['receiver_id'=>$user_id])->andWhere(['sender_id'=>$_POST['user_id']]);
-            }
-
-
-
-            if(isset($_POST['last_msg_at'])){
-                $query->andWhere(['>=','rumah_chats.created_at',$_POST['last_msg_at']]);
-            }
-
-            if(isset($_POST['offset']) && !isset($_POST['last_msg_at'])){
-                $query->offset($_POST['offset']);
-            }
-
-            if(!isset($_POST['last_msg_at'])){
-                $query->limit(20);
-            }
-
-            $data = $query->asArray()->all();
-
-            return array('status' => 1, 'data' => $data);
-        }
-    }
     public function actionTopup()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -886,6 +850,7 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if (!empty($_POST) && isset($_POST['lat']) && $_POST['lat']!='' && isset($_POST['long']) && $_POST['long']!='') {
+                $user_id = $this->user_id;
                 $lat = (isset($_POST['lat']) && $_POST['lat']!='')?$_POST['lat']:'';
                 $long = (isset($_POST['long']) && $_POST['long']!='')?$_POST['long']:'';
                 $furnished_status = (isset($_POST['furnished_status']) && $_POST['furnished_status']!='')?$_POST['furnished_status']:'';
@@ -910,7 +875,7 @@ class ApiusersController extends ActiveController
                     ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,'.$harvesformula)
                 ->with([
                     'pictures'=>function ($query) {
-                        $query->select('id,property_id,image')->one();
+                        $query->select(['id','property_id',new \yii\db\Expression("CONCAT('/uploads/properties/', '', `image`) as image")])->one();
                     },
                 ]);
                 if(!empty($commute)){
@@ -975,6 +940,12 @@ class ApiusersController extends ActiveController
 
 
                 $properties =  $query1->asArray()->all();
+                if(!empty($properties)){
+                    foreach ($properties as $key=>$property){
+                        $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
+
+                    }
+                }
                 return array('status' => 1, 'data' => $properties,'total'=>count($properties));
 
 
@@ -995,12 +966,12 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if (!empty($_POST) && !empty($_POST['property_id'])) {
-
+                $user_id = $this->user_id;
                 $query1 = Properties::find()
-                    ->select('id,user_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price')
+                    ->select('id,user_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,carparks,amenities,commute')
                     ->with([
                         'images'=>function ($query) {
-                            $query->select('id,property_id,image');
+                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('/uploads/properties/', '', `image`) as image")]);
                         },
                         'user'=>function($query){
                             $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
@@ -1008,6 +979,7 @@ class ApiusersController extends ActiveController
                     ])->where(['id'=>$_POST['property_id']]);
 
                 $propertydata =  $query1->asArray()->one();
+                $propertydata['favourite'] = Properties::checkfavourite($_POST['property_id'],$user_id);
 
                 return array('status' => 1, 'data' => $propertydata,);
 

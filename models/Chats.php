@@ -32,7 +32,7 @@ class Chats extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'receiver_id', 'send_by', 'msg', 'msg_type'], 'required'],
+            [['user_id', 'receiver_id', 'msg', 'msg_type'], 'required'],
             [['user_id', 'receiver_id'], 'integer'],
             [['msg'], 'string'],
             [['created_at', 'updated_at'], 'safe'],

@@ -156,4 +156,14 @@ class Properties extends \yii\db\ActiveRecord
     {
         return $this->hasOne(BookingRequests::className(), ['id' => 'request_id']);
     }
+
+    public static function checkfavourite($merchant_id,$user_id)
+    {
+        $favourite_exist = FavouriteProperties::find()->where(['property_id'=>$merchant_id,'user_id'=>$user_id])->one();
+        if(!empty($favourite_exist)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
