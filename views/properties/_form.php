@@ -19,7 +19,10 @@ use kartik\date\DatePicker;
 
         <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-        <?= $form->field($model, 'location')->widget(\fv\yii\geocomplete\Widget::class); ?>
+        <?= $form->field($model, 'location')->textInput();
+            //->widget(\fv\yii\geocomplete\Widget::class); ?>
+        <?= $form->field($model, 'latitude')->textInput(); ?>
+        <?= $form->field($model, 'longitude')->textInput(); ?>
 
 
         <?= $form->field($model, 'property_type')->dropDownList(Yii::$app->common->propertytype()) ?>

@@ -1597,7 +1597,7 @@ class ApiusersController extends ActiveController
         } else {
             $user_id = $this->user_id;
            // echo $user_id;exit;
-            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','due_date',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                 ->with([
                     'request'=>function ($query) {
                         $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
@@ -2048,17 +2048,18 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='') {
+            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='' && isset($_POST['status']) && $_POST['status']!='') {
 
                 $user_id = $this->user_id;
+                $status = $_POST['status'];
                 $systemaccount = Yii::$app->common->getsystemaccount();
                 $todomodel = TodoList::find()->where(['id'=>$_POST['todo_id']])->one();
                 if (empty($todomodel)){
                     return array('status' => 0, 'message' => 'Data not found.');
                 }
-                $this->actionUpdatetodostatus($_POST['todo_id'],'Accepted',$todomodel->reftype,$_POST);
+              $return =  $this->actionUpdatetodostatus($_POST['todo_id'],$status,$todomodel->reftype,$_POST);
 
-
+              return $return;
 
                 //$todoitems = TodoItems::find()->where(['todo_id'=>$_POST['todo_id']])
 
@@ -2294,8 +2295,8 @@ class ApiusersController extends ActiveController
                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                        }
-                   } else if ($status == 'Refund Rejected') {
-                       $todomodel->status = $status;
+                   } else if ($status == 'Rejected') {
+                       $todomodel->status = ($status=='Rejected')?'Refund Rejected':'';
                        if ($todomodel->save()) {
                            $transaction->commit();
                            return array('status' => 1, 'message' => 'You have rejected refund request successfully.');
@@ -2873,7 +2874,8 @@ class ApiusersController extends ActiveController
                break;
            case "Service";
            if(($todomodel->service_type=='Handyman' || $todomodel->service_type=='Mover') && $todomodel->status=='Pending'){
-                if($status=='Accepted'){
+
+               if($status=='Accepted'){
                    $todomodel->status = 'Accepted';
                    $todomodel->updated_at = date("Y-m-d H:i:s");
                    if($todomodel->save(false)){
@@ -2882,6 +2884,9 @@ class ApiusersController extends ActiveController
                      if($todomodel->servicerequest->save(false)){
                          return array('status' => 1, 'message' => 'You have accepted request successfully.');
 
+                     }else{
+                         return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
                      }
                    }else{
                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -2889,7 +2894,22 @@ class ApiusersController extends ActiveController
                    }
 
                 }else if($status=='Rejected'){
+                    $todomodel->status = 'Rejected';
+                    $todomodel->updated_at = date("Y-m-d H:i:s");
+                    if($todomodel->save(false)){
+                        $todomodel->servicerequest->status ='Rejected';
+                        $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                        if($todomodel->servicerequest->save(false)){
+                            return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
+                        }else{
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                        }
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
                 }
            }
            break;
