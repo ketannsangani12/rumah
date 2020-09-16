@@ -978,6 +978,9 @@ class ApiusersController extends ActiveController
                 return array('status' => 1, 'data' => $properties,'total'=>count($properties));
 
 
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
             }
         }
 
