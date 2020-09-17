@@ -77,6 +77,7 @@ use kartik\date\DatePicker;
                 <?= $form->field($model, 'auto_rental')->checkbox() ?>
 
                 <?= $form->field($model, 'insurance')->checkbox() ?>
+                <?= $form->field($model, 'is_featured')->checkbox() ?>
 
 
             </div>

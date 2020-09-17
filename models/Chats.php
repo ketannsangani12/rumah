@@ -32,8 +32,8 @@ class Chats extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'receiver_id', 'msg', 'msg_type'], 'required'],
-            [['user_id', 'receiver_id'], 'integer'],
+            [['user_id', 'landlord_id', 'send_by','msg', 'msg_type'], 'required'],
+            [['user_id', 'landlord_id'], 'integer'],
             [['msg'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['send_by', 'msg_type'], 'string', 'max' => 10],
@@ -48,7 +48,7 @@ class Chats extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'receiver_id' => 'Receiver ID',
+            'landlord_id' => 'Receiver ID',
             'send_by' => 'Send By',
             'msg' => 'Msg',
             'msg_type' => 'Msg Type',
@@ -57,13 +57,19 @@ class Chats extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getSender()
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMerchant()
     {
-        return $this->hasOne(Users::className(), ['id' => 'user_id']);
+        return $this->hasOne(Users::className(), ['id' => 'landlord_id']);
     }
 
-    public function getReceiver()
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
     {
-        return $this->hasOne(Users::className(), ['id' => 'receiver_id']);
+        return $this->hasOne(Users::className(), ['id' => 'user_id']);
     }
 }

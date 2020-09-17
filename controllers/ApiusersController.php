@@ -338,6 +338,51 @@ class ApiusersController extends ActiveController
 
 
     }
+    public function actionDashboard()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+
+            if (!empty($_POST)) {
+                $baseurl = $this->baseurl;
+                $userid = $this->user_id;
+
+                $lat = (isset($_POST['lat']) && $_POST['lat'] != '') ? $_POST['lat'] : '';
+                $long = (isset($_POST['long']) && $_POST['long'] != '') ? $_POST['long'] : '';
+                //$harvesformula = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance' : '';
+
+                $favouritemerchants = FavouriteProperties::find()->with([
+                    'property' => function ($query) {
+                        $query->select('id,property_no,title,location,property_type,type,price');
+                    },
+                    'property.pictures' => function ($query) use($baseurl) {
+                        $query->select(['id', 'property_id', new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
+                    },
+                ])->where(['user_id' => $userid])->asArray()->all();
+                $featuredproperties = Properties::find()
+                    ->select('id,property_no,title,location,property_type,type,price')
+                    ->with([
+                        'pictures'=>function ($query) use($baseurl) {
+                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
+                        },
+                    ])->where(['is_featured'=>1])->asArray()->all();
+                $data['isaved'] = $favouritemerchants;
+                $data['featured'] = $featuredproperties;
+
+                return array('status' => 1, 'data' => $data);
+
+            }else{
+
+                return array('status' => 0, 'message' => 'Please allow location access to search property nearby.');
+
+            }
+
+        }
+
+
+    }
     public function actionAddtofavourite()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -403,7 +448,7 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if (!empty($_POST) && isset($_POST['lat']) && $_POST['lat'] != '' && isset($_POST['long']) && $_POST['long'] != '') {
-
+                $baseurl = $this->baseurl;
                 $userid = $this->user_id;
 
                 $lat = (isset($_POST['lat']) && $_POST['lat'] != '') ? $_POST['lat'] : '';
@@ -414,8 +459,8 @@ class ApiusersController extends ActiveController
                     'property' => function ($query) use ($harvesformula) {
                         $query->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,' . $harvesformula);
                     },
-                    'property.pictures' => function ($query) {
-                        $query->select(['id', 'property_id', new \yii\db\Expression("CONCAT('/uploads/properties/', '', `image`) as image")])->one();
+                    'property.pictures' => function ($query) use($baseurl) {
+                        $query->select(['id', 'property_id', new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
                     },
                 ])->where(['user_id' => $userid])->asArray()->all();
 
@@ -849,6 +894,7 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
+            $baseurl = $this->baseurl;
             if (!empty($_POST) && isset($_POST['lat']) && $_POST['lat']!='' && isset($_POST['long']) && $_POST['long']!='') {
                 $user_id = $this->user_id;
                 $lat = (isset($_POST['lat']) && $_POST['lat']!='')?$_POST['lat']:'';
@@ -874,8 +920,8 @@ class ApiusersController extends ActiveController
                 $query1 = Properties::find()
                     ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,'.$harvesformula)
                 ->with([
-                    'pictures'=>function ($query) {
-                        $query->select(['id','property_id',new \yii\db\Expression("CONCAT('/uploads/properties/', '', `image`) as image")])->one();
+                    'pictures'=>function ($query) use($baseurl) {
+                        $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
                     },
                 ]);
                 if(!empty($commute)){
@@ -966,12 +1012,13 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if (!empty($_POST) && !empty($_POST['property_id'])) {
+                $baseurl = $this->baseurl;
                 $user_id = $this->user_id;
                 $query1 = Properties::find()
                     ->select('id,user_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,carparks,amenities,commute')
                     ->with([
-                        'images'=>function ($query) {
-                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('/uploads/properties/', '', `image`) as image")]);
+                        'images'=>function ($query) use($baseurl) {
+                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")]);
                         },
                         'user'=>function($query){
                             $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
@@ -979,9 +1026,39 @@ class ApiusersController extends ActiveController
                     ])->where(['id'=>$_POST['property_id']]);
 
                 $propertydata =  $query1->asArray()->one();
-                $propertydata['favourite'] = Properties::checkfavourite($_POST['property_id'],$user_id);
+                if(empty($propertydata)){
+                    return array('status' => 0, 'message' => 'No property details found.');
 
-                return array('status' => 1, 'data' => $propertydata,);
+                }
+                $propertydata['favourite'] = Properties::checkfavourite($_POST['property_id'],$user_id);
+                $lat = $propertydata['latitude'];
+                $long = $propertydata['longitude'];
+                $harvesformula = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance': '';
+                $harvesformula1 = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
+                $query1 = Properties::find()
+                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,'.$harvesformula)
+                    ->with([
+                        'pictures'=>function ($query) use($baseurl) {
+                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
+                        },
+                    ]);
+                $distance = 20;
+                $propertytype = $propertydata['property_type'];
+                $query1->where(['property_type'=>$propertytype]);
+                if($distance!='' && $lat!='' && $long!=''){
+                    $query1->andWhere(['<=', $harvesformula1, $distance]);
+
+                }
+                $properties =  $query1->asArray()->all();
+                if(!empty($properties)){
+                    foreach ($properties as $key=>$property){
+                        $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
+
+                    }
+                }
+                $data['propertydata'] = $propertydata;
+                $data['similarproperties'] = $properties;
+                return array('status' => 1, 'data' => $data);
 
 
             }else{

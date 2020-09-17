@@ -35,7 +35,7 @@ class ApichatController extends ActiveController
     public static function allowedDomains()
     {
         return [
-             '*',                        
+             '*',
             // star allows all domains
             // 'http://localhost:3000',
             // 'http://test2.example.com',
@@ -80,6 +80,7 @@ class ApichatController extends ActiveController
             $headers = Yii::$app->request->headers;
             if(!empty($headers) && isset($headers['token']) && $headers['token']!=''){
                 try{
+                    $type = $_POST['from'];
                     $token = Yii::$app->jwt->getParser()->parse((string) $headers['token']);
                     $data = Yii::$app->jwt->getValidationData(); // It will use the current time to validate (iat, nbf and exp)
                     $data->setIssuer(\Yii::$app->params[ 'hostInfo' ]);
@@ -88,7 +89,12 @@ class ApichatController extends ActiveController
                     // $data->setCurrentTime(time() + 61);
                     if($token->validate($data)){
                         $userdata = $token->getClaim('uid');
-                        $this->user_id = $userdata->id;
+                        if($type=='customer_app') {
+                            $this->userId = $userdata->id;
+                        }elseif($type=='merchant_app'){
+                            $this->merchantId = $userdata->id;
+
+                        }
                         return true;
 
 
@@ -123,29 +129,34 @@ class ApichatController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            $user_id = $this->user_id;
             $query = Chats::find()
                 ->orderBy([
                     'rumah_chats.created_at' => SORT_DESC
                 ])
                 ->joinWith([
-                    'sender'=>function($q) use ($baseurl){
+                    'merchant'=>function($q) use ($baseurl){
                         return $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                     },
-                    'receiver'=>function($q1) use ($baseurl){
+                    'user'=>function($q1) use ($baseurl){
                         return $q1->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                     }
                 ]);
-            $query->where(['user_id'=>$user_id])->orWhere(['receiver_id'=>$user_id])
-                ->where('rumah_chats.id in (select MAX(tc.id) from rumah_chats as tc where tc.user_id = '.$user_id.' or tc.receiver_id = '.$user_id.')');
+            if($this->userId != null){
+                $query->where(['user_id'=>$this->userId])
+                    ->where('rumah_chats.id in (select MAX(tc.id) from rumah_chats as tc where tc.user_id = '.$this->userId.' and tc.landlord_id = rumah_chats.landlord_id)');
+            }
 
+            if($this->merchantId != null){
+                $query->where(['landlord_id'=>$this->userId])
+                    ->where('rumah_chats.id in (select MAX(tc.id) from rumah_chats as tc where tc.landlord_id = '.$this->merchantId.' and tc.user_id = rumah_chats.user_id)');;
+            }
 
             if(isset($_POST['offset'])){
                 $query->offset($_POST['offset']);
             }
 
-            $query->limit(20)->all();
-            echo $query->createCommand()->getRawSql();exit;
+         $data =   $query->limit(20)->all();
+            //echo $query->createCommand()->getRawSql();exit;
 
 
             return array('status' => 1, 'data' => $data);
@@ -162,7 +173,7 @@ class ApichatController extends ActiveController
             if(!empty($_POST)){
                 $model = new Chats();
                 $model->attributes = Yii::$app->request->post();
-                $model->user_id = $this->user_id;
+                $model->user_id = $this->userId;
                 if($_POST['msg_type'] == 'image') {
                     try{
                         $filename = uniqid();
@@ -182,10 +193,10 @@ class ApichatController extends ActiveController
                             ->orderBy([
                                 'rumah_chats.id' => SORT_DESC
                             ])
-                            ->joinWith(['sender'=>function($q) use ($baseurl){
+                            ->joinWith(['merchant'=>function($q) use ($baseurl){
                                 $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                             }])
-                            ->joinWith(['receiver'=>function($q) use ($baseurl){
+                            ->joinWith(['user'=>function($q) use ($baseurl){
                                 $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                             }])->where(['rumah_users.id'=>$model->id])->asArray()->one();
                         return array('status' => 1, 'message' => 'You have added chat msg successfully.','data'=>$lastmessage);
@@ -209,9 +220,12 @@ class ApichatController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            $user_id = $this->user_id;
 
-            if(!isset($_POST['user_id'])){
+            if($this->userId != null && !isset($_POST['landlord_id'])){
+                echo json_encode(array('status' => 0, 'message' => 'Merchant id is required'));exit;
+            }
+
+            if($this->merchantId != null && !isset($_POST['user_id'])){
                 echo json_encode(array('status' => 0, 'message' => 'User id is required'));exit;
             }
 
@@ -219,16 +233,19 @@ class ApichatController extends ActiveController
                 ->orderBy([
                     'rumah_chats.id' => SORT_DESC
                 ])
-                ->joinWith(['sender'=>function($q) use ($baseurl){
+                ->joinWith(['merchant'=>function($q) use ($baseurl){
                     $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                 }])
-                ->joinWith(['receiver'=>function($q) use ($baseurl){
+                ->joinWith(['user'=>function($q) use ($baseurl){
                     $q->select(['id','full_name as name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                 }]);
 
-            if($user_id != null){
-                $query->where(['user_id'=>$user_id])->andWhere(['receiver_id'=>$_POST['user_id']]);
+            if($this->userId != null){
+                $query->where(['user_id'=>$this->userId])->andWhere(['landlord_id'=>$_POST['landlord_id']]);
+            }
 
+            if($this->merchantId != null){
+                $query->where(['merchant_id'=>$this->merchantId])->andWhere(['user_id'=>$_POST['user_id']]);
             }
 
 
