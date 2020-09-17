@@ -42,6 +42,9 @@
                             ['label' => 'Agreement Templates', 'icon' => ' fa-adjust', 'url' => ['/agreementtemplates']],
                             ['label' => 'Packages', 'icon' => ' fa-adjust', 'url' => ['/packages']],
                             ['label' => 'Platform Fees', 'icon' => ' fa-adjust', 'url' => ['/platformfees']],
+                            ['label' => 'i-Stories', 'icon' => ' fa-adjust', 'url' => ['/istories']],
+
+                            ['label' => 'i-Lifestyles', 'icon' => ' fa-adjust', 'url' => ['/ilifestyle']],
 //                            ['label' => 'Platform Fees', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/platformfees']],
 //                            ['label' => 'Withdrawal Fees', 'icon' => ' fa-adjust', 'url' => ['/topupwallet/withdrawalfees']],
 //

@@ -8,7 +8,9 @@ use app\models\BookingRequests;
 use app\models\Chats;
 use app\models\FavouriteProperties;
 use app\models\GoldTransactions;
+use app\models\Ilifestyle;
 use app\models\Images;
+use app\models\Istories;
 use app\models\PromoCodes;
 use app\models\Properties;
 use app\models\PropertyRatings;
@@ -370,6 +372,8 @@ class ApiusersController extends ActiveController
                     ])->where(['is_featured'=>1])->asArray()->all();
                 $data['isaved'] = $favouritemerchants;
                 $data['featured'] = $featuredproperties;
+                $data['istories'] = Istories::find()->select(['id','title','link','description',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->asArray()->all();
+                $data['ilifestyles'] = Ilifestyle::find()->select(['id','title','link','description',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->asArray()->all();
 
                 return array('status' => 1, 'data' => $data);
 
