@@ -32,11 +32,11 @@ class Chats extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'landlord_id', 'send_by','msg', 'msg_type'], 'required'],
-            [['user_id', 'landlord_id'], 'integer'],
+            [['property_id', 'sender_id', 'receiver_id','msg', 'msg_type'], 'required'],
+            [['property_id','sender_id', 'receiver_id'], 'integer'],
             [['msg'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
-            [['send_by', 'msg_type'], 'string', 'max' => 10],
+            [['msg_type'], 'string', 'max' => 10],
         ];
     }
 
@@ -47,9 +47,9 @@ class Chats extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'landlord_id' => 'Receiver ID',
-            'send_by' => 'Send By',
+            'property_id' => 'User ID',
+            'sender_id' => 'Sender ID',
+            'receiver_id' => 'Receiver ID',
             'msg' => 'Msg',
             'msg_type' => 'Msg Type',
             'created_at' => 'Created At',
