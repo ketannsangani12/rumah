@@ -60,16 +60,16 @@ class Chats extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMerchant()
+    public function getSender()
     {
-        return $this->hasOne(Users::className(), ['id' => 'landlord_id']);
+        return $this->hasOne(Users::className(), ['id' => 'sender_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
+    public function getReceiver()
     {
-        return $this->hasOne(Users::className(), ['id' => 'user_id']);
+        return $this->hasOne(Users::className(), ['id' => 'receiver_id']);
     }
 }
