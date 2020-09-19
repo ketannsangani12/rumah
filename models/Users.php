@@ -54,6 +54,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['email'], 'email'],
             [['email'], 'unique','on'=>'adduser'],
             [['email'], 'unique','on'=>'register'],
+            [['contact_no'], 'unique','on'=>'register'],
             [['email', 'password'], 'required','on' => 'login'],
             ['password', 'validatePassword','on' => 'login'],
             [['bank_account_name','bank_account_no','bank_name'], 'required','on' => 'adduseraccount'],

@@ -107,7 +107,7 @@ class ApiusersController extends ActiveController
         header("Access-Control-Allow-Headers: X-Requested-With,token,user");
         parent::beforeAction($action);
 
-        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal') {
+        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp') {
             $headers = Yii::$app->request->headers;
             if(!empty($headers) && isset($headers['token']) && $headers['token']!=''){
                 try{
@@ -213,6 +213,37 @@ class ApiusersController extends ActiveController
                     $save = $model->save();
 
                     if($save){
+                        $contact_no = $model->contact_no;
+
+                        if($contact_no!=''){
+                            $curl = curl_init();
+//60126479285
+                            curl_setopt_array($curl, array(
+                                CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&from=RUMAH&to=".$contact_no."&servid=MES01&tempCode=Rumah&ApiReturnType=2&pass=SyR%26PbN0",
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => "",
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 30,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => "POST",
+
+                            ));
+                            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
+
+
+
+                            $response = curl_exec($curl);
+                            $err = curl_error($curl);
+
+                            curl_close($curl);
+
+                            if ($err) {
+                                echo "cURL Error #:" . $err;exit;
+                            } else {
+                                //echo $response;exit;
+                            }
+
+                        }
                         if(!empty($refferal_code)){
                             $referall_id = Users::getUserIdFromReferralCode($refferal_code);
                             if($referall_id!=null && $model->id!=$referall_id){
@@ -221,7 +252,8 @@ class ApiusersController extends ActiveController
                                     $model->referred_by = $referral_user->id;
                                     $model->save(false);
 
-                                    return array('status' => 1, 'message' => 'You have Registered  Successfully.Please check you inbox to activate your account.','user_id'=>$model->id);
+                                    return array('status' => 1, 'message' => 'You have Registered  Successfully.We have sent you OTP on your mobile number,Please verify it.','user_id'=>$model->id);
+
 
                                 }else{
                                     return array('status' => 0, 'message' => 'Please enter Valid Referral Code.');
@@ -234,7 +266,7 @@ class ApiusersController extends ActiveController
                         }else{
                             $model->save(false);
 
-                            return array('status' => 1, 'message' => 'You have Registered  Successfully.Please check you inbox to activate your account.','user_id'=>$model->id);
+                            return array('status' => 1, 'message' => 'You have Registered  Successfully.We have sent you OTP on your mobile number,Please verify it.','user_id'=>$model->id);
 
                         }
 
@@ -252,6 +284,65 @@ class ApiusersController extends ActiveController
             }
         }
 
+
+    }
+
+    public function actionVerifyotp(){
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && isset($_POST['contact_no']) && $_POST['contact_no']!='' && isset($_POST['otp']) && $_POST['otp']!='') {
+               $contact_no = $_POST['contact_no'];
+               $otp = $_POST['otp'];
+                $curl = curl_init();
+                $model = Users::find()->where(['contact_no'=>$contact_no])->one();
+                if(empty($model)){
+                    return array('status' => 0, 'message' => 'User details not found.');
+
+                }
+//60126479285
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPVerify?user=TEST177&from=RUMAH&to=".$contact_no."&pincode=".$otp."&servid=MES01&tempCode=Rumah&ApiReturnType=2&pass=SyR%26PbN0",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+
+                ));
+                curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
+
+
+
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+
+                curl_close($curl);
+
+                //print_r($response);exit;
+                if ($err) {
+                    return array('status' => 0, 'message' => 'Something went wrong.Please try again.');
+
+                } else {
+                    $response = json_decode($response);
+                    if(!empty($response) && $response->StatusCode==200){
+                        $model->status = 1;
+                        $model->save(false);
+                        return array('status' => 1, 'message' => 'Your account have Verified Successfully.g');
+
+                    }else{
+                        return array('status' => 0, 'message' => 'You have entered wrong OTP.Please enter correct OTP.');
+
+                    }
+                    //echo $response;exit;
+                }
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+        }
 
     }
 
