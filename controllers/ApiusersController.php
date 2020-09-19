@@ -330,7 +330,7 @@ class ApiusersController extends ActiveController
                     if(!empty($response) && $response->StatusCode==200){
                         $model->status = 1;
                         $model->save(false);
-                        return array('status' => 1, 'message' => 'Your account have Verified Successfully.g');
+                        return array('status' => 1, 'message' => 'Your account have Verified Successfully.');
 
                     }else{
                         return array('status' => 0, 'message' => 'You have entered wrong OTP.Please enter correct OTP.');

@@ -127,13 +127,17 @@ class ApichatController extends ActiveController
                 }])
                 ->joinWith(['receiver'=>function($q) use ($baseurl){
                     $q->select(['id','full_name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
-                }]);
+                }])
+                ->joinWith(['property'=>function($q) use ($baseurl){
+                    $q->select(['id','property_no','title']);
+                }]);;
 
             if($this->userId != null){
                 $query->where(['or',
                     ['sender_id'=>$this->userId],
                     ['receiver_id'=>$this->userId]
-                ])->andWhere('rumah_chats.id in (select MAX(tc.id) from rumah_chats as tc where tc.sender_id = '.$this->userId.' or tc.receiver_id = '.$this->userId.')');
+                ]);
+                    //->andWhere('rumah_chats.id in (select tc.id from rumah_chats as tc where tc.sender_id = '.$this->userId.' or tc.receiver_id = '.$this->userId.')');
             }
 
             $query->groupBy(['property_id']);
@@ -141,9 +145,10 @@ class ApichatController extends ActiveController
             if(isset($_POST['offset'])){
                 $query->offset($_POST['offset']);
             }
-           echo  $query->createCommand()->getRawSql();exit;
+           //echo  $query->createCommand()->getRawSql();exit;
 
-            $data = $query->limit(20)->asArray()->all();
+            $data = $query->asArray()->all();
+
 
             return array('status' => 1, 'data' => $data);
         }

@@ -72,4 +72,8 @@ class Chats extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'receiver_id']);
     }
+    public function getProperty()
+    {
+        return $this->hasOne(Properties::className(), ['id' => 'property_id']);
+    }
 }
