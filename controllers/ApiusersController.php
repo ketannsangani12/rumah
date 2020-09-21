@@ -3028,6 +3028,23 @@ class ApiusersController extends ActiveController
                }
 
                break;
+           case "Appointment";
+           if($status=='Completed') {
+               $todomodel->status = 'Completed';
+               $todomodel->updated_at = date("Y-m-d H:i:s");
+               if ($todomodel->save(false)) {
+                   return array('status' => 1, 'message' => 'You have completed appointment successfully.');
+
+               }
+           }else if($status=='Cancelled'){
+               $todomodel->status = 'Cancelled';
+               $todomodel->updated_at = date("Y-m-d H:i:s");
+               if ($todomodel->save(false)) {
+                   return array('status' => 1, 'message' => 'You have Cancelled appointment successfully.');
+
+               }
+           }
+               break;
            case "Service";
            if(($todomodel->service_type=='Handyman' || $todomodel->service_type=='Mover') && $todomodel->status=='Pending'){
 

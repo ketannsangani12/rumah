@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApichatController.php" afterPath="$PROJECT_DIR$/controllers/ApichatController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
@@ -27,12 +28,12 @@
       <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="1956" column="105" selection-start-line="1956" selection-start-column="105" selection-end-line="1956" selection-end-column="105" />
+            <state relative-caret-position="386">
+              <caret line="3042" column="91" selection-start-line="3042" selection-start-column="91" selection-end-line="3042" selection-end-column="91" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
                 <element signature="e#119383#119538#0#PHP" expanded="false" />
-                <marker date="1600521617718" expanded="true" signature="45943:45971" ph="..." />
+                <marker date="1600685654756" expanded="true" signature="45943:45971" ph="..." />
               </folding>
             </state>
           </provider>
@@ -41,8 +42,8 @@
       <file leaf-file-name="ApichatController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApichatController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="257">
-              <caret line="131" column="57" selection-start-line="131" selection-start-column="57" selection-end-line="131" selection-end-column="57" />
+            <state relative-caret-position="2655">
+              <caret line="238" column="32" selection-start-line="238" selection-start-column="32" selection-end-line="238" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -61,7 +62,7 @@
       <file leaf-file-name="Chats.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/Chats.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="617">
+            <state relative-caret-position="1140">
               <caret line="76" column="75" selection-start-line="76" selection-start-column="75" selection-end-line="76" selection-end-column="75" />
               <folding />
             </state>
@@ -394,18 +395,19 @@
       <workItem from="1600400674965" duration="4950000" />
       <workItem from="1600489283190" duration="1079000" />
       <workItem from="1600506930382" duration="2654000" />
-      <workItem from="1600519830530" duration="1417000" />
+      <workItem from="1600519830530" duration="1871000" />
+      <workItem from="1600684753883" duration="710000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="449668000" />
+    <option name="totallyTimeSpent" value="450832000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="836" extended-state="0" />
+    <frame x="0" y="23" width="1440" height="836" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28397712" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28755364" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42876345" sideWeight="0.5028612" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -835,7 +837,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/models/Chats.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="617">
+        <state relative-caret-position="1140">
           <caret line="76" column="75" selection-start-line="76" selection-start-column="75" selection-end-line="76" selection-end-column="75" />
           <folding />
         </state>
@@ -843,20 +845,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApichatController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="131" column="57" selection-start-line="131" selection-start-column="57" selection-end-line="131" selection-end-column="57" />
+        <state relative-caret-position="2655">
+          <caret line="238" column="32" selection-start-line="238" selection-start-column="32" selection-end-line="238" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="1956" column="105" selection-start-line="1956" selection-start-column="105" selection-end-line="1956" selection-end-column="105" />
+        <state relative-caret-position="386">
+          <caret line="3042" column="91" selection-start-line="3042" selection-start-column="91" selection-end-line="3042" selection-end-column="91" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
             <element signature="e#119383#119538#0#PHP" expanded="false" />
-            <marker date="1600521617718" expanded="true" signature="45943:45971" ph="..." />
+            <marker date="1600685654756" expanded="true" signature="45943:45971" ph="..." />
           </folding>
         </state>
       </provider>
