@@ -233,13 +233,17 @@ class ApichatController extends ActiveController
                 }]);
 
             //if($_POST['sender_id'] != null){
-                $query->where(['or',
-                    ['sender_id'=>$_POST['sender_id']],
-                    ['receiver_id'=>$_POST['receiver_id']]
-                ])->orWhere(['or',
-                    ['sender_id'=>$_POST['receiver_id']],
-                    ['receiver_id'=>$_POST['sender_id']]
-                ])->andWhere(['property_id'=>$_POST['property_id']]);
+//                $query->where(['or',
+//                    ['sender_id'=>$_POST['sender_id']],
+//                    ['receiver_id'=>$_POST['receiver_id']]
+//                ])->orWhere(['or',
+//                    ['sender_id'=>$_POST['receiver_id']],
+//                    ['receiver_id'=>$_POST['sender_id']]
+//                ])
+                 $sender_id = $_POST['sender_id'];
+                 $receiver_id = $_POST['receiver_id'];
+                 $query->where('(sender_id = '.$sender_id.' OR receiver_id = '.$receiver_id.') OR (sender_id = '.$receiver_id.' OR receiver_id = '.$sender_id.')');
+                 $query->andWhere(['property_id'=>$_POST['property_id']]);
            // }
 
 
