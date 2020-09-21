@@ -3040,7 +3040,7 @@ class ApiusersController extends ActiveController
                $todomodel->status = 'Cancelled';
                $todomodel->updated_at = date("Y-m-d H:i:s");
                if ($todomodel->save(false)) {
-                   return array('status' => 1, 'message' => 'You have Cancelled appointment successfully.');
+                   return array('status' => 1, 'message' => 'You have cancelled appointment successfully.');
 
                }
            }
