@@ -129,8 +129,8 @@ class ApichatController extends ActiveController
                     $q->select(['id','full_name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                 }])
                 ->joinWith(['property'=>function($q) use ($baseurl){
-                    $q->select(['id','property_no','title']);
-                }]);;
+                    $q->select(['id','property_no','title','user_id']);
+                }]);
 
             if($this->userId != null){
                 $query->where(['or',
@@ -230,6 +230,8 @@ class ApichatController extends ActiveController
                 }])
                 ->joinWith(['receiver'=>function($q) use ($baseurl){
                     $q->select(['id','full_name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
+                }])->joinWith(['property'=>function($q) use ($baseurl){
+                    $q->select(['id','property_no','title','user_id']);
                 }]);
 
             //if($_POST['sender_id'] != null){

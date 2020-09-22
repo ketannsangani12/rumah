@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApichatController.php" afterPath="$PROJECT_DIR$/controllers/ApichatController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,10 +24,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="506">
+            <state relative-caret-position="176">
               <caret line="1150" column="80" selection-start-line="1150" selection-start-column="80" selection-end-line="1150" selection-end-column="80" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
@@ -38,15 +38,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ApichatController.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ApichatController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApichatController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="290" column="35" selection-start-line="290" selection-start-column="35" selection-end-line="290" selection-end-column="35" />
+            <state relative-caret-position="347">
+              <caret line="234" column="20" selection-start-line="234" selection-start-column="20" selection-end-line="234" selection-end-column="20" />
               <folding>
-                <element signature="e#7757#10471#0#PHP" expanded="false" />
-                <marker date="1600750950609" expanded="true" signature="11294:11471" ph="DELETE FROM " />
-                <marker date="1600750950609" expanded="true" signature="11294:11484" ph="DELETE FROM " />
+                <marker date="1600755154548" expanded="true" signature="11447:11624" ph="DELETE FROM " />
+                <marker date="1600755154548" expanded="true" signature="11447:11637" ph="DELETE FROM " />
               </folding>
             </state>
           </provider>
@@ -162,9 +161,9 @@
         <option value="$PROJECT_DIR$/models/Users.php" />
         <option value="$PROJECT_DIR$/models/Chats.php" />
         <option value="$PROJECT_DIR$/index.php" />
-        <option value="$PROJECT_DIR$/controllers/ApichatController.php" />
         <option value="$PROJECT_DIR$/config/web.php" />
         <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
+        <option value="$PROJECT_DIR$/controllers/ApichatController.php" />
       </list>
     </option>
   </component>
@@ -422,12 +421,12 @@
       <workItem from="1600684753883" duration="1326000" />
       <workItem from="1600692315558" duration="1937000" />
       <workItem from="1600696427033" duration="144000" />
-      <workItem from="1600749475644" duration="2829000" />
+      <workItem from="1600749475644" duration="3189000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="456358000" />
+    <option name="totallyTimeSpent" value="456718000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -858,18 +857,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApichatController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="290" column="35" selection-start-line="290" selection-start-column="35" selection-end-line="290" selection-end-column="35" />
-          <folding>
-            <element signature="e#7757#10471#0#PHP" expanded="false" />
-            <marker date="1600750950609" expanded="true" signature="11294:11471" ph="DELETE FROM " />
-            <marker date="1600750950609" expanded="true" signature="11294:11484" ph="DELETE FROM " />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/web.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -880,12 +867,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
+        <state relative-caret-position="176">
           <caret line="1150" column="80" selection-start-line="1150" selection-start-column="80" selection-end-line="1150" selection-end-column="80" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
             <element signature="e#120004#120159#0#PHP" expanded="false" />
             <marker date="1600753842838" expanded="true" signature="46452:46480" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/ApichatController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="347">
+          <caret line="234" column="20" selection-start-line="234" selection-start-column="20" selection-end-line="234" selection-end-column="20" />
+          <folding>
+            <marker date="1600755154548" expanded="true" signature="11447:11624" ph="DELETE FROM " />
+            <marker date="1600755154548" expanded="true" signature="11447:11637" ph="DELETE FROM " />
           </folding>
         </state>
       </provider>
