@@ -97,7 +97,7 @@ class RenovationQuotes extends \yii\db\ActiveRecord
     public function checkhavealreadyrequest($attribute, $params)
     {
         if (!$this->hasErrors()) {
-            $request = RenovationQuotes::find()->where(['in', 'status', ['Pending','Approved','Work In Progress']])->count();
+            $request = RenovationQuotes::find()->where(['property_id'=>$this->property_id])->andWhere(['in', 'status', ['Pending','Approved','Work In Progress']])->count();
 
             if ($request>0) {
                 $this->addError($attribute, 'You already submitted Renovation Quote for this Property.');
