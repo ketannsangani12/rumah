@@ -1752,7 +1752,7 @@ class ApiusersController extends ActiveController
         } else {
             $user_id = $this->user_id;
            // echo $user_id;exit;
-            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                 ->with([
                     'request'=>function ($query) {
                         $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
@@ -1876,7 +1876,7 @@ class ApiusersController extends ActiveController
 
                 $user_id = $this->user_id;
                 // echo $user_id;exit;
-                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                     ->with([
                         'request' => function ($query) {
                             $query->select(['id', 'booking_fees', 'credit_score', 'monthly_rental', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'rental_deposit', 'utilities_deposit', 'subtotal', 'total', 'commencement_date', 'tenancy_period', 'security_deposit', new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
