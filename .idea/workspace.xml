@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/web.php" afterPath="$PROJECT_DIR$/config/web.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApichatController.php" afterPath="$PROJECT_DIR$/controllers/ApichatController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
@@ -26,15 +24,15 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="1021" column="57" selection-start-line="1021" selection-start-column="57" selection-end-line="1021" selection-end-column="57" />
+            <state relative-caret-position="506">
+              <caret line="1150" column="80" selection-start-line="1150" selection-start-column="80" selection-end-line="1150" selection-end-column="80" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
-                <element signature="e#119444#119599#0#PHP" expanded="false" />
-                <marker date="1600751080022" expanded="true" signature="46004:46032" ph="..." />
+                <element signature="e#120004#120159#0#PHP" expanded="false" />
+                <marker date="1600753842838" expanded="true" signature="46452:46480" ph="..." />
               </folding>
             </state>
           </provider>
@@ -64,7 +62,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="web.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="web.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/web.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="120">
@@ -165,8 +163,8 @@
         <option value="$PROJECT_DIR$/models/Chats.php" />
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/controllers/ApichatController.php" />
-        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
         <option value="$PROJECT_DIR$/config/web.php" />
+        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
       </list>
     </option>
   </component>
@@ -424,12 +422,12 @@
       <workItem from="1600684753883" duration="1326000" />
       <workItem from="1600692315558" duration="1937000" />
       <workItem from="1600696427033" duration="144000" />
-      <workItem from="1600749475644" duration="1682000" />
+      <workItem from="1600749475644" duration="2829000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="455211000" />
+    <option name="totallyTimeSpent" value="456358000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -503,12 +501,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>2146</line>
+          <line>2156</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>1971</line>
+          <line>1981</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -872,23 +870,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="1021" column="57" selection-start-line="1021" selection-start-column="57" selection-end-line="1021" selection-end-column="57" />
-          <folding>
-            <element signature="e#35#63#0#PHP" expanded="true" />
-            <element signature="e#119444#119599#0#PHP" expanded="false" />
-            <marker date="1600751080022" expanded="true" signature="46004:46032" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/web.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="8" column="38" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="1150" column="80" selection-start-line="1150" selection-start-column="80" selection-end-line="1150" selection-end-column="80" />
+          <folding>
+            <element signature="e#35#63#0#PHP" expanded="true" />
+            <element signature="e#120004#120159#0#PHP" expanded="false" />
+            <marker date="1600753842838" expanded="true" signature="46452:46480" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -1005,6 +1005,8 @@ class ApiusersController extends ActiveController
                 $amenities = (isset($_POST['amenities']) && $_POST['amenities']!='')?explode(",",$_POST['amenities']):'';
                 $rooms = (isset($_POST['rooms']) && $_POST['rooms']!='')?$_POST['rooms']:'';
                 $size = (isset($_POST['size']) && $_POST['size']!='')?$_POST['size']:'';
+                $search = (isset($_POST['search']) && $_POST['search']!='')?$_POST['search']:'';
+                $location = (isset($_POST['location']) && $_POST['location']!='')?$_POST['location']:'';
 
                 // $searchword = $_POST['search'];
 
@@ -1045,8 +1047,14 @@ class ApiusersController extends ActiveController
 
                     }
                 }
+                if($location!=''){
+                    $query1->andWhere(['like', 'location', $location]);
+                }
+                if($search!=''){
+                    $query1->andWhere(['like', 'title', $search]);
+                }
                 if ($property_type!=''){
-                    $query1->where(['property_type'=>$property_type]);
+                    $query1->andWhere(['property_type'=>$property_type]);
                 }
                 if($room_type!=''){
                     $query1->andWhere(['room_type'=>$room_type]);
@@ -1140,7 +1148,9 @@ class ApiusersController extends ActiveController
                     ]);
                 $distance = 20;
                 $propertytype = $propertydata['property_type'];
-                $query1->where(['property_type'=>$propertytype]);
+                $query1->where(['!=', 'user_id', $user_id])->andWhere(['!=', 'id', $_POST['property_id']]);
+
+                $query1->andWhere(['property_type'=>$propertytype]);
                 if($distance!='' && $lat!='' && $long!=''){
                     $query1->andWhere(['<=', $harvesformula1, $distance]);
 
