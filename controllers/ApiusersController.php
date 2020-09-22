@@ -3056,6 +3056,23 @@ class ApiusersController extends ActiveController
                }
            }
                break;
+           case "Renovation Quote";
+               if($status=='Accepted') {
+                   $todomodel->status = 'Accepted';
+                   $todomodel->updated_at = date("Y-m-d H:i:s");
+                   if ($todomodel->save(false)) {
+                       return array('status' => 1, 'message' => 'You have accepted renovation quote successfully.');
+
+                   }
+               }else if($status=='Rejected'){
+                   $todomodel->status = 'Rejected';
+                   $todomodel->updated_at = date("Y-m-d H:i:s");
+                   if ($todomodel->save(false)) {
+                       return array('status' => 1, 'message' => 'You have Rejected renovation quote successfully.');
+
+                   }
+               }
+               break;
            case "Service";
            if(($todomodel->service_type=='Handyman' || $todomodel->service_type=='Mover') && $todomodel->status=='Pending'){
 

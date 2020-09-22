@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/RenovationquotesController.php" afterPath="$PROJECT_DIR$/controllers/RenovationquotesController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,15 +24,15 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2584">
-              <caret line="1745" column="29" selection-start-line="1745" selection-start-column="20" selection-end-line="1745" selection-end-column="29" />
+            <state relative-caret-position="80">
+              <caret line="3058" column="33" selection-start-line="3058" selection-start-column="33" selection-end-line="3058" selection-end-column="33" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
                 <element signature="e#120042#120197#0#PHP" expanded="false" />
-                <marker date="1600772708224" expanded="true" signature="46452:46480" ph="..." />
+                <marker date="1600781068909" expanded="true" signature="46452:46480" ph="..." />
               </folding>
             </state>
           </provider>
@@ -58,7 +58,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RenovationquotesController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RenovationquotesController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/RenovationquotesController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="295">
@@ -201,9 +201,9 @@
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/config/web.php" />
         <option value="$PROJECT_DIR$/controllers/ApichatController.php" />
-        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
         <option value="$PROJECT_DIR$/models/RenovationQuotes.php" />
         <option value="$PROJECT_DIR$/controllers/RenovationquotesController.php" />
+        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
       </list>
     </option>
   </component>
@@ -506,12 +506,12 @@
       <workItem from="1600749475644" duration="4191000" />
       <workItem from="1600772581651" duration="189000" />
       <workItem from="1600774096730" duration="2792000" />
-      <workItem from="1600780102013" duration="233000" />
+      <workItem from="1600780102013" duration="629000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="460934000" />
+    <option name="totallyTimeSpent" value="461330000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -960,23 +960,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2584">
-          <caret line="1745" column="29" selection-start-line="1745" selection-start-column="20" selection-end-line="1745" selection-end-column="29" />
-          <folding>
-            <element signature="e#35#63#0#PHP" expanded="true" />
-            <element signature="e#120042#120197#0#PHP" expanded="false" />
-            <marker date="1600772708224" expanded="true" signature="46452:46480" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/RenovationquotesController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="295">
           <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="3058" column="33" selection-start-line="3058" selection-start-column="33" selection-end-line="3058" selection-end-column="33" />
+          <folding>
+            <element signature="e#35#63#0#PHP" expanded="true" />
+            <element signature="e#120042#120197#0#PHP" expanded="false" />
+            <marker date="1600781068909" expanded="true" signature="46452:46480" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
