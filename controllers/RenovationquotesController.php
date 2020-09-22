@@ -104,6 +104,7 @@ class RenovationquotesController extends Controller
                     $todorequest = new TodoList();
                     $todorequest->renovation_quote_id = $model->id;
                     $todorequest->property_id = $model->property_id;
+                    $todorequest->landlord_id = $model->landlord_id;
                     $todorequest->reftype = 'Renovation Quote';
                     $todorequest->status = 'Pending';
                     $todorequest->created_at = date("Y-m-d H:i:s");
