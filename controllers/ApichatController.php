@@ -265,4 +265,39 @@ class ApichatController extends ActiveController
             return array('status' => 1, 'data' => $data);
         }
     }
+    public function actionDeletechat()
+    {
+        $baseurl = $this->baseurl;
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!isset($_POST['sender_id']) || $_POST['sender_id']==''){
+                echo json_encode(array('status' => 0, 'message' => 'Sender id is required'));exit;
+            }
+
+
+
+            if(!isset($_POST['property_id']) || $_POST['property_id']==''){
+                echo json_encode(array('status' => 0, 'message' => 'Property id is required'));exit;
+            }
+
+
+            $sender_id = $this->userId;
+            $receiver_id = $_POST['sender_id'];
+            $property_id = $_POST['property_id'];
+            $delete = Yii::$app->db->createCommand("
+    DELETE FROM rumah_chats 
+    WHERE ((sender_id = '$sender_id' OR receiver_id = '$receiver_id') OR (sender_id = '$receiver_id' OR receiver_id = '$sender_id')) AND property_id = '$property_id'
+")->execute();
+           if($delete){
+               return array('status' => 1, 'message' => 'You have deleted chat successfully.');
+
+           }else{
+               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+           }
+        }
+    }
+
 }
