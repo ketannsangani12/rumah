@@ -107,7 +107,7 @@ class ApiusersController extends ActiveController
         header("Access-Control-Allow-Headers: X-Requested-With,token,user");
         parent::beforeAction($action);
 
-        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp') {
+        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp') {
             $headers = Yii::$app->request->headers;
             if(!empty($headers) && isset($headers['token']) && $headers['token']!=''){
                 try{
@@ -168,10 +168,46 @@ class ApiusersController extends ActiveController
                     ])->andWhere(['in','role',['User']])->asArray()->one();
 
                     if(!empty($userexist)){
-                        $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
+                        if($userexist->status==2){
+                            $contact_no = $userexist->contact_no;
+                            if($contact_no!=''){
+                                $curl = curl_init();
+//60126479285
+                                curl_setopt_array($curl, array(
+                                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&from=RUMAH&to=".$contact_no."&servid=MES01&tempCode=Rumah&ApiReturnType=2&pass=SyR%26PbN0",
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => "",
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 30,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => "POST",
 
-                        $token = (string) Users::generateToken($userexist);
-                        return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist,'token'=>$token);
+                                ));
+                                curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
+
+
+
+                                $response = curl_exec($curl);
+                                $err = curl_error($curl);
+
+                                curl_close($curl);
+
+                                if ($err) {
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                } else {
+                                    return array('status' => 1, 'message' => 'Your account is not verified.Please verify using OTP.', 'data' => $contact_no);
+
+                                    //echo $response;exit;
+                                }
+
+                            }
+                        }else{
+                            $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
+
+                            $token = (string) Users::generateToken($userexist);
+                            return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist,'token'=>$token);
+
+                        }
 
 
                     }else{
@@ -285,6 +321,54 @@ class ApiusersController extends ActiveController
         }
 
 
+    }
+    public function actionResendotp()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && isset($_POST['contact_no']) && $_POST['contact_no'] != '') {
+                $contact_no = $_POST['contact_no'];
+                if ($contact_no != '') {
+                    $curl = curl_init();
+//60126479285
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&from=RUMAH&to=" . $contact_no . "&servid=MES01&tempCode=Rumah&ApiReturnType=2&pass=SyR%26PbN0",
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+
+                    ));
+                    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
+
+
+                    $response = curl_exec($curl);
+                    $err = curl_error($curl);
+
+                    curl_close($curl);
+
+                    if ($err) {
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                    } else {
+                        return array('status' => 1, 'message' => 'OTP sent successfully.', 'data' => '');
+
+                        //echo $response;exit;
+                    }
+                } else {
+                    return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+                }
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+
+
+        }
     }
 
     public function actionVerifyotp(){
