@@ -38,7 +38,7 @@ class ApichatController extends ActiveController
     }
     public function init()
     {
-        if($_SERVER['HTTP_HOST'] != 'tls.test') {
+        if($_SERVER['HTTP_HOST'] != 'rumah.test') {
             $this->baseurl = Url::base('https');
         }else{
             $this->baseurl = Url::base(true);
