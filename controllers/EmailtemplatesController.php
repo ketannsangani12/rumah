@@ -20,12 +20,7 @@ class EmailtemplatesController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::class,
-                'allowActions' => [
-                    // The actions listed here will be allowed to everyone including guests.
-                ]
-            ],
+
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

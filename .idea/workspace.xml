@@ -2,18 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/controllers/EmailtemplatesController.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/EmailTemplates.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/EmailTemplatesSearch.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/emailtemplates/_form.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/emailtemplates/_search.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/emailtemplates/create.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/emailtemplates/index.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/emailtemplates/update.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/emailtemplates/view.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/web.php" afterPath="$PROJECT_DIR$/config/web.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/EmailtemplatesController.php" afterPath="$PROJECT_DIR$/controllers/EmailtemplatesController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -37,14 +29,24 @@
       <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="3177" column="53" selection-start-line="3177" selection-start-column="53" selection-end-line="3177" selection-end-column="53" />
+            <state relative-caret-position="311">
+              <caret line="460" column="20" selection-start-line="460" selection-start-column="20" selection-end-line="460" selection-end-column="20" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
                 <element signature="e#7850#12073#0#PHP" expanded="false" />
-                <element signature="e#124381#124536#0#PHP" expanded="false" />
-                <marker date="1600842748166" expanded="true" signature="50791:50819" ph="..." />
+                <element signature="e#124403#124558#0#PHP" expanded="false" />
+                <marker date="1600844236462" expanded="true" signature="50813:50841" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EmailtemplatesController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/controllers/EmailtemplatesController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -79,6 +81,26 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="RenovationquotesController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/controllers/RenovationquotesController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="341">
+              <caret line="167" column="48" selection-start-line="167" selection-start-column="48" selection-end-line="167" selection-end-column="48" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Model.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/yiisoft/yii2/base/Model.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="478">
+              <caret line="389" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="1077" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="_form.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/views/insurances/_form.php">
           <provider selected="true" editor-type-id="text-editor">
@@ -92,8 +114,8 @@
       <file leaf-file-name="web.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="94" column="49" selection-start-line="94" selection-start-column="31" selection-end-line="94" selection-end-column="49" />
+            <state relative-caret-position="225">
+              <caret line="95" column="47" selection-start-line="95" selection-start-column="47" selection-end-line="95" selection-end-column="47" />
               <folding />
             </state>
           </provider>
@@ -121,7 +143,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/views/defectreports/_form.php" />
         <option value="$PROJECT_DIR$/config/params.php" />
         <option value="$PROJECT_DIR$/components/JwtValidationData.php" />
         <option value="$PROJECT_DIR$/models/PropertiesSearch.php" />
@@ -169,8 +190,9 @@
         <option value="$PROJECT_DIR$/controllers/ApichatController.php" />
         <option value="$PROJECT_DIR$/models/RenovationQuotes.php" />
         <option value="$PROJECT_DIR$/controllers/RenovationquotesController.php" />
-        <option value="$PROJECT_DIR$/config/web.php" />
         <option value="$PROJECT_DIR$/models/EmailTemplates.php" />
+        <option value="$PROJECT_DIR$/config/web.php" />
+        <option value="$PROJECT_DIR$/controllers/EmailtemplatesController.php" />
         <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
       </list>
     </option>
@@ -508,12 +530,12 @@
       <workItem from="1600774096730" duration="2792000" />
       <workItem from="1600780102013" duration="1895000" />
       <workItem from="1600832560502" duration="720000" />
-      <workItem from="1600841216802" duration="1581000" />
+      <workItem from="1600841216802" duration="2801000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="464897000" />
+    <option name="totallyTimeSpent" value="466117000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="0" />
@@ -525,7 +547,7 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293011" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -606,13 +628,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/models/ServiceRequestsSearch.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ServicerequestimagesController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2190">
@@ -853,14 +868,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/yiisoft/yii2/base/Model.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="662">
-          <caret line="373" column="41" selection-start-line="0" selection-start-column="0" selection-end-line="1077" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/Users.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="795">
@@ -927,14 +934,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/RenovationquotesController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="662">
-          <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/RenovationQuotes.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="662">
@@ -947,14 +946,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="662">
           <caret line="215" column="36" selection-start-line="215" selection-start-column="20" selection-end-line="215" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="94" column="49" selection-start-line="94" selection-start-column="31" selection-end-line="94" selection-end-column="49" />
           <folding />
         </state>
       </provider>
@@ -975,15 +966,47 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/RenovationquotesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="167" column="48" selection-start-line="167" selection-start-column="48" selection-end-line="167" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/yiisoft/yii2/base/Model.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="478">
+          <caret line="389" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="1077" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="95" column="47" selection-start-line="95" selection-start-column="47" selection-end-line="95" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/EmailtemplatesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="3177" column="53" selection-start-line="3177" selection-start-column="53" selection-end-line="3177" selection-end-column="53" />
+        <state relative-caret-position="311">
+          <caret line="460" column="20" selection-start-line="460" selection-start-column="20" selection-end-line="460" selection-end-column="20" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
             <element signature="e#7850#12073#0#PHP" expanded="false" />
-            <element signature="e#124381#124536#0#PHP" expanded="false" />
-            <marker date="1600842748166" expanded="true" signature="50791:50819" ph="..." />
+            <element signature="e#124403#124558#0#PHP" expanded="false" />
+            <marker date="1600844236462" expanded="true" signature="50813:50841" ph="..." />
           </folding>
         </state>
       </provider>

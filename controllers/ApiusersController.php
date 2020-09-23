@@ -445,6 +445,7 @@ class ApiusersController extends ActiveController
                     $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 
                     $password = substr(str_shuffle($permitted_chars), 0, 10);
+                    $model->password = $password;
                     $emailtemplate = EmailTemplates::findOne(['name'=>'User Forgot Password']);
                     $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
 
@@ -454,10 +455,9 @@ class ApiusersController extends ActiveController
                         ->setSubject($emailtemplate->subject)
                         ->setHtmlBody($content)
                         ->send();
-                    var_dump($send);exit;
+                    //var_dump($send);exit;
                     $model->password = md5($password);
                     $model->save(false);
-                    $model->password = $password;
 
 
                     return array('status' => 1, 'message' => 'Your new password sent to your email.Please check your inbox.');
