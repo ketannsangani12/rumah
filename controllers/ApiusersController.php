@@ -6,6 +6,7 @@ use app\models\AgentRatings;
 use app\models\BankAccounts;
 use app\models\BookingRequests;
 use app\models\Chats;
+use app\models\EmailTemplates;
 use app\models\FavouriteProperties;
 use app\models\GoldTransactions;
 use app\models\Ilifestyle;
@@ -444,6 +445,16 @@ class ApiusersController extends ActiveController
                     $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 
                     $password = substr(str_shuffle($permitted_chars), 0, 10);
+                    $emailtemplate = EmailTemplates::findOne(['name'=>'User Forgot Password']);
+                    $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
+
+                    $send = Yii::$app->mailer->compose()
+                        ->setFrom('rumahimy@gmail.com')
+                        ->setTo($model->email)
+                        ->setSubject($emailtemplate->subject)
+                        ->setHtmlBody($content)
+                        ->send();
+                    var_dump($send);exit;
                     $model->password = md5($password);
                     $model->save(false);
                     $model->password = $password;
@@ -2647,6 +2658,8 @@ class ApiusersController extends ActiveController
                                            if($updatereceiverbalance && $updatesenderbalance){
                                                $todomodel->status= 'Paid';
                                                $todomodel->save(false);
+                                               $todomodel->renovationquote->status = 'Work In Progress';
+                                               $todomodel->renovationquote->save(false);
                                                $transaction->commit();
                                                return array('status' => 1, 'message' => 'You have completed payment successfully.');
 
@@ -3145,6 +3158,8 @@ class ApiusersController extends ActiveController
                    $todomodel->status = 'Approved';
                    $todomodel->updated_at = date("Y-m-d H:i:s");
                    if ($todomodel->save(false)) {
+                       $todomodel->renovationquote->status = 'Approved';
+                       $todomodel->renovationquote->save(false);
                        return array('status' => 1, 'message' => 'You have accepted renovation quote successfully.');
 
                    }
@@ -3152,6 +3167,8 @@ class ApiusersController extends ActiveController
                    $todomodel->status = 'Rejected';
                    $todomodel->updated_at = date("Y-m-d H:i:s");
                    if ($todomodel->save(false)) {
+                       $todomodel->renovationquote->status = 'Rejected';
+                       $todomodel->renovationquote->save(false);
                        return array('status' => 1, 'message' => 'You have Rejected renovation quote successfully.');
 
                    }
