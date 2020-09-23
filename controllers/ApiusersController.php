@@ -168,8 +168,8 @@ class ApiusersController extends ActiveController
                     ])->andWhere(['in','role',['User']])->asArray()->one();
 
                     if(!empty($userexist)){
-                        if($userexist->status==2){
-                            $contact_no = $userexist->contact_no;
+                        if($userexist['status']==2){
+                            $contact_no = $userexist['contact_no'];
                             if($contact_no!=''){
                                 $curl = curl_init();
 //60126479285
