@@ -148,6 +148,11 @@ class Properties extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'user_id']);
     }
+
+    public function getViews()
+    {
+        return $this->hasMany(PropertyViews::className(), ['property_id' => 'id']);
+    }
     /**
      * Gets query for [[Images]].
      *

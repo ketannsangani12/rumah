@@ -15,6 +15,7 @@ use app\models\Istories;
 use app\models\PromoCodes;
 use app\models\Properties;
 use app\models\PropertyRatings;
+use app\models\PropertyViews;
 use app\models\ServicerequestImages;
 use app\models\ServiceRequests;
 use app\models\TodoDocuments;
@@ -694,10 +695,24 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-
+            $baseurl = $this->baseurl;
             $user_id = $this->user_id;
-            $vacantproperties = Properties::find()->where(['user_id'=>$user_id,'status'=>'Active'])->asArray()->all();
-            $rentedproperties = Properties::find()->where(['user_id'=>$user_id,'status'=>'Rented'])->asArray()->all();
+            $vacantproperties = Properties::find()->with([
+                'pictures'=>function ($query) use($baseurl) {
+                    $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->all();
+                },
+                'views'=>function ($query) use($baseurl) {
+                    $query->select('COUNT(*) as views,property_id')->all();
+                },
+            ])->where(['user_id'=>$user_id,'status'=>'Active'])->asArray()->all();
+            $rentedproperties = Properties::find()->with([
+                'pictures'=>function ($query) use($baseurl) {
+                    $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->all();
+                },
+                'views'=>function ($query) use($baseurl) {
+                    $query->select('COUNT(*) as views,property_id')->all();
+                },
+            ])->where(['user_id'=>$user_id,'status'=>'Rented'])->asArray()->all();
             $data['vacant'] = $vacantproperties;
             $data['rented'] = $rentedproperties;
             return array('status' => 1, 'data' => $data);
@@ -1263,6 +1278,14 @@ class ApiusersController extends ActiveController
                 }
                 $data['propertydata'] = $propertydata;
                 $data['similarproperties'] = $properties;
+                $propertyviewexist = PropertyViews::find()->where(['property_id'=>$_POST['property_id'],'user_id'=>$user_id])->one();
+                if(empty($propertyviewexist)){
+                    $propertview = new PropertyViews();
+                    $propertview->user_id = $user_id;
+                    $propertview->property_id = $_POST['property_id'];
+                    $propertview->created_at = date('Y-m-d H:i:s');
+                    $propertview->save(false);
+                }
                 return array('status' => 1, 'data' => $data);
 
 
