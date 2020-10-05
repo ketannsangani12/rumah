@@ -1205,7 +1205,7 @@ class ApiusersController extends ActiveController
                 //$query1->all();
 
                 $properties =  $query1->asArray()->all();
-                echo "<pre>";print_r($properties);exit;
+                //echo "<pre>";print_r($properties);exit;
                 if(!empty($properties)){
                     foreach ($properties as $key=>$property){
                         $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
