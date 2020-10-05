@@ -278,7 +278,7 @@ class ApiusersController extends ActiveController
                             $err = curl_error($curl);
 
                             curl_close($curl);
-
+                            //echo $response;exit;
                             if ($err) {
                                 echo "cURL Error #:" . $err;exit;
                             } else {
@@ -357,7 +357,7 @@ class ApiusersController extends ActiveController
                     $err = curl_error($curl);
 
                     curl_close($curl);
-
+                    echo $response;exit;
                     if ($err) {
                         return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
                     } else {
