@@ -180,14 +180,14 @@ class ApiusersController extends ActiveController
                                 $curl = curl_init();
 //60126479285
                                 curl_setopt_array($curl, array(
-                                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&from=RUMAH&servid=MES01&ApiReturnType=2&pass=SyR%2526PbN0&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                                     CURLOPT_RETURNTRANSFER => true,
                                     CURLOPT_ENCODING => "",
                                     CURLOPT_MAXREDIRS => 10,
-                                    CURLOPT_TIMEOUT => 30,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
                                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST => "POST",
-
+                                    CURLOPT_CUSTOMREQUEST => "GET",
                                 ));
                                 curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
 
@@ -261,14 +261,14 @@ class ApiusersController extends ActiveController
                             $curl = curl_init();
 //60126479285
                             curl_setopt_array($curl, array(
-                                CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&from=RUMAH&servid=MES01&ApiReturnType=2&pass=SyR%2526PbN0&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                                CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                                 CURLOPT_RETURNTRANSFER => true,
                                 CURLOPT_ENCODING => "",
                                 CURLOPT_MAXREDIRS => 10,
-                                CURLOPT_TIMEOUT => 30,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
                                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST => "POST",
-
+                                CURLOPT_CUSTOMREQUEST => "GET",
                             ));
                             curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
 
@@ -357,7 +357,7 @@ class ApiusersController extends ActiveController
                     $err = curl_error($curl);
 
                     curl_close($curl);
-                    echo $response;exit;
+                   // echo $response;exit;
                     if ($err) {
                         return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
                     } else {
