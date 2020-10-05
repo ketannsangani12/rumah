@@ -1203,9 +1203,9 @@ class ApiusersController extends ActiveController
                 }
 
                 //$query1->all();
-                echo $query1->createCommand()->getRawSql();exit;
 
                 $properties =  $query1->asArray()->all();
+                echo "<pre>";print_r($properties);exit;
                 if(!empty($properties)){
                     foreach ($properties as $key=>$property){
                         $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
