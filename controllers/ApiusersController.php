@@ -1121,7 +1121,7 @@ class ApiusersController extends ActiveController
                 $size = (isset($_POST['size']) && $_POST['size']!='')?$_POST['size']:'';
                 $search = (isset($_POST['search']) && $_POST['search']!='')?$_POST['search']:'';
                 $location = (isset($_POST['location']) && $_POST['location']!='')?$_POST['location']:'';
-
+                //print_r($price);exit;
                 // $searchword = $_POST['search'];
 
                 $baseurl = $this->baseurl;
@@ -1202,6 +1202,8 @@ class ApiusersController extends ActiveController
                     $query1->orderBy(['distance'=>SORT_ASC]);
                 }
 
+                //$query1->all();
+                echo $query1->createCommand()->getRawSql();exit;
 
                 $properties =  $query1->asArray()->all();
                 if(!empty($properties)){
