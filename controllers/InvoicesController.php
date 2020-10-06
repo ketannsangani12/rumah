@@ -107,11 +107,15 @@ class InvoicesController extends Controller
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
+                    if ($modelCustomer->pay_from=='Tenant' && !isset($propertyxist->request->user_id)){
+                        Yii::$app->session->setFlash('error', "This property is not rented");
+                        return $this->redirect(['create']);
 
+                    }
                     //$modelCustomer->pay_from = $_POST['TodoList']['pay_from'];
                     $modelCustomer->request_id = $propertyxist->request_id;
                     $modelCustomer->user_id = ($modelCustomer->pay_from=='Tenant')?$propertyxist->request->user_id:NULL;
-                    $modelCustomer->landlord_id = ($modelCustomer->pay_from=='Landlord')?$propertyxist->request->landlord_id:NULL;
+                    $modelCustomer->landlord_id = ($modelCustomer->pay_from=='Landlord')?$propertyxist->user_id:NULL;
                     $modelCustomer->due_date = date('Y-m-d',strtotime($modelCustomer->due_date));
                     $modelCustomer->reftype = 'General';
                     $modelCustomer->status = "Unpaid";

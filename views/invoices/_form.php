@@ -16,6 +16,7 @@ use yii\widgets\ActiveForm;
 
                 <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
                 <div class="box-body table-responsive">
+
                     <div class="row">
                         <div class="col-md-10">
                             <?= $form->field($modelCustomer, 'title')->textInput(); ?>
@@ -25,8 +26,9 @@ use yii\widgets\ActiveForm;
                     <div class="row">
                         <div class="col-md-10">
                             <?php
-                            $properties = \app\models\Properties::find()->asArray()->all();
+                            $properties = \app\models\Properties::find()->where(['!=', 'user_id', ''])->asArray()->all();
                             //print_r($properties);exit;
+                            $data = array();
                             if(!empty($properties)){
                                 foreach ($properties as $property){
                                     $data[$property['id']] = $property['property_no']." - ".$property['title'];
