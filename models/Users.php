@@ -26,6 +26,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public $rememberMe = true;
     protected $token;
     public $newpassword;
+    public $agentcard;
     /**
      * {@inheritdoc}
      */
@@ -43,7 +44,12 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['email','password'], 'required','on' => 'login'],
             [['role', 'full_name','email'], 'required','on' => 'adduser'],
             [['full_name','email','password','contact_no'], 'required','on' => 'register'],
+            [['company_name','email','password','contact_no','document_no','agentcard'], 'required','on' => 'registeragent'],
+            [['agentcard'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'registeragent'],
+
             [['gender','dob','race','nationality','education_level','occupation','annual_income','contact_no','emergency_contact'], 'required','on' => 'updateprofileuser'],
+            [['company_name','document_no','bank_account_name','bank_account_no','bank_name'], 'required','on' => 'updateprofileagent'],
+
             ['referral_code', 'checkReferralcode'],
             [['contact_no','company_name','company_address','company_state','bank_account_name','bank_account_no','bank_name'], 'required','when' => function ($model) {
                 return ($model->role == 'Cleaner' || $model->role == 'Mover');
@@ -54,7 +60,10 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['email'], 'email'],
             [['email'], 'unique','on'=>'adduser'],
             [['email'], 'unique','on'=>'register'],
+            [['email'], 'unique','on'=>'registeragent'],
             [['contact_no'], 'unique','on'=>'register'],
+            [['contact_no'], 'unique','on'=>'registeragent'],
+            [['contact_no'], 'unique','on'=>'adduser'],
             [['email', 'password'], 'required','on' => 'login'],
             ['password', 'validatePassword','on' => 'login'],
             [['bank_account_name','bank_account_no','bank_name'], 'required','on' => 'adduseraccount'],
@@ -93,6 +102,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'bank_name'=>'Bank Name',
             'gender'=>'Gender',
             'dob'=>'DOB',
+            'agent_card'=>'Agent Card',
+            'agentcard'=>'Agent Card',
             'race'=>'Race',
             'nationality'=>'Nationality',
             'education_level'=>'Education Level',

@@ -53,6 +53,7 @@ class TodoList extends \yii\db\ActiveRecord
             [['property_id','landlord_id','user_id','receive_via','commission'], 'required','on'=>'addinsurance'],
             [['description','property_id','user_id','photo'], 'required','on'=>'reportdefect'],
             [['appointment_date','property_id','user_id','appointment_time'], 'required','on'=>'appointment'],
+            [['agent_id','user_id','landlord_id','receive_via','commission','property_id'], 'required','on'=>'transferrequest'],
 
             [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             ['property_id', 'checkhavealreadyrequest','on' => 'addinsurance'],
