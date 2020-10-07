@@ -509,10 +509,9 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
            $model = Users::findOne($this->user_id);
-            $model->scenario = 'updateprofileuser';
+            //$model->scenario = 'updateprofileuser';
             $model->attributes = Yii::$app->request->post();
-            if($model->validate()){
-               $model->dob = date('Y-m-d',strtotime($model->dob));
+               $model->dob = (isset($model->dob) && $model->dob!='')?date('Y-m-d',strtotime($model->dob)):NULL;
                $model->updated_at = date('Y-m-d h:i:s');
                if($model->save(false)){
                    return array('status' => 1, 'message' => 'You have updated your profile successfully.');
@@ -521,10 +520,7 @@ class ApiusersController extends ActiveController
                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                }
-            }else{
-                return array('status' => 0, 'message' => $model->getErrors());
 
-            }
 
 
         }
