@@ -137,6 +137,9 @@ class ServicerequestsController extends Controller
         $model = $this->findModel($id);
 
         $modelCustomer = TodoList::findOne($model->todo_id);
+        if ($modelCustomer == null) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
         $modelsAddress = [new TodoItems()];
         if (!empty($_POST)) {
 
@@ -205,6 +208,9 @@ class ServicerequestsController extends Controller
         $model = $this->findModel($id);
 
         $modelCustomer = TodoList::find()->where(['id'=>$model->todo_id,'reftype'=>'Service'])->one();
+        if ($modelCustomer == null) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
         $modelsAddress = $modelCustomer->todoItems;
 
         if (!empty($_POST)) {

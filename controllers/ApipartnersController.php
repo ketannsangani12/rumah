@@ -26,6 +26,7 @@ use app\models\Transactions;
 use app\models\TransactionsItems;
 use app\models\UsersDocuments;
 use app\models\Withdrawals;
+use app\models\Workers;
 use Da\QrCode\QrCode;
 use sizeg\jwt\JwtHttpBearerAuth;
 use yii\db\ActiveQuery;
@@ -682,7 +683,7 @@ class ApipartnersController extends ActiveController
 
 
     }
-    public function actionAddbankdetails()
+    public function actionAddworker()
     {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method != 'POST') {
@@ -690,13 +691,13 @@ class ApipartnersController extends ActiveController
         } else {
 
             if(!empty($_POST)){
-                $model = Users::findOne($this->user_id);
-                $model->scenario = 'adduseraccount';
+                $model = new Workers();
                 $model->attributes = Yii::$app->request->post();
-
+                $model->vendor_id = $this->user_id;
                 if ($model->validate()) {
+                    $model->created_at = date('Y-m-d H:i:s');
                     if($model->save()){
-                        return array('status' => 1, 'message' => 'You have updated bank account successfully.');
+                        return array('status' => 1, 'message' => 'You have added worker successfully.');
 
                     }else{
                         return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -2143,31 +2144,6 @@ class ApipartnersController extends ActiveController
         }
     }
 
-    public function actionRefundmoveout()
-    {
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='') {
-
-                $user_id = $this->user_id;
-                $systemaccount = Yii::$app->common->getsystemaccount();
-                $todomodel = TodoList::find()->where(['reftype'=>'Moveout Refund','id'=>$_POST['todo_id'],'status'=>'Pending'])->one();
-                if (empty($todomodel)){
-                    return array('status' => 0, 'message' => 'Data not found.');
-                }
-                $this->actionUpdatetodostatus($_POST['todo_id'],'Accepted','Moveout Refund');
-                //$todoitems = TodoItems::find()->where(['todo_id'=>$_POST['todo_id']])
-
-
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-        }
-    }
     public function actionRejecttodo(){
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method != 'POST') {
@@ -3240,176 +3216,6 @@ class ApipartnersController extends ActiveController
     }
 
 
-    public function actionReportdefect(){
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            $model = new TodoList();
-            $model->user_id = $this->user_id;
-            $model->scenario = 'reportdefect';
-            $model->attributes = Yii::$app->request->post();
-
-            if($model->validate()){
-                $property = Properties::findOne($model->property_id);
-                $photo = $model->photo;
-                $model->photo = null;
-                $model->landlord_id = $property->user_id;
-                $model->reftype = 'Defect Report';
-                $model->status = 'New';
-                $model->created_at = date('Y-m-d H:i:s');
-                if($model->save(false)) {
-                    $filename = uniqid();
-                    $data = Yii::$app->common->processBase64($photo);
-                    file_put_contents('uploads/tododocuments/' . $filename . '.' . $data['type'], $data['data']);
-                    $tododocument = new TodoDocuments();
-                    $tododocument->todo_id = $model->id;
-                    $tododocument->document = $filename . '.' . $data['type'];
-                    $tododocument->created_at = date('Y-m-d H:i:s');
-                    if ($tododocument->save(false)){
-                        return array('status' => 1, 'message' => 'You have submitted defect report successfully.');
-
-                    }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                    }
-
-                }else{
-                    return array('status' => 0, 'message' => $model->getErrors());
-
-                }
-
-            }else{
-                return array('status' => 0, 'message' => $model->getErrors());
-
-            }
-        }
-    }
-    public function actionBookservice(){
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if(!empty($_POST) && isset($_POST['service_type']) && $_POST['service_type']!='') {
-                $user_id = $this->user_id;
-                $type = $_POST['service_type'];
-                $model = new ServiceRequests();
-                switch ($type) {
-                    case "Handyman";
-
-                        $model->scenario = 'bookhandyman';
-                        $model->attributes = Yii::$app->request->post();
-                        $model->pictures = $_POST['pictures'];
-                        if($model->validate()){
-                            $model->user_id = $user_id;
-                            $model->reftype = $type;
-
-                            $pictures = $model->pictures;
-                            $descriptions = $model->descriptions;
-                            $model->pictures = null;
-                            $model->descriptions = null;
-                            $model->date = date('Y-m-d',strtotime($model->date));
-                            $model->status = 'New';
-                            $model->created_at = date("Y-m-d H:i:s");
-                            if($model->save(false)) {
-                                $request_id = $model->id;
-                                $reference_no = Yii::$app->common->generatereferencenumber($request_id);
-
-                                if (!empty($pictures)) {
-                                    foreach ($pictures as $key=>$picture) {
-                                        $filename = uniqid();
-
-                                        $data = Yii::$app->common->processBase64($picture);
-
-                                        file_put_contents('uploads/servicerequestimages/' . $filename . '.' . $data['type'], $data['data']);
-                                        $servicerequestimages = new ServicerequestImages();
-                                        $servicerequestimages->description = (isset($descriptions[$key]) && $descriptions[$key]!='')?$descriptions[$key]:'';
-                                        $servicerequestimages->service_request_id = $request_id;
-                                        $servicerequestimages->reftype = 'useruploadedphotos';
-                                        $servicerequestimages->image = 'uploads/servicerequestimages/' . $filename . '.' . $data['type'];
-                                        $servicerequestimages->created_at = date('Y-m-d H:i:s');
-                                        $servicerequestimages->save(false);
-                                    }
-                                }
-                                $model->reference_no = $reference_no;
-                                if($model->save(false)){
-                                    $todolist = new TodoList();
-                                    $todolist->user_id = $user_id;
-                                    $todolist->service_request_id = $request_id;
-                                    $todolist->property_id = $model->property_id;
-                                    $todolist->reftype = 'Service';
-                                    $todolist->service_type = $type;
-                                    $todolist->created_at =  date("Y-m-d H:i:s");
-                                    $todolist->status = 'New';
-                                    if($todolist->save()){
-                                        return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
-
-                                    }else{
-                                        return array('status' => 0, 'message' => $todolist->getErrors());
-
-                                    }
-                                }
-                            }else{
-                                return array('status' => 0, 'message' => $model->getErrors());
-
-                            }
-
-                        }else{
-                            return array('status' => 0, 'message' => $model->getErrors());
-
-                        }
-
-                        break;
-                    case "Mover";
-                        $model->attributes = Yii::$app->request->post();
-                        $model->user_id = $user_id;
-                        $model->reftype = $type;
-                        $model->scenario = 'bookmover';
-                        if($model->validate()){
-                            $model->date = date('Y-m-d',strtotime($model->date));
-                            $model->status = 'New';
-                            $model->created_at = date("Y-m-d H:i:s");
-                            if($model->save()) {
-                                $request_id = $model->id;
-                                $reference_no = Yii::$app->common->generatereferencenumber($request_id);
-                                $model->reference_no = $reference_no;
-                                if($model->save(false)){
-                                    $todolist = new TodoList();
-                                    $todolist->user_id = $user_id;
-                                    $todolist->service_request_id = $request_id;
-                                    $todolist->property_id = $model->property_id;
-                                    $todolist->reftype = 'Service';
-                                    $todolist->service_type = $type;
-                                    $todolist->created_at =  date("Y-m-d H:i:s");
-                                    $todolist->status = 'New';
-                                    if($todolist->save()){
-                                        return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
-
-                                    }else{
-                                        return array('status' => 0, 'message' => $todolist->getErrors());
-
-                                    }
-                                }
-                            }else{
-                                return array('status' => 0, 'message' => $model->getErrors());
-
-                            }
-
-                        }else{
-                            return array('status' => 0, 'message' => $model->getErrors());
-
-                        }
-
-                        break;
-                }
-
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-
-        }
-    }
     public function actionTransactions()
     {
         $method = $_SERVER['REQUEST_METHOD'];

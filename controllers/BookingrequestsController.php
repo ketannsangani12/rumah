@@ -133,7 +133,7 @@ class BookingrequestsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->report = \yii\web\UploadedFile::getInstance($model, 'report');
             if($model->validate()){
-                $todomodel = TodoList::find()->where(['request_id'=>$id,'reftype'=>'Booking','status'=>'New'])->one();
+                $todomodel = TodoList::find()->where(['request_id'=>$id,'reftype'=>'Booking','status'=>'Confirmed'])->one();
                 if(empty($todomodel)){
                     throw new NotFoundHttpException('The requested page does not exist.');
 
@@ -141,11 +141,11 @@ class BookingrequestsController extends Controller
                 $newFileName = \Yii::$app->security
                         ->generateRandomString().'.'.$model->report->extension;
                $model->credit_score_report = $newFileName;
-               if($model->status=='New'){
+               if($model->status=='Confirmed'){
                    $model->status = 'Pending';
                }
                $model->updated_at = date('Y-m-d H:i:s');
-               if($model->save()){
+               if($model->save(false)){
                    $todomodel->status = 'Pending';
                    $todomodel->save();
                    $model->report->saveAs('uploads/creditscorereports/' . $newFileName);

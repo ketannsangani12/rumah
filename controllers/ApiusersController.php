@@ -1396,7 +1396,7 @@ class ApiusersController extends ActiveController
                         $model->user_id = $model->tenant_id;
                         $model->landlord_id = $this->user_id;
                         $model->tenant_id = null;
-                        $model->status = 'Incompleted';
+                        $model->status = 'New';
                         $model->created_at = date('Y-m-d H:i:s');
                         if ($model->save(false)) {
                             $lastid = $model->id;
@@ -1461,7 +1461,7 @@ class ApiusersController extends ActiveController
             if (!empty($_POST) && $_POST['request_id']!='') {
 
                 $model = BookingRequests::findOne($_POST['request_id']);
-                $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking','status'=>'Incompleted'])->one();
+                $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking','status'=>'Pending'])->one();
                 if(empty($todomodel)){
                     return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');exit;
 
@@ -1474,25 +1474,46 @@ class ApiusersController extends ActiveController
                     $full_name = $model->full_name;
                     $identification_no = $model->identification_no;
                     $usermodel = Users::findOne($this->user_id);
+                    $kyc_document = $model->kyc_document;
+                    $spa_document = $model->spa_document;
+                    $model->kyc_document = null;
+                    $model->spa_document = null;
+                    $filename = uniqid();
+
+                    $data = Yii::$app->common->processBase64($kyc_document);
+
+                    file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
+                    $filename1 = uniqid();
+
+                    $data1 = Yii::$app->common->processBase64($spa_document);
+
+                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
+                    $documents = new UsersDocuments();
+                    $documents->request_id = $model->id;
+                    $documents->user_id = $this->user_id;
+                    $documents->ekyc_document = $filename . '.' . $data['type'];
+                    $documents->supporting_document = $filename1 . '.' . $data1['type'];
+                    $documents->created_at = date('Y-m-d H:i:s');
+                    $documents->save(false);
                     $model->full_name = null;
                     $model->identification_no = null;
-                    $model->status = 'New';
+                    $model->status = 'Confirmed';
                     $model->updated_at = date('Y-m-d H:i:s');
-                    if($model->save()){
-                        $todomodel->status = 'New';
+                    if($model->save(false)){
+                        $todomodel->status = 'Confirmed';
                         $todomodel->updated_at = date('Y-m-d H:i:s');
                         $todomodel->save();
                         $usermodel->full_name = $full_name;
                         $usermodel->document_no = $identification_no;
                         if($usermodel->save(false)){
-                            return array('status' => 1, 'message' => 'You have sent request successfully.');
+                            return array('status' => 1, 'message' => 'You have confirmed request successfully.');
 
                         }else{
                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                         }
                     }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        return array('status' => 0, 'message' => $model->getErrors());
 
                     }
 
@@ -1510,6 +1531,7 @@ class ApiusersController extends ActiveController
 
 
     }
+
 
     public function actionBookingprocess()
     {
@@ -1911,7 +1933,7 @@ class ApiusersController extends ActiveController
 
                     },
 
-                ])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->asArray()->all();
+                ])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->orderBy(['updated_at'=>SORT_DESC])->asArray()->all();
 
             $data = array();
             if(!empty($todolists)){
@@ -1919,9 +1941,16 @@ class ApiusersController extends ActiveController
 
                     switch ($todolist['reftype']){
                         case "Booking";
-                            if($todolist['status']=='Incompleted' || $todolist['status']=='Pending' || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
-                            $data[] = $todolist;
+                            if($todolist['user_id']==$user_id){
+                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']=='') || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
+                                    $data[] = $todolist;
+                                }
+                            }else if($todolist['landlord_id']==$user_id){
+                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
+                                    $data[] = $todolist;
+                                }
                             }
+
                         break;
                         case "Transfer Request";
                             if($todolist['status']=='Pending'){
@@ -2043,7 +2072,7 @@ class ApiusersController extends ActiveController
 
                         switch ($todolist['reftype']) {
                             case "Booking";
-                                if ($todolist['status'] == 'Incompleted' || $todolist['status'] == 'Pending' || $todolist['status'] == 'Approved' || $todolist['status'] == 'Unpaid') {
+                                if ($todolist['status'] == 'Pending' || $todolist['status'] == 'Approved' || $todolist['status'] == 'Unpaid') {
                                     $data[] = $todolist;
                                 }
                                 break;
@@ -3463,6 +3492,8 @@ class ApiusersController extends ActiveController
                                    $todolist->created_at =  date("Y-m-d H:i:s");
                                    $todolist->status = 'New';
                                    if($todolist->save()){
+                                       $model->todo_id = $todolist->id;
+                                       $model->save(false);
                                        return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
 
                                    }else{
@@ -3504,6 +3535,8 @@ class ApiusersController extends ActiveController
                                     $todolist->created_at =  date("Y-m-d H:i:s");
                                     $todolist->status = 'New';
                                     if($todolist->save()){
+                                        $model->todo_id = $todolist->id;
+                                        $model->save(false);
                                         return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
 
                                     }else{

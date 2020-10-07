@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'landlord_id',
 
-                    'value' => 'user.full_name',
+                    'value' => 'landlord.full_name',
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
