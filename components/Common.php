@@ -140,6 +140,12 @@ class Common extends Component
             case "In Progress";
                 return "<span class='btn bg-orange btn-xs'>In Progress</span>";
                 break;
+            case "Processing";
+                return "<span class='btn bg-orange btn-xs'>Processing</span>";
+                break;
+            case "Processed";
+                return "<span class='btn bg-orange btn-xs'>Processed</span>";
+                break;
             case "Declined";
                 return "<span class='btn btn-danger btn-xs'>Declined</span>";
                 break;

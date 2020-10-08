@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value'=> function($model){
                         return Yii::$app->common->getStatus($model->status);
                     },
-                    'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Cancelled"=>"Cancelled","Payment Requested"=>"Payment Requested","Rented"=>"Rented"),
+                    'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Processing"=>"Processing","Processed"=>"Processed","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Cancelled"=>"Cancelled","Payment Requested"=>"Payment Requested","Rented"=>"Rented"),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 
                 ],
@@ -89,8 +89,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'headerOptions' => ['style' => 'width:18%'],
                     'template'=>'{view} {update} {choosetemplate} {uploadagreement} {uploadmoveout} {moveoutinvoice} {cancel}',
                     'visibleButtons' => [
+                        'update' => function ($model) {
+                            return ($model->status=='Confirmed');
+                        },
                         'choosetemplate' => function ($model) {
-                            return ($model->status=='Approved' || $model->status=='Agreement Processed');
+                            return ($model->status=='Processed' || $model->status=='Agreement Processed');
                         },
                         'uploadagreement' => function ($model) {
                             return ($model->status=='Agreement Processed' || $model->status=='Payment Requested' || $model->status=='Rented');

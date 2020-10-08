@@ -46,6 +46,7 @@ use yii\widgets\ActiveForm;
                                 ],
                             ],
                         ]); ?>
+                        <?= $form->field($model, 'stamp_duty')->textInput(); ?>
 
                     </div>
                 </div>

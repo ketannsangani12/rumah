@@ -1407,7 +1407,7 @@ class ApiusersController extends ActiveController
                             $todomodel->created_at = date('Y-m-d H:i:s');
                             $todomodel->updated_at = date('Y-m-d H:i:s');
                             $todomodel->reftype = 'Booking';
-                            $todomodel->status = 'Incompleted';
+                            $todomodel->status = 'New';
                             if ($todomodel->save()) {
                                 $transaction->commit();
 
@@ -1548,61 +1548,16 @@ class ApiusersController extends ActiveController
                 $user_id = $this->user_id;
                 switch ($step){
                     case "first";
-                    if ($model->status=='Pending' && isset($_POST['status']) && !empty($_POST['status']) && $model->landlord_id==$this->user_id){
-                        $transaction1 = Yii::$app->db->beginTransaction();
+                        if ($model->status=='New' && isset($_POST['status']) && !empty($_POST['status']) && $model->user_id==$this->user_id) {
+                            $transaction1 = Yii::$app->db->beginTransaction();
 
-                        try {
-                            if ($_POST['status'] == 'Approved') {
-                                $model->scenario = 'bookingprocessfirststepapprove';
-                            } elseif ($_POST['status'] == 'Rejected') {
-                                $model->scenario = 'bookingprocessfirststepreject';
-
-                            }
-                            $model->attributes = Yii::$app->request->post();
-                            if ($model->validate()) {
-                                if ($_POST['status'] == 'Approved') {
-                                    $subtotal = $model->tenancy_fees+$model->stamp_duty+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;
-                                    $sst = Yii::$app->common->calculatesst($subtotal);
-                                    $model->subtotal = $subtotal;
-                                    $model->sst = $sst;
-                                    $model->total = $subtotal+$sst;
-
-                                    $full_name = $model->full_name;
-                                    $identification_no = $model->identification_no;
-                                    $usermodel = Users::findOne($this->user_id);
-                                    $model->full_name = null;
-                                    $model->identification_no = null;
-                                    $usermodel->full_name = $full_name;
-                                    $usermodel->document_no = $identification_no;
-                                    $usermodel->save();
-                                    $kyc_document = $model->kyc_document;
-                                    $spa_document = $model->spa_document;
-                                    $model->kyc_document = null;
-                                    $model->spa_document = null;
-                                    $filename = uniqid();
-
-                                    $data = Yii::$app->common->processBase64($kyc_document);
-
-                                    file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                    $filename1 = uniqid();
-
-                                    $data1 = Yii::$app->common->processBase64($spa_document);
-
-                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
-                                    $documents = new UsersDocuments();
-                                    $documents->request_id = $_POST['request_id'];
-                                    $documents->user_id = $this->user_id;
-                                    $documents->ekyc_document = $filename . '.' . $data['type'];
-                                    $documents->supporting_document = $filename1 . '.' . $data1['type'];
-                                    $documents->created_at = date('Y-m-d H:i:s');
-                                    $documents->save(false);
-                                }
-
+                            try {
+                                $model->status = $_POST['status'];
                                 $model->updated_at = date('Y-m-d H:i:s');
-                                if ($model->save()) {
+                                if ($model->save(false)) {
                                     $todomodel->status = $_POST['status'];
                                     $todomodel->updated_at = date('Y-m-d H:i:s');
-                                    if ($todomodel->save()) {
+                                    if ($todomodel->save(false)) {
                                         $transaction1->commit();
                                         return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
 
@@ -1616,20 +1571,49 @@ class ApiusersController extends ActiveController
                                     return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                 }
-                            } else {
-                                return array('status' => 0, 'message' => $model->getErrors());
 
+                            } catch (Exception $e) {
+                                // # if error occurs then rollback all transactions
+                                $transaction1->rollBack();
                             }
-                        }catch (Exception $e) {
-                            // # if error occurs then rollback all transactions
-                            $transaction1->rollBack();
-                        }
-                    }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }else{
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
-                    }
-                     break;
+                        }
                     case "second";
+                        if ($model->status=='Pending' && isset($_POST['status']) && !empty($_POST['status']) && $model->landlord_id==$this->user_id) {
+                            $transaction1 = Yii::$app->db->beginTransaction();
+
+                            try {
+                                $model->status = $_POST['status'];
+                                $model->updated_at = date('Y-m-d H:i:s');
+                                if ($model->save(false)) {
+                                    $todomodel->status = $_POST['status'];
+                                    $todomodel->updated_at = date('Y-m-d H:i:s');
+                                    if ($todomodel->save(false)) {
+                                        $transaction1->commit();
+                                        return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
+
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+
+                            } catch (Exception $e) {
+                                // # if error occurs then rollback all transactions
+                                $transaction1->rollBack();
+                            }
+                        }else{
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                        }
+                    case "third";
                         if ($model->status=='Approved'  && $model->user_id==$this->user_id) {
                             $transaction1 = Yii::$app->db->beginTransaction();
 
@@ -1662,15 +1646,27 @@ class ApiusersController extends ActiveController
                                     $usermodel = Users::findOne($this->user_id);
                                     $model->full_name = null;
                                     $model->identification_no = null;
-                                    $model->status = 'Agreement Processed';
+                                    $model->status = 'Processing';
                                     $model->updated_at = date('Y-m-d H:i:s');
-                                    if ($model->save()) {
+                                    if ($model->save(false)) {
+
                                         $documents->save(false);
 
                                         $usermodel->full_name = $full_name;
                                         $usermodel->document_no = $identification_no;
-                                        $usermodel->save();
-                                        $transaction1->commit();
+                                        $usermodel->save(false);
+                                        $todomodel->status = 'Processing';
+                                        $todomodel->updated_at = date('Y-m-d H:i:s');
+                                        if($todomodel->save(false)){
+
+                                            $transaction1->commit();
+                                            return array('status' => 1, 'message' => 'You have uploaded details successfully.');
+
+
+                                        }else{
+                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                        }
                                     } else {
                                         $transaction1->rollBack();
 
@@ -1688,15 +1684,94 @@ class ApiusersController extends ActiveController
                                 // # if error occurs then rollback all transactions
                                 $transaction1->rollBack();
                             }
-                            }else{
+                        }else{
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                        }
+
+
+                        break;
+                    case "fourth";
+                    if ($model->status=='Processing' && $model->landlord_id==$this->user_id){
+                        $transaction1 = Yii::$app->db->beginTransaction();
+
+                        try {
+                            $model->scenario = 'bookingprocessfirststepapprove';
+
+                            $model->attributes = Yii::$app->request->post();
+                            if ($model->validate()) {
+                                    $model->tenancy_fees = 99;
+                                    $subtotal = $model->tenancy_fees+$model->stamp_duty+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;
+                                    $sst = Yii::$app->common->calculatesst($subtotal);
+                                    $model->subtotal = $subtotal;
+                                    $model->sst = $sst;
+                                    $model->total = $subtotal+$sst;
+                                    $model->commencement_date = date('Y-m-d',strtotime($model->commencement_date));
+                                    $full_name = $model->full_name;
+                                    $identification_no = $model->identification_no;
+                                    $usermodel = Users::findOne($this->user_id);
+                                    $model->full_name = null;
+                                    $model->identification_no = null;
+                                    $usermodel->full_name = $full_name;
+                                    $usermodel->document_no = $identification_no;
+                                    $usermodel->save();
+                                    $kyc_document = $model->kyc_document;
+                                    $spa_document = $model->spa_document;
+                                    $model->kyc_document = null;
+                                    $model->spa_document = null;
+                                    $filename = uniqid();
+
+                                    $data = Yii::$app->common->processBase64($kyc_document);
+
+                                    file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
+                                    $filename1 = uniqid();
+
+                                    $data1 = Yii::$app->common->processBase64($spa_document);
+
+                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
+                                    $documents = new UsersDocuments();
+                                    $documents->request_id = $_POST['request_id'];
+                                    $documents->user_id = $this->user_id;
+                                    $documents->ekyc_document = $filename . '.' . $data['type'];
+                                    $documents->supporting_document = $filename1 . '.' . $data1['type'];
+                                    $documents->created_at = date('Y-m-d H:i:s');
+                                    $documents->save(false);
+
+                                $model->status = 'Processed';
+                                $model->updated_at = date('Y-m-d H:i:s');
+                                if ($model->save(false)) {
+                                    $todomodel->status = 'Processed';
+                                    $todomodel->updated_at = date('Y-m-d H:i:s');
+                                    if ($todomodel->save(false)) {
+                                        $transaction1->commit();
+                                        return array('status' => 1, 'message' => 'You have uploaded documents successfully.');
+
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                } else {
+                                    $transaction1->rollBack();
                                     return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                 }
+                            } else {
+                                return array('status' => 0, 'message' => $model->getErrors());
 
+                            }
+                        }catch (Exception $e) {
+                            // # if error occurs then rollback all transactions
+                            $transaction1->rollBack();
+                        }
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
+                    }
                      break;
-                    case "third";
-                    if ($model->status=='Payment Requested' && $model->user_id==$this->user_id){
+
+                    case "fifth";
+                    if ($model->status=='Payment Requested' && $model->user_id==$this->user_id && isset($_POST['amount']) && $_POST['amount']!=''){
                         $promocode = (isset($_POST['promo_code']) && $_POST['promo_code']!='')?$_POST['promo_code']:'';
                         $amount = (isset($_POST['amount']) && $_POST['amount']!='')?$_POST['amount']:'';
                         $discount = (isset($_POST['discount']) && $_POST['discount']!='')?$_POST['discount']:0;
@@ -1705,10 +1780,17 @@ class ApiusersController extends ActiveController
                         if($promocode!=''){
                             $promocodedetails = PromoCodes::find()->where(['promo_code'=>$promocode])->one();
                         }
+                        $sst = $model->sst;
                         $totalamount = $amount;
-                        $totalamountafterdiscount = $totalamount-$discount-$coins_savings;
+                        $totalamountafterdiscount = (int)$totalamount-(int)$discount-(int)$coins_savings;
+
                         $receiverbalance = Users::getbalance($model->landlord_id);
                         $senderbalance = Users::getbalance($model->user_id);
+                        if($senderbalance < $totalamountafterdiscount){
+                            return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
+                            exit;
+
+                        }
                         $systemaccount = Yii::$app->common->getsystemaccount();
                         $systemaccountbalance = $systemaccount->wallet_balance;
 
@@ -1721,6 +1803,7 @@ class ApiusersController extends ActiveController
                             $transaction->landlord_id = $model->landlord_id;
                             $transaction->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
                             $transaction->amount = $totalamount;
+                            $transaction->sst = $sst;
                             $transaction->discount = $discount;
                             $transaction->coins = $goldcoins;
                             $transaction->coins_savings = $coins_savings;
@@ -1737,6 +1820,8 @@ class ApiusersController extends ActiveController
                                         $transactionitems = new TransactionsItems();
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $model->landlord_id;
+                                        $transactionitems->amount = $model->booking_fees;
+                                        $transactionitems->total_amount = $model->booking_fees;
                                         $transactionitems->oldsenderbalance = $senderbalance;
                                         $transactionitems->newsenderbalance = $senderbalance-$model->booking_fees;
                                         $transactionitems->oldreceiverbalance = $receiverbalance;
@@ -1749,6 +1834,8 @@ class ApiusersController extends ActiveController
                                         $transactionitems = new TransactionsItems();
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $model->landlord_id;
+                                        $transactionitems->amount = $model->rental_deposit;
+                                        $transactionitems->total_amount = $model->rental_deposit;
                                         $transactionitems->oldsenderbalance = $senderbalance;
                                         $transactionitems->newsenderbalance = $senderbalance-$model->rental_deposit;
                                         $transactionitems->oldreceiverbalance = $receiverbalance;
@@ -1761,6 +1848,8 @@ class ApiusersController extends ActiveController
                                         $transactionitems = new TransactionsItems();
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $model->landlord_id;
+                                        $transactionitems->amount = $model->keycard_deposit;
+                                        $transactionitems->total_amount = $model->keycard_deposit;
                                         $transactionitems->oldsenderbalance = $senderbalance;
                                         $transactionitems->newsenderbalance = $senderbalance-$model->keycard_deposit;
                                         $transactionitems->oldreceiverbalance = $receiverbalance;
@@ -1773,6 +1862,8 @@ class ApiusersController extends ActiveController
                                         $transactionitems = new TransactionsItems();
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $model->landlord_id;
+                                        $transactionitems->amount = $model->utilities_deposit;
+                                        $transactionitems->total_amount = $model->utilities_deposit;
                                         $transactionitems->oldsenderbalance = $senderbalance;
                                         $transactionitems->newsenderbalance = $senderbalance-$model->utilities_deposit;
                                         $transactionitems->oldreceiverbalance = $receiverbalance;
@@ -1785,6 +1876,8 @@ class ApiusersController extends ActiveController
                                         $transactionitems = new TransactionsItems();
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $systemaccount->id;
+                                        $transactionitems->amount = $model->stamp_duty;
+                                        $transactionitems->total_amount = $model->stamp_duty;
                                         $transactionitems->oldsenderbalance = $senderbalance;
                                         $transactionitems->newsenderbalance = $senderbalance-$model->stamp_duty;
                                         $transactionitems->oldreceiverbalance = $systemaccountbalance;
@@ -1797,6 +1890,8 @@ class ApiusersController extends ActiveController
                                         $transactionitems = new TransactionsItems();
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $systemaccount->id;
+                                        $transactionitems->amount = $model->tenancy_fees;
+                                        $transactionitems->total_amount = $model->tenancy_fees;
                                         $transactionitems->oldsenderbalance = $senderbalance;
                                         $transactionitems->newsenderbalance = $senderbalance-$model->tenancy_fees;
                                         $transactionitems->oldreceiverbalance = $systemaccountbalance;
@@ -1829,7 +1924,7 @@ class ApiusersController extends ActiveController
                                             }
                                             $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
                                             $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->booking_fees+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
-                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty,$systemaccount->id);
+                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
 
                                             $transaction1->commit();
                                             return array('status' => 1, 'message' => 'You have rented property successfully.');
@@ -1869,7 +1964,7 @@ class ApiusersController extends ActiveController
                         }
                         //$transaction
                     }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        return array('status' => 0, 'message' => 'Please enter mandatory fields.');
 
                     }
                     break;
@@ -1938,11 +2033,11 @@ class ApiusersController extends ActiveController
                     switch ($todolist['reftype']){
                         case "Booking";
                             if($todolist['user_id']==$user_id){
-                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']=='') || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
+                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']=='') || $todolist['status']=='New' || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
                                     $data[] = $todolist;
                                 }
                             }else if($todolist['landlord_id']==$user_id){
-                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
+                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') ||  $todolist['status']=='Processing'){
                                     $data[] = $todolist;
                                 }
                             }

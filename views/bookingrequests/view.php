@@ -122,8 +122,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4>Documents</h4>
             <div class="col-md-6">
                 <?php
-                $documentstenants = \app\models\UsersDocuments::find()->where(['user_id'=>$model->user_id,'request_id'=>$model->id])->one();
-                $documentslandlord = \app\models\UsersDocuments::find()->where(['user_id'=>$model->landlord_id,'request_id'=>$model->id])->one();
 
                 ?>
                 <?= DetailView::widget([
@@ -139,28 +137,36 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'label' => 'Tenant Ekyc Document',
                             'value' => function ($model,$documentstenants) {
-                                return (!empty($documentstenants) && isset($documentstenants->ekyc_document))?Html::a('Download', Yii::$app->homeUrl.'uploads/documents/'.$documentstenants->ekyc_document):'Not Uploaded';
+                                $documentstenants = \app\models\UsersDocuments::find()->where(['user_id'=>$model->user_id,'request_id'=>$model->id])->one();
+
+                                return (!empty($documentstenants) && isset($documentstenants->ekyc_document))?Html::a('Download', Yii::$app->homeUrl.'uploads/user_documents/'.$documentstenants->ekyc_document):'Not Uploaded';
                             },
                             'format' => 'raw',
                         ],
                         [
                             'label' => 'Tenant Supporting Document',
                             'value' => function ($model,$documentstenants) {
-                                return (!empty($documentstenants) && isset($documentstenants->supporting_document))?Html::a('Download', Yii::$app->homeUrl.'uploads/documents/'.$documentstenants->supporting_document):'Not Uploaded';
+                                $documentstenants = \app\models\UsersDocuments::find()->where(['user_id'=>$model->user_id,'request_id'=>$model->id])->one();
+
+                                return (!empty($documentstenants) && isset($documentstenants->supporting_document))?Html::a('Download', Yii::$app->homeUrl.'uploads/user_documents/'.$documentstenants->supporting_document):'Not Uploaded';
                             },
                             'format' => 'raw',
                         ],
                         [
                             'label' => 'Landlord Ekyc Document',
                             'value' => function ($model,$documentslandlord) {
-                                return (!empty($documentslandlord) && isset($documentslandlord->ekyc_document))?Html::a('Download', Yii::$app->homeUrl.'uploads/documents/'.$documentslandlord->ekyc_document):'Not Uploaded';
+                                $documentslandlord = \app\models\UsersDocuments::find()->where(['user_id'=>$model->landlord_id,'request_id'=>$model->id])->one();
+
+                                return (!empty($documentslandlord) && isset($documentslandlord->ekyc_document))?Html::a('Download', Yii::$app->homeUrl.'uploads/user_documents/'.$documentslandlord->ekyc_document):'Not Uploaded';
                             },
                             'format' => 'raw',
                         ],
                         [
                             'label' => 'Landlord SPA',
                             'value' => function ($model,$documentslandlord) {
-                                return (!empty($documentslandlord) && isset($documentslandlord->supporting_document))?Html::a('Download', Yii::$app->homeUrl.'uploads/documents/'.$documentslandlord->supporting_document):'Not Uploaded';
+                                $documentslandlord = \app\models\UsersDocuments::find()->where(['user_id'=>$model->landlord_id,'request_id'=>$model->id])->one();
+
+                                return (!empty($documentslandlord) && isset($documentslandlord->supporting_document))?Html::a('Download', Yii::$app->homeUrl.'uploads/user_documents/'.$documentslandlord->supporting_document):'Not Uploaded';
                             },
                             'format' => 'raw',
                         ],
