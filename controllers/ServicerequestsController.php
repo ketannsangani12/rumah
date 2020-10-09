@@ -72,7 +72,7 @@ class ServicerequestsController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        $query = TodoItems::find()->where(['todo_id'=>$model->todo_id,'reftype'=>'Other']);
+        $query = TodoItems::find()->where(['todo_id'=>$model->todo_id,'reftype'=>'Payment']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
@@ -92,7 +92,7 @@ class ServicerequestsController extends Controller
     public function actionUploadquote($id)
     {
         $model = $this->findModel($id);
-        $todoexist = TodoList::find()->where(['service_request_id'=>$id,'reftype'=>'Service'])->one();
+        $todoexist = TodoList::find()->where(['service_request_id'=>$id,'reftype'=>'Service','status'=>'New'])->one();
         if($todoexist==null){
             throw new NotFoundHttpException('The requested page does not exist.');
 
@@ -336,6 +336,46 @@ class ServicerequestsController extends Controller
                 'model' => $model,
                 'merchantmodel' => $merchantmodel,
                 'images' => $images
+            ]);
+
+        }
+    }
+    public function actionAssignvendor($id)
+    {
+        $merchantmodel = $this->findModel($id);
+        if(($merchantmodel->reftype=='Laundry' || $merchantmodel->reftype=='Cleaner')){
+            throw new NotFoundHttpException('The requested page does not exist.');
+
+        }
+        if($merchantmodel->status!='Confirmed'){
+            throw new NotFoundHttpException('The requested page does not exist.');
+
+        }
+        $merchantmodel->scenario = 'assigndriver';
+
+
+        if ($merchantmodel->load(Yii::$app->request->post()) ) {
+            // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
+            if($merchantmodel->validate()) {
+                $merchantmodel->status = 'In Progress';
+                if($merchantmodel->save(false)) {
+                    $todolist = $merchantmodel->todo;
+                    $todolist->status = $merchantmodel->status;
+                    $todolist->save(false);
+                    return $this->redirect(['index']);
+                }
+
+            }else{
+                return $this->render('assignvendor', [
+                    'merchantmodel' => $merchantmodel,
+                    //'images' => $images
+                ]);
+            }
+        }else {
+            $servicetype = $merchantmodel->reftype;
+            return $this->render('assignvendor', [
+                'merchantmodel' => $merchantmodel,
+
             ]);
 
         }

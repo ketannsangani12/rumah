@@ -2097,7 +2097,7 @@ class ApiusersController extends ActiveController
                             }
                             break;
                         case "Service";
-                            if($todolist['status']=='Pending' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                            if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid' || $todolist['status']='In Progress') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
                                 $data[] = $todolist;
                             }
                             break;
@@ -2120,7 +2120,7 @@ class ApiusersController extends ActiveController
 
                 $user_id = $this->user_id;
                 // echo $user_id;exit;
-                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                     ->with([
                         'request' => function ($query) {
                             $query->select(['id', 'booking_fees', 'credit_score', 'monthly_rental', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'rental_deposit', 'utilities_deposit', 'subtotal', 'total', 'commencement_date', 'tenancy_period', 'security_deposit', new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
@@ -2163,8 +2163,14 @@ class ApiusersController extends ActiveController
 
                         switch ($todolist['reftype']) {
                             case "Booking";
-                                if ($todolist['status'] == 'Pending' || $todolist['status'] == 'Approved' || $todolist['status'] == 'Unpaid') {
-                                    $data[] = $todolist;
+                                if($todolist['user_id']==$user_id){
+                                    if(($todolist['status']=='Pending' && $todolist['request']['credit_score']=='') || $todolist['status']=='New' || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
+                                        $data[] = $todolist;
+                                    }
+                                }else if($todolist['landlord_id']==$user_id){
+                                    if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') ||  $todolist['status']=='Processing'){
+                                        $data[] = $todolist;
+                                    }
                                 }
                                 break;
                             case "Transfer Request";
@@ -2214,7 +2220,7 @@ class ApiusersController extends ActiveController
                                 }
                                 break;
                             case "Service";
-                                if($todolist['status']=='Pending' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
                                     $data[] = $todolist;
                                 }
                                 break;
@@ -2541,17 +2547,18 @@ class ApiusersController extends ActiveController
         }
     }
 
-   public function actionUpdatetodostatus($todo_id,$status,$reftype,$post=array()){
+   public function actionUpdatetodostatus($todo_id,$status,$reftype,$post=array())
+   {
        $systemaccount = Yii::$app->common->getsystemaccount();
        $user_id = $this->user_id;
        $todomodel = TodoList::findOne($todo_id);
-       $promocode = (isset($post['promo_code']) && $post['promo_code']!='')?$post['promo_code']:'';
-       $amount = (isset($post['amount']) && $post['amount']!='')?$post['amount']:'';
-       $discount = (isset($post['discount']) && $post['discount']!='')?$post['discount']:0;
-       $goldcoins = (isset($post['gold_coins']) && $post['gold_coins']!='')?$post['gold_coins']:0;
-       $coins_savings = (isset($post['coins_savings']) && $post['coins_savings']!='')?$post['coins_savings']:0;
-       if($promocode!=''){
-           $promocodedetails = PromoCodes::find()->where(['promo_code'=>$promocode])->one();
+       $promocode = (isset($post['promo_code']) && $post['promo_code'] != '') ? $post['promo_code'] : '';
+       $amount = (isset($post['amount']) && $post['amount'] != '') ? $post['amount'] : '';
+       $discount = (isset($post['discount']) && $post['discount'] != '') ? $post['discount'] : 0;
+       $goldcoins = (isset($post['gold_coins']) && $post['gold_coins'] != '') ? $post['gold_coins'] : 0;
+       $coins_savings = (isset($post['coins_savings']) && $post['coins_savings'] != '') ? $post['coins_savings'] : 0;
+       if ($promocode != '') {
+           $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
        }
        switch ($reftype) {
            case "Moveout Refund";
@@ -2565,7 +2572,7 @@ class ApiusersController extends ActiveController
                        $todomodel->status = $status;
                        if ($todomodel->save()) {
                            $todoitems = $todomodel->todoItems;
-                           if(!empty($todoitems)){
+                           if (!empty($todoitems)) {
 
                                $transactionmodel = new Transactions();
                                $transactionmodel->user_id = $user_id;
@@ -2579,21 +2586,21 @@ class ApiusersController extends ActiveController
                                $transactionmodel->reftype = 'Moveout Refund';
                                $transactionmodel->status = 'Completed';
                                $transactionmodel->created_at = date('Y-m-d H:i:s');
-                               if($transactionmodel->save()) {
+                               if ($transactionmodel->save()) {
                                    $flag = false;
                                    $lastid = $transactionmodel->id;
                                    $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
                                    $transactionmodel->reference_no = $reference_no;
                                    $transactionmodel->save(false);
-                                   if(!empty($todoitems)){
-                                       $totalplatform_deductible=0;
+                                   if (!empty($todoitems)) {
+                                       $totalplatform_deductible = 0;
                                        $totaldeductfromuser = 0;
                                        $receiverbalance = Users::getbalance($user_id);
                                        $senderbalance = Users::getbalance($todomodel->request->landlord_id);
-                                       foreach ($todoitems as $todoitem){
+                                       foreach ($todoitems as $todoitem) {
 
-                                           if($todoitem->platform_deductible>0){
-                                               $totalplatform_deductible+=$todoitem->platform_deductible;
+                                           if ($todoitem->platform_deductible > 0) {
+                                               $totalplatform_deductible += $todoitem->platform_deductible;
                                                $transactionitemmodel = new TransactionsItems();
                                                $transactionitemmodel->sender_id = $systemaccount->id;
                                                $transactionitemmodel->transaction_id = $lastid;
@@ -2601,15 +2608,15 @@ class ApiusersController extends ActiveController
                                                $transactionitemmodel->amount = $todoitem->platform_deductible;
                                                $transactionitemmodel->total_amount = $todoitem->platform_deductible;
                                                $transactionitemmodel->oldsenderbalance = $systemaccount->wallet_balance;
-                                               $transactionitemmodel->newsenderbalance = $systemaccount->wallet_balance-$todoitem->platform_deductible;
+                                               $transactionitemmodel->newsenderbalance = $systemaccount->wallet_balance - $todoitem->platform_deductible;
                                                $transactionitemmodel->oldreceiverbalance = $receiverbalance;
-                                               $transactionitemmodel->newreceiverbalance = $receiverbalance+$todoitem->platform_deductible;
+                                               $transactionitemmodel->newreceiverbalance = $receiverbalance + $todoitem->platform_deductible;
                                                $transactionitemmodel->type = 'Refund';
                                                $transactionitemmodel->status = 'Completed';
                                                $transactionitemmodel->description = $todoitem->description;
                                                $transactionitemmodel->created_at = date('Y-m-d H:i:s');
-                                               if ($flag = $transactionitemmodel->save(false)){
-                                                   $totaldeductfromuser +=$todoitem->price;
+                                               if ($flag = $transactionitemmodel->save(false)) {
+                                                   $totaldeductfromuser += $todoitem->price;
                                                    $transactionitemmodel1 = new TransactionsItems();
                                                    $transactionitemmodel1->transaction_id = $lastid;
                                                    $transactionitemmodel1->sender_id = $todomodel->request->landlord_id;
@@ -2618,28 +2625,28 @@ class ApiusersController extends ActiveController
                                                    $transactionitemmodel1->total_amount = $todoitem->price;
 
                                                    $transactionitemmodel1->oldsenderbalance = $senderbalance;
-                                                   $transactionitemmodel1->newsenderbalance = $senderbalance-$todoitem->price;
+                                                   $transactionitemmodel1->newsenderbalance = $senderbalance - $todoitem->price;
                                                    $transactionitemmodel1->oldreceiverbalance = $receiverbalance;
-                                                   $transactionitemmodel1->newreceiverbalance = $receiverbalance+$todoitem->price;
+                                                   $transactionitemmodel1->newreceiverbalance = $receiverbalance + $todoitem->price;
                                                    $transactionitemmodel1->type = 'Refund';
                                                    $transactionitemmodel1->status = 'Completed';
 
                                                    $transactionitemmodel1->description = $todoitem->description;
                                                    $transactionitemmodel1->created_at = date('Y-m-d H:i:s');
                                                    $transactionitemmodel1->save(false);
-                                                   if (! ($flag = $transactionitemmodel1->save(false))) {
+                                                   if (!($flag = $transactionitemmodel1->save(false))) {
                                                        $transaction->rollBack();
                                                        break;
                                                    }
 
 
-                                               }else{
+                                               } else {
                                                    $transaction->rollBack();
                                                    break;
                                                }
 
-                                           }else{
-                                               $totaldeductfromuser +=$todoitem->price;
+                                           } else {
+                                               $totaldeductfromuser += $todoitem->price;
                                                $transactionitemmodel = new TransactionsItems();
                                                $transactionitemmodel->transaction_id = $lastid;
                                                $transactionitemmodel->sender_id = $todomodel->request->landlord_id;
@@ -2648,14 +2655,14 @@ class ApiusersController extends ActiveController
                                                $transactionitemmodel->total_amount = $todoitem->price;
 
                                                $transactionitemmodel->oldsenderbalance = $senderbalance;
-                                               $transactionitemmodel->newsenderbalance = $senderbalance-$todoitem->price;
+                                               $transactionitemmodel->newsenderbalance = $senderbalance - $todoitem->price;
                                                $transactionitemmodel->oldreceiverbalance = $receiverbalance;
-                                               $transactionitemmodel->newreceiverbalance = $receiverbalance+$todoitem->price;
+                                               $transactionitemmodel->newreceiverbalance = $receiverbalance + $todoitem->price;
                                                $transactionitemmodel->type = 'Refund';
                                                $transactionitemmodel->status = 'Completed';
                                                $transactionitemmodel->description = $todoitem->description;
                                                $transactionitemmodel->created_at = date('Y-m-d H:i:s');
-                                               if(! ($flag = $transactionitemmodel->save(false))){
+                                               if (!($flag = $transactionitemmodel->save(false))) {
                                                    $transaction->rollBack();
                                                    break;
                                                }
@@ -2663,16 +2670,14 @@ class ApiusersController extends ActiveController
                                            }
 
 
-
-
                                        }
                                        //var_dump($flag);exit;
                                        if ($flag) {
-                                           $updatesenderbalance = Users::updatebalance($senderbalance-$totaldeductfromuser,$todomodel->request->landlord_id);
-                                           $updatesystembalance = Users::updatebalance($systemaccount->wallet_balance-$totalplatform_deductible,$systemaccount->id);
-                                           $updatereceiverbalance = Users::updatebalance($totaldeductfromuser+$totalplatform_deductible,$user_id);
-                                           if($updatereceiverbalance && $updatesenderbalance && $updatesystembalance){
-                                               $todomodel->status= 'Completed';
+                                           $updatesenderbalance = Users::updatebalance($senderbalance - $totaldeductfromuser, $todomodel->request->landlord_id);
+                                           $updatesystembalance = Users::updatebalance($systemaccount->wallet_balance - $totalplatform_deductible, $systemaccount->id);
+                                           $updatereceiverbalance = Users::updatebalance($totaldeductfromuser + $totalplatform_deductible, $user_id);
+                                           if ($updatereceiverbalance && $updatesenderbalance && $updatesystembalance) {
+                                               $todomodel->status = 'Completed';
                                                $todomodel->save(false);
                                                $todomodel->property->status = 'Active';
                                                $todomodel->property->save(false);
@@ -2681,12 +2686,12 @@ class ApiusersController extends ActiveController
                                                $transaction->commit();
                                                return array('status' => 1, 'message' => 'You have accepted refund request successfully.');
 
-                                           }else{
+                                           } else {
                                                $transaction->rollBack();
                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                            }
-                                       }else{
+                                       } else {
                                            $transaction->rollBack();
 
                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -2694,7 +2699,7 @@ class ApiusersController extends ActiveController
                                        }
                                    }
 
-                               }else{
+                               } else {
                                    return array('status' => 0, 'message' => $transactionmodel->getErrors());
 
                                }
@@ -2707,7 +2712,7 @@ class ApiusersController extends ActiveController
 
                        }
                    } else if ($status == 'Rejected') {
-                       $todomodel->status = ($status=='Rejected')?'Refund Rejected':'';
+                       $todomodel->status = ($status == 'Rejected') ? 'Refund Rejected' : '';
                        if ($todomodel->save()) {
                            $transaction->commit();
                            return array('status' => 1, 'message' => 'You have rejected refund request successfully.');
@@ -2717,7 +2722,7 @@ class ApiusersController extends ActiveController
 
                        }
                    }
-               }catch (Exception $e) {
+               } catch (Exception $e) {
                    // # if error occurs then rollback all transactions
                    $transaction->rollBack();
                }
@@ -2730,9 +2735,9 @@ class ApiusersController extends ActiveController
                        $todomodel->status = $status;
                        if ($todomodel->save()) {
                            $todoitems = $todomodel->todoItems;
-                           if(!empty($todoitems)){
+                           if (!empty($todoitems)) {
                                $totalamount = $amount;
-                               $totalamountafterdiscount = $totalamount-$discount-$coins_savings;
+                               $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
 
                                $transactionmodel = new Transactions();
                                $transactionmodel->user_id = $user_id;
@@ -2740,7 +2745,7 @@ class ApiusersController extends ActiveController
                                $transactionmodel->property_id = $todomodel->property_id;
                                $transactionmodel->renovation_quote_id = $todomodel->renovation_quote_id;
                                $transactionmodel->todo_id = $todo_id;
-                               $transactionmodel->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
+                               $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
                                $transactionmodel->amount = $totalamount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
@@ -2750,20 +2755,20 @@ class ApiusersController extends ActiveController
                                $transactionmodel->reftype = 'Renovation Payment';
                                $transactionmodel->status = 'Completed';
                                $transactionmodel->created_at = date('Y-m-d H:i:s');
-                               if($transactionmodel->save()) {
+                               if ($transactionmodel->save()) {
                                    $flag = false;
                                    $lastid = $transactionmodel->id;
                                    $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
                                    $transactionmodel->reference_no = $reference_no;
                                    $transactionmodel->save(false);
-                                   if(!empty($todoitems)){
-                                       $totalplatform_deductible=0;
+                                   if (!empty($todoitems)) {
+                                       $totalplatform_deductible = 0;
                                        $totaldeductfromuser = 0;
                                        $receiverbalance = Users::getbalance($systemaccount->id);
                                        $senderbalance = Users::getbalance($todomodel->landlord_id);
-                                       foreach ($todoitems as $todoitem){
+                                       foreach ($todoitems as $todoitem) {
 
-                                           $totaldeductfromuser +=$todoitem->price;
+                                           $totaldeductfromuser += $todoitem->price;
                                            $transactionitemmodel = new TransactionsItems();
                                            $transactionitemmodel->transaction_id = $lastid;
                                            $transactionitemmodel->sender_id = $todomodel->landlord_id;
@@ -2772,14 +2777,14 @@ class ApiusersController extends ActiveController
                                            $transactionitemmodel->total_amount = $todoitem->price;
 
                                            $transactionitemmodel->oldsenderbalance = $senderbalance;
-                                           $transactionitemmodel->newsenderbalance = $senderbalance-$totalamountafterdiscount;
+                                           $transactionitemmodel->newsenderbalance = $senderbalance - $totalamountafterdiscount;
                                            $transactionitemmodel->oldreceiverbalance = $receiverbalance;
-                                           $transactionitemmodel->newreceiverbalance = $receiverbalance+$totalamount;
+                                           $transactionitemmodel->newreceiverbalance = $receiverbalance + $totalamount;
                                            $transactionitemmodel->type = 'Payment';
                                            $transactionitemmodel->status = 'Completed';
                                            $transactionitemmodel->description = $todoitem->description;
                                            $transactionitemmodel->created_at = date('Y-m-d H:i:s');
-                                           if(! ($flag = $transactionitemmodel->save(false))){
+                                           if (!($flag = $transactionitemmodel->save(false))) {
                                                $transaction->rollBack();
                                                break;
                                            }
@@ -2788,36 +2793,36 @@ class ApiusersController extends ActiveController
                                        }
                                        //var_dump($flag);exit;
                                        if ($flag) {
-                                           if($goldcoins>0){
+                                           if ($goldcoins > 0) {
                                                $usercoinsbalance = Users::getcoinsbalance($user_id);
                                                $goldtransaction = new GoldTransactions();
                                                $goldtransaction->user_id = $user_id;
                                                $goldtransaction->gold_coins = $goldcoins;
                                                $goldtransaction->transaction_id = $lastid;
-                                               $goldtransaction->olduserbalance =$usercoinsbalance;
-                                               $goldtransaction->newuserbalance = $usercoinsbalance-$goldcoins;
+                                               $goldtransaction->olduserbalance = $usercoinsbalance;
+                                               $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
                                                $goldtransaction->reftype = 'In App Purchase';
                                                $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                               if($goldtransaction->save(false)){
-                                                  Users::updatecoinsbalance($usercoinsbalance-$goldcoins,$user_id);
+                                               if ($goldtransaction->save(false)) {
+                                                   Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
                                                }
                                            }
-                                           $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$todomodel->landlord_id);
-                                           $updatereceiverbalance = Users::updatebalance($receiverbalance+$totalamount,$systemaccount->id);
-                                           if($updatereceiverbalance && $updatesenderbalance){
-                                               $todomodel->status= 'Paid';
+                                           $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->landlord_id);
+                                           $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
+                                           if ($updatereceiverbalance && $updatesenderbalance) {
+                                               $todomodel->status = 'Paid';
                                                $todomodel->save(false);
                                                $todomodel->renovationquote->status = 'Work In Progress';
                                                $todomodel->renovationquote->save(false);
                                                $transaction->commit();
                                                return array('status' => 1, 'message' => 'You have completed payment successfully.');
 
-                                           }else{
+                                           } else {
                                                $transaction->rollBack();
                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                            }
-                                       }else{
+                                       } else {
                                            $transaction->rollBack();
 
                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -2825,7 +2830,7 @@ class ApiusersController extends ActiveController
                                        }
                                    }
 
-                               }else{
+                               } else {
                                    return array('status' => 0, 'message' => $transactionmodel->getErrors());
 
                                }
@@ -2850,7 +2855,7 @@ class ApiusersController extends ActiveController
 
                        }
                    }
-               }catch (Exception $e) {
+               } catch (Exception $e) {
                    // # if error occurs then rollback all transactions
                    $transaction->rollBack();
                }
@@ -2865,19 +2870,19 @@ class ApiusersController extends ActiveController
                            $todoitems = $todomodel->todoItems;
                            $totalpayableamount = $todomodel->total;
                            $senderbalance = Users::getbalance($todomodel->landlord_id);
-                           if($totalpayableamount>$senderbalance){
+                           if ($totalpayableamount > $senderbalance) {
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                            }
-                           if(!empty($todoitems)){
+                           if (!empty($todoitems)) {
                                $totalamount = $amount;
-                               $totalamountafterdiscount = $totalamount-$discount-$coins_savings;
+                               $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
 
                                $transactionmodel = new Transactions();
                                $transactionmodel->landlord_id = $todomodel->landlord_id;
                                $transactionmodel->property_id = $todomodel->property_id;
                                $transactionmodel->todo_id = $todo_id;
-                               $transactionmodel->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
+                               $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
                                $transactionmodel->amount = $totalamount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
@@ -2887,17 +2892,17 @@ class ApiusersController extends ActiveController
                                $transactionmodel->reftype = 'Insurance';
                                $transactionmodel->status = 'Completed';
                                $transactionmodel->created_at = date('Y-m-d H:i:s');
-                               if($transactionmodel->save()) {
+                               if ($transactionmodel->save()) {
                                    $flag = false;
                                    $lastid = $transactionmodel->id;
                                    $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
                                    $transactionmodel->reference_no = $reference_no;
                                    $transactionmodel->save(false);
-                                   if(!empty($todoitems)){
-                                       $totalplatform_deductible=0;
+                                   if (!empty($todoitems)) {
+                                       $totalplatform_deductible = 0;
                                        $totaldeductfromuser = 0;
                                        $receiverbalance = Users::getbalance($systemaccount->id);
-                                       foreach ($todoitems as $todoitem){
+                                       foreach ($todoitems as $todoitem) {
                                            $transactionitemmodel = new TransactionsItems();
                                            $transactionitemmodel->transaction_id = $lastid;
                                            $transactionitemmodel->sender_id = $todomodel->landlord_id;
@@ -2905,48 +2910,48 @@ class ApiusersController extends ActiveController
                                            $transactionitemmodel->amount = $todoitem->price;
                                            $transactionitemmodel->total_amount = $todoitem->price;
                                            $transactionitemmodel->oldsenderbalance = $senderbalance;
-                                           $transactionitemmodel->newsenderbalance = $senderbalance-$totalamountafterdiscount;
+                                           $transactionitemmodel->newsenderbalance = $senderbalance - $totalamountafterdiscount;
                                            $transactionitemmodel->oldreceiverbalance = $receiverbalance;
-                                           $transactionitemmodel->newreceiverbalance = $receiverbalance+$totalamount;
+                                           $transactionitemmodel->newreceiverbalance = $receiverbalance + $totalamount;
                                            $transactionitemmodel->type = 'Payment';
                                            $transactionitemmodel->status = 'Completed';
                                            $transactionitemmodel->description = $todoitem->description;
                                            $transactionitemmodel->created_at = date('Y-m-d H:i:s');
-                                           if(! ($flag = $transactionitemmodel->save(false))){
+                                           if (!($flag = $transactionitemmodel->save(false))) {
                                                $transaction->rollBack();
                                                break;
                                            }
 
                                        }
                                        if ($flag) {
-                                           if($goldcoins>0){
+                                           if ($goldcoins > 0) {
                                                $usercoinsbalance = Users::getcoinsbalance($user_id);
                                                $goldtransaction = new GoldTransactions();
                                                $goldtransaction->user_id = $user_id;
                                                $goldtransaction->gold_coins = $goldcoins;
                                                $goldtransaction->transaction_id = $lastid;
-                                               $goldtransaction->olduserbalance =$usercoinsbalance;
-                                               $goldtransaction->newuserbalance = $usercoinsbalance-$goldcoins;
+                                               $goldtransaction->olduserbalance = $usercoinsbalance;
+                                               $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
                                                $goldtransaction->reftype = 'In App Purchase';
                                                $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                               if($goldtransaction->save(false)){
-                                                   Users::updatecoinsbalance($usercoinsbalance-$goldcoins,$user_id);
+                                               if ($goldtransaction->save(false)) {
+                                                   Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
                                                }
                                            }
-                                           $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$todomodel->landlord_id);
-                                           $updatereceiverbalance = Users::updatebalance($receiverbalance+$totalamount,$systemaccount->id);
-                                           if($updatereceiverbalance && $updatesenderbalance){
-                                               $todomodel->status= 'Paid';
+                                           $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->landlord_id);
+                                           $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
+                                           if ($updatereceiverbalance && $updatesenderbalance) {
+                                               $todomodel->status = 'Paid';
                                                $todomodel->save(false);
                                                $transaction->commit();
                                                return array('status' => 1, 'message' => 'You have completed payment successfully.');
 
-                                           }else{
+                                           } else {
                                                $transaction->rollBack();
                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                            }
-                                       }else{
+                                       } else {
                                            $transaction->rollBack();
 
                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -2954,7 +2959,7 @@ class ApiusersController extends ActiveController
                                        }
                                    }
 
-                               }else{
+                               } else {
                                    return array('status' => 0, 'message' => $transactionmodel->getErrors());
 
                                }
@@ -2979,7 +2984,7 @@ class ApiusersController extends ActiveController
 
                        }
                    }
-               }catch (Exception $e) {
+               } catch (Exception $e) {
                    // # if error occurs then rollback all transactions
                    $transaction->rollBack();
                }
@@ -2994,34 +2999,34 @@ class ApiusersController extends ActiveController
                        if ($todomodel->save()) {
                            $todoitems = $todomodel->todoItems;
                            $totalpayableamount = $todomodel->total;
-                           if($todomodel->pay_from=='Tenant'){
+                           if ($todomodel->pay_from == 'Tenant') {
                                $senderbalance = Users::getbalance($todomodel->user_id);
 
-                           }else{
+                           } else {
                                $senderbalance = Users::getbalance($todomodel->landlord_id);
 
                            }
 
-                           if($totalpayableamount>$senderbalance){
+                           if ($totalpayableamount > $senderbalance) {
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                            }
-                           if(!empty($todoitems)){
+                           if (!empty($todoitems)) {
                                $totalamount = $amount;
-                               $totalamountafterdiscount = $totalamount-$discount-$coins_savings;
+                               $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
 
 
                                $transactionmodel = new Transactions();
-                               if($todomodel->pay_from=='Tenant'){
+                               if ($todomodel->pay_from == 'Tenant') {
                                    $transactionmodel->user_id = $todomodel->user_id;
 
-                               }else{
+                               } else {
                                    $transactionmodel->landlord_id = $todomodel->landlord_id;
 
                                }
                                $transactionmodel->property_id = $todomodel->property_id;
                                $transactionmodel->todo_id = $todo_id;
-                               $transactionmodel->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
+                               $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
                                $transactionmodel->amount = $totalamount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
@@ -3031,23 +3036,23 @@ class ApiusersController extends ActiveController
                                $transactionmodel->reftype = 'General';
                                $transactionmodel->status = 'Completed';
                                $transactionmodel->created_at = date('Y-m-d H:i:s');
-                               if($transactionmodel->save()) {
+                               if ($transactionmodel->save()) {
                                    $flag = false;
                                    $lastid = $transactionmodel->id;
                                    $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
                                    $transactionmodel->reference_no = $reference_no;
                                    $transactionmodel->save(false);
-                                   if(!empty($todoitems)){
-                                       $totalplatform_deductible=0;
+                                   if (!empty($todoitems)) {
+                                       $totalplatform_deductible = 0;
                                        $totaldeductfromuser = 0;
                                        $receiverbalance = Users::getbalance($systemaccount->id);
-                                       foreach ($todoitems as $todoitem){
+                                       foreach ($todoitems as $todoitem) {
                                            $transactionitemmodel = new TransactionsItems();
                                            $transactionitemmodel->transaction_id = $lastid;
-                                           if($todomodel->pay_from=='Tenant'){
+                                           if ($todomodel->pay_from == 'Tenant') {
                                                $transactionitemmodel->sender_id = $todomodel->user_id;
 
-                                           }else{
+                                           } else {
                                                $transactionitemmodel->sender_id = $todomodel->landlord_id;
                                            }
 
@@ -3055,48 +3060,48 @@ class ApiusersController extends ActiveController
                                            $transactionitemmodel->amount = $todoitem->price;
                                            $transactionitemmodel->total_amount = $todoitem->price;
                                            $transactionitemmodel->oldsenderbalance = $senderbalance;
-                                           $transactionitemmodel->newsenderbalance = $senderbalance-$todoitem->price;
+                                           $transactionitemmodel->newsenderbalance = $senderbalance - $todoitem->price;
                                            $transactionitemmodel->oldreceiverbalance = $receiverbalance;
-                                           $transactionitemmodel->newreceiverbalance = $receiverbalance+$todoitem->price;
+                                           $transactionitemmodel->newreceiverbalance = $receiverbalance + $todoitem->price;
                                            $transactionitemmodel->type = 'Payment';
                                            $transactionitemmodel->status = 'Completed';
                                            $transactionitemmodel->description = $todoitem->description;
                                            $transactionitemmodel->created_at = date('Y-m-d H:i:s');
-                                           if(! ($flag = $transactionitemmodel->save(false))){
+                                           if (!($flag = $transactionitemmodel->save(false))) {
                                                $transaction->rollBack();
                                                break;
                                            }
 
                                        }
                                        if ($flag) {
-                                           if($goldcoins>0){
+                                           if ($goldcoins > 0) {
                                                $usercoinsbalance = Users::getcoinsbalance($user_id);
                                                $goldtransaction = new GoldTransactions();
                                                $goldtransaction->user_id = $user_id;
                                                $goldtransaction->gold_coins = $goldcoins;
                                                $goldtransaction->transaction_id = $lastid;
-                                               $goldtransaction->olduserbalance =$usercoinsbalance;
-                                               $goldtransaction->newuserbalance = $usercoinsbalance-$goldcoins;
+                                               $goldtransaction->olduserbalance = $usercoinsbalance;
+                                               $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
                                                $goldtransaction->reftype = 'In App Purchase';
                                                $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                               if($goldtransaction->save(false)){
-                                                   Users::updatecoinsbalance($usercoinsbalance-$goldcoins,$user_id);
+                                               if ($goldtransaction->save(false)) {
+                                                   Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
                                                }
                                            }
-                                           $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,($todomodel->pay_from=='Tenant')?$todomodel->user_id:$todomodel->landlord_id);
-                                           $updatereceiverbalance = Users::updatebalance($receiverbalance+$totalamount,$systemaccount->id);
-                                           if($updatereceiverbalance && $updatesenderbalance){
-                                               $todomodel->status= 'Paid';
+                                           $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, ($todomodel->pay_from == 'Tenant') ? $todomodel->user_id : $todomodel->landlord_id);
+                                           $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
+                                           if ($updatereceiverbalance && $updatesenderbalance) {
+                                               $todomodel->status = 'Paid';
                                                $todomodel->save(false);
                                                $transaction->commit();
                                                return array('status' => 1, 'message' => 'You have completed payment successfully.');
 
-                                           }else{
+                                           } else {
                                                $transaction->rollBack();
                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                            }
-                                       }else{
+                                       } else {
                                            $transaction->rollBack();
 
                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -3104,7 +3109,7 @@ class ApiusersController extends ActiveController
                                        }
                                    }
 
-                               }else{
+                               } else {
                                    return array('status' => 0, 'message' => $transactionmodel->getErrors());
 
                                }
@@ -3129,7 +3134,7 @@ class ApiusersController extends ActiveController
 
                        }
                    }
-               }catch (Exception $e) {
+               } catch (Exception $e) {
                    // # if error occurs then rollback all transactions
                    $transaction->rollBack();
                }
@@ -3144,34 +3149,34 @@ class ApiusersController extends ActiveController
                        if ($todomodel->save()) {
                            $todoitems = $todomodel->todoItems;
                            $totalpayableamount = $todomodel->total;
-                           if($todomodel->pay_from=='Tenant'){
+                           if ($todomodel->pay_from == 'Tenant') {
                                $senderbalance = Users::getbalance($todomodel->user_id);
 
-                           }else{
+                           } else {
                                $senderbalance = Users::getbalance($todomodel->landlord_id);
 
                            }
 
-                           if($totalpayableamount>$senderbalance){
+                           if ($totalpayableamount > $senderbalance) {
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                            }
-                           if(!empty($todoitems)){
+                           if (!empty($todoitems)) {
                                $totalamount = $amount;
-                               $totalamountafterdiscount = $totalamount-$discount-$coins_savings;
+                               $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
 
 
                                $transactionmodel = new Transactions();
-                               if($todomodel->pay_from=='Tenant'){
+                               if ($todomodel->pay_from == 'Tenant') {
                                    $transactionmodel->user_id = $todomodel->user_id;
 
-                               }else{
+                               } else {
                                    $transactionmodel->landlord_id = $todomodel->landlord_id;
 
                                }
                                $transactionmodel->property_id = $todomodel->property_id;
                                $transactionmodel->todo_id = $todo_id;
-                               $transactionmodel->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
+                               $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
                                $transactionmodel->amount = $totalamount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
@@ -3181,23 +3186,23 @@ class ApiusersController extends ActiveController
                                $transactionmodel->reftype = 'Defect Report';
                                $transactionmodel->status = 'Completed';
                                $transactionmodel->created_at = date('Y-m-d H:i:s');
-                               if($transactionmodel->save()) {
+                               if ($transactionmodel->save()) {
                                    $flag = false;
                                    $lastid = $transactionmodel->id;
                                    $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
                                    $transactionmodel->reference_no = $reference_no;
                                    $transactionmodel->save(false);
-                                   if(!empty($todoitems)){
-                                       $totalplatform_deductible=0;
+                                   if (!empty($todoitems)) {
+                                       $totalplatform_deductible = 0;
                                        $totaldeductfromuser = 0;
                                        $receiverbalance = Users::getbalance($systemaccount->id);
-                                       foreach ($todoitems as $todoitem){
+                                       foreach ($todoitems as $todoitem) {
                                            $transactionitemmodel = new TransactionsItems();
                                            $transactionitemmodel->transaction_id = $lastid;
-                                           if($todomodel->pay_from=='Tenant'){
+                                           if ($todomodel->pay_from == 'Tenant') {
                                                $transactionitemmodel->sender_id = $todomodel->user_id;
 
-                                           }else{
+                                           } else {
                                                $transactionitemmodel->sender_id = $todomodel->landlord_id;
                                            }
 
@@ -3205,48 +3210,48 @@ class ApiusersController extends ActiveController
                                            $transactionitemmodel->amount = $todoitem->price;
                                            $transactionitemmodel->total_amount = $todoitem->price;
                                            $transactionitemmodel->oldsenderbalance = $senderbalance;
-                                           $transactionitemmodel->newsenderbalance = $senderbalance-$todoitem->price;
+                                           $transactionitemmodel->newsenderbalance = $senderbalance - $todoitem->price;
                                            $transactionitemmodel->oldreceiverbalance = $receiverbalance;
-                                           $transactionitemmodel->newreceiverbalance = $receiverbalance+$todoitem->price;
+                                           $transactionitemmodel->newreceiverbalance = $receiverbalance + $todoitem->price;
                                            $transactionitemmodel->type = 'Payment';
                                            $transactionitemmodel->status = 'Completed';
                                            $transactionitemmodel->description = $todoitem->description;
                                            $transactionitemmodel->created_at = date('Y-m-d H:i:s');
-                                           if(! ($flag = $transactionitemmodel->save(false))){
+                                           if (!($flag = $transactionitemmodel->save(false))) {
                                                $transaction->rollBack();
                                                break;
                                            }
 
                                        }
                                        if ($flag) {
-                                           if($goldcoins>0){
+                                           if ($goldcoins > 0) {
                                                $usercoinsbalance = Users::getcoinsbalance($user_id);
                                                $goldtransaction = new GoldTransactions();
                                                $goldtransaction->user_id = $user_id;
                                                $goldtransaction->gold_coins = $goldcoins;
                                                $goldtransaction->transaction_id = $lastid;
-                                               $goldtransaction->olduserbalance =$usercoinsbalance;
-                                               $goldtransaction->newuserbalance = $usercoinsbalance-$goldcoins;
+                                               $goldtransaction->olduserbalance = $usercoinsbalance;
+                                               $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
                                                $goldtransaction->reftype = 'In App Purchase';
                                                $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                               if($goldtransaction->save(false)){
-                                                   Users::updatecoinsbalance($usercoinsbalance-$goldcoins,$user_id);
+                                               if ($goldtransaction->save(false)) {
+                                                   Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
                                                }
                                            }
-                                           $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,($todomodel->pay_from=='Tenant')?$todomodel->user_id:$todomodel->landlord_id);
-                                           $updatereceiverbalance = Users::updatebalance($receiverbalance+$totalamount,$systemaccount->id);
-                                           if($updatereceiverbalance && $updatesenderbalance){
-                                               $todomodel->status= 'Paid';
+                                           $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, ($todomodel->pay_from == 'Tenant') ? $todomodel->user_id : $todomodel->landlord_id);
+                                           $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
+                                           if ($updatereceiverbalance && $updatesenderbalance) {
+                                               $todomodel->status = 'Paid';
                                                $todomodel->save(false);
                                                $transaction->commit();
                                                return array('status' => 1, 'message' => 'You have completed payment successfully.');
 
-                                           }else{
+                                           } else {
                                                $transaction->rollBack();
                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                            }
-                                       }else{
+                                       } else {
                                            $transaction->rollBack();
 
                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -3254,7 +3259,7 @@ class ApiusersController extends ActiveController
                                        }
                                    }
 
-                               }else{
+                               } else {
                                    return array('status' => 0, 'message' => $transactionmodel->getErrors());
 
                                }
@@ -3279,31 +3284,31 @@ class ApiusersController extends ActiveController
 
                        }
                    }
-               }catch (Exception $e) {
+               } catch (Exception $e) {
                    // # if error occurs then rollback all transactions
                    $transaction->rollBack();
                }
 
                break;
            case "Appointment";
-           if($status=='Completed') {
-               $todomodel->status = 'Completed';
-               $todomodel->updated_at = date("Y-m-d H:i:s");
-               if ($todomodel->save(false)) {
-                   return array('status' => 1, 'message' => 'You have completed appointment successfully.');
+               if ($status == 'Completed') {
+                   $todomodel->status = 'Completed';
+                   $todomodel->updated_at = date("Y-m-d H:i:s");
+                   if ($todomodel->save(false)) {
+                       return array('status' => 1, 'message' => 'You have completed appointment successfully.');
 
-               }
-           }else if($status=='Cancelled'){
-               $todomodel->status = 'Cancelled';
-               $todomodel->updated_at = date("Y-m-d H:i:s");
-               if ($todomodel->save(false)) {
-                   return array('status' => 1, 'message' => 'You have cancelled appointment successfully.');
+                   }
+               } else if ($status == 'Cancelled') {
+                   $todomodel->status = 'Cancelled';
+                   $todomodel->updated_at = date("Y-m-d H:i:s");
+                   if ($todomodel->save(false)) {
+                       return array('status' => 1, 'message' => 'You have cancelled appointment successfully.');
 
+                   }
                }
-           }
                break;
            case "Renovation Quote";
-               if($status=='Accepted') {
+               if ($status == 'Accepted') {
                    $todomodel->status = 'Approved';
                    $todomodel->updated_at = date("Y-m-d H:i:s");
                    if ($todomodel->save(false)) {
@@ -3312,7 +3317,7 @@ class ApiusersController extends ActiveController
                        return array('status' => 1, 'message' => 'You have accepted renovation quote successfully.');
 
                    }
-               }else if($status=='Rejected'){
+               } else if ($status == 'Rejected') {
                    $todomodel->status = 'Rejected';
                    $todomodel->updated_at = date("Y-m-d H:i:s");
                    if ($todomodel->save(false)) {
@@ -3324,49 +3329,198 @@ class ApiusersController extends ActiveController
                }
                break;
            case "Service";
-           if(($todomodel->service_type=='Handyman' || $todomodel->service_type=='Mover') && $todomodel->status=='Pending'){
+               if (($todomodel->service_type == 'Handyman' || $todomodel->service_type == 'Mover') && $todomodel->status == 'Pending') {
 
-               if($status=='Accepted'){
-                   $todomodel->status = 'Accepted';
-                   $todomodel->updated_at = date("Y-m-d H:i:s");
-                   if($todomodel->save(false)){
-                     $todomodel->servicerequest->status ='Accepted';
-                     $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                     if($todomodel->servicerequest->save(false)){
-                         return array('status' => 1, 'message' => 'You have accepted request successfully.');
+                   if ($status == 'Accepted') {
+                       $todomodel->status = 'Accepted';
+                       $todomodel->updated_at = date("Y-m-d H:i:s");
+                       if ($todomodel->save(false)) {
+                           $todomodel->servicerequest->status = 'Accepted';
+                           $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                           if ($todomodel->servicerequest->save(false)) {
+                               return array('status' => 1, 'message' => 'You have accepted request successfully.');
 
-                     }else{
-                         return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                           } else {
+                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
-                     }
-                   }else{
-                       return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                           }
+                       } else {
+                           return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
+                       }
+
+                   } else if ($status == 'Rejected') {
+                       $todomodel->status = 'Rejected';
+                       $todomodel->updated_at = date("Y-m-d H:i:s");
+                       if ($todomodel->save(false)) {
+                           $todomodel->servicerequest->status = 'Rejected';
+                           $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                           if ($todomodel->servicerequest->save(false)) {
+                               return array('status' => 1, 'message' => 'You have rejected request successfully.');
+
+                           } else {
+                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                           }
+                       } else {
+                           return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                       }
                    }
+               } else if (($todomodel->service_type == 'Handyman' || $todomodel->service_type == 'Mover') && $todomodel->status == 'Unpaid') {
+                   $transaction = Yii::$app->db->beginTransaction();
 
-                }else if($status=='Rejected'){
-                    $todomodel->status = 'Rejected';
-                    $todomodel->updated_at = date("Y-m-d H:i:s");
-                    if($todomodel->save(false)){
-                        $todomodel->servicerequest->status ='Rejected';
-                        $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                        if($todomodel->servicerequest->save(false)){
-                            return array('status' => 1, 'message' => 'You have rejected request successfully.');
+                   try {
 
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                       if ($status == 'Accepted') {
+                               $todoitems = $todomodel->todoItems;
+                               $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
+                               $totalpayableamount = $todomodel->total;
+                               $sst = $todomodel->sst;
 
-                        }
-                    }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                               $senderbalance = Users::getbalance($todomodel->user_id);
+                               if ($totalpayableamount > $senderbalance) {
+                                   return array('status' => 0, 'message' => 'You don`t have enough balance.Please topup your wallet.');
 
-                    }
-                }
-           }
-           break;
+                               }
+                               if (!empty($todoitems)) {
+                                   $totalamount = $amount;
+                                   $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+                                   $receiverbalance = Users::getbalance($systemaccount->id);
+                                   $transactionmodel = new Transactions();
+                                   $transactionmodel->user_id = $todomodel->user_id;
+                                   $transactionmodel->property_id = $todomodel->property_id;
+                                   $transactionmodel->todo_id = $todo_id;
+                                   $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
+                                   $transactionmodel->amount = $totalamount;
+                                   $transactionmodel->sst = $sst;
+                                   $transactionmodel->discount = $discount;
+                                   $transactionmodel->coins = $goldcoins;
+                                   $transactionmodel->coins_savings = $coins_savings;
+                                   $transactionmodel->total_amount = $totalamountafterdiscount;
+                                   $transactionmodel->type = 'Payment';
+                                   $transactionmodel->reftype = 'Service';
+                                   $transactionmodel->status = 'Completed';
+                                   $transactionmodel->created_at = date('Y-m-d H:i:s');
+                                   if ($transactionmodel->save()) {
+                                       $flag = false;
+                                       $lastid = $transactionmodel->id;
+                                       $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
+                                       $transactionmodel->reference_no = $reference_no;
+                                       $transactionmodel->save(false);
+                                       if (!empty($todoitems)) {
+                                           $totalplatform_deductible = 0;
+                                           $totaldeductfromuser = 0;
+
+                                           foreach ($todoitems as $todoitem) {
+                                               $transactionitemmodel = new TransactionsItems();
+                                               $transactionitemmodel->transaction_id = $lastid;
+                                               $transactionitemmodel->sender_id = $todomodel->user_id;
+                                               $transactionitemmodel->receiver_id = $systemaccount->id;
+                                               $transactionitemmodel->amount = $todoitem->price;
+                                               $transactionitemmodel->total_amount = $todoitem->price;
+                                               $transactionitemmodel->oldsenderbalance = $senderbalance;
+                                               $transactionitemmodel->newsenderbalance = $senderbalance - $todoitem->price;
+                                               $transactionitemmodel->oldreceiverbalance = $receiverbalance;
+                                               $transactionitemmodel->newreceiverbalance = $receiverbalance + $todoitem->price;
+                                               $transactionitemmodel->type = 'Payment';
+                                               $transactionitemmodel->status = 'Completed';
+                                               $transactionitemmodel->description = $todoitem->description;
+                                               $transactionitemmodel->created_at = date('Y-m-d H:i:s');
+                                               if (!($flag = $transactionitemmodel->save(false))) {
+                                                   $transaction->rollBack();
+                                                   break;
+                                               }
+
+                                           }
+                                           if ($flag) {
+                                               if ($goldcoins > 0) {
+                                                   $usercoinsbalance = Users::getcoinsbalance($user_id);
+                                                   $goldtransaction = new GoldTransactions();
+                                                   $goldtransaction->user_id = $user_id;
+                                                   $goldtransaction->gold_coins = $goldcoins;
+                                                   $goldtransaction->transaction_id = $lastid;
+                                                   $goldtransaction->olduserbalance = $usercoinsbalance;
+                                                   $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
+                                                   $goldtransaction->reftype = 'In App Purchase';
+                                                   $goldtransaction->created_at = date('Y-m-d H:i:s');
+                                                   if ($goldtransaction->save(false)) {
+                                                       Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
+                                                   }
+                                               }
+                                               $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
+                                               $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
+                                               if ($updatereceiverbalance && $updatesenderbalance) {
+                                                   $todomodel->payment_date = date('Y-m-d H:i:s');
+                                                   $todomodel->status = 'Confirmed';
+                                                   if($todomodel->save(false)){
+                                                       $servicerequestmodel->status = 'Confirmed';
+                                                       $servicerequestmodel->updated_at = date('Y-m-d H:i:s');
+                                                       if($servicerequestmodel->save(false)){
+                                                           $transaction->commit();
+                                                           return array('status' => 1, 'message' => 'You have completed payment successfully.');
+
+                                                       }else{
+                                                           $transaction->rollBack();
+                                                           return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+
+                                                       }
+                                                   }else{
+                                                       $transaction->rollBack();
+                                                       return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                                   }
+
+                                               } else {
+                                                   $transaction->rollBack();
+                                                   return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                               }
+                                           } else {
+                                               $transaction->rollBack();
+
+                                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                           }
+                                       }
+
+                                   } else {
+                                       return array('status' => 0, 'message' => $transactionmodel->getErrors());
+
+                                   }
+
+                               }
+
+
+
+                       } else if ($status == 'Rejected') {
+                           $todomodel->status = 'Rejected';
+                           $todomodel->updated_at = date("Y-m-d H:i:s");
+                           if ($todomodel->save(false)) {
+                               $todomodel->servicerequest->status = 'Rejected';
+                               $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                               if ($todomodel->servicerequest->save(false)) {
+                                   return array('status' => 1, 'message' => 'You have rejected request successfully.');
+
+                               } else {
+                                   return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                               }
+                           } else {
+                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                           }
+                       }
+                   } catch (Exception $e) {
+                       // # if error occurs then rollback all transactions
+                       $transaction->rollBack();
+                   }
+                   break;
+
+               }
 
        }
-
    }
    public function actionApplypromocode(){
        $method = $_SERVER['REQUEST_METHOD'];
@@ -3537,6 +3691,10 @@ class ApiusersController extends ActiveController
                 $model = new ServiceRequests();
                 switch ($type) {
                     case "Handyman";
+                        if (empty($_POST['pictures'])){
+                            return array('status' => 0, 'message' => 'You must upload at least one picture');
+
+                        }
 
                         $model->scenario = 'bookhandyman';
                         $model->attributes = Yii::$app->request->post();
@@ -3551,6 +3709,7 @@ class ApiusersController extends ActiveController
                             $model->descriptions = null;
                             $model->date = date('Y-m-d',strtotime($model->date));
                             $model->status = 'New';
+                            $model->booked_at = date("Y-m-d H:i:s");
                             $model->created_at = date("Y-m-d H:i:s");
                             if($model->save(false)) {
                                 $request_id = $model->id;

@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 ['class' => 'yii\grid\ActionColumn',
                     'headerOptions' => ['style' => 'width:18%'],
-                    'template'=>'{view} {update} {gallery} {uploadquote} {issueinvoice} {refund} {cancel}',
+                    'template'=>'{view} {update} {assignvendor} {gallery} {uploadquote} {issueinvoice} {refund} {cancel}',
                     'visibleButtons' => [
                         'gallery' => function ($model){
                             return ($model->reftype!='Mover');
@@ -116,12 +116,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         'update' => function ($model){
                             return (($model->reftype=='Handyman' || $model->reftype=='Mover') && ($model->status!='Refund Requested' && $model->status!='Refund Rejected' && $model->status!='Refunded' && $model->status!='Completed'));//|| $model->status!='Refund Rejected' || $model->status!='Refunded' || $model->status!='Completed'));//&& ($model->status=='Confirmed')
                         },
+                        'assignvendor'=> function($model){
+                            return (($model->reftype=='Handyman' || $model->reftype=='Mover') && ($model->status=='Confirmed'));
+                        },
                         'issueinvoice'=> function($model){
                             return (($model->reftype=='Handyman' || $model->reftype=='Mover') && ($model->status=='Accepted' || $model->status=='Unpaid'));
                         },
                         'refund'=> function($model){
                    return (($model->reftype=='Handyman' || $model->reftype=='Mover') && ($model->status=='Cancelled'));
-             }
+                       }
                     ],
                     'buttons'=>[
 //
@@ -166,6 +169,16 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
 
                         },
+                        'assignvendor' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-user-plus" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/assignvendor', 'id' => $model->id])], [
+
+                                'title' => 'Assign Vendor',
+                                'class' =>'btn btn-sm bg-teal datatable-operation-btn'
+
+                            ]);
+
+                        },
                         'uploadquote' => function ($url, $model) {
 
                             return Html::a('<i class="fa fa-file" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadquote', 'id' => $model->id])], [
@@ -177,7 +190,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         },
                         'issueinvoice' => function ($url, $model) {
-                            $requestexist = \app\models\TodoList::find()->where(['id'=>$model->todo_id,'reftype'=>'Service'])->one();
+                            $requestexist = \app\models\TodoItems::find()->where(['todo_id'=>$model->todo_id])->one();
                             if(!empty($requestexist)){
                                 $url = \yii\helpers\Url::to([Yii::$app->controller->id.'/issueinvoiceupdate', 'id' => $model->id]);
                             }else{

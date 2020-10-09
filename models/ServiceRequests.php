@@ -59,6 +59,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
     {
         return [
             [['status'], 'required','on' => 'changestatus'],
+            [['vendor_id'], 'required','on' => 'assigndriver'],
             [['property_id', 'vendor_id', 'user_id', 'todo_id'], 'integer'],
             [['property_id' , 'date' , 'time' , 'type'], 'required','on'=>'bookhandyman'],
             [['user_id' , 'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'bookmover'],

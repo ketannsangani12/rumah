@@ -514,41 +514,97 @@ class ApipartnersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
 
-            if (!empty($_POST)) {
                 $baseurl = $this->baseurl;
-                $userid = $this->user_id;
+                $user_id = $this->user_id;
+                $date = date('Y-m-d');
+                $userdetails = Users::find()->select(['*', new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),new \yii\db\Expression("CONCAT('/uploads/users/', '', `agent_card`) as agent_card")])->where(['id'=>$this->user_id])->asArray()->one();
 
-                $lat = (isset($_POST['lat']) && $_POST['lat'] != '') ? $_POST['lat'] : '';
-                $long = (isset($_POST['long']) && $_POST['long'] != '') ? $_POST['long'] : '';
-                //$harvesformula = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance' : '';
-
-                $favouritemerchants = FavouriteProperties::find()->with([
-                    'property' => function ($query) {
-                        $query->select('id,property_no,title,location,property_type,type,price');
-                    },
-                    'property.pictures' => function ($query) use($baseurl) {
-                        $query->select(['id', 'property_id', new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
-                    },
-                ])->where(['user_id' => $userid])->asArray()->all();
-                $featuredproperties = Properties::find()
-                    ->select('id,property_no,title,location,property_type,type,price')
+                $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                     ->with([
-                        'pictures'=>function ($query) use($baseurl) {
-                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
+                        'request'=>function ($query) {
+                            $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                         },
-                    ])->where(['is_featured'=>1])->asArray()->all();
-                $data['isaved'] = $favouritemerchants;
-                $data['featured'] = $featuredproperties;
-                $data['istories'] = Istories::find()->select(['id','title','link','description',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->asArray()->all();
-                $data['ilifestyles'] = Ilifestyle::find()->select(['id','title','link','description',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->asArray()->all();
+                        'servicerequest'=>function ($query) {
+                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst']);
+                        },
+                        'property'=>function($query){
+                            $query->select('id,property_no,title');
+                        },
+                        'user'=>function($query){
+                            $query->select("id,full_name");
+                        },
+                        'landlord'=>function($query){
+                            $query->select("id,full_name");
 
+                        },
+                        'agent'=>function($query){
+                            $query->select("id,full_name");
+
+                        },
+                        'renovationquote'=>function($query){
+                            $query->select(['id',new \yii\db\Expression("CONCAT('/uploads/renovationquotes/', '', `quote_document`) as quote_document")]);
+
+                        },
+                        'documents'=>function($query){
+                            $query->select(['id','todo_id','description',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")]);
+
+                        },
+                        'todoItems'=>function($query){
+                            $query->select(['id','todo_id','description','platform_deductible','price','reftype']);
+
+                        },
+
+                    ])->where(['vendor_id'=>$user_id])->orWhere(['agent_id'=>$user_id])->asArray()->all();
+
+                $services = array();
+                $upcoming = array();
+                if(!empty($todolists)){
+                    foreach ($todolists as $key=>$todolist){
+
+                        switch ($todolist['reftype']){
+                            case "Booking";
+                                if($todolist['status']=='Incompleted' || $todolist['status']=='Pending' || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
+                                    $services[] = $todolist;
+                                }
+                                break;
+                            case "Transfer Request";
+                                if($todolist['status']=='Pending'){
+                                    $services[] = $todolist;
+                                }
+                                break;
+                            case "Moveout Refund";
+                                if($todolist['status']=='Moveout Refund'){
+                                    $services[] = $todolist;
+                                }
+                                break;
+
+                            case "Appointment";
+                                $date = date('Y-m-d');
+                                if($todolist['status']=='Pending' && $date<=$todolist['appointment_date']){
+                                    $services[] = $todolist;
+                                }
+                                break;
+                            case "Service";
+                                if($todolist['status']=='In Progress' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                    if($date==$todolist['servicerequest']['date']){
+                                        $upcoming[] = $todolist;
+                                    }else {
+
+                                        $services[] = $todolist;
+                                    }
+                                }
+                                break;
+
+                        }
+                    }
+                }
+                $data = array();
+                $data['userdetails'] = $userdetails;
+                $data['upcoming'] = $upcoming;
+                $data['services'] = $services;
                 return array('status' => 1, 'data' => $data);
 
-            }else{
 
-                return array('status' => 0, 'message' => 'Please allow location access to search property nearby.');
-
-            }
 
         }
 
@@ -962,777 +1018,8 @@ class ApipartnersController extends ActiveController
 
 
     }
-    public function actionSearch()
-    {
 
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            $baseurl = $this->baseurl;
-            if (!empty($_POST) && isset($_POST['lat']) && $_POST['lat']!='' && isset($_POST['long']) && $_POST['long']!='') {
-                $user_id = $this->user_id;
-                $lat = (isset($_POST['lat']) && $_POST['lat']!='')?$_POST['lat']:'';
-                $long = (isset($_POST['long']) && $_POST['long']!='')?$_POST['long']:'';
-                $furnished_status = (isset($_POST['furnished_status']) && $_POST['furnished_status']!='')?$_POST['furnished_status']:'';
 
-                $property_type = (isset($_POST['property_type']) && $_POST['property_type']!='')?$_POST['property_type']:'';
-                $room_type = (isset($_POST['room_type']) && $_POST['room_type']!='')?$_POST['room_type']:'';
-                $preference = (isset($_POST['preference']) && $_POST['preference']!='')?$_POST['preference']:'';
-                $price = (isset($_POST['price']) && $_POST['price']!='')?explode(",",$_POST['price']):'';
-                $distance = (isset($_POST['distance']) && $_POST['distance']!='')?$_POST['distance']:'';
-                $commute = (isset($_POST['commute']) && $_POST['commute']!='')?explode(",",$_POST['commute']):'';
-                $amenities = (isset($_POST['amenities']) && $_POST['amenities']!='')?explode(",",$_POST['amenities']):'';
-                $rooms = (isset($_POST['rooms']) && $_POST['rooms']!='')?$_POST['rooms']:'';
-                $size = (isset($_POST['size']) && $_POST['size']!='')?$_POST['size']:'';
-                $search = (isset($_POST['search']) && $_POST['search']!='')?$_POST['search']:'';
-                $location = (isset($_POST['location']) && $_POST['location']!='')?$_POST['location']:'';
-                //print_r($price);exit;
-                // $searchword = $_POST['search'];
-
-                $baseurl = $this->baseurl;
-                $harvesformula = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance': '';
-                $harvesformula1 = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
-
-                $query1 = Properties::find()
-                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,'.$harvesformula)
-                    ->with([
-                        'pictures'=>function ($query) use($baseurl) {
-                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
-                        },
-                    ]);
-                $query1->where(['!=', 'user_id', $user_id]);
-                if(!empty($commute)){
-                    foreach ($commute as $key=>$item){
-                        if($key==0) {
-                            $query1->andWhere(new \yii\db\Expression('FIND_IN_SET("'.$item.'",commute)'));
-                            // $query1->andWhere(['like', 'commute', $item]);
-                        }else{
-                            $query1->orWhere(new \yii\db\Expression('FIND_IN_SET("'.$item.'",commute)'));//->addParams([':commute_to_find' => $item]);
-
-                        }
-
-                    }
-                }
-                if(!empty($amenities)){
-                    foreach ($amenities as $key=>$amenity){
-                        if($key==0) {
-                            $query1->andWhere(new \yii\db\Expression('FIND_IN_SET("'.$amenity.'",amenities)'));
-
-                        }else{
-                            $query1->orWhere(new \yii\db\Expression('FIND_IN_SET("'.$amenity.'",amenities)'));//->addParams([':commute_to_find' => $item]);
-
-
-                        }
-
-                    }
-                }
-                if($location!=''){
-                    $query1->andWhere(['like', 'location', $location]);
-                }
-                if($search!=''){
-                    $query1->andWhere(['like', 'title', $search]);
-                }
-                if ($property_type!=''){
-                    $query1->andWhere(['property_type'=>$property_type]);
-                }
-                if($room_type!=''){
-                    $query1->andWhere(['room_type'=>$room_type]);
-                }
-                if($preference!=''){
-                    $query1->andWhere(['preference'=>$preference]);
-                }
-                if($distance!='' && $lat!='' && $long!=''){
-                    $query1->andWhere(['<=', $harvesformula1, $distance]);
-
-                }
-                if($furnished_status!=''){
-                    $query1->andWhere(['furnished_status'=>$furnished_status]);
-                }
-                if($rooms!=''){
-                    $query1->andWhere(['<=', 'bedroom', $rooms]);
-
-                }
-                if($size!=''){
-                    $query1->andWhere(['>=', 'size_of_area', $size]);
-
-                }
-                if(!empty($price)){
-                    $query1->andWhere(["between", "price", $price[0], $price[1]]);
-
-                }
-
-
-
-                if($lat!='' && $long!=''){
-                    $query1->orderBy(['distance'=>SORT_ASC]);
-                }
-
-                //$query1->all();
-
-                $properties =  $query1->asArray()->all();
-                //echo "<pre>";print_r($properties);exit;
-                if(!empty($properties)){
-                    foreach ($properties as $key=>$property){
-                        $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
-
-                    }
-                }
-                return array('status' => 1, 'data' => $properties,'total'=>count($properties));
-
-
-            }else{
-                return array('status' => 0, 'message' => 'Please allow location access to search property nearby.');
-
-            }
-        }
-
-
-    }
-
-    public function actionPropertydetails()
-    {
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if (!empty($_POST) && !empty($_POST['property_id'])) {
-                $baseurl = $this->baseurl;
-                $user_id = $this->user_id;
-                $query1 = Properties::find()
-                    ->select('id,user_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,carparks,amenities,commute')
-                    ->with([
-                        'images'=>function ($query) use($baseurl) {
-                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")]);
-                        },
-                        'user'=>function($query){
-                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
-                        }
-                    ])->where(['id'=>$_POST['property_id']]);
-
-                $propertydata =  $query1->asArray()->one();
-                if(empty($propertydata)){
-                    return array('status' => 0, 'message' => 'No property details found.');
-
-                }
-                $propertydata['favourite'] = Properties::checkfavourite($_POST['property_id'],$user_id);
-                $lat = $propertydata['latitude'];
-                $long = $propertydata['longitude'];
-                $harvesformula = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance': '';
-                $harvesformula1 = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
-                $query1 = Properties::find()
-                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,'.$harvesformula)
-                    ->with([
-                        'pictures'=>function ($query) use($baseurl) {
-                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
-                        },
-                    ]);
-                $distance = 20;
-                $propertytype = $propertydata['property_type'];
-                $query1->where(['!=', 'user_id', $user_id])->andWhere(['!=', 'id', $_POST['property_id']]);
-
-                $query1->andWhere(['property_type'=>$propertytype]);
-                if($distance!='' && $lat!='' && $long!=''){
-                    $query1->andWhere(['<=', $harvesformula1, $distance]);
-
-                }
-                $properties =  $query1->asArray()->all();
-                if(!empty($properties)){
-                    foreach ($properties as $key=>$property){
-                        $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
-
-                    }
-                }
-                $data['propertydata'] = $propertydata;
-                $data['similarproperties'] = $properties;
-                $propertyviewexist = PropertyViews::find()->where(['property_id'=>$_POST['property_id'],'user_id'=>$user_id])->one();
-                if(empty($propertyviewexist)){
-                    $propertview = new PropertyViews();
-                    $propertview->user_id = $user_id;
-                    $propertview->property_id = $_POST['property_id'];
-                    $propertview->created_at = date('Y-m-d H:i:s');
-                    $propertview->save(false);
-                }
-                return array('status' => 1, 'data' => $data);
-
-
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-        }
-
-
-    }
-    public function actionAppointment(){
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            $user_id = $this->user_id;
-            $model = new TodoList();
-            $model->scenario = 'appointment';
-            $model->attributes = Yii::$app->request->post();
-            $model->user_id = $user_id;
-            if($model->validate()){
-                $property = Properties::findOne($model->property_id);
-                $photo = $model->photo;
-                $model->photo = null;
-                $model->landlord_id = $property->user_id;
-                $model->reftype = 'Appointment';
-                $model->status = 'Pending';
-                $model->created_at = date('Y-m-d H:i:s');
-                if($model->save(false)) {
-                    return array('status' => 1, 'message' => 'You have submitted appointment successfully.');
-
-                }else{
-                    return array('status' => 0, 'message' => $model->getErrors());
-
-                }
-
-            }else{
-                return array('status' => 0, 'message' => $model->getErrors());
-
-            }
-        }
-    }
-
-    public function actionBookingrequestdetails()
-    {
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if (!empty($_POST) && $_POST['request_id']!='') {
-
-                $query1 = BookingRequests::find()->select(['id','property_id','user_id','landlord_id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")])->with([
-                    'property'=>function ($query) {
-                        $query->select('id,property_no,title');
-                    },
-                    'user'=>function($query){
-                        $query->select(["id","full_name"]);
-                    },
-                    'landlord'=>function($query){
-                        $query->select(["id","full_name"]);
-
-                    },
-//                    'agent'=>function($query){
-//                        $query->select(["id","full_name"]);
-//
-//                    }
-                ])->where(['id'=>$_POST['request_id']]);
-
-                $requestdata =  $query1->asArray()->one();;
-
-                return array('status' => 1, 'data' => $requestdata);
-
-
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-        }
-
-
-    }
-
-    public function actionBookproperty()
-    {
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if (!empty($_POST)) {
-                $transaction = Yii::$app->db->beginTransaction();
-
-                try {
-                    $model = new BookingRequests();
-                    $model->scenario = 'bookfirststep';
-                    $model->attributes = Yii::$app->request->post();
-
-                    if ($model->validate()) {
-                        $checkbookingrequestexist = BookingRequests::find()->where(['user_id'=>$model->tenant_id,'property_id'=>$model->property_id,'status'=>'Incompleted'])->one();
-                        if(!empty($checkbookingrequestexist)){
-                            return array('status' => 0, 'message' => 'You already sent booking request for this property.');
-
-                        }
-                        $model->user_id = $model->tenant_id;
-                        $model->landlord_id = $this->user_id;
-                        $model->tenant_id = null;
-                        $model->status = 'Incompleted';
-                        $model->created_at = date('Y-m-d H:i:s');
-                        if ($model->save(false)) {
-                            $lastid = $model->id;
-                            $reference_no = "BR" . Yii::$app->common->generatereferencenumber($lastid);
-                            $model->reference_no = $reference_no;
-                            $model->save(false);
-                            $todomodel = new TodoList();
-                            $todomodel->user_id = $model->user_id;
-                            $todomodel->landlord_id = $this->user_id;
-                            $todomodel->request_id = $model->id;
-                            $todomodel->property_id = $model->property_id;
-                            $todomodel->created_at = date('Y-m-d H:i:s');
-                            $todomodel->updated_at = date('Y-m-d H:i:s');
-                            $todomodel->reftype = 'Booking';
-                            $todomodel->status = 'Incompleted';
-                            if ($todomodel->save()) {
-                                $transaction->commit();
-
-                                return array('status' => 1, 'message' => 'You have sent request successfully.');
-
-                            } else {
-                                $transaction->rollBack();
-
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                            }
-
-                        } else {
-                            $transaction->rollBack();
-
-                            return array('status' => 0, 'message' => $model->getErrors());
-
-                        }
-
-                    } else {
-                        $transaction->rollBack();
-
-                        return array('status' => 0, 'message' => $model->getErrors());
-
-                    }
-
-                }catch (Exception $e) {
-                    // # if error occurs then rollback all transactions
-                    $transaction->rollBack();
-                }
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-        }
-
-
-    }
-
-    public function actionConfirmbookproperty()
-    {
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if (!empty($_POST) && $_POST['request_id']!='') {
-
-                $model = BookingRequests::findOne($_POST['request_id']);
-                $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking','status'=>'Incompleted'])->one();
-                if(empty($todomodel)){
-                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');exit;
-
-                }
-                unset($_POST['request_id']);
-                $model->scenario = 'bookconfirm';
-                $model->attributes = Yii::$app->request->post();
-                if($model->validate()){
-
-                    $full_name = $model->full_name;
-                    $identification_no = $model->identification_no;
-                    $usermodel = Users::findOne($this->user_id);
-                    $model->full_name = null;
-                    $model->identification_no = null;
-                    $model->status = 'New';
-                    $model->updated_at = date('Y-m-d H:i:s');
-                    if($model->save()){
-                        $todomodel->status = 'New';
-                        $todomodel->updated_at = date('Y-m-d H:i:s');
-                        $todomodel->save();
-                        $usermodel->full_name = $full_name;
-                        $usermodel->document_no = $identification_no;
-                        if($usermodel->save(false)){
-                            return array('status' => 1, 'message' => 'You have sent request successfully.');
-
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                        }
-                    }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                    }
-
-                }else{
-                    return array('status' => 0, 'message' => $model->getErrors());
-
-                }
-
-
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-        }
-
-
-    }
-
-    public function actionBookingprocess()
-    {
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if (!empty($_POST) && isset($_POST['request_id']) && $_POST['request_id']!='' && isset($_POST['step']) && $_POST['step']!='' && isset($_POST['todo_id']) && !empty($_POST['todo_id'])) {
-                $request_id = $_POST['request_id'];
-                $step = $_POST['step'];
-                $model = BookingRequests::findOne($_POST['request_id']);
-                $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking'])->one();
-                if(empty($model) || empty($todomodel)){
-                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                }
-                $user_id = $this->user_id;
-                switch ($step){
-                    case "first";
-                        if ($model->status=='Pending' && isset($_POST['status']) && !empty($_POST['status']) && $model->landlord_id==$this->user_id){
-                            $transaction1 = Yii::$app->db->beginTransaction();
-
-                            try {
-                                if ($_POST['status'] == 'Approved') {
-                                    $model->scenario = 'bookingprocessfirststepapprove';
-                                } elseif ($_POST['status'] == 'Rejected') {
-                                    $model->scenario = 'bookingprocessfirststepreject';
-
-                                }
-                                $model->attributes = Yii::$app->request->post();
-                                if ($model->validate()) {
-                                    if ($_POST['status'] == 'Approved') {
-                                        $subtotal = $model->tenancy_fees+$model->stamp_duty+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;
-                                        $sst = Yii::$app->common->calculatesst($subtotal);
-                                        $model->subtotal = $subtotal;
-                                        $model->sst = $sst;
-                                        $model->total = $subtotal+$sst;
-
-                                        $full_name = $model->full_name;
-                                        $identification_no = $model->identification_no;
-                                        $usermodel = Users::findOne($this->user_id);
-                                        $model->full_name = null;
-                                        $model->identification_no = null;
-                                        $usermodel->full_name = $full_name;
-                                        $usermodel->document_no = $identification_no;
-                                        $usermodel->save();
-                                        $kyc_document = $model->kyc_document;
-                                        $spa_document = $model->spa_document;
-                                        $model->kyc_document = null;
-                                        $model->spa_document = null;
-                                        $filename = uniqid();
-
-                                        $data = Yii::$app->common->processBase64($kyc_document);
-
-                                        file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                        $filename1 = uniqid();
-
-                                        $data1 = Yii::$app->common->processBase64($spa_document);
-
-                                        file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
-                                        $documents = new UsersDocuments();
-                                        $documents->request_id = $_POST['request_id'];
-                                        $documents->user_id = $this->user_id;
-                                        $documents->ekyc_document = $filename . '.' . $data['type'];
-                                        $documents->supporting_document = $filename1 . '.' . $data1['type'];
-                                        $documents->created_at = date('Y-m-d H:i:s');
-                                        $documents->save(false);
-                                    }
-
-                                    $model->updated_at = date('Y-m-d H:i:s');
-                                    if ($model->save()) {
-                                        $todomodel->status = $_POST['status'];
-                                        $todomodel->updated_at = date('Y-m-d H:i:s');
-                                        if ($todomodel->save()) {
-                                            $transaction1->commit();
-                                            return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
-
-                                        } else {
-                                            $transaction1->rollBack();
-                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                                        }
-                                    } else {
-                                        $transaction1->rollBack();
-                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                                    }
-                                } else {
-                                    return array('status' => 0, 'message' => $model->getErrors());
-
-                                }
-                            }catch (Exception $e) {
-                                // # if error occurs then rollback all transactions
-                                $transaction1->rollBack();
-                            }
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                        }
-                        break;
-                    case "second";
-                        if ($model->status=='Approved'  && $model->user_id==$this->user_id) {
-                            $transaction1 = Yii::$app->db->beginTransaction();
-
-                            try {
-                                $model->scenario = 'bookingprocesssecondstep';
-                                $model->attributes = Yii::$app->request->post();
-                                if ($model->validate()) {
-                                    $kyc_document = $model->kyc_document;
-                                    $spa_document = $model->spa_document;
-                                    $model->kyc_document = null;
-                                    $model->spa_document = null;
-                                    $filename = uniqid();
-
-                                    $data = Yii::$app->common->processBase64($kyc_document);
-
-                                    file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                    $filename1 = uniqid();
-
-                                    $data1 = Yii::$app->common->processBase64($spa_document);
-
-                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
-                                    $documents = new UsersDocuments();
-                                    $documents->request_id = $_POST['request_id'];
-                                    $documents->user_id = $this->user_id;
-                                    $documents->ekyc_document = $filename . '.' . $data['type'];
-                                    $documents->supporting_document = $filename1 . '.' . $data1['type'];
-                                    $documents->created_at = date('Y-m-d H:i:s');
-                                    $full_name = $model->full_name;
-                                    $identification_no = $model->identification_no;
-                                    $usermodel = Users::findOne($this->user_id);
-                                    $model->full_name = null;
-                                    $model->identification_no = null;
-                                    $model->status = 'Agreement Processed';
-                                    $model->updated_at = date('Y-m-d H:i:s');
-                                    if ($model->save()) {
-                                        $documents->save(false);
-
-                                        $usermodel->full_name = $full_name;
-                                        $usermodel->document_no = $identification_no;
-                                        $usermodel->save();
-                                        $transaction1->commit();
-                                    } else {
-                                        $transaction1->rollBack();
-
-                                        return array('status' => 0, 'message' => $model->getErrors());
-
-                                    }
-
-                                } else {
-                                    $transaction1->rollBack();
-
-                                    return array('status' => 0, 'message' => $model->getErrors());
-
-                                }
-                            }catch (Exception $e) {
-                                // # if error occurs then rollback all transactions
-                                $transaction1->rollBack();
-                            }
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                        }
-
-
-                        break;
-                    case "third";
-                        if ($model->status=='Payment Requested' && $model->user_id==$this->user_id){
-                            $promocode = (isset($_POST['promo_code']) && $_POST['promo_code']!='')?$_POST['promo_code']:'';
-                            $amount = (isset($_POST['amount']) && $_POST['amount']!='')?$_POST['amount']:'';
-                            $discount = (isset($_POST['discount']) && $_POST['discount']!='')?$_POST['discount']:0;
-                            $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins']!='')?$_POST['gold_coins']:0;
-                            $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings']!='')?$_POST['coins_savings']:0;
-                            if($promocode!=''){
-                                $promocodedetails = PromoCodes::find()->where(['promo_code'=>$promocode])->one();
-                            }
-                            $totalamount = $amount;
-                            $totalamountafterdiscount = $totalamount-$discount-$coins_savings;
-                            $receiverbalance = Users::getbalance($model->landlord_id);
-                            $senderbalance = Users::getbalance($model->user_id);
-                            $systemaccount = Yii::$app->common->getsystemaccount();
-                            $systemaccountbalance = $systemaccount->wallet_balance;
-
-                            $transaction1 = Yii::$app->db->beginTransaction();
-
-                            try {
-                                $transaction = new Transactions();
-                                $transaction->user_id = $this->user_id;
-                                $transaction->request_id = $model->id;
-                                $transaction->landlord_id = $model->landlord_id;
-                                $transaction->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
-                                $transaction->amount = $totalamount;
-                                $transaction->discount = $discount;
-                                $transaction->coins = $goldcoins;
-                                $transaction->coins_savings = $coins_savings;
-                                $transaction->total_amount = $totalamountafterdiscount;
-                                $transaction->reftype = 'Booking Payment';
-                                $transaction->status = 'Completed';
-                                $transaction->created_at = date('Y-m-d H:i:s');
-                                if ($transaction->save()) {
-                                    $lastid = $transaction->id;
-                                    $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
-                                    $transaction->reference_no = $reference_no;
-                                    if ($transaction->save(false)) {
-                                        if($model->booking_fees>0){
-                                            $transactionitems = new TransactionsItems();
-                                            $transactionitems->sender_id = $model->user_id;
-                                            $transactionitems->receiver_id = $model->landlord_id;
-                                            $transactionitems->oldsenderbalance = $senderbalance;
-                                            $transactionitems->newsenderbalance = $senderbalance-$model->booking_fees;
-                                            $transactionitems->oldreceiverbalance = $receiverbalance;
-                                            $transactionitems->newreceiverbalance = $receiverbalance+$model->booking_fees;
-                                            $transactionitems->description = 'Booking Fees';
-                                            $transactionitems->created_at = date('Y-m-d H:i:s');
-                                            $transactionitems->save(false);
-                                        }
-                                        if($model->rental_deposit>0){
-                                            $transactionitems = new TransactionsItems();
-                                            $transactionitems->sender_id = $model->user_id;
-                                            $transactionitems->receiver_id = $model->landlord_id;
-                                            $transactionitems->oldsenderbalance = $senderbalance;
-                                            $transactionitems->newsenderbalance = $senderbalance-$model->rental_deposit;
-                                            $transactionitems->oldreceiverbalance = $receiverbalance;
-                                            $transactionitems->newreceiverbalance = $receiverbalance+$model->rental_deposit;
-                                            $transactionitems->description = 'Deposit';
-                                            $transactionitems->created_at = date('Y-m-d H:i:s');
-                                            $transactionitems->save(false);
-                                        }
-                                        if($model->keycard_deposit>0){
-                                            $transactionitems = new TransactionsItems();
-                                            $transactionitems->sender_id = $model->user_id;
-                                            $transactionitems->receiver_id = $model->landlord_id;
-                                            $transactionitems->oldsenderbalance = $senderbalance;
-                                            $transactionitems->newsenderbalance = $senderbalance-$model->keycard_deposit;
-                                            $transactionitems->oldreceiverbalance = $receiverbalance;
-                                            $transactionitems->newreceiverbalance = $receiverbalance+$model->keycard_deposit;
-                                            $transactionitems->description = 'Keycard Deposit';
-                                            $transactionitems->created_at = date('Y-m-d H:i:s');
-                                            $transactionitems->save(false);
-                                        }
-                                        if($model->utilities_deposit>0){
-                                            $transactionitems = new TransactionsItems();
-                                            $transactionitems->sender_id = $model->user_id;
-                                            $transactionitems->receiver_id = $model->landlord_id;
-                                            $transactionitems->oldsenderbalance = $senderbalance;
-                                            $transactionitems->newsenderbalance = $senderbalance-$model->utilities_deposit;
-                                            $transactionitems->oldreceiverbalance = $receiverbalance;
-                                            $transactionitems->newreceiverbalance = $receiverbalance+$model->utilities_deposit;
-                                            $transactionitems->description = 'Utilities Deposit';
-                                            $transactionitems->created_at = date('Y-m-d H:i:s');
-                                            $transactionitems->save(false);
-                                        }
-                                        if($model->stamp_duty>0){
-                                            $transactionitems = new TransactionsItems();
-                                            $transactionitems->sender_id = $model->user_id;
-                                            $transactionitems->receiver_id = $systemaccount->id;
-                                            $transactionitems->oldsenderbalance = $senderbalance;
-                                            $transactionitems->newsenderbalance = $senderbalance-$model->stamp_duty;
-                                            $transactionitems->oldreceiverbalance = $systemaccountbalance;
-                                            $transactionitems->newreceiverbalance = $systemaccountbalance+$model->stamp_duty;
-                                            $transactionitems->description = 'Stamp Duty';
-                                            $transactionitems->created_at = date('Y-m-d H:i:s');
-                                            $transactionitems->save(false);
-                                        }
-                                        if($model->tenancy_fees>0){
-                                            $transactionitems = new TransactionsItems();
-                                            $transactionitems->sender_id = $model->user_id;
-                                            $transactionitems->receiver_id = $systemaccount->id;
-                                            $transactionitems->oldsenderbalance = $senderbalance;
-                                            $transactionitems->newsenderbalance = $senderbalance-$model->tenancy_fees;
-                                            $transactionitems->oldreceiverbalance = $systemaccountbalance;
-                                            $transactionitems->newreceiverbalance = $systemaccountbalance+$model->tenancy_fees;
-                                            $transactionitems->description = 'Tenancy Fees';
-                                            $transactionitems->created_at = date('Y-m-d H:i:s');
-                                            $transactionitems->save(false);
-                                        }
-                                        $model->status = 'Rented';
-                                        $model->rented_at = date('Y-m-d H:i:s');
-                                        if ($model->save(false)) {
-                                            $todomodel->status = 'Paid';
-                                            $todomodel->save(false);
-                                            $model->property->status = 'Rented';
-                                            $model->property->request_id = $model->id;
-                                            if($model->property->save()){
-                                                if($goldcoins>0){
-                                                    $usercoinsbalance = Users::getcoinsbalance($model->user_id);
-                                                    $goldtransaction = new GoldTransactions();
-                                                    $goldtransaction->user_id = $model->user_id;
-                                                    $goldtransaction->gold_coins = $goldcoins;
-                                                    $goldtransaction->transaction_id = $lastid;
-                                                    $goldtransaction->olduserbalance =$usercoinsbalance;
-                                                    $goldtransaction->newuserbalance = $usercoinsbalance-$goldcoins;
-                                                    $goldtransaction->reftype = 'In App Purchase';
-                                                    $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                                    if($goldtransaction->save(false)){
-                                                        Users::updatecoinsbalance($usercoinsbalance-$goldcoins,$model->user_id);
-                                                    }
-                                                }
-                                                $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
-                                                $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->booking_fees+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
-                                                $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty,$systemaccount->id);
-
-                                                $transaction1->commit();
-                                                return array('status' => 1, 'message' => 'You have rented property successfully.');
-
-
-                                            }else{
-                                                $transaction1->rollBack();
-                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                                            }
-
-
-                                        }else{
-                                            $transaction1->rollBack();
-
-                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                                        }
-
-                                    }else{
-                                        $transaction1->rollBack();
-
-                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                                    }
-
-
-                                } else {
-                                    $transaction1->rollBack();
-
-                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                                }
-                            }catch (Exception $e) {
-                                // # if error occurs then rollback all transactions
-                                $transaction1->rollBack();
-                            }
-                            //$transaction
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                        }
-                        break;
-
-                }
-
-
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-        }
-
-
-    }
     public function actionTodolist()
     {
 
@@ -1777,7 +1064,7 @@ class ApipartnersController extends ActiveController
 
                     },
 
-                ])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->asArray()->all();
+                ])->where(['vendor_id'=>$user_id])->orWhere(['agent_id'=>$user_id])->asArray()->all();
 
             $data = array();
             if(!empty($todolists)){
@@ -1799,43 +1086,7 @@ class ApipartnersController extends ActiveController
                                 $data[] = $todolist;
                             }
                             break;
-                        case "Renovation Quote";
-                            if($todolist['status']=='Pending'){
-                                $data[] = $todolist;
-                            }
-                            break;
-                        case "Renovation Milestone";
-                            if($todolist['status']=='Unpaid'){
-                                $data[] = $todolist;
-                            }
-                            break;
-                        case "Defect Report";
-                            if($todolist['pay_from']=='Tenant' && $user_id==$todolist['user_id']){
-                                if($todolist['status']=='Pending' || $todolist['status']=='Unpaid'){
-                                    $data[] = $todolist;
-                                }
-                            }else if($todolist['pay_from']=='Landlord' && $user_id==$todolist['landlord_id']){
-                                if($todolist['status']=='Pending' || $todolist['status']=='Unpaid'){
-                                    $data[] = $todolist;
-                                }
-                            }
 
-                            break;
-                        case "General";
-                            if($todolist['status']=='Unpaid'){
-                                $data[] = $todolist;
-                            }
-                            break;
-                        case "Insurance";
-                            if($todolist['status']=='Unpaid'){
-                                $data[] = $todolist;
-                            }
-                            break;
-                        case "Monthly Rental";
-                            if($todolist['status']=='Unpaid'){
-                                $data[] = $todolist;
-                            }
-                            break;
                         case "Appointment";
                             $date = date('Y-m-d');
                             if($todolist['status']=='Pending' && $date<=$todolist['appointment_date']){
@@ -1843,7 +1094,7 @@ class ApipartnersController extends ActiveController
                             }
                             break;
                         case "Service";
-                            if($todolist['status']=='Pending' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                            if($todolist['status']=='In Progress' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
                                 $data[] = $todolist;
                             }
                             break;
@@ -1918,41 +1169,6 @@ class ApipartnersController extends ActiveController
                                     $data[] = $todolist;
                                 }
                                 break;
-                            case "Moveout Refund";
-                                if ($todolist['status'] == 'Pending') {
-                                    $data[] = $todolist;
-                                }
-                                break;
-                            case "Renovation Quote";
-                                if ($todolist['status'] == 'Pending') {
-                                    $data[] = $todolist;
-                                }
-                                break;
-                            case "Renovation Milestone";
-                                if ($todolist['status'] == 'Unpaid') {
-                                    $data[] = $todolist;
-                                }
-                                break;
-                            case "Defect Report";
-                                if ($todolist['status'] == 'Pending' || $todolist['status'] == 'Unpaid') {
-                                    $data[] = $todolist;
-                                }
-                                break;
-                            case "General";
-                                if ($todolist['status'] == 'Unpaid') {
-                                    $data[] = $todolist;
-                                }
-                                break;
-                            case "Insurance";
-                                if ($todolist['status'] == 'Unpaid') {
-                                    $data[] = $todolist;
-                                }
-                                break;
-                            case "Monthly Rental";
-                                if ($todolist['status'] == 'Unpaid') {
-                                    $data[] = $todolist;
-                                }
-                                break;
                             case "Appointment";
                                 $date = date('Y-m-d');
                                 if($todolist['status']=='Pending' && $date<=$todolist['appointment_date']){
@@ -1960,7 +1176,7 @@ class ApipartnersController extends ActiveController
                                 }
                                 break;
                             case "Service";
-                                if($todolist['status']=='Pending' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                if($todolist['status']=='In Progress' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
                                     $data[] = $todolist;
                                 }
                                 break;

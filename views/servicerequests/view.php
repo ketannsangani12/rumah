@@ -69,6 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         //'status',
                         'booked_at:datetime',
+                        'todo.payment_date:datetime',
                         'checkin_time:datetime',
                         'checkout_time:datetime'
                         // 'created_at:datetime',
@@ -83,9 +84,31 @@ $this->params['breadcrumbs'][] = $this->title;
                         'pickup_location',
                         'dropoff_location',
                         'truck_size',
-                        'subtotal:currency',
-                        'sst:currency',
-                        'total_amount:currency',
+                        [
+                            'label'=>'Subtotal',
+
+                            'value'=>function($model){
+                                return (isset($model->todo->subtotal))?$model->todo->subtotal:'';
+                            }
+                        ],
+
+                        [
+                            'label'=>'SST',
+
+                            'value'=>function($model){
+                                return (isset($model->todo->sst))?$model->todo->sst:'';
+                            }
+                        ],
+                        [
+                            'label'=>'Total',
+
+                            'value'=>function($model){
+                                return (isset($model->todo->total))?$model->todo->total:'';
+                            }
+                        ],
+                        //'subtotal:currency',
+                       // 'sst:currency',
+                        //'total_amount:currency',
                         [
                             'label' => 'Work / Quotation Order',
                             'value' => function ($model,$documentstenants) {
