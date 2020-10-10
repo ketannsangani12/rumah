@@ -30,6 +30,10 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'bank_account_no')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'bank_name')->textInput(['maxlength' => true]) ?>
         </div>
+             <div id="location" style="<?php echo ($model->role=='Cleaner'  || $model->role=='Laundry')?"display: block;":"display: none;"?>">
+                 <?= $form->field($model, 'latitude')->textInput(['maxlength' => true]) ?>
+                 <?= $form->field($model, 'longitude')->textInput(['maxlength' => true]) ?>
+             </div>
          </div>
 </div>
         </div>

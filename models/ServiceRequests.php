@@ -63,6 +63,8 @@ class ServiceRequests extends \yii\db\ActiveRecord
             [['property_id', 'vendor_id', 'user_id', 'todo_id'], 'integer'],
             [['property_id' , 'date' , 'time' , 'type'], 'required','on'=>'bookhandyman'],
             [['user_id' , 'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'bookmover'],
+            [['property_id' , 'date' , 'time' ,'hours'], 'required','on'=>'bookcleaner'],
+
             [['quote',], 'required','on' => 'uploadquote'],
             [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             [['date', 'booked_at', 'created_at', 'updated_at'], 'safe'],

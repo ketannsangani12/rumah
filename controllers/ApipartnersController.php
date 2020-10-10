@@ -519,13 +519,13 @@ class ApipartnersController extends ActiveController
                 $date = date('Y-m-d');
                 $userdetails = Users::find()->select(['*', new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),new \yii\db\Expression("CONCAT('/uploads/users/', '', `agent_card`) as agent_card")])->where(['id'=>$this->user_id])->asArray()->one();
 
-                $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+                $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                     ->with([
                         'request'=>function ($query) {
                             $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                         },
                         'servicerequest'=>function ($query) {
-                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst']);
+                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','hours']);
                         },
                         'property'=>function($query){
                             $query->select('id,property_no,title');
@@ -586,6 +586,13 @@ class ApipartnersController extends ActiveController
                                 break;
                             case "Service";
                                 if($todolist['status']=='In Progress' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                    if($date==$todolist['servicerequest']['date']){
+                                        $upcoming[] = $todolist;
+                                    }else {
+
+                                        $services[] = $todolist;
+                                    }
+                                }else if($todolist['status']=='New' && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
                                     if($date==$todolist['servicerequest']['date']){
                                         $upcoming[] = $todolist;
                                     }else {
@@ -1117,21 +1124,21 @@ class ApipartnersController extends ActiveController
 
                 $user_id = $this->user_id;
                 // echo $user_id;exit;
-                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+                $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                     ->with([
-                        'request' => function ($query) {
-                            $query->select(['id', 'booking_fees', 'credit_score', 'monthly_rental', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'rental_deposit', 'utilities_deposit', 'subtotal', 'total', 'commencement_date', 'tenancy_period', 'security_deposit', new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
+                        'request'=>function ($query) {
+                            $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                         },
                         'servicerequest'=>function ($query) {
-                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst']);
+                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','hours']);
                         },
-                        'property' => function ($query) {
+                        'property'=>function($query){
                             $query->select('id,property_no,title');
                         },
-                        'user' => function ($query) {
+                        'user'=>function($query){
                             $query->select("id,full_name");
                         },
-                        'landlord' => function ($query) {
+                        'landlord'=>function($query){
                             $query->select("id,full_name");
 
                         },
@@ -1139,19 +1146,21 @@ class ApipartnersController extends ActiveController
                             $query->select("id,full_name");
 
                         },
-                        'renovationquote' => function ($query) {
-                            $query->select(['id', new \yii\db\Expression("CONCAT('/uploads/renovationquotes/', '', `quote_document`) as quote_document")]);
+                        'renovationquote'=>function($query){
+                            $query->select(['id',new \yii\db\Expression("CONCAT('/uploads/renovationquotes/', '', `quote_document`) as quote_document")]);
 
                         },
-                        'documents' => function ($query) {
-                            $query->select(['id', 'todo_id', 'description', new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")]);
+                        'documents'=>function($query){
+                            $query->select(['id','todo_id','description',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")]);
 
                         },
-                        'todoItems' => function ($query) {
-                            $query->select(['id', 'todo_id', 'description', 'platform_deductible', 'price', 'reftype']);
+                        'todoItems'=>function($query){
+                            $query->select(['id','todo_id','description','platform_deductible','price','reftype']);
 
                         },
-                    ])->where(['id' => $_POST['todo_id']])->asArray()->all();
+
+                    ])->where(['vendor_id'=>$user_id])->orWhere(['agent_id'=>$user_id])->asArray()->all();
+
 
                 $data = array();
                 //echo "<pre>";print_r($todolists);exit;
@@ -1177,6 +1186,8 @@ class ApipartnersController extends ActiveController
                                 break;
                             case "Service";
                                 if($todolist['status']=='In Progress' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                    $data[] = $todolist;
+                                }else if($todolist['status']=='New' && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
                                     $data[] = $todolist;
                                 }
                                 break;

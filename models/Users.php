@@ -52,9 +52,14 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
             ['referral_code', 'checkReferralcode'],
             [['contact_no','company_name','company_address','company_state','bank_account_name','bank_account_no','bank_name'], 'required','when' => function ($model) {
-                return ($model->role == 'Cleaner' || $model->role == 'Mover');
+                return ($model->role == 'Handyman' || $model->role == 'Mover');
             }, 'whenClient' => "function (attribute, value) {
-        return ($('#role').val() == 'Cleaner' || $('#role').val() == 'Mover');
+        return ($('#role').val() == 'Handyman' || $('#role').val() == 'Mover');
+    }"],
+            [['contact_no','company_name','company_address','company_state','bank_account_name','bank_account_no','bank_name','latitude','longitude'], 'required','when' => function ($model) {
+                return ($model->role == 'Laundry' || $model->role == 'Cleaner');
+            }, 'whenClient' => "function (attribute, value) {
+        return ($('#role').val() == 'Laundry' || $('#role').val() == 'Cleaner');
     }"],
 
             [['email'], 'email'],
@@ -75,7 +80,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             //[['name', 'username', 'password', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
             [['password'], 'string', 'max' => 255],
-            [['username'], 'string', 'max' => 40],
+            [['username','current_status'], 'string', 'max' => 40],
         ];
     }
 
@@ -114,7 +119,10 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'emergency_contact'=>'Emergency Contact',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
-            'referral_code'=>'Referral Code'
+            'referral_code'=>'Referral Code',
+            'current_status'=>'Current Status',
+            'latitude'=>'Latitude',
+            'longitude'=>'Longitude'
         ];
     }
 

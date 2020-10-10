@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\ServicerequestImages;
 use app\models\TodoItems;
 use app\models\TodoList;
+use app\models\Users;
 use Yii;
 use app\models\ServiceRequests;
 use app\models\ServiceRequestsSearch;
@@ -355,14 +356,24 @@ class ServicerequestsController extends Controller
 
 
         if ($merchantmodel->load(Yii::$app->request->post()) ) {
+            $vendormodel = Users::findOne($merchantmodel->vendor_id);
+            if($vendormodel->current_status=='Busy'){
+                throw new NotFoundHttpException('This Vendor already assigned to other request.Please try different');
+
+            }
             // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
             if($merchantmodel->validate()) {
                 $merchantmodel->status = 'In Progress';
+                $merchantmodel->updated_at = date('Y-m-d H:i:s');
                 if($merchantmodel->save(false)) {
                     $todolist = $merchantmodel->todo;
                     $todolist->status = $merchantmodel->status;
-                    $todolist->save(false);
-                    return $this->redirect(['index']);
+                    $todolist->updated_at = date('Y-m-d H:i:s');
+                    if($todolist->save(false)) {
+                        $vendormodel->current_status = 'Busy';
+                        $vendormodel->updated_at = date('Y-m-d H:i:s');
+                        return $this->redirect(['index']);
+                    }
                 }
 
             }else{

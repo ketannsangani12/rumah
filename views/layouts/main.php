@@ -70,6 +70,11 @@ if (Yii::$app->controller->action->id === 'login') {
                 var val = $("#role option:selected").val();
                 if(val=="Cleaner" || val=="Mover" || val=="Laundry" || val=="Handyman"){
                     $("#companydetails").show();
+                    if(val=="Cleaner" || val=="Laundry"){
+                    $("#location").show();
+                    }else{
+                    $("#location").hide();
+                    }
                 }else{
                     $("#companydetails").hide();
                 }

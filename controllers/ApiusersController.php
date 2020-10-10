@@ -3513,6 +3513,8 @@ class ApiusersController extends ActiveController
                            }
                        }
                    } catch (Exception $e) {
+                       return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
                        // # if error occurs then rollback all transactions
                        $transaction->rollBack();
                    }
@@ -3805,6 +3807,118 @@ class ApiusersController extends ActiveController
                         }
 
                         break;
+                    case "Cleaner";
+                        $transaction = Yii::$app->db->beginTransaction();
+
+                        try {
+                            $addons = (isset($_POST['addon']) && $_POST['addon'] != '') ? $_POST['addon'] : '';
+                            unset($_POST['addon']);
+                            $model->attributes = Yii::$app->request->post();
+                            $model->user_id = $user_id;
+                            $model->reftype = $type;
+                            $model->scenario = 'bookcleaner';
+                            if ($model->validate()) {
+                                $propertydetails = Properties::findOne($model->property_id);
+                                $lat = $propertydetails->latitude;
+                                $long = $propertydetails->longitude;
+                                $harvesformula = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance' : '';
+                                $harvesformula1 = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
+                                $distance = 50;
+                                $cleaner = Users::find()
+                                    ->select('id,latitude,longitude,full_name,email,' . $harvesformula)->where(['current_status' => 'Free', 'role' => 'Cleaner'])->andWhere(['<=', $harvesformula1, $distance])->one();
+                                if (empty($cleaner)) {
+                                    return array('status' => 0, 'message' => 'There is no Cleaning Company Available in your area.');
+
+                                }
+                                $priceperhour = 40;
+                                $addonprice = (!empty($addons))?28:0;
+
+                                //print_r($subtotal);exit;
+                                $model->date = date('Y-m-d', strtotime($model->date));
+                                $model->status = 'New';
+                                $model->created_at = date("Y-m-d H:i:s");
+                                $model->booked_at = date("Y-m-d H:i:s");
+                                if ($model->save()) {
+                                    $request_id = $model->id;
+                                    $reference_no = Yii::$app->common->generatereferencenumber($request_id);
+                                    $model->reference_no = $reference_no;
+                                    $model->vendor_id= $cleaner->id;
+                                    if ($model->save(false)) {
+                                        $todolist = new TodoList();
+                                        $todolist->user_id = $user_id;
+                                        $todolist->service_request_id = $request_id;
+                                        $todolist->property_id = $model->property_id;
+                                        $todolist->vendor_id = $cleaner->id;
+                                        $todolist->reftype = 'Service';
+                                        $todolist->service_type = $type;
+                                        $todolist->created_at = date("Y-m-d H:i:s");
+                                        $todolist->status = 'New';
+
+                                        if ($todolist->save(false)) {
+                                            $todoitems = new TodoItems();
+                                            $todoitems->todo_id = $todolist->id;
+                                            $todoitems->description = 'Cleaning Services (' . $model->hours . ' hours)';
+                                            $todoitems->price = $priceperhour * $model->hours;
+                                            $todoitems->created_at = date("Y-m-d H:i:s");
+                                            $todoitems->save(false);
+                                            if (!empty($addons)) {
+                                                $todoitems1 = new TodoItems();
+                                                $todoitems1->todo_id = $todolist->id;
+                                                $todoitems1->description = 'Cleaning Tools ';
+                                                $todoitems1->price = $addonprice;
+                                                $todoitems1->created_at = date("Y-m-d H:i:s");
+                                                $todoitems1->save(false);
+                                            }
+                                            $subtotal = ($priceperhour * $model->hours)+$addonprice;
+                                            $sst = Yii::$app->common->calculatesst($subtotal);
+                                            $total_amount = $subtotal+$sst;
+                                            $model->subtotal = $subtotal;
+                                            $model->sst = $sst;
+                                            $model->total_amount = $total_amount;
+                                            $model->todo_id = $todolist->id;
+                                            if($model->save(false)) {
+                                                $todolist->subtotal = $subtotal;
+                                                $todolist->sst = $sst;
+                                                $todolist->total = $total_amount;
+                                                $todolist->save(false);
+                                                $cleaner->current_status = 'Busy';
+                                                $cleaner->save(false);
+                                                $transaction->commit();
+                                                return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
+                                            }else{
+                                                $transaction->rollBack();
+                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                            }
+                                        } else {
+                                            $transaction->rollBack();
+
+                                            return array('status' => 0, 'message' => $todolist->getErrors());
+
+                                        }
+                                    }
+                                } else {
+                                    $transaction->rollBack();
+
+                                    return array('status' => 0, 'message' => $model->getErrors());
+
+                                }
+
+                            } else {
+                                $transaction->rollBack();
+
+                                return array('status' => 0, 'message' => $model->getErrors());
+
+                            }
+                        }catch (Exception $e) {
+                            // # if error occurs then rollback all transactions
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                        }
+
+                        break;
+
                 }
 
             }else{
