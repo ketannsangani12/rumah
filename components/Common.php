@@ -2,6 +2,7 @@
 namespace app\components;
 
 
+use app\models\PlatformFees;
 use app\models\Users;
 use Yii;
 use yii\base\Component;
@@ -230,6 +231,13 @@ class Common extends Component
         $userdetails = Users::findOne($user_id);
 
         return ($userdetails->secondary_password==md5($password))?true:false;
+
+
+    }
+    public function getplatformfees($name){
+        $platformfees = PlatformFees::find()->where(['name'=>$name])->asArray()->one();
+
+        return $platformfees;
 
 
     }

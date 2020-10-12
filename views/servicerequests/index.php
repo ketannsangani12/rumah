@@ -123,7 +123,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return (($model->reftype=='Handyman' || $model->reftype=='Mover') && ($model->status=='Accepted' || $model->status=='Unpaid'));
                         },
                         'refund'=> function($model){
-                   return (($model->reftype=='Handyman' || $model->reftype=='Mover') && ($model->status=='Cancelled'));
+                   return (($model->reftype=='Handyman' || $model->reftype=='Mover' || $model->reftype=='Cleaner') && ($model->status=='Cancelled'));
                        }
                     ],
                     'buttons'=>[
