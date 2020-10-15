@@ -2804,12 +2804,17 @@ class ApiusersController extends ActiveController
 
                try {
                    if ($status == 'Accepted') {
+                       $totalamount = $amount;
+                       $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+                       $senderbalance = Users::getbalance($todomodel->landlord_id);
+                       if($senderbalance < $totalamountafterdiscount){
+                           return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
+
+                       }
                        $todomodel->status = $status;
                        if ($todomodel->save()) {
                            $todoitems = $todomodel->todoItems;
                            if (!empty($todoitems)) {
-                               $totalamount = $amount;
-                               $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
 
                                $transactionmodel = new Transactions();
                                $transactionmodel->user_id = $user_id;
@@ -2937,15 +2942,16 @@ class ApiusersController extends ActiveController
 
                try {
                    if ($status == 'Accepted') {
+                       $totalpayableamount = $todomodel->total;
+                       $senderbalance = Users::getbalance($todomodel->landlord_id);
+                       if ($totalpayableamount > $senderbalance) {
+                           return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
+
+                       }
                        $todomodel->status = $status;
                        if ($todomodel->save()) {
                            $todoitems = $todomodel->todoItems;
-                           $totalpayableamount = $todomodel->total;
-                           $senderbalance = Users::getbalance($todomodel->landlord_id);
-                           if ($totalpayableamount > $senderbalance) {
-                               return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
-                           }
                            if (!empty($todoitems)) {
                                $totalamount = $amount;
                                $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
@@ -3080,6 +3086,7 @@ class ApiusersController extends ActiveController
                            }
 
                            if ($totalpayableamount > $senderbalance) {
+                               $transaction->rollBack();
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                            }
@@ -3230,6 +3237,7 @@ class ApiusersController extends ActiveController
                            }
 
                            if ($totalpayableamount > $senderbalance) {
+                               $transaction->rollBack();
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                            }
@@ -3618,6 +3626,7 @@ class ApiusersController extends ActiveController
                            $receiverbalance = Users::getbalance($todomodel->vendor_id);
 
                            if ($totalpayableamount > $senderbalance) {
+                               $transaction->rollBack();
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please topup your wallet.');
 
                            }
@@ -3831,6 +3840,7 @@ class ApiusersController extends ActiveController
                            $receiverbalance = Users::getbalance($todomodel->vendor_id);
 
                            if ($totalpayableamount > $senderbalance) {
+                               $transaction->rollBack();
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please topup your wallet.');
 
                            }
