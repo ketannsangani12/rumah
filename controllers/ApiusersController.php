@@ -2080,7 +2080,7 @@ class ApiusersController extends ActiveController
                             }
                         break;
                         case "Moveout Refund";
-                            if($todolist['status']=='Moveout Refund'){
+                            if($todolist['status']=='Pending'){
                                 $data[] = $todolist;
                             }
                         break;
@@ -2681,12 +2681,13 @@ class ApiusersController extends ActiveController
                                $transactionmodel->request_id = $todomodel->request_id;
                                $transactionmodel->todo_id = $todo_id;
                                $transactionmodel->amount = $todomodel->total;
+                               $transactionmodel->sst = $todomodel->sst;
                                $transactionmodel->total_amount = $todomodel->total;
                                $transactionmodel->type = 'Refund';
                                $transactionmodel->reftype = 'Moveout Refund';
                                $transactionmodel->status = 'Completed';
                                $transactionmodel->created_at = date('Y-m-d H:i:s');
-                               if ($transactionmodel->save()) {
+                               if ($transactionmodel->save(false)) {
                                    $flag = false;
                                    $lastid = $transactionmodel->id;
                                    $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
@@ -2771,20 +2772,25 @@ class ApiusersController extends ActiveController
 
 
                                        }
-                                       //var_dump($flag);exit;
                                        if ($flag) {
                                            $updatesenderbalance = Users::updatebalance($senderbalance - $totaldeductfromuser, $todomodel->request->landlord_id);
-                                           $updatesystembalance = Users::updatebalance($systemaccount->wallet_balance - $totalplatform_deductible, $systemaccount->id);
-                                           $updatereceiverbalance = Users::updatebalance($totaldeductfromuser + $totalplatform_deductible, $user_id);
+                                           $updatesystembalance = Users::updatebalance($systemaccount->wallet_balance - $totalplatform_deductible - $todomodel->sst, $systemaccount->id);
+                                           $updatereceiverbalance = Users::updatebalance($receiverbalance + $totaldeductfromuser + $totalplatform_deductible + $todomodel->sst, $user_id);
                                            if ($updatereceiverbalance && $updatesenderbalance && $updatesystembalance) {
                                                $todomodel->status = 'Completed';
-                                               $todomodel->save(false);
-                                               $todomodel->property->status = 'Active';
-                                               $todomodel->property->save(false);
-                                               $todomodel->request->status = 'Completed';
-                                               $todomodel->request->save(false);
-                                               $transaction->commit();
-                                               return array('status' => 1, 'message' => 'You have accepted refund request successfully.');
+                                               if($todomodel->save(false)){
+                                                   $todomodel->property->status = 'Active';
+                                                   $todomodel->property->save(false);
+                                                   $todomodel->request->status = 'Completed';
+                                                   $todomodel->request->save(false);
+                                                   $transaction->commit();
+                                                   return array('status' => 1, 'message' => 'You have accepted refund request successfully.');
+
+                                               }else{
+                                                   $transaction->rollBack();
+                                                   return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                               }
 
                                            } else {
                                                $transaction->rollBack();
@@ -2800,9 +2806,13 @@ class ApiusersController extends ActiveController
                                    }
 
                                } else {
+                                   $transaction->rollBack();
                                    return array('status' => 0, 'message' => $transactionmodel->getErrors());
 
                                }
+
+                           }else{
+                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                            }
 
@@ -4271,7 +4281,7 @@ class ApiusersController extends ActiveController
                             $model->created_at = date("Y-m-d H:i:s");
                             if($model->save(false)) {
                                 $request_id = $model->id;
-                                $reference_no = Yii::$app->common->generatereferencenumber($request_id);
+                                $reference_no = "SR".Yii::$app->common->generatereferencenumber($request_id);
 
                                 if (!empty($pictures)) {
                                     foreach ($pictures as $key=>$picture) {

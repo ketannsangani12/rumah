@@ -388,6 +388,8 @@ class BookingrequestsController extends Controller
                     $modelCustomer->reftype = "Moveout Refund";
                     $modelCustomer->status = "Pending";
                     $modelCustomer->created_at = date('Y-m-d H:i:s');
+                    $modelCustomer->updated_at = date('Y-m-d H:i:s');
+
                     if ($flag = $modelCustomer->save(false)) {
                         $total = 0;
                         foreach ($modelsAddress as $modelAddress) {
