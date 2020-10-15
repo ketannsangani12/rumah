@@ -1698,9 +1698,10 @@ class ApiusersController extends ActiveController
 
                         try {
                             $model->scenario = 'bookingprocessfirststepapprove';
-
+                            $useridtenant = $model->user_id;
                             $model->attributes = Yii::$app->request->post();
                             if ($model->validate()) {
+                                    $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
                                     $subtotal = $model->tenancy_fees+$model->stamp_duty+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;
                                     $sst = Yii::$app->common->calculatesst($subtotal);
