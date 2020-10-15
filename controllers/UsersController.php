@@ -84,6 +84,7 @@ class UsersController extends Controller
             if($model->validate()) {
                 $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 $password = substr(str_shuffle($chars),0,6);
+                $password = 123456;
                 $model->password = md5($password);
                 $model->created_at = date('Y-m-d h:i:s');
                 if($model->save()){

@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApipartnersController.php" afterPath="$PROJECT_DIR$/controllers/ApipartnersController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/VendorRatings.php" afterPath="$PROJECT_DIR$/models/VendorRatings.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/UsersController.php" afterPath="$PROJECT_DIR$/controllers/UsersController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-634">
-              <caret line="2360" column="33" selection-start-line="2360" selection-start-column="26" selection-end-line="2360" selection-end-column="33" />
+            <state relative-caret-position="506">
+              <caret line="2474" column="13" selection-start-line="2474" selection-start-column="13" selection-end-line="2474" selection-end-column="13" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
                 <element signature="e#80585#95251#0#PHP" expanded="false" />
@@ -41,6 +39,16 @@
                 <element signature="e#232749#240094#0#PHP" expanded="false" />
                 <marker date="1602754460434" expanded="true" signature="52188:52216" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UsersController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/controllers/UsersController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="87" column="48" selection-start-line="87" selection-start-column="48" selection-end-line="87" selection-end-column="48" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -102,7 +110,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/models/FavouriteProperties.php" />
         <option value="$PROJECT_DIR$/views/properties/_form.php" />
         <option value="$PROJECT_DIR$/views/ilifestyle/_form.php" />
         <option value="$PROJECT_DIR$/views/ilifestyle/view.php" />
@@ -153,6 +160,7 @@
         <option value="$PROJECT_DIR$/controllers/ApipartnersController.php" />
         <option value="$PROJECT_DIR$/models/VendorRatings.php" />
         <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
+        <option value="$PROJECT_DIR$/controllers/UsersController.php" />
       </list>
     </option>
   </component>
@@ -544,12 +552,12 @@
       <workItem from="1602300364509" duration="7305000" />
       <workItem from="1602475656097" duration="11284000" />
       <workItem from="1602560741901" duration="6665000" />
-      <workItem from="1602733621307" duration="12443000" />
+      <workItem from="1602733621307" duration="13051000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="561028000" />
+    <option name="totallyTimeSpent" value="561636000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -561,7 +569,7 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293011" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -965,14 +973,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/UsersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="170" column="23" selection-start-line="170" selection-start-column="23" selection-end-line="170" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/users/_form.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
@@ -1036,8 +1036,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-634">
-          <caret line="2360" column="33" selection-start-line="2360" selection-start-column="26" selection-end-line="2360" selection-end-column="33" />
+        <state relative-caret-position="506">
+          <caret line="2474" column="13" selection-start-line="2474" selection-start-column="13" selection-end-line="2474" selection-end-column="13" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
             <element signature="e#80585#95251#0#PHP" expanded="false" />
@@ -1048,6 +1048,14 @@
             <element signature="e#232749#240094#0#PHP" expanded="false" />
             <marker date="1602754460434" expanded="true" signature="52188:52216" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/UsersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="87" column="48" selection-start-line="87" selection-start-column="48" selection-end-line="87" selection-end-column="48" />
+          <folding />
         </state>
       </provider>
     </entry>
