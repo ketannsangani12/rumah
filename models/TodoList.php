@@ -67,6 +67,7 @@ class TodoList extends \yii\db\ActiveRecord
             [['request_id'], 'exist', 'skipOnError' => false, 'targetClass' => BookingRequests::className(), 'targetAttribute' => ['request_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['vendor_id' => 'id']],
+            [['worker_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workers::className(), 'targetAttribute' => ['worker_id' => 'id']],
             [['renovation_quote_id'], 'exist', 'skipOnError' => false, 'targetClass' => RenovationQuotes::className(), 'targetAttribute' => ['renovation_quote_id' => 'id']],
 
         ];
@@ -187,6 +188,11 @@ class TodoList extends \yii\db\ActiveRecord
     public function getAgent()
     {
         return $this->hasOne(Users::className(), ['id' => 'agent_id']);
+    }
+
+    public function getWorker()
+    {
+        return $this->hasOne(Workers::className(), ['id' => 'worker_id']);
     }
     /**
      * Gets query for [[Request]].

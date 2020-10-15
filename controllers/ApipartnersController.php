@@ -519,7 +519,7 @@ class ApipartnersController extends ActiveController
                 $date = date('Y-m-d');
                 $userdetails = Users::find()->select(['*', new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),new \yii\db\Expression("CONCAT('/uploads/users/', '', `agent_card`) as agent_card")])->where(['id'=>$this->user_id])->asArray()->one();
 
-                $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+                $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','worker_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                     ->with([
                         'request'=>function ($query) {
                             $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
@@ -551,6 +551,10 @@ class ApipartnersController extends ActiveController
                         },
                         'todoItems'=>function($query){
                             $query->select(['id','todo_id','description','platform_deductible','price','reftype']);
+
+                        },
+                        'worker'=>function($query){
+                            $query->select("id,full_name");
 
                         },
 
