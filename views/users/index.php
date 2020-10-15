@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'full_name',
                 'company_name',
                 'registration_no',
-                // 'wallet_balance',
+                 'wallet_balance',
                 // 'contact_no',
                 // 'email:email',
                 // 'company_name',
