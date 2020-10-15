@@ -709,7 +709,26 @@ class ApiusersController extends ActiveController
                 'views'=>function ($query) use($baseurl) {
                     $query->select('COUNT(*) as views,property_id')->all();
                 },
+                'request'=>function ($query) use($baseurl) {
+                    $query->select('commencement_date,monthly_rental,tenancy_period,user_id')->all();
+                },
+                'request.user'=>function ($query) use($baseurl) {
+                    $query->select("id ,full_name")->all();
+                },
             ])->where(['user_id'=>$user_id,'status'=>'Rented'])->asArray()->all();
+            if(!empty($rentedproperties)){
+                foreach ($rentedproperties as $key=>$rentedproperty){
+                    $commencmentdate = $rentedproperty['request']['commencement_date'];
+                    $months = $rentedproperty['request']['tenancy_period'];
+                    $effectiveDate = date('Y-m-d', strtotime("+".$months." months", strtotime($commencmentdate)));
+                    $rentedproperties[$key]['tenant'] =  $rentedproperty['request']['user']['full_name'];
+                    $rentedproperties[$key]['rental'] =  $rentedproperty['request']['monthly_rental'];
+                    $rentedproperties[$key]['date'] =  $effectiveDate;
+
+
+                }
+
+            }
             $data['vacant'] = $vacantproperties;
             $data['rented'] = $rentedproperties;
             return array('status' => 1, 'data' => $data);
