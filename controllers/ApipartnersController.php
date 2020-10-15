@@ -1620,7 +1620,7 @@ class ApipartnersController extends ActiveController
                         }
                     } else if (($todomodel->service_type == 'Cleaner' || $todomodel->service_type == 'Laundry') && ($todomodel->status == 'In Progress' || $todomodel->status == 'Accepted' || $todomodel->status == 'Picked Up')) {
                         if ($status == 'Accepted') {
-                            if ($updatetype == 'assignworker') {
+                            if ($updatetype == 'assignworker' && $todomodel->service_type == 'Cleaner') {
                                 if ($worker_id == '') {
                                     return array('status' => 0, 'message' => 'Please select Worker.');
 
@@ -1645,7 +1645,7 @@ class ApipartnersController extends ActiveController
 
                                 }
 
-                            } else if ($updatetype == 'checkin') {
+                            } else if ($updatetype == 'checkin' && $todomodel->service_type == 'Cleaner') {
                                 if (empty($pictures)) {
                                     return array('status' => 0, 'message' => 'Please Upload atleast one Check In Picture.');
 
@@ -1683,7 +1683,7 @@ class ApipartnersController extends ActiveController
 
                                 }
 
-                            } else if ($updatetype == 'checkout') {
+                            } else if ($updatetype == 'checkout' && $todomodel->service_type == 'Cleaner') {
                                 if (empty($pictures)) {
                                     return array('status' => 0, 'message' => 'Please Upload atleast one Check In Picture.');
 
@@ -1723,7 +1723,7 @@ class ApipartnersController extends ActiveController
 
                                 }
 
-                            } else if ($updatetype == 'pickup') {
+                            } else if ($updatetype == 'pickup' && $todomodel->service_type == 'Laundry') {
                                 if (empty($pictures)) {
                                     return array('status' => 0, 'message' => 'Please Upload atleast one Pickup Picture.');
 
@@ -1764,7 +1764,7 @@ class ApipartnersController extends ActiveController
                                 }
 
                             }
-                            if ($updatetype == 'paymentrequest') {
+                            if ($updatetype == 'paymentrequest' && $todomodel->service_type == 'Laundry') {
                                 $descriptions = (isset($_POST['descriptions']) && !empty($_POST['descriptions'])) ? $_POST['descriptions'] : array();
                                 $prices = (isset($_POST['prices']) && !empty($_POST['prices'])) ? $_POST['prices'] : array();
                                 if (empty($descriptions) || empty($prices)) {
@@ -1808,28 +1808,52 @@ class ApipartnersController extends ActiveController
 
                                 }
 
+                            }else if ($updatetype == 'delivery' && $todomodel->service_type == 'Laundry') {
+                                if (empty($pictures)) {
+                                    return array('status' => 0, 'message' => 'Please Upload atleast one Delivery Picture.');
+
+                                }
+                                foreach ($pictures as $key => $picture) {
+                                    $filename = uniqid();
+
+                                    $data = Yii::$app->common->processBase64($picture);
+
+                                    file_put_contents('uploads/servicerequestimages/' . $filename . '.' . $data['type'], $data['data']);
+                                    $servicerequestimages = new ServicerequestImages();
+                                    $servicerequestimages->description = '';
+                                    $servicerequestimages->service_request_id = $todomodel->servicerequest->id;
+                                    $servicerequestimages->reftype = 'deliveryphoto';
+                                    $servicerequestimages->image = 'uploads/servicerequestimages/' . $filename . '.' . $data['type'];
+                                    $servicerequestimages->created_at = date('Y-m-d H:i:s');
+                                    $servicerequestimages->save(false);
+
+                                }
+                                $todomodel->status = 'Completed';
+                                $todomodel->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->save(false)) {
+                                    $todomodel->servicerequest->status = 'Completed';
+                                    $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+
+                                    if ($todomodel->servicerequest->save(false)) {
+                                        $transaction1->commit();
+                                        return array('status' => 1, 'message' => 'You have delivered successfully.');
+
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+
                             } else {
                                 return array('status' => 0, 'message' => 'Data not found');
 
                             }
 
-                        } else if ($status == 'Rejected') {
-                            $todomodel->status = 'Cancelled';
-                            $todomodel->updated_at = date("Y-m-d H:i:s");
-                            if ($todomodel->save(false)) {
-                                $todomodel->servicerequest->status = 'Cancelled';
-                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                                if ($todomodel->servicerequest->save(false)) {
-                                    return array('status' => 1, 'message' => 'You have rejected request successfully.');
-
-                                } else {
-                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                                }
-                            } else {
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                            }
                         }
                     } else {
                         return array('status' => 0, 'message' => 'Data not found');

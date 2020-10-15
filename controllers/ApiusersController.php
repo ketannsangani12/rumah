@@ -25,6 +25,7 @@ use app\models\Topups;
 use app\models\Transactions;
 use app\models\TransactionsItems;
 use app\models\UsersDocuments;
+use app\models\VendorRatings;
 use app\models\Withdrawals;
 use Da\QrCode\QrCode;
 use sizeg\jwt\JwtHttpBearerAuth;
@@ -1989,13 +1990,13 @@ class ApiusersController extends ActiveController
         } else {
             $user_id = $this->user_id;
            // echo $user_id;exit;
-            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total', new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                 ->with([
                     'request'=>function ($query) {
                         $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit','status',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                     },
                     'servicerequest'=>function ($query) {
-                        $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst']);
+                        $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
                     },
                     'property'=>function($query){
                         $query->select('id,property_no,title');
@@ -2104,10 +2105,24 @@ class ApiusersController extends ActiveController
                             }
                             break;
                         case "Service";
-                            if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid' || $todolist['status']='In Progress') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
-                                $data[] = $todolist;
-                            }elseif (($todolist['status']=='Unpaid' || $todolist['status']=='In Progress') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
-                                $data[] = $todolist;
+                            if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid' || $todolist['status']=='In Progress' || $todolist['status']=='Completed') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                if($todolist['status']=='Completed'){
+                                    $reviewexist = VendorRatings::find()->where(['request_id'=>$todolist['service_request_id'],'user_id'=>$user_id])->one();
+                                    if(empty($reviewexist)){
+                                        $data[] = $todolist;
+                                    }
+                                }else {
+                                    $data[] = $todolist;
+                                }
+                            }elseif (($todolist['status']=='Unpaid' || $todolist['status']=='In Progress' || $todolist['status']=='Completed') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
+                                if($todolist['status']=='Completed'){
+                                    $reviewexist = VendorRatings::find()->where(['request_id'=>$todolist['service_request_id'],'user_id'=>$user_id])->one();
+                                    if(empty($reviewexist)){
+                                        $data[] = $todolist;
+                                    }
+                                }else {
+                                    $data[] = $todolist;
+                                }
                             }
                             break;
 
@@ -2132,10 +2147,10 @@ class ApiusersController extends ActiveController
                 $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                     ->with([
                         'request' => function ($query) {
-                            $query->select(['id', 'booking_fees', 'credit_score', 'monthly_rental', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'rental_deposit', 'utilities_deposit', 'subtotal', 'total', 'commencement_date', 'tenancy_period', 'security_deposit','status', new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
+                            $query->select(['id', 'booking_fees', 'credit_score', 'monthly_rental', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'rental_deposit', 'utilities_deposit', 'subtotal', 'total','sst', 'commencement_date', 'tenancy_period', 'security_deposit','status', new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                         },
                         'servicerequest'=>function ($query) {
-                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst']);
+                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
                         },
                         'property' => function ($query) {
                             $query->select('id,property_no,title');
@@ -2236,8 +2251,7 @@ class ApiusersController extends ActiveController
                             case "Service";
                                 if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
                                     $data[] = $todolist;
-                                }elseif ($todolist['status']=='Unpaid' && $todolist['service_type']=='Cleaner'){
-
+                                }elseif (($todolist['status']=='Unpaid' || $todolist['status']=='In Progress') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
                                     $data[] = $todolist;
                                 }
 
@@ -2421,6 +2435,47 @@ class ApiusersController extends ActiveController
             }
         }
     }
+
+    public function actionRankvendor()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && isset($_POST['request_id']) && $_POST['request_id']!='') {
+
+                $user_id = $this->user_id;
+                $model = new VendorRatings();
+                $model->scenario = 'addrating';
+                $model->attributes = Yii::$app->request->post();
+                $model->user_id =  $user_id;
+                if($model->validate()){
+                    $bookingrequest = ServiceRequests::findOne($model->request_id);
+                    if(empty($bookingrequest)){
+                        return array('status' => 0, 'message' => 'Data not found.');
+                    }
+                    $model->property_id = $bookingrequest->property_id;
+                    $model->vendor_id = $bookingrequest->vendor_id;
+                    $model->created_at = date('Y-m-d H:i:s');
+                    if($model->save()){
+                        return array('status' => 1, 'message' => 'You have reviewed vendor successfully.');
+                    }else{
+                        return array('status' => 0, 'data' => $model->getErrors());
+
+                    }
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+        }
+    }
+
 
     public function actionRefundmoveout()
     {
