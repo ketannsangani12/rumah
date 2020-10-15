@@ -3436,6 +3436,9 @@ class ApiusersController extends ActiveController
                            $todomodel->servicerequest->status = 'Rejected';
                            $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
                            if ($todomodel->servicerequest->save(false)) {
+                               $vendor = Users::findOne($todomodel->vendor_id);
+                               $vendor->current_status = 'Free';
+                               $vendor->save(false);
                                return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
                            } else {
@@ -3581,6 +3584,10 @@ class ApiusersController extends ActiveController
                                $todomodel->servicerequest->status = 'Rejected';
                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
                                if ($todomodel->servicerequest->save(false)) {
+                                   $vendor = Users::findOne($todomodel->vendor_id);
+                                   $vendor->current_status = 'Free';
+                                   $vendor->save(false);
+                                   $transaction->commit();
                                    return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
                                } else {
@@ -3795,6 +3802,10 @@ class ApiusersController extends ActiveController
                                $todomodel->servicerequest->status = 'Cancelled';
                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
                                if ($todomodel->servicerequest->save(false)) {
+                                   $vendor = Users::findOne($todomodel->vendor_id);
+                                   $vendor->current_status = 'Free';
+                                   $vendor->save(false);
+                                   $transaction->commit();
                                    return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
                                } else {
@@ -4009,6 +4020,10 @@ class ApiusersController extends ActiveController
                                $todomodel->servicerequest->status = 'Cancelled';
                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
                                if ($todomodel->servicerequest->save(false)) {
+                                   $vendor = Users::findOne($todomodel->vendor_id);
+                                   $vendor->current_status = 'Free';
+                                   $vendor->save(false);
+                                   $transaction->commit();
                                    return array('status' => 1, 'message' => 'You have Cancelled request successfully.');
 
                                } else {

@@ -1560,6 +1560,9 @@ class ApipartnersController extends ActiveController
                                 $todomodel->servicerequest->status = 'Rejected';
                                 $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
                                 if ($todomodel->servicerequest->save(false)) {
+                                    $vendor = Users::findOne($todomodel->vendor_id);
+                                    $vendor->current_status = 'Free';
+                                    $vendor->save(false);
                                     $transaction1->commit();
                                     return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
@@ -1604,6 +1607,9 @@ class ApipartnersController extends ActiveController
                                 $todomodel->servicerequest->status = 'Rejected';
                                 $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
                                 if ($todomodel->servicerequest->save(false)) {
+                                    $vendor = Users::findOne($todomodel->vendor_id);
+                                    $vendor->current_status = 'Free';
+                                    $vendor->save(false);
                                     $transaction1->commit();
                                     return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
@@ -1709,6 +1715,9 @@ class ApipartnersController extends ActiveController
                                     $todomodel->servicerequest->checkout_time = date("Y-m-d H:i:s");
                                     $todomodel->servicerequest->status = "Completed";
                                     if ($todomodel->servicerequest->save(false)) {
+                                        $vendor = Users::findOne($todomodel->vendor_id);
+                                        $vendor->current_status = 'Free';
+                                        $vendor->save(false);
                                         $transaction1->commit();
                                         return array('status' => 1, 'message' => 'You have updated request successfully.');
 
@@ -1835,6 +1844,9 @@ class ApipartnersController extends ActiveController
                                     $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
 
                                     if ($todomodel->servicerequest->save(false)) {
+                                        $vendor = Users::findOne($todomodel->vendor_id);
+                                        $vendor->current_status = 'Free';
+                                        $vendor->save(false);
                                         $transaction1->commit();
                                         return array('status' => 1, 'message' => 'You have delivered successfully.');
 
@@ -1854,6 +1866,29 @@ class ApipartnersController extends ActiveController
 
                             }
 
+                        }else if ($status == 'Rejected') {
+                            $todomodel->status = 'Cancelled';
+                            $todomodel->updated_at = date("Y-m-d H:i:s");
+                            if ($todomodel->save(false)) {
+                                $todomodel->servicerequest->status = 'Cancelled';
+                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->servicerequest->save(false)) {
+                                    $vendor = Users::findOne($todomodel->vendor_id);
+                                    $vendor->current_status = 'Free';
+                                    $vendor->save(false);
+                                    $transaction1->commit();
+                                    return array('status' => 1, 'message' => 'You have cancelled request successfully.');
+
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+                            } else {
+                                $transaction1->rollBack();
+                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                            }
                         }
                     } else {
                         return array('status' => 0, 'message' => 'Data not found');
