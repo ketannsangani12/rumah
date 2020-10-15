@@ -80,7 +80,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             //[['name', 'username', 'password', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
             [['password'], 'string', 'max' => 255],
-            [['username','current_status'], 'string', 'max' => 40],
+            [['username','current_status','wallet_balance'], 'string', 'max' => 40],
         ];
     }
 
@@ -122,7 +122,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'referral_code'=>'Referral Code',
             'current_status'=>'Current Status',
             'latitude'=>'Latitude',
-            'longitude'=>'Longitude'
+            'longitude'=>'Longitude',
+            'wallet_balance'=>'Wallet Balance'
         ];
     }
 

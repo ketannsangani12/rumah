@@ -87,7 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 ['class' => 'yii\grid\ActionColumn',
                     'headerOptions' => ['style' => 'width:18%'],
-                    'template'=>'{view} {update} {choosetemplate} {uploadagreement} {uploadmoveout} {moveoutinvoice} {cancel}',
+                    'template'=>'{view} {update} {choosetemplate} {uploadagreement} {uploadmovein} {uploadmoveout} {moveoutinvoice} {cancel}',
                     'visibleButtons' => [
                         'update' => function ($model) {
                             return ($model->status=='Confirmed');
@@ -97,6 +97,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'uploadagreement' => function ($model) {
                             return ($model->status=='Agreement Processed' || $model->status=='Payment Requested' || $model->status=='Rented');
+                        },
+                        'uploadmovein' => function ($model) {
+                            $reviewexist = \app\models\PropertyRatings::find()->where(['request_id'=>$model->id,'user_id'=>$model->user_id,'property_id'=>$model->property_id])->one();
+
+                            return ($model->status=='Rented' && empty($reviewexist));
                         },
                         'uploadmoveout' => function ($model) {
                             return ($model->status=='Rented');
@@ -153,10 +158,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'uploadagreement' => function ($url, $model) {
 
-                            return Html::a('<i class="fa fa-file" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadagreement', 'id' => $model->id])], [
+                            return Html::a('<i class="fa fa-legal" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadagreement', 'id' => $model->id])], [
 
                                 'title' => 'Upload Agreement',
                                 'class' =>'btn btn-sm bg-purple datatable-operation-btn'
+
+                            ]);
+
+                        },
+                        'uploadmovein' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-file" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadmovein', 'id' => $model->id])], [
+
+                                'title' => 'Upload Move In Checklist',
+                                'class' =>'btn btn-sm bg-green datatable-operation-btn'
 
                             ]);
 

@@ -285,6 +285,39 @@ class BookingrequestsController extends Controller
             ]);
         }
     }
+    public function actionUploadmovein($id)
+    {
+        $model = $this->findModel($id);
+        $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking'])->one();
+        $model->scenario = 'uploadmovein';
+        if ($model->load(Yii::$app->request->post())) {
+            $model->movein = \yii\web\UploadedFile::getInstance($model, 'movein');
+            if($model->validate()) {
+                $newFileName1 = \Yii::$app->security
+                        ->generateRandomString().'.'.$model->movein->extension;
+                $model->movein_document = $newFileName1;
+
+                $model->updated_at = date('Y-m-d H:i:s');
+                if($model->save()){
+                    $model->movein->saveAs('uploads/moveinout/' . $newFileName1);
+                    return $this->redirect(['index']);
+
+                }else{
+                    return $this->render('uploadmovein', [
+                        'model' => $model,
+                    ]);
+                }
+            }else{
+                return $this->render('uploadmovein', [
+                    'model' => $model,
+                ]);
+            }
+        } else {
+            return $this->render('uploadmovein', [
+                'model' => $model,
+            ]);
+        }
+    }
     public function actionUploadmoveout($id)
     {
 

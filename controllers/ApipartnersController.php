@@ -586,14 +586,14 @@ class ApipartnersController extends ActiveController
                                 break;
                             case "Service";
                                 if($todolist['status']=='In Progress' && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
-                                    if($date==$todolist['servicerequest']['date']){
+                                    if($date==$todolist['servicerequest']['date'] && $todolist['status']=='In Progress'){
                                         $upcoming[] = $todolist;
                                     }else {
 
                                         $services[] = $todolist;
                                     }
-                                }else if(($todolist['status']=='New' || $todolist['status']=='In Progress') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
-                                    if($date==$todolist['servicerequest']['date']){
+                                }else if(($todolist['status']=='New' || $todolist['status']=='In Progress' || $todolist['status']=='Accepted' || $todolist['status']=='Picked Up' || $todolist['status']=='Unpaid') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
+                                    if($date==$todolist['servicerequest']['date'] && $todolist['status']=='In Progress'){
                                         $upcoming[] = $todolist;
                                     }else {
 
@@ -1527,203 +1527,317 @@ class ApipartnersController extends ActiveController
                 break;
 
             case "Service";
-                if(($todomodel->service_type=='Handyman' || $todomodel->service_type=='Mover') && $todomodel->status=='Pending'){
+                $transaction1 = Yii::$app->db->beginTransaction();
 
-                    if($status=='Accepted'){
-                        $todomodel->status = 'Accepted';
-                        $todomodel->updated_at = date("Y-m-d H:i:s");
-                        if($todomodel->save(false)){
-                            $todomodel->servicerequest->status ='Accepted';
-                            $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                            if($todomodel->servicerequest->save(false)){
-                                return array('status' => 1, 'message' => 'You have accepted request successfully.');
+                try {
+                    if (($todomodel->service_type == 'Handyman' || $todomodel->service_type == 'Mover') && $todomodel->status == 'Pending') {
 
-                            }else{
+                        if ($status == 'Accepted') {
+                            $todomodel->status = 'Accepted';
+                            $todomodel->updated_at = date("Y-m-d H:i:s");
+                            if ($todomodel->save(false)) {
+                                $todomodel->servicerequest->status = 'Accepted';
+                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->servicerequest->save(false)) {
+                                    $transaction1->commit();
+                                    return array('status' => 1, 'message' => 'You have accepted request successfully.');
+
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+                            } else {
+                                $transaction1->rollBack();
                                 return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                             }
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
-                        }
+                        } else if ($status == 'Rejected') {
+                            $todomodel->status = 'Rejected';
+                            $todomodel->updated_at = date("Y-m-d H:i:s");
+                            if ($todomodel->save(false)) {
+                                $todomodel->servicerequest->status = 'Rejected';
+                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->servicerequest->save(false)) {
+                                    $transaction1->commit();
+                                    return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
-                    }else if($status=='Rejected'){
-                        $todomodel->status = 'Rejected';
-                        $todomodel->updated_at = date("Y-m-d H:i:s");
-                        if($todomodel->save(false)){
-                            $todomodel->servicerequest->status ='Rejected';
-                            $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                            if($todomodel->servicerequest->save(false)){
-                                return array('status' => 1, 'message' => 'You have rejected request successfully.');
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
-                            }else{
+                                }
+                            } else {
+                                $transaction1->rollBack();
                                 return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                             }
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
                         }
-                    }
-                }else   if(($todomodel->service_type=='Cleaner' || $todomodel->service_type=='Laundry') && $todomodel->status=='New'){
+                    } else if (($todomodel->service_type == 'Cleaner' || $todomodel->service_type == 'Laundry') && $todomodel->status == 'New') {
 
-                    if($status=='Accepted'){
-                        $todomodel->status = 'Unpaid';
-                        $todomodel->updated_at = date("Y-m-d H:i:s");
-                        if($todomodel->save(false)){
-                            $todomodel->servicerequest->status ='Confirmed';
-                            $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                            if($todomodel->servicerequest->save(false)){
-                                return array('status' => 1, 'message' => 'You have accepted request successfully.');
+                        if ($status == 'Accepted') {
+                            $todomodel->status = ($todomodel->service_type == 'Cleaner') ? 'Unpaid' : 'Accepted';
+                            $todomodel->updated_at = date("Y-m-d H:i:s");
+                            if ($todomodel->save(false)) {
+                                $todomodel->servicerequest->status = ($todomodel->service_type == 'Cleaner') ? 'Confirmed' : 'Accepted';
+                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->servicerequest->save(false)) {
+                                    $transaction1->commit();
+                                    return array('status' => 1, 'message' => 'You have accepted request successfully.');
 
-                            }else{
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+                            } else {
+                                $transaction1->rollBack();
                                 return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                             }
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
-                        }
+                        } else if ($status == 'Rejected') {
+                            $todomodel->status = 'Rejected';
+                            $todomodel->updated_at = date("Y-m-d H:i:s");
+                            if ($todomodel->save(false)) {
+                                $todomodel->servicerequest->status = 'Rejected';
+                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->servicerequest->save(false)) {
+                                    $transaction1->commit();
+                                    return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
-                    }else if($status=='Rejected'){
-                        $todomodel->status = 'Rejected';
-                        $todomodel->updated_at = date("Y-m-d H:i:s");
-                        if($todomodel->save(false)){
-                            $todomodel->servicerequest->status ='Rejected';
-                            $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                            if($todomodel->servicerequest->save(false)){
-                                return array('status' => 1, 'message' => 'You have rejected request successfully.');
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
-                            }else{
+                                }
+                            } else {
+                                $transaction1->rollBack();
                                 return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                             }
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
                         }
-                    }
-                }else if(($todomodel->service_type=='Cleaner' || $todomodel->service_type=='Laundry') && $todomodel->status=='In Progress'){
+                    } else if (($todomodel->service_type == 'Cleaner' || $todomodel->service_type == 'Laundry') && ($todomodel->status == 'In Progress' || $todomodel->status == 'Accepted' || $todomodel->status == 'Picked Up')) {
+                        if ($status == 'Accepted') {
+                            if ($updatetype == 'assignworker') {
+                                if ($worker_id == '') {
+                                    return array('status' => 0, 'message' => 'Please select Worker.');
 
-                    if($status=='Accepted'){
-                        if($updatetype=='assignworker'){
-                            if($worker_id==''){
-                                return array('status' => 0, 'message' => 'Please select Worker.');
-
-                            }
-                            $todomodel->worker_id = $worker_id;
-                            $todomodel->updated_at =     date("Y-m-d H:i:s");
-                                if($todomodel->save(false)){
-                                    $todomodel->servicerequest->worker_id =$worker_id;
+                                }
+                                $todomodel->worker_id = $worker_id;
+                                $todomodel->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->save(false)) {
+                                    $todomodel->servicerequest->worker_id = $worker_id;
                                     $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                                    if($todomodel->servicerequest->save(false)){
+                                    if ($todomodel->servicerequest->save(false)) {
+                                        $transaction1->commit();
                                         return array('status' => 1, 'message' => 'You have assigned worker successfully.');
 
-                                    }else{
+                                    } else {
+                                        $transaction1->rollBack();
                                         return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                     }
-                                }else{
+                                } else {
+                                    $transaction1->rollBack();
                                     return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                 }
 
-                        }else if($updatetype=='checkin'){
-                            if(empty($pictures)){
-                                return array('status' => 0, 'message' => 'Please Upload atleast one Check In Picture.');
+                            } else if ($updatetype == 'checkin') {
+                                if (empty($pictures)) {
+                                    return array('status' => 0, 'message' => 'Please Upload atleast one Check In Picture.');
+
+                                }
+                                foreach ($pictures as $key => $picture) {
+                                    $filename = uniqid();
+
+                                    $data = Yii::$app->common->processBase64($picture);
+
+                                    file_put_contents('uploads/servicerequestimages/' . $filename . '.' . $data['type'], $data['data']);
+                                    $servicerequestimages = new ServicerequestImages();
+                                    $servicerequestimages->description = '';
+                                    $servicerequestimages->service_request_id = $todomodel->servicerequest->id;
+                                    $servicerequestimages->reftype = 'checkinphoto';
+                                    $servicerequestimages->image = 'uploads/servicerequestimages/' . $filename . '.' . $data['type'];
+                                    $servicerequestimages->created_at = date('Y-m-d H:i:s');
+                                    $servicerequestimages->save(false);
+
+                                }
+                                $todomodel->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->save(false)) {
+                                    $todomodel->servicerequest->checkin_time = date("Y-m-d H:i:s");
+                                    if ($todomodel->servicerequest->save(false)) {
+                                        $transaction1->commit();
+                                        return array('status' => 1, 'message' => 'You have updated request successfully.');
+
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+
+                            } else if ($updatetype == 'checkout') {
+                                if (empty($pictures)) {
+                                    return array('status' => 0, 'message' => 'Please Upload atleast one Check In Picture.');
+
+                                }
+                                foreach ($pictures as $key => $picture) {
+                                    $filename = uniqid();
+
+                                    $data = Yii::$app->common->processBase64($picture);
+
+                                    file_put_contents('uploads/servicerequestimages/' . $filename . '.' . $data['type'], $data['data']);
+                                    $servicerequestimages = new ServicerequestImages();
+                                    $servicerequestimages->description = '';
+                                    $servicerequestimages->service_request_id = $todomodel->servicerequest->id;
+                                    $servicerequestimages->reftype = 'checkoutphoto';
+                                    $servicerequestimages->image = 'uploads/servicerequestimages/' . $filename . '.' . $data['type'];
+                                    $servicerequestimages->created_at = date('Y-m-d H:i:s');
+                                    $servicerequestimages->save(false);
+
+                                }
+                                $todomodel->status = 'Completed';
+                                $todomodel->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->save(false)) {
+                                    $todomodel->servicerequest->checkout_time = date("Y-m-d H:i:s");
+                                    $todomodel->servicerequest->status = "Completed";
+                                    if ($todomodel->servicerequest->save(false)) {
+                                        $transaction1->commit();
+                                        return array('status' => 1, 'message' => 'You have updated request successfully.');
+
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+
+                            } else if ($updatetype == 'pickup') {
+                                if (empty($pictures)) {
+                                    return array('status' => 0, 'message' => 'Please Upload atleast one Pickup Picture.');
+
+                                }
+                                foreach ($pictures as $key => $picture) {
+                                    $filename = uniqid();
+
+                                    $data = Yii::$app->common->processBase64($picture);
+
+                                    file_put_contents('uploads/servicerequestimages/' . $filename . '.' . $data['type'], $data['data']);
+                                    $servicerequestimages = new ServicerequestImages();
+                                    $servicerequestimages->description = '';
+                                    $servicerequestimages->service_request_id = $todomodel->servicerequest->id;
+                                    $servicerequestimages->reftype = 'pickupphoto';
+                                    $servicerequestimages->image = 'uploads/servicerequestimages/' . $filename . '.' . $data['type'];
+                                    $servicerequestimages->created_at = date('Y-m-d H:i:s');
+                                    $servicerequestimages->save(false);
+
+                                }
+                                $todomodel->status = 'Picked Up';
+                                $todomodel->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->save(false)) {
+                                    $todomodel->servicerequest->status = 'Picked Up';
+                                    $todomodel->servicerequest->pickup_time = date("Y-m-d H:i:s");
+                                    if ($todomodel->servicerequest->save(false)) {
+                                        $transaction1->commit();
+                                        return array('status' => 1, 'message' => 'You have updated request successfully.');
+
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
 
                             }
-                            foreach ($pictures as $key=>$picture) {
-                                $filename = uniqid();
+                            if ($updatetype == 'paymentrequest') {
+                                $descriptions = (isset($_POST['descriptions']) && !empty($_POST['descriptions'])) ? $_POST['descriptions'] : array();
+                                $prices = (isset($_POST['prices']) && !empty($_POST['prices'])) ? $_POST['prices'] : array();
+                                if (empty($descriptions) || empty($prices)) {
+                                    return array('status' => 0, 'message' => 'Please enter Invoice Items');
+                                }
+                                $subtotal = 0;
+                                foreach ($descriptions as $key => $description) {
+                                    $todoitem = new TodoItems();
+                                    $todoitem->todo_id = $todomodel->id;
+                                    $todoitem->description = $description;
+                                    $todoitem->price = $prices[$key];
+                                    $todoitem->created_at = date("Y-m-d H:i:s");
+                                    $todoitem->save(false);
+                                    $subtotal += $prices[$key];
 
-                                $data = Yii::$app->common->processBase64($picture);
+                                }
+                                $sst = Yii::$app->common->calculatesst($subtotal);
+                                $todomodel->subtotal = $subtotal;
+                                $todomodel->sst = $sst;
+                                $todomodel->total = $subtotal+$sst;
+                                $todomodel->status = 'Unpaid';
+                                $todomodel->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->save(false)) {
+                                    $todomodel->servicerequest->amount = $subtotal;
+                                    $todomodel->servicerequest->subtotal = $subtotal;
+                                    $todomodel->servicerequest->sst = $sst;
+                                    $todomodel->servicerequest->total_amount = $subtotal+$sst;
+                                    $todomodel->servicerequest->status = 'Unpaid';
+                                    if ($todomodel->servicerequest->save(false)) {
+                                        $transaction1->commit();
+                                        return array('status' => 1, 'message' => 'You have sent payment request successfully.');
 
-                                file_put_contents('uploads/servicerequestimages/' . $filename . '.' . $data['type'], $data['data']);
-                                $servicerequestimages = new ServicerequestImages();
-                                $servicerequestimages->description = '';
-                                $servicerequestimages->service_request_id = $todomodel->servicerequest->id;
-                                $servicerequestimages->reftype = 'checkinphoto';
-                                $servicerequestimages->image = 'uploads/servicerequestimages/' . $filename . '.' . $data['type'];
-                                $servicerequestimages->created_at = date('Y-m-d H:i:s');
-                                $servicerequestimages->save(false);
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+
+                            } else {
+                                return array('status' => 0, 'message' => 'Data not found');
 
                             }
+
+                        } else if ($status == 'Rejected') {
+                            $todomodel->status = 'Cancelled';
                             $todomodel->updated_at = date("Y-m-d H:i:s");
-                            if($todomodel->save(false)){
-                                $todomodel->servicerequest->checkin_time = date("Y-m-d H:i:s");
-                                if($todomodel->servicerequest->save(false)){
-                                    return array('status' => 1, 'message' => 'You have updated request successfully.');
+                            if ($todomodel->save(false)) {
+                                $todomodel->servicerequest->status = 'Cancelled';
+                                $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->servicerequest->save(false)) {
+                                    return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
-                                }else{
+                                } else {
                                     return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                 }
-                            }else{
+                            } else {
                                 return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                             }
-
-                        }else if($updatetype=='checkout'){
-                            if(empty($pictures)){
-                                return array('status' => 0, 'message' => 'Please Upload atleast one Check In Picture.');
-
-                            }
-                            foreach ($pictures as $key=>$picture) {
-                                $filename = uniqid();
-
-                                $data = Yii::$app->common->processBase64($picture);
-
-                                file_put_contents('uploads/servicerequestimages/' . $filename . '.' . $data['type'], $data['data']);
-                                $servicerequestimages = new ServicerequestImages();
-                                $servicerequestimages->description = '';
-                                $servicerequestimages->service_request_id = $todomodel->servicerequest->id;
-                                $servicerequestimages->reftype = 'checkoutphoto';
-                                $servicerequestimages->image = 'uploads/servicerequestimages/' . $filename . '.' . $data['type'];
-                                $servicerequestimages->created_at = date('Y-m-d H:i:s');
-                                $servicerequestimages->save(false);
-
-                            }
-                            $todomodel->status = 'Completed';
-                            $todomodel->updated_at = date("Y-m-d H:i:s");
-                            if($todomodel->save(false)){
-                                $todomodel->servicerequest->checkout_time = date("Y-m-d H:i:s");
-                                $todomodel->servicerequest->status = "Completed";
-                                if($todomodel->servicerequest->save(false)){
-                                    return array('status' => 1, 'message' => 'You have updated request successfully.');
-
-                                }else{
-                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                                }
-                            }else{
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                            }
-
-                        }else{
-                            return array('status' => 0, 'message' => 'Data not found');
-
                         }
+                    } else {
+                        return array('status' => 0, 'message' => 'Data not found');
 
-                    }else if($status=='Rejected'){
-                        $todomodel->status = 'Cancelled';
-                        $todomodel->updated_at = date("Y-m-d H:i:s");
-                        if($todomodel->save(false)){
-                            $todomodel->servicerequest->status ='Cancelled';
-                            $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
-                            if($todomodel->servicerequest->save(false)){
-                                return array('status' => 1, 'message' => 'You have rejected request successfully.');
-
-                            }else{
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                            }
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                        }
                     }
-                }else{
+                }catch (Exception $e) {
+                    // # if error occurs then rollback all transactions
+                    $transaction1->rollBack();
                     return array('status' => 0, 'message' => 'Data not found');
 
                 }

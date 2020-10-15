@@ -64,6 +64,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
             [['property_id' , 'date' , 'time' , 'type'], 'required','on'=>'bookhandyman'],
             [['user_id' , 'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'bookmover'],
             [['property_id' , 'date' , 'time' ,'hours'], 'required','on'=>'bookcleaner'],
+            [[ 'date' , 'time','latitude','longitude','pickup_location'], 'required','on'=>'booklaundry'],
 
             [['quote',], 'required','on' => 'uploadquote'],
             [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
@@ -73,6 +74,8 @@ class ServiceRequests extends \yii\db\ActiveRecord
             [['reference_no', 'type', 'time', 'document'], 'string', 'max' => 255],
             [['hours'], 'string', 'max' => 10],
             [['truck_size'], 'string', 'max' => 150],
+            [['latitude', 'longitude'], 'number'],
+
             [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Properties::className(), 'targetAttribute' => ['property_id' => 'id']],
             [['todo_id'], 'exist', 'skipOnError' => true, 'targetClass' => TodoList::className(), 'targetAttribute' => ['todo_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -115,6 +118,8 @@ class ServiceRequests extends \yii\db\ActiveRecord
             'booked_at' => 'Booked At',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'latitude'=>'Latitude',
+            'longitude'=>'Longitude'
         ];
     }
 

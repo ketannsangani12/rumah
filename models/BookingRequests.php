@@ -66,7 +66,8 @@ class BookingRequests extends \yii\db\ActiveRecord
             [['identification_no','full_name','kyc_document','spa_document'], 'required','on' => 'bookingprocesssecondstep'],
 
             [['credit_score','report'], 'required','on' => 'updatecreditscore'],
-            [['agreement','movein'], 'required','on' => 'uploadagreement'],
+            [['agreement'], 'required','on' => 'uploadagreement'],
+            [['movein'], 'required','on' => 'uploadmovein'],
             [['moveout_date','moveout'], 'required','on' => 'uploadmoveout'],
             [['template_id','document_content'], 'required','on' => 'choosetemplate'],
             [['agreement'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpeg,jpg,png,pdf'],

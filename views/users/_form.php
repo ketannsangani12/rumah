@@ -19,7 +19,9 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-        <div id="companydetails" style="<?php echo ($model->role=='Cleaner' || $model->role=='Mover' || $model->role=='Handyman' || $model->role=='Laundry')?"display: block;":"display: none;"?>">
+             <?= $form->field($model, 'wallet_balance')->textInput(['maxlength' => true]) ?>
+
+             <div id="companydetails" style="<?php echo ($model->role=='Cleaner' || $model->role=='Mover' || $model->role=='Handyman' || $model->role=='Laundry')?"display: block;":"display: none;"?>">
             <?= $form->field($model, 'contact_no')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'company_name')->textInput(['maxlength' => true]) ?>
 
