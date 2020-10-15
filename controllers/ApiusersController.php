@@ -972,17 +972,15 @@ class ApiusersController extends ActiveController
                         if(!$validatepassword){
                             return array('status' => 0, 'message' => 'You have entered invalid wrong PIN.');
                         }
-                        if($userdetails->can_withdraw==0){
-                            return array('status' => 0, 'message' => 'You can not withdraw..');
-                        }
 
-                        $withdrawalrequestexist = Withdrawals::findOne(['status'=>1,'user_id'=>$model->user_id]);
+
+                        $withdrawalrequestexist = Withdrawals::findOne(['status'=>'Pending','user_id'=>$model->user_id]);
                         if(!empty($withdrawalrequestexist)){
                             return array('status' => 0, 'message' => 'You have already submitted a withdrawal request. Please wait for it to complete processing first before submitting again.');
                         }
 
-                        $bankaccountexist = BankAccounts::findOne(['user_id'=>$model->user_id]);
-                        if(empty($bankaccountexist)){
+                        $bankaccountexist = Users::findOne(['id'=>$this->user_id]);
+                        if($bankaccountexist->bank_name=='' || $bankaccountexist->bank_account_no==''){
                             return array('status' => 0, 'message' => 'Please submit your banking information.');
                         }
                         $userbalance = Users::getbalance($model->user_id);
@@ -993,21 +991,20 @@ class ApiusersController extends ActiveController
                         if($amount>$userbalance){
                             return array('status' => 0, 'message' => 'Please enter lower amount.');
                         }
-                        $model->bank_id = $bankaccountexist->id;
                         $model->old_balance = $userbalance;
                         $model->new_balance = $userbalance-$amount;
                         $model->total_amount = $amount;
-                        $model->status = 1;
+                        $model->status = 'Pending';
                         $model->created_at = date('Y-m-d H:i:s');
-                        if($model->save()){
+                        if($model->save(false)){
                             $transactionmodel = new Transactions();
                             $transactionmodel->user_id = $model->user_id;
                             $transactionmodel->amount = $model->amount;
                             $transactionmodel->total_amount = $amount;
                             $transactionmodel->withdrawal_id = $model->id;
                             $transactionmodel->created_at = date('Y-m-d H:i:s');
-                            $transactionmodel->reftype = 3;
-                            $transactionmodel->status = 1;
+                            $transactionmodel->reftype = 'Withdrawal';
+                            $transactionmodel->status = 'Pending';
                             if($transactionmodel->save()){
                                 $lastid = $transactionmodel->id;
                                 $reference_no = Yii::$app->common->generatereferencenumber($lastid);
@@ -1015,7 +1012,7 @@ class ApiusersController extends ActiveController
                                 if($transactionmodel->save()){
                                     $model->reference_no = $reference_no;
                                     $model->save(false);
-                                    Yii::$app->common->updateuserbalance($model->user_id,$model->new_balance);
+                                    Users::updatebalance($model->new_balance,$this->user_id);
                                     $transaction->commit();
 
                                     return array('status' => 1, 'message' => 'Withdrawal request submitted successfully. Please allow 7 days for processing.');

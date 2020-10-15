@@ -40,6 +40,7 @@ class Withdrawals extends \yii\db\ActiveRecord
     {
         return [
             [['user_id','amount','password'], 'required','on'=>'userwithdrawal'],
+            [['status'], 'required','on'=>'updatewithdrawal'],
             [['user_id', 'bank_id'], 'integer'],
             [['amount', 'fees', 'total_amount', 'old_balance', 'new_balance'], 'number'],
             [['status'], 'string'],
@@ -56,8 +57,8 @@ class Withdrawals extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'bank_id' => 'Bank ID',
+            'user_id' => 'User',
+            'bank_id' => 'Bank',
             'reference_no' => 'Reference No',
             'amount' => 'Amount',
             'fees' => 'Fees',
