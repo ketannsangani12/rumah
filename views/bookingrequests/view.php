@@ -69,6 +69,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 //'landlord_id',
                 //'template_id',
                 'commencement_date:date',
+                [
+                    'label' => 'Tenancy End Date',
+                    'value' => function ($model) {
+                        $months = $model->tenancy_period;
+                        $effectiveDate = date('Y-m-d', strtotime("+".$months." months", strtotime($model->commencement_date)));
+                        return date('d-m-Y', strtotime("+".$months." months", strtotime($effectiveDate)));
+
+                    },
+
+                ],
                 'tenancy_period',
                 [
                     'attribute' => 'status',
@@ -95,10 +105,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'tenancy_fees:currency',
                     'stamp_duty:currency',
                     'keycard_deposit:currency',
-                    'sst:currency',
                     'rental_deposit:currency',
                     'utilities_deposit:currency',
                     'security_deposit:currency',
+                    'sst:currency',
+                    'subtotal:currency',
+                    'total:currency',
                     [
                         'label' => 'Agreement document(Non - Stamped)',
                         'value' => function ($model) {

@@ -4,6 +4,10 @@
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/InsurancesController.php" afterPath="$PROJECT_DIR$/controllers/InsurancesController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/BookingRequests.php" afterPath="$PROJECT_DIR$/models/BookingRequests.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/TodoList.php" afterPath="$PROJECT_DIR$/models/TodoList.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/view.php" afterPath="$PROJECT_DIR$/views/bookingrequests/view.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,17 +28,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="596">
-              <caret line="730" column="13" selection-start-line="730" selection-start-column="13" selection-end-line="730" selection-end-column="13" />
+            <state relative-caret-position="131">
+              <caret line="1930" column="40" selection-start-line="1927" selection-start-column="40" selection-end-line="1930" selection-end-column="40" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
-                <element signature="e#117643#119203#0#PHP" expanded="false" />
-                <element signature="e#139935#140090#0#PHP" expanded="false" />
-                <element signature="e#235645#242990#0#PHP" expanded="false" />
-                <marker date="1602768204630" expanded="true" signature="53222:53250" ph="..." />
+                <element signature="e#118010#119570#0#PHP" expanded="false" />
+                <element signature="e#140302#140457#0#PHP" expanded="false" />
+                <element signature="e#236012#243357#0#PHP" expanded="false" />
+                <marker date="1602768757696" expanded="true" signature="53222:53250" ph="..." />
               </folding>
             </state>
           </provider>
@@ -43,8 +47,28 @@
       <file leaf-file-name="BookingRequests.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/BookingRequests.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="63" column="252" selection-start-line="63" selection-start-column="222" selection-end-line="63" selection-end-column="252" />
+            <state relative-caret-position="476">
+              <caret line="113" column="54" selection-start-line="113" selection-start-column="54" selection-end-line="113" selection-end-column="54" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="view.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/bookingrequests/view.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="112" column="37" selection-start-line="112" selection-start-column="37" selection-end-line="112" selection-end-column="37" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="InsurancesController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/controllers/InsurancesController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-435">
+              <caret line="82" column="32" selection-start-line="82" selection-start-column="32" selection-end-line="82" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -70,41 +94,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/users/index.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="39" column="16" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UsersController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/controllers/UsersController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="88" column="35" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="VendorRatings.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/VendorRatings.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="223">
               <caret line="41" column="67" selection-start-line="41" selection-start-column="67" selection-end-line="41" selection-end-column="67" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AgentRatings.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/AgentRatings.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="525">
-              <caret line="42" column="16" selection-start-line="42" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -123,11 +117,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TodoList.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="TodoList.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/models/TodoList.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="566">
-              <caret line="194" column="70" selection-start-line="194" selection-start-column="70" selection-end-line="194" selection-end-column="70" />
+            <state relative-caret-position="335">
+              <caret line="201" column="40" selection-start-line="201" selection-start-column="40" selection-end-line="201" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -155,7 +149,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/views/ilifestyle/_form.php" />
         <option value="$PROJECT_DIR$/views/ilifestyle/view.php" />
         <option value="$PROJECT_DIR$/models/Ilifestyle.php" />
         <option value="$PROJECT_DIR$/controllers/IlifestyleController.php" />
@@ -179,7 +172,6 @@
         <option value="$PROJECT_DIR$/controllers/InvoicesController.php" />
         <option value="$PROJECT_DIR$/views/invoices/_form.php" />
         <option value="$PROJECT_DIR$/models/Workers.php" />
-        <option value="$PROJECT_DIR$/views/bookingrequests/view.php" />
         <option value="$PROJECT_DIR$/views/bookingrequests/_formchoosetemplate.php" />
         <option value="$PROJECT_DIR$/views/servicerequests/assigndriver.php" />
         <option value="$PROJECT_DIR$/views/servicerequests/_formassignvendor.php" />
@@ -192,7 +184,6 @@
         <option value="$PROJECT_DIR$/views/servicerequests/index.php" />
         <option value="$PROJECT_DIR$/models/ServiceRequests.php" />
         <option value="$PROJECT_DIR$/components/Common.php" />
-        <option value="$PROJECT_DIR$/models/BookingRequests.php" />
         <option value="$PROJECT_DIR$/views/bookingrequests/uploadmovein.php" />
         <option value="$PROJECT_DIR$/views/bookingrequests/_formmovein.php" />
         <option value="$PROJECT_DIR$/views/bookingrequests/_formagreement.php" />
@@ -202,10 +193,13 @@
         <option value="$PROJECT_DIR$/models/VendorRatings.php" />
         <option value="$PROJECT_DIR$/controllers/UsersController.php" />
         <option value="$PROJECT_DIR$/views/users/index.php" />
-        <option value="$PROJECT_DIR$/models/TodoList.php" />
         <option value="$PROJECT_DIR$/controllers/ApipartnersController.php" />
         <option value="$PROJECT_DIR$/controllers/BookingrequestsController.php" />
         <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
+        <option value="$PROJECT_DIR$/models/BookingRequests.php" />
+        <option value="$PROJECT_DIR$/views/bookingrequests/view.php" />
+        <option value="$PROJECT_DIR$/controllers/InsurancesController.php" />
+        <option value="$PROJECT_DIR$/models/TodoList.php" />
       </list>
     </option>
   </component>
@@ -597,12 +591,12 @@
       <workItem from="1602300364509" duration="7305000" />
       <workItem from="1602475656097" duration="11284000" />
       <workItem from="1602560741901" duration="6665000" />
-      <workItem from="1602733621307" duration="19995000" />
+      <workItem from="1602733621307" duration="21326000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="568580000" />
+    <option name="totallyTimeSpent" value="569911000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -676,12 +670,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>2506</line>
+          <line>2509</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>2290</line>
+          <line>2293</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -691,7 +685,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/ApiusersController.php</url>
-          <line>3638</line>
+          <line>3641</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
@@ -700,20 +694,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/config/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1425">
-          <caret line="95" column="47" selection-start-line="95" selection-start-column="47" selection-end-line="95" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/renovationquotes/addmilestone.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/renovationquotes/index.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1125">
@@ -797,13 +777,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="478">
           <caret line="32" column="52" selection-start-line="32" selection-start-column="42" selection-end-line="32" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/bookingrequests/view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2355">
-          <caret line="158" column="0" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1043,14 +1016,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/TodoList.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="194" column="70" selection-start-line="194" selection-start-column="70" selection-end-line="194" selection-end-column="70" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="656">
@@ -1070,6 +1035,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="131">
+          <caret line="1930" column="40" selection-start-line="1927" selection-start-column="40" selection-end-line="1930" selection-end-column="40" />
+          <folding>
+            <element signature="e#35#63#0#PHP" expanded="true" />
+            <element signature="e#118010#119570#0#PHP" expanded="false" />
+            <element signature="e#140302#140457#0#PHP" expanded="false" />
+            <element signature="e#236012#243357#0#PHP" expanded="false" />
+            <marker date="1602768757696" expanded="true" signature="53222:53250" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/BookingRequests.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="113" column="54" selection-start-line="113" selection-start-column="54" selection-end-line="113" selection-end-column="54" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/bookingrequests/view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="112" column="37" selection-start-line="112" selection-start-column="37" selection-end-line="112" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/yiisoft/yii2/base/Model.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="888" column="20" selection-start-line="888" selection-start-column="20" selection-end-line="888" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/models/Properties.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1423">
@@ -1078,25 +1081,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/BookingRequests.php">
+    <entry file="file://$PROJECT_DIR$/controllers/InsurancesController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="63" column="252" selection-start-line="63" selection-start-column="222" selection-end-line="63" selection-end-column="252" />
+        <state relative-caret-position="-435">
+          <caret line="82" column="32" selection-start-line="82" selection-start-column="32" selection-end-line="82" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+    <entry file="file://$PROJECT_DIR$/models/TodoList.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="596">
-          <caret line="730" column="13" selection-start-line="730" selection-start-column="13" selection-end-line="730" selection-end-column="13" />
-          <folding>
-            <element signature="e#35#63#0#PHP" expanded="true" />
-            <element signature="e#117643#119203#0#PHP" expanded="false" />
-            <element signature="e#139935#140090#0#PHP" expanded="false" />
-            <element signature="e#235645#242990#0#PHP" expanded="false" />
-            <marker date="1602768204630" expanded="true" signature="53222:53250" ph="..." />
-          </folding>
+        <state relative-caret-position="335">
+          <caret line="201" column="40" selection-start-line="201" selection-start-column="40" selection-end-line="201" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>

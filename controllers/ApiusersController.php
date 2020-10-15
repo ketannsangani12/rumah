@@ -1925,6 +1925,9 @@ class ApiusersController extends ActiveController
                                     if ($model->save(false)) {
                                         $todomodel->status = 'Paid';
                                         $todomodel->save(false);
+                                        $months = $model->tenancy_period;
+                                        $effectiveDate = date('Y-m-d', strtotime("+".$months." months", strtotime($model->commencement_date)));
+                                        $model->property->availability = date('Y-m-d', strtotime("+".$months." months", strtotime($effectiveDate)));
                                         $model->property->status = 'Rented';
                                         $model->property->request_id = $model->id;
                                         if($model->property->save(false)){

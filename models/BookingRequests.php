@@ -111,7 +111,7 @@ class BookingRequests extends \yii\db\ActiveRecord
             'rental_deposit' => 'Rental Deposit',
             'utilities_deposit' => 'Utilities Deposit',
             'commencement_date' => 'Commencement Date',
-            'tenancy_period' => 'Tenancy Period',
+            'tenancy_period' => 'Tenancy Period(Months)',
             'status' => 'Status',
             'moveout_date'=>'Move Out Date',
             'security_deposit' => 'Security Deposit',
