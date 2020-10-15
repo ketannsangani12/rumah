@@ -249,14 +249,10 @@ class BookingrequestsController extends Controller
         $model->scenario = 'uploadagreement';
         if ($model->load(Yii::$app->request->post())) {
             $model->agreement = \yii\web\UploadedFile::getInstance($model, 'agreement');
-            $model->movein = \yii\web\UploadedFile::getInstance($model, 'movein');
             if($model->validate()) {
                 $newFileName = \Yii::$app->security
                         ->generateRandomString().'.'.$model->agreement->extension;
-                $newFileName1 = \Yii::$app->security
-                        ->generateRandomString().'.'.$model->movein->extension;
                 $model->agreement_document = $newFileName;
-                $model->movein_document = $newFileName1;
                 if($model->status=='Agreement Processed'){
                     $model->status = 'Payment Requested';
                 }
@@ -266,7 +262,6 @@ class BookingrequestsController extends Controller
                     $todomodel->updated_at = date('Y-m-d H:i:s');
                     $todomodel->save(false);
                     $model->agreement->saveAs('uploads/agreements/' . $newFileName);
-                    $model->movein->saveAs('uploads/moveinout/' . $newFileName1);
                     return $this->redirect(['index']);
 
                 }else{
