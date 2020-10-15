@@ -729,8 +729,40 @@ class ApiusersController extends ActiveController
                 }
 
             }
+            $myvacantproperties = BookingRequests::find()->select(['id','property_id','user_id','landlord_id','monthly_rental','commencement_date','tenancy_period'])->with([
+                'property'=>function ($query) {
+                    $query->select('id,property_no,title');
+                },
+                'property.pictures'=>function ($query) use($baseurl) {
+                    $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->all();
+                },
+                'user'=>function($query){
+                    $query->select(["id","full_name"]);
+                },
+                'landlord'=>function($query){
+                    $query->select(["id","full_name"]);
+
+                },
+          ])->where(['user_id'=>$user_id,'status'=>'Rented'])->asArray()->all();
+            $myrentedproperties = array();
+            if(!empty($myvacantproperties)){
+                foreach ($myvacantproperties as $key=>$myvacantproperty){
+                    $commencmentdate = $myvacantproperty['commencement_date'];
+                    $months = $myvacantproperty['tenancy_period'];
+                    $effectiveDate = date('Y-m-d', strtotime("+".$months." months", strtotime($commencmentdate)));
+                    $myrentedproperties[] = $myvacantproperty['property'];
+                    $myrentedproperties[$key]['landlord'] =  $myvacantproperty['landlord']['full_name'];
+                    $myrentedproperties[$key]['rental'] =  $myvacantproperty['monthly_rental'];
+                    $myrentedproperties[$key]['date'] =  $effectiveDate;
+
+
+                }
+
+            }
             $data['vacant'] = $vacantproperties;
             $data['rented'] = $rentedproperties;
+            $data['myrented'] = $myrentedproperties;
+
             return array('status' => 1, 'data' => $data);
 
 
