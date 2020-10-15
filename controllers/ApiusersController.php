@@ -1787,9 +1787,8 @@ class ApiusersController extends ActiveController
 
                         $receiverbalance = Users::getbalance($model->landlord_id);
                         $senderbalance = Users::getbalance($model->user_id);
-                        if($senderbalance < $totalamountafterdiscount){
+                        if($senderbalance < $totalamount){
                             return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
-                            exit;
 
                         }
                         $systemaccount = Yii::$app->common->getsystemaccount();

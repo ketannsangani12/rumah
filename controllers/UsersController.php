@@ -86,6 +86,7 @@ class UsersController extends Controller
                 $password = substr(str_shuffle($chars),0,6);
                 $password = 123456;
                 $model->password = md5($password);
+                $model->status = 1;
                 $model->created_at = date('Y-m-d h:i:s');
                 if($model->save()){
                     Yii::$app->mailer->compose('adduser',
