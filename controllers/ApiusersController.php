@@ -1933,7 +1933,7 @@ class ApiusersController extends ActiveController
 
                                         }else{
                                             $transaction1->rollBack();
-                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes23.');
 
                                         }
 
@@ -1941,14 +1941,14 @@ class ApiusersController extends ActiveController
                                     }else{
                                         $transaction1->rollBack();
 
-                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes45.');
 
                                     }
 
                                 }else{
                                     $transaction1->rollBack();
 
-                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes67.');
 
                                 }
 
@@ -1956,7 +1956,7 @@ class ApiusersController extends ActiveController
                             } else {
                                 $transaction1->rollBack();
 
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes89.');
 
                             }
                         }catch (Exception $e) {
