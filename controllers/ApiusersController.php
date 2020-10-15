@@ -1703,7 +1703,7 @@ class ApiusersController extends ActiveController
                             if ($model->validate()) {
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
-                                    $subtotal = $model->tenancy_fees+$model->stamp_duty+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;
+                                    $subtotal = $model->tenancy_fees+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;
                                     $sst = Yii::$app->common->calculatesst($subtotal);
                                     $model->subtotal = $subtotal;
                                     $model->sst = $sst;
