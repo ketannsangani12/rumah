@@ -1812,7 +1812,7 @@ class ApiusersController extends ActiveController
                             $transaction->reftype = 'Booking Payment';
                             $transaction->status = 'Completed';
                             $transaction->created_at = date('Y-m-d H:i:s');
-                            if ($transaction->save()) {
+                            if ($transaction->save(false)) {
                                 $lastid = $transaction->id;
                                 $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
                                 $transaction->reference_no = $reference_no;
@@ -1908,7 +1908,7 @@ class ApiusersController extends ActiveController
                                         $todomodel->save(false);
                                         $model->property->status = 'Rented';
                                         $model->property->request_id = $model->id;
-                                        if($model->property->save()){
+                                        if($model->property->save(false)){
                                             if($goldcoins>0){
                                                 $usercoinsbalance = Users::getcoinsbalance($model->user_id);
                                                 $goldtransaction = new GoldTransactions();
