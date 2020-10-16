@@ -76,6 +76,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['oldpassword', 'newpassword'], 'required','on' => 'changepassword'],
             //[['oldpassword'], 'checkoldpassword','on' => 'changepassword'],
             [['secondary_password'], 'required', 'on' => 'createsecondarypassword'],
+            [['wallet_balance'], 'number'],
 
             //[['name', 'username', 'password', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],

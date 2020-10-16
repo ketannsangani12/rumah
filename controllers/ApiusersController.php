@@ -2240,7 +2240,6 @@ class ApiusersController extends ActiveController
                     ])->where(['id' => $_POST['todo_id']])->asArray()->all();
 
                 $data = array();
-                //echo "<pre>";print_r($todolists);exit;
                 if (!empty($todolists)) {
                     foreach ($todolists as $key => $todolist) {
 
@@ -2371,6 +2370,136 @@ class ApiusersController extends ActiveController
                            // }
                             break;
 
+
+                    }
+                }
+            }
+            return array('status' => 1, 'data' => $data);
+
+        }
+    }
+    public function actionMydocuments()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+
+            $user_id = $this->user_id;
+            // echo $user_id;exit;
+            $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'worker_id' ,'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
+                ->with([
+                    'request' => function ($query) {
+                        $query->select(['id', new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
+                    },
+                    'servicerequest'=>function ($query) {
+                        $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
+                    },
+                    'property' => function ($query) {
+                        $query->select('id,property_no,title');
+                    },
+                    'user' => function ($query) {
+                        $query->select("id,full_name");
+                    },
+                    'landlord' => function ($query) {
+                        $query->select("id,full_name");
+
+                    },
+                    'agent'=>function($query){
+                        $query->select("id,full_name");
+
+                    },
+                    'renovationquote' => function ($query) {
+                        $query->select(['id', new \yii\db\Expression("CONCAT('/uploads/renovationquotes/', '', `quote_document`) as quote_document")]);
+
+                    },
+                    'documents' => function ($query) {
+                        $query->select(['id', 'todo_id', 'description', new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")]);
+
+                    },
+                    'todoItems' => function ($query) {
+                        $query->select(['id', 'todo_id', 'description', 'platform_deductible', 'price', 'reftype']);
+
+                    },
+                    'worker'=>function($query){
+                        $query->select("id,full_name");
+
+                    },
+                ])->where(['id' => $_POST['todo_id']])->asArray()->all();
+
+            $data = array();
+            if (!empty($todolists)) {
+                foreach ($todolists as $key => $todolist) {
+
+                    switch ($todolist['reftype']) {
+                        case "Booking";
+                            if($todolist['user_id']==$user_id){
+                                 if(($todolist['request']['status']=='Rented' || $todolist['request']['status']=='Completed') && $todolist['request']['movein_document']!=''){
+                                    $moveindocument['document'] = $todolist['request']['movein_document'];
+                                    $moveindocument['type'] = 'Move In Document';
+                                    $moveindocument['property'] = '';
+                                }
+                            }else if($todolist['landlord_id']==$user_id){
+                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') ||  $todolist['status']=='Processing'){
+                                    $data[] = $todolist;
+                                }
+                            }
+                            break;
+                        case "Transfer Request";
+                            if($todolist['status']=='Pending'){
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "Moveout Refund";
+                            if ($todolist['status'] == 'Pending') {
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "Renovation Quote";
+                            if ($todolist['status'] == 'Pending') {
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "Renovation Milestone";
+                            if ($todolist['status'] == 'Unpaid') {
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "Defect Report";
+                            if ($todolist['status'] == 'Pending' || $todolist['status'] == 'Unpaid') {
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "General";
+                            if ($todolist['status'] == 'Unpaid') {
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "Insurance";
+                            if ($todolist['status'] == 'Unpaid') {
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "Monthly Rental";
+                            if ($todolist['status'] == 'Unpaid') {
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "Appointment";
+                            $date = date('Y-m-d');
+                            if($todolist['status']=='Pending' && $date<=$todolist['appointment_date']){
+                                $data[] = $todolist;
+                            }
+                            break;
+                        case "Service";
+                            if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                $data[] = $todolist;
+                            }elseif (($todolist['status']=='Unpaid' || $todolist['status']=='In Progress') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
+                                $data[] = $todolist;
+                            }
+
+                            break;
 
                     }
                 }
