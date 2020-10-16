@@ -2416,6 +2416,7 @@ class ApiusersController extends ActiveController
                     },
 
                 ])->where(['user_id' => $user_id])->orWhere(['landlord_id'=>$user_id])->asArray()->all();
+           // echo "<pre>";print_r($todolists);exit;
 
             $data = array();
             if (!empty($todolists)) {
@@ -2505,7 +2506,7 @@ class ApiusersController extends ActiveController
 
                         case "Insurance";
                             if ($todolist['status'] == 'Completed' && $todolist['landlord_id']==$user_id) {
-                                $covernotedocument['document'] = $todolist['documents']['document'];
+                                $covernotedocument['document'] = $todolist['documents'][0]['document'];
                                 $covernotedocument['type'] = 'Insurance Cover Note';
                                 $covernotedocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
                                 $covernotedocument['location'] = $todolist['property']['location'];
