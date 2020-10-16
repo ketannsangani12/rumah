@@ -2049,6 +2049,9 @@ class ApiusersController extends ActiveController
                     'servicerequest'=>function ($query) {
                         $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
                     },
+                    'servicerequest.servicerequestImages'=>function ($query) {
+                        $query->select(['id','service_request_id','description','image','reftype','created_at']);
+                    },
                     'property'=>function($query){
                         $query->select('id,property_no,title');
                     },
@@ -2202,6 +2205,9 @@ class ApiusersController extends ActiveController
                         },
                         'servicerequest'=>function ($query) {
                             $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
+                        },
+                        'servicerequest.servicerequestImages'=>function ($query) {
+                            $query->select(['id','service_request_id','description','image','reftype','created_at']);
                         },
                         'property' => function ($query) {
                             $query->select('id,property_no,title');
