@@ -2478,7 +2478,7 @@ class ApiusersController extends ActiveController
                                         $commencmentdate = $todolist['request']['commencement_date'];
                                         $months = $todolist['request']['tenancy_period'];
                                         $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
-                                        $agreementdocument['agreement_period'] = date('m-Y', strtotime($commencmentdate)) . " - " . date('m-Y', strtotime($effectiveDate));
+                                        $agreementdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('m-Y', strtotime($effectiveDate));
                                         $data[] = $agreementdocument;
 
                                     }
@@ -2490,7 +2490,7 @@ class ApiusersController extends ActiveController
                                         $commencmentdate = $todolist['request']['commencement_date'];
                                         $months = $todolist['request']['tenancy_period'];
                                         $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
-                                        $moveoutdocument['agreement_period'] = date('m-Y', strtotime($commencmentdate)) . " - " . date('m-Y', strtotime($effectiveDate));
+                                        $moveoutdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('m-Y', strtotime($effectiveDate));
                                         $data[] = $moveoutdocument;
 
                                     }
