@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/InsurancesController.php" afterPath="$PROJECT_DIR$/controllers/InsurancesController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/InvoicesController.php" afterPath="$PROJECT_DIR$/controllers/InvoicesController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/RenovationquotesController.php" afterPath="$PROJECT_DIR$/controllers/RenovationquotesController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/defectreports/index.php" afterPath="$PROJECT_DIR$/views/defectreports/index.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,8 +26,8 @@
       <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="116">
-              <caret line="3589" column="58" selection-start-line="3589" selection-start-column="58" selection-end-line="3589" selection-end-column="58" />
+            <state relative-caret-position="526">
+              <caret line="2508" column="60" selection-start-line="2508" selection-start-column="60" selection-end-line="2508" selection-end-column="60" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
                 <element signature="e#108086#110616#1#PHP" expanded="false" />
@@ -40,7 +35,7 @@
                 <element signature="e#130150#131710#0#PHP" expanded="false" />
                 <element signature="e#153088#153243#0#PHP" expanded="false" />
                 <element signature="e#250998#258343#0#PHP" expanded="false" />
-                <marker date="1602829519746" expanded="true" signature="54742:54770" ph="..." />
+                <marker date="1602829767035" expanded="true" signature="54742:54770" ph="..." />
               </folding>
             </state>
           </provider>
@@ -659,12 +654,12 @@
       <workItem from="1602475656097" duration="11284000" />
       <workItem from="1602560741901" duration="6665000" />
       <workItem from="1602733621307" duration="28234000" />
-      <workItem from="1602820007242" duration="7569000" />
+      <workItem from="1602820007242" duration="7815000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="584388000" />
+    <option name="totallyTimeSpent" value="584634000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -1162,8 +1157,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="3589" column="58" selection-start-line="3589" selection-start-column="58" selection-end-line="3589" selection-end-column="58" />
+        <state relative-caret-position="526">
+          <caret line="2508" column="60" selection-start-line="2508" selection-start-column="60" selection-end-line="2508" selection-end-column="60" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
             <element signature="e#108086#110616#1#PHP" expanded="false" />
@@ -1171,7 +1166,7 @@
             <element signature="e#130150#131710#0#PHP" expanded="false" />
             <element signature="e#153088#153243#0#PHP" expanded="false" />
             <element signature="e#250998#258343#0#PHP" expanded="false" />
-            <marker date="1602829519746" expanded="true" signature="54742:54770" ph="..." />
+            <marker date="1602829767035" expanded="true" signature="54742:54770" ph="..." />
           </folding>
         </state>
       </provider>
