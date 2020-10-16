@@ -120,6 +120,7 @@ class InvoicesController extends Controller
                     $modelCustomer->reftype = 'General';
                     $modelCustomer->status = "Unpaid";
                     $modelCustomer->created_at = date('Y-m-d H:i:s');
+                    $modelCustomer->updated_at = date('Y-m-d H:i:s');
                     if ($flag = $modelCustomer->save(false)){
                         foreach ($modelsAddress as $modelAddress) {
                             $modelAddress->todo_id = $modelCustomer->id;

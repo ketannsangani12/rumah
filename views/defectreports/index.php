@@ -39,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'description',
                 [
+                    'label' => 'User',
                     'attribute' => 'user_id',
 
                     'value' => 'user.full_name',
@@ -49,6 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     //'filter'=>false
                 ],
+                'pay_from',
                 //'property_id',
                 // 'user_id',
                  //'landlord_id',

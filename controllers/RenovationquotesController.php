@@ -99,6 +99,7 @@ class RenovationquotesController extends Controller
                 $model->quote_document = $newFileName;
                 $model->status = "Pending";
                 $model->created_at = date('Y-m-d H:i:s');
+
                 if($model->save()){
                     $model->document->saveAs('uploads/renovationquotes/' . $newFileName);
                     $todorequest = new TodoList();
@@ -108,6 +109,7 @@ class RenovationquotesController extends Controller
                     $todorequest->reftype = 'Renovation Quote';
                     $todorequest->status = 'Pending';
                     $todorequest->created_at = date("Y-m-d H:i:s");
+                    $todorequest->updated_at = date('Y-m-d H:i:s');
                     $todorequest->save(false);
                     return $this->redirect(['index']);
                 }
