@@ -674,9 +674,9 @@ class ApipartnersController extends ActiveController
 
                     $usermodel = Users::findOne(['id'=>$this->user_id,'password'=>md5($model->oldpassword)]);
                     if (!empty($usermodel)){
-                        $model->password = md5($model->newpassword);
+                        $usermodel->password = md5($model->newpassword);
 
-                        $usermodel->save();
+                        $usermodel->save(false);
                         return array('status' => 1, 'message' => 'You have changed your primary password successfully.');
                     }else{
                         return array('status' => 0, 'message' => 'You have entered wrong old password.');
