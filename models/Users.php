@@ -361,7 +361,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public static function updatebalance($walletbalance,$user_id)
     {
         $usermodel = Users::findOne($user_id);
-        $usermodel->wallet_balance=$walletbalance;
+        $usermodel->wallet_balance = $walletbalance;
         if($usermodel->save(false)){
             return true;
         }else{

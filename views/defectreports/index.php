@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return ($model->status=='New');
                         },
                         'updatequote' => function ($model) {
-                            return ($model->status=='Accepted');
+                            return ($model->status=='In Progress');
                         },
                     ],
                     'buttons'=>[
@@ -126,7 +126,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return Html::a('<i class="fa fa-money" aria-hidden="true"></i>', [$url], [
 
                                 'title' => 'Defect Report Quote',
-                                'class' =>'btn btn-sm btn-warning datatable-operation-btn'
+                                'class' =>'btn btn-sm bg-blue datatable-operation-btn'
 
                             ]);
 
