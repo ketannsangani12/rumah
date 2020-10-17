@@ -110,6 +110,9 @@ class Common extends Component
             case "New";
                 return "<span class='btn btn-warning btn-xs'>New</span>";
                 break;
+            case "Active";
+                return "<span class='btn btn-warning btn-xs'>Active</span>";
+                break;
             case "Pending";
                 return "<span class='btn btn-warning btn-xs'>Pending</span>";
 
@@ -137,6 +140,9 @@ class Common extends Component
                 break;
             case "Picked Up";
                 return "<span class='btn bg-blue btn-xs'>Picked Up</span>";
+                break;
+            case "Rented";
+                return "<span class='btn bg-olive btn-xs'>Rented</span>";
                 break;
             case "In Progress";
                 return "<span class='btn bg-purple btn-xs'>In Progress</span>";
@@ -171,11 +177,14 @@ class Common extends Component
             case "Out For Delivey";
                 return "<span class='btn bg-blue btn-xs'>Out For Delivey</span>";
                 break;
-            case "Rented";
-                return "<span class='btn bg-green btn-xs'>Rented</span>";
+            case "Inactive";
+                return "<span class='btn btn-danger btn-xs'>Inactive</span>";
+                break;
+            case "Suspended";
+                return "<span class='btn btn-danger btn-xs'>Suspended</span>";
                 break;
             case "Terminated";
-                return "<span class='btn btn-danger btn-xs'>Suspended</span>";
+                return "<span class='btn btn-danger btn-xs'>Terminated</span>";
                 break;
             case "Incompleted";
                 return "<span class='btn btn-danger btn-xs'>Incompleted</span>";

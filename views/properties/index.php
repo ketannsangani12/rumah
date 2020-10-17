@@ -73,14 +73,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'digital_tenancy',
                 // 'auto_rental',
                 // 'insurance',
-                // 'status',
+                [
+                    'attribute'=>'status',
+                    'format'=>'raw',
+                    'value'=> function($model){
+                        return Yii::$app->common->getStatus($model->status);
+                    },
+                    'filter'=>array("Active"=>"Active","Inactive"=>"Inactive","Rented"=>"Rented","Suspended"=>"Suspended"),
+                    'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
+
+                ],
+                //'status',
                 // 'created_at',
                 // 'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
                     'template'=>'{view} {managedlisting} {gallery} {update} {delete}',
                     'visibleButtons' => [
-                        'managedlisting' => function ($model,$managedlisting) {
+                        'managedlisting' => function ($model) use ($managedlisting) {
                             return $managedlisting==false;
                         },
 

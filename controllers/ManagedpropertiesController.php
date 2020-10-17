@@ -182,14 +182,19 @@ class ManagedpropertiesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->status = 'Deleted';
+        $model->deleted_at = date('Y-m-d H:i:s');
+        $model->save(false);
 
         return $this->redirect(['index']);
     }
 
-    public function actionAddtomanagelisting($id)
+    public function actionRemovefrommanagelisting($id)
     {
         $model = $this->findModel($id);
+
+        $model->is_managed = 0;
         $model->pe_userid = Yii::$app->user->identity->getId();
         $model->save(false);
         return $this->redirect(['index']);

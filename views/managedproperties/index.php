@@ -61,24 +61,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     //'filter'=>false
                 ],
-                 //'availability',
-                // 'bedroom',
-                // 'bathroom',
-                // 'carparks',
-                // 'furnished_status',
-                // 'size_of_area',
-                // 'price',
-                // 'amenities:ntext',
-                // 'commute',
-                // 'digital_tenancy',
-                // 'auto_rental',
-                // 'insurance',
-                // 'status',
-                // 'created_at',
-                // 'updated_at',
-
+                'status',
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{gallery} {update} {delete}',
+                    'template'=>'{gallery} {managedlisting} {update} {delete}',
 
                     'buttons'=>[
 //
@@ -92,6 +77,15 @@ $this->params['breadcrumbs'][] = $this->title;
 //                            ]);
 //
 //                        },
+                        'managedlisting' => function ($url, $model,$managedlisting) {
+
+                            return Html::a('<i class="fa fa-minus" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/removefrommanagelisting', 'id' => $model->id])], [
+
+                                'title' => 'Remove From Managed Listing',
+                                'class'=>'btn btn-sm bg-navy datatable-operation-btn'
+                            ]);
+
+                        },
 
                         'gallery' => function ($url, $model) {
 
