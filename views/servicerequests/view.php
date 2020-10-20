@@ -73,6 +73,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         'checkin_time:datetime',
                         'checkout_time:datetime',
                         'pickup_time:datetime',
+                        [
+                            'label' => 'Delivery Time',
+                            'value' => function ($model) {
+                                return ($model->reftype=='Laundry' && $model->status=='Completed')?date('M d,Y h:i:s a'):"";
+                                },
+                           // 'format' => 'raw',
+                        ],
                         // 'created_at:datetime',
                         //'updated_at:datetime',
                     ],
