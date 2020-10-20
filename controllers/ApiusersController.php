@@ -4729,7 +4729,7 @@ class ApiusersController extends ActiveController
                                 $cleaner = Users::find()
                                     ->select('id,latitude,longitude,full_name,email,' . $harvesformula)->where(['current_status' => 'Free', 'role' => 'Laundry'])->andWhere(['<=', $harvesformula1, $distance])->one();
                                 if (empty($cleaner)) {
-                                    return array('status' => 0, 'message' => 'There is no Cleaning Company Available in your area.');
+                                    return array('status' => 0, 'message' => 'Currently there is no Laudry Company Available in your area.');
 
                                 }
 

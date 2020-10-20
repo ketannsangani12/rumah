@@ -1745,6 +1745,31 @@ class ApipartnersController extends ActiveController
 
                                 }
 
+                            }else if ($updatetype == 'assignworker' && $todomodel->service_type == 'Laundry') {
+                                if ($worker_id == '') {
+                                    return array('status' => 0, 'message' => 'Please select Worker.');
+
+                                }
+                                $todomodel->worker_id = $worker_id;
+                                $todomodel->updated_at = date("Y-m-d H:i:s");
+                                if ($todomodel->save(false)) {
+                                    $todomodel->servicerequest->worker_id = $worker_id;
+                                    $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                                    if ($todomodel->servicerequest->save(false)) {
+                                        $transaction1->commit();
+                                        return array('status' => 1, 'message' => 'You have assigned worker successfully.');
+
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                } else {
+                                    $transaction1->rollBack();
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                }
+
                             } else if ($updatetype == 'pickup' && $todomodel->service_type == 'Laundry') {
                                 if (empty($pictures)) {
                                     return array('status' => 0, 'message' => 'Please Upload atleast one Pickup Picture.');
