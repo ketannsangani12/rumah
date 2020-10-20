@@ -71,7 +71,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'booked_at:datetime',
                         'todo.payment_date:datetime',
                         'checkin_time:datetime',
-                        'checkout_time:datetime'
+                        'checkout_time:datetime',
+                        'pickup_time:datetime',
                         // 'created_at:datetime',
                         //'updated_at:datetime',
                     ],

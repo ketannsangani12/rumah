@@ -2045,7 +2045,7 @@ class ApiusersController extends ActiveController
                         $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit','status',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                     },
                     'servicerequest'=>function ($query) {
-                        $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
+                        $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount','pickup_time','checkin_time','checkout_time']);
                     },
                     'servicerequest.servicerequestImages'=>function ($query) {
                         $query->select(['id','service_request_id','description','image','reftype','created_at']);
@@ -2166,7 +2166,7 @@ class ApiusersController extends ActiveController
                                 }else {
                                     $data[] = $todolist;
                                 }
-                            }elseif (($todolist['status']=='Unpaid' || $todolist['status']=='In Progress' || $todolist['status']=='Completed') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
+                            }elseif (($todolist['status']=='Unpaid' || $todolist['status']=='In Progress' || $todolist['status']=='Completed' || $todolist['status']=='Picked Up') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
                                 if($todolist['status']=='Completed'){
                                     $reviewexist = VendorRatings::find()->where(['request_id'=>$todolist['service_request_id'],'user_id'=>$user_id])->one();
                                     if(empty($reviewexist)){
