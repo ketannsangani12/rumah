@@ -44,6 +44,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
     public $quote;
     public $descriptions;
     public $pictures;
+    public $request_to;
     /**
      * {@inheritdoc}
      */
@@ -60,9 +61,12 @@ class ServiceRequests extends \yii\db\ActiveRecord
         return [
             [['status'], 'required','on' => 'changestatus'],
             [['vendor_id'], 'required','on' => 'assigndriver'],
+            [['vendor_id'], 'required','on' => 'reassigndriver'],
             [['property_id', 'vendor_id', 'user_id', 'todo_id'], 'integer'],
+            [['property_id' ,'request_to','vendor_id', 'date' , 'time' ], 'required','on'=>'createcleaningorder'],
             [['property_id' , 'date' , 'time' , 'type'], 'required','on'=>'bookhandyman'],
-            [['user_id' , 'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'bookmover'],
+            [['user_id' , 'property_id' ,'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'bookmover'],
+            [['property_id' ,'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'createmoverorder'],
             [['property_id' , 'date' , 'time' ,'hours'], 'required','on'=>'bookcleaner'],
             [[ 'date' , 'time','latitude','longitude','pickup_location'], 'required','on'=>'booklaundry'],
 
@@ -109,6 +113,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
             'amount' => 'Amount',
             'subtotal' => 'Subtotal',
             'sst' => 'Sst',
+            'request_to'=>'Request To',
             'total_amount' => 'Total Amount',
             'reftype' => 'Service',
             'checkin_time'=>'Check-In Time',

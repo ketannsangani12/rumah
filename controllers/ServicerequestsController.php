@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Properties;
 use app\models\ServicerequestImages;
 use app\models\TodoItems;
 use app\models\TodoList;
@@ -282,14 +283,93 @@ class ServicerequestsController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreatecleaningorder()
     {
         $model = new ServiceRequests();
+        $model->scenario = 'createcleaningorder';
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) ) {
+            if($model->validate()) {
+
+                $model->created_at = date('Y-m-d h:i:s');
+                $model->save();
+
+                return $this->redirect(['index']);
+            }else{
+                return $this->render('create', [
+                    'model' => $model
+                ]);
+            }
         } else {
             return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+    public function actionCreatemoverorder()
+    {
+        $model = new ServiceRequests();
+        $model->scenario = 'createmoverorder';
+
+        if ($model->load(Yii::$app->request->post()) ) {
+            if($model->validate()) {
+                $requestexist = ServiceRequests::find()->where(['property_id'=>$model->property_id,'reftype'=>'Mover'])->andWhere(['in','status',['New','Pending','Unpaid','Confirmed']])->one();
+                if (!empty($requestexist)){
+                    Yii::$app->session->setFlash('error', "Move request already exist in system.");
+                    return $this->redirect(['createmoverorder']);
+
+                }
+                if ($model->request_to=='Tenant' && !isset($model->request->user_id)){
+                    Yii::$app->session->setFlash('error', "This property is not rented");
+                    return $this->redirect(['createmoverorder']);
+
+                }
+                $propertydetails = Properties::findOne($model->property_id);
+                $model->user_id = ($model->request_to=='Tenant')?$model->request->user_id:$propertydetails->user_id;
+                $model->request_to = null;
+                $model->date = date('Y-m-d',strtotime($model->date));
+                $model->reftype = 'Mover';
+                $model->status = 'New';
+                $model->created_at = date('Y-m-d h:i:s');
+                $model->booked_at = date('Y-m-d h:i:s');
+                if($model->save()) {
+                    $request_id = $model->id;
+                    $reference_no = Yii::$app->common->generatereferencenumber($request_id);
+                    $model->reference_no = $reference_no;
+                    if($model->save(false)){
+                        $todolist = new TodoList();
+                        $todolist->user_id = $model->user_id;
+                        $todolist->service_request_id = $request_id;
+                        $todolist->property_id = $model->property_id;
+                        $todolist->reftype = 'Service';
+                        $todolist->service_type = 'Mover';
+                        $todolist->created_at =  date("Y-m-d H:i:s");
+                        $todolist->updated_at =  date("Y-m-d H:i:s");
+                        $todolist->status = 'New';
+                        if($todolist->save()){
+                            $model->todo_id = $todolist->id;
+                            $model->save(false);
+                            return $this->redirect(['index']);
+
+                        }else{
+                            return $this->render('createmoverorder', [
+                                'model' => $model
+                            ]);
+                        }
+                    }
+                }else{
+                    return $this->render('createmoverorder', [
+                        'model' => $model
+                    ]);
+                }
+
+            }else{
+                return $this->render('createmoverorder', [
+                    'model' => $model
+                ]);
+            }
+        } else {
+            return $this->render('createmoverorder', [
                 'model' => $model,
             ]);
         }
@@ -372,6 +452,7 @@ class ServicerequestsController extends Controller
                     if($todolist->save(false)) {
                         $vendormodel->current_status = 'Busy';
                         $vendormodel->updated_at = date('Y-m-d H:i:s');
+                        $vendormodel->save(false);
                         return $this->redirect(['index']);
                     }
                 }
@@ -379,6 +460,7 @@ class ServicerequestsController extends Controller
             }else{
                 return $this->render('assignvendor', [
                     'merchantmodel' => $merchantmodel,
+                    'reassign' => false
                     //'images' => $images
                 ]);
             }
@@ -386,6 +468,65 @@ class ServicerequestsController extends Controller
             $servicetype = $merchantmodel->reftype;
             return $this->render('assignvendor', [
                 'merchantmodel' => $merchantmodel,
+                'reassign' => false
+
+            ]);
+
+        }
+    }
+    public function actionReassignvendor($id)
+    {
+        $merchantmodel = $this->findModel($id);
+        $oldvendor = $merchantmodel->vendor_id;
+        if($merchantmodel->reftype!='Cleaner'){
+            throw new NotFoundHttpException('The requested page does not exist.');
+
+        }
+        if($merchantmodel->status!='New'  && $merchantmodel->status!='Unpaid'){
+
+            throw new NotFoundHttpException('The requested page does not exist.');
+
+        }
+        $merchantmodel->scenario = 'reassigndriver';
+
+
+        if ($merchantmodel->load(Yii::$app->request->post()) ) {
+            $oldvendormodel = Users::findOne($oldvendor);
+            if($oldvendormodel->current_status=='Busy'){
+                throw new NotFoundHttpException('This Vendor already assigned to other request.Please try different');
+
+            }
+            // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
+            if($merchantmodel->validate()) {
+                $merchantmodel->updated_at = date('Y-m-d H:i:s');
+                if($merchantmodel->save(false)) {
+                    $vendormodel = Users::findOne($merchantmodel->vendor_id);
+                    $todolist = $merchantmodel->todo;
+                    $todolist->vendor_id = $merchantmodel->vendor_id;
+                    $todolist->updated_at = date('Y-m-d H:i:s');
+                    if($todolist->save(false)) {
+                        $vendormodel->current_status = 'Free';
+                        $vendormodel->updated_at = date('Y-m-d H:i:s');
+                        $vendormodel->save(false);
+                        $oldvendormodel->current_status = 'Busy';
+                        $oldvendormodel->updated_at = date('Y-m-d H:i:s');
+                        $oldvendormodel->save(false);
+
+                        return $this->redirect(['index']);
+                    }
+                }
+
+            }else{
+                return $this->render('assignvendor', [
+                    'merchantmodel' => $merchantmodel,
+                    'reassign' => true
+                ]);
+            }
+        }else {
+            $servicetype = $merchantmodel->reftype;
+            return $this->render('assignvendor', [
+                'merchantmodel' => $merchantmodel,
+                'reassign' => true
 
             ]);
 

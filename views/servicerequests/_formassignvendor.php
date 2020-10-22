@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
         <div class="box-body table-responsive">
 
             <?php
-            $properties = \app\models\Users::find()->where(['role'=>$propertymodel->reftype])->asArray()->all();
+            $properties = \app\models\Users::find()->where(['role'=>$propertymodel->reftype,'current_status'=>'Free'])->asArray()->all();
             //print_r($properties);exit;
             if(!empty($properties)){
                 foreach ($properties as $property){

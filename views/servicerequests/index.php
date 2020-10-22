@@ -14,6 +14,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Pjax::begin(); ?>
     <div class="box-header with-border">
         <h2>Service Requests</h2>
+        <?= Html::a('Create Cleaning Order', ['createcleaningorder'], ['class' => 'btn btn-primary btn-flat']) ?>
+        <?= Html::a('Create Mover Order', ['createmoverorder'], ['class' => 'btn btn-primary btn-flat']) ?>
+
     </div>
     <div class="box-body table-responsive">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -105,7 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 ['class' => 'yii\grid\ActionColumn',
                     'headerOptions' => ['style' => 'width:18%'],
-                    'template'=>'{view} {update} {assignvendor} {gallery} {uploadquote} {issueinvoice} {refund} {cancel}',
+                    'template'=>'{view} {update} {assignvendor} {reassignvendor} {gallery} {uploadquote} {issueinvoice} {refund} {cancel}',
                     'visibleButtons' => [
                         'gallery' => function ($model){
                             return ($model->reftype!='Mover');
@@ -118,6 +121,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'assignvendor'=> function($model){
                             return (($model->reftype=='Handyman' || $model->reftype=='Mover') && ($model->status=='Confirmed'));
+                        },
+                        'reassignvendor'=> function($model){
+                            return (($model->reftype=='Cleaner') && ($model->status=='New' || $model->status=='Unpaid'));
                         },
                         'issueinvoice'=> function($model){
                             return (($model->reftype=='Handyman' || $model->reftype=='Mover') && ($model->status=='Accepted' || $model->status=='Unpaid'));
@@ -174,6 +180,16 @@ $this->params['breadcrumbs'][] = $this->title;
                             return Html::a('<i class="fa fa-user-plus" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/assignvendor', 'id' => $model->id])], [
 
                                 'title' => 'Assign Vendor',
+                                'class' =>'btn btn-sm bg-teal datatable-operation-btn'
+
+                            ]);
+
+                        },
+                        'reassignvendor' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-user-plus" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/reassignvendor', 'id' => $model->id])], [
+
+                                'title' => 'Re-Assign Cleaner',
                                 'class' =>'btn btn-sm bg-teal datatable-operation-btn'
 
                             ]);
