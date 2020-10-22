@@ -27,6 +27,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     protected $token;
     public $newpassword;
     public $agentcard;
+    public $agent_card;
     /**
      * {@inheritdoc}
      */
@@ -45,7 +46,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['role', 'full_name','email'], 'required','on' => 'adduser'],
             [['full_name','email','password','contact_no'], 'required','on' => 'register'],
             [['company_name','email','password','contact_no','document_no','agentcard'], 'required','on' => 'registeragent'],
-            [['agentcard'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'registeragent'],
+            //[['agentcard'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'registeragent'],
 
             [['gender','dob','race','nationality','education_level','occupation','annual_income','contact_no','emergency_contact'], 'required','on' => 'updateprofileuser'],
             [['company_name','document_no','bank_account_name','bank_account_no','bank_name'], 'required','on' => 'updateprofileagent'],

@@ -212,7 +212,6 @@ class ApipartnersController extends ActiveController
                 $model = new Users();
                 $model->scenario = 'registeragent';
                 $model->attributes = Yii::$app->request->post();
-                $model->agentcard = $uploads = UploadedFile::getInstanceByName('agentcard');
 
                 if($model->validate()){
                     $model->referral_code = NULL;
@@ -220,11 +219,15 @@ class ApipartnersController extends ActiveController
                     $model->password = md5(Yii::$app->request->post('password'));
                     $model->verify_token = Yii::$app->getSecurity()->generateRandomString();
                     $model->created_at = date('Y-m-d h:i:s');
-                    $newFileName = \Yii::$app->security
-                            ->generateRandomString().'.'.$model->agentcard->extension;
-                    $model->agent_card = $newFileName;
-                    $model->agentcard->saveAs('uploads/users/' . $newFileName);
+                    $picture = $model->agentcard;
                     $model->agentcard = null;
+                    $filename = uniqid();
+
+                    $data = Yii::$app->common->processBase64($picture);
+
+                    file_put_contents('uploads/users/' . $filename . '.' . $data['type'], $data['data']);
+
+                    $model->agent_card = $filename . '.' . $data['type'];
 
                     $save = $model->save(false);
 
