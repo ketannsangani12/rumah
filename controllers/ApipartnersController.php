@@ -422,7 +422,7 @@ class ApipartnersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if (!empty($_POST) && !empty($_POST['email'])) {
-                $model = Users::find()->where(['email'=>$_POST['email'],'status'=>1])->andWhere(['in','role',['Cleaner','Mover','Agent','Laundry','Handyman']])->one();
+                $model = Users::find()->where(['email'=>$_POST['email']])->andWhere(['in','role',['Cleaner','Mover','Agent','Laundry','Handyman']])->one();
                 if(!empty($model)){
                     $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 
