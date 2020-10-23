@@ -45,6 +45,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
     public $descriptions;
     public $pictures;
     public $request_to;
+    public $addons;
     /**
      * {@inheritdoc}
      */
@@ -63,7 +64,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
             [['vendor_id'], 'required','on' => 'assigndriver'],
             [['vendor_id'], 'required','on' => 'reassigndriver'],
             [['property_id', 'vendor_id', 'user_id', 'todo_id'], 'integer'],
-            [['property_id' ,'request_to','vendor_id', 'date' , 'time' ], 'required','on'=>'createcleaningorder'],
+            [['property_id' ,'request_to','vendor_id', 'date' , 'time','hours' ], 'required','on'=>'createcleaningorder'],
             [['property_id' , 'date' , 'time' , 'type'], 'required','on'=>'bookhandyman'],
             [['user_id' , 'property_id' ,'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'bookmover'],
             [['property_id' ,'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'createmoverorder'],
@@ -75,7 +76,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
             [['date', 'booked_at', 'created_at', 'updated_at'], 'safe'],
             [['description', 'pickup_location', 'dropoff_location', 'reftype', 'status'], 'string'],
             [['amount', 'subtotal', 'sst', 'total_amount'], 'number'],
-            [['reference_no', 'type', 'time', 'document'], 'string', 'max' => 255],
+            [['reference_no', 'type', 'time', 'document','addons'], 'string', 'max' => 255],
             [['hours'], 'string', 'max' => 10],
             [['truck_size'], 'string', 'max' => 150],
             [['latitude', 'longitude'], 'number'],
@@ -114,6 +115,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
             'subtotal' => 'Subtotal',
             'sst' => 'Sst',
             'request_to'=>'Request To',
+            'addons'=>'Add Ons',
             'total_amount' => 'Total Amount',
             'reftype' => 'Service',
             'checkin_time'=>'Check-In Time',

@@ -62,6 +62,8 @@ use kartik\date\DatePicker;
                 <?= $form->field($model, 'size_of_area')->textInput(['placeholder'=>'Sq. Ft.']) ?>
 
                 <?= $form->field($model, 'price')->textInput(['placeholder'=>'RM']) ?>
+                <?= $form->field($model, 'doorlock_code')->textInput() ?>
+
 
                 <?= $form->field($model, 'amenities')->checkboxList(Yii::$app->common->amenities()) ?>
 

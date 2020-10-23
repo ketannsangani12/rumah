@@ -273,4 +273,13 @@ return array (
       '@Da/QrCode' => $vendorDir . '/2amigos/qrcode-library/src',
     ),
   ),
+  'marqu3s/yii2-summernote' => 
+  array (
+    'name' => 'marqu3s/yii2-summernote',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@marqu3s/summernote' => $vendorDir . '/marqu3s/yii2-summernote',
+    ),
+  ),
 );

@@ -63,7 +63,7 @@ class Properties extends \yii\db\ActiveRecord
             [['latitude', 'longitude', 'size_of_area', 'price'], 'number'],
             [['availability', 'created_at', 'updated_at'], 'safe'],
             [['property_type', 'room_type', 'preference'], 'string', 'max' => 255],
-            [['furnished_status'], 'string', 'max' => 100],
+            [['furnished_status','doorlock_code'], 'string', 'max' => 100],
             [['pe_userid'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['pe_userid' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -96,6 +96,7 @@ class Properties extends \yii\db\ActiveRecord
             'price' => 'Price',
             'amenities' => 'Amenities',
             'commute' => 'Commute',
+            'doorlock_code'=>'Door Lock Code',
             'digital_tenancy' => 'Digital Tenancy',
             'auto_rental' => 'Auto Rental',
             'insurance' => 'Insurance',

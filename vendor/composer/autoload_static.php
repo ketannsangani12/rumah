@@ -121,6 +121,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
             'phpnt\\fontAwesome\\' => 18,
             'phpDocumentor\\Reflection\\' => 25,
         ),
+        'm' => 
+        array (
+            'marqu3s\\summernote\\' => 19,
+        ),
         'k' => 
         array (
             'kartik\\sortable\\' => 16,
@@ -306,6 +310,10 @@ class ComposerStaticInit2204ad7f4c7c49956c06aeb8939bb7ce
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+        ),
+        'marqu3s\\summernote\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/marqu3s/yii2-summernote',
         ),
         'kartik\\sortable\\' => 
         array (

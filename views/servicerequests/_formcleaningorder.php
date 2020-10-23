@@ -71,6 +71,8 @@ use yii\widgets\ActiveForm;
                     ]
                 ]); ?>
                 <?= $form->field($model, 'time')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'hours')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'addons')->textInput(['maxlength' => true]) ?>
 
             </div>
             <div class="box-footer">

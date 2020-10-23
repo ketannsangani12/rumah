@@ -287,20 +287,123 @@ class ServicerequestsController extends Controller
     {
         $model = new ServiceRequests();
         $model->scenario = 'createcleaningorder';
+        $transaction = Yii::$app->db->beginTransaction();
 
-        if ($model->load(Yii::$app->request->post()) ) {
-            if($model->validate()) {
+        try {
+            if ($model->load(Yii::$app->request->post())) {
+                if ($model->validate()) {
+                    $requestexist = ServiceRequests::find()->where(['property_id' => $model->property_id, 'reftype' => 'Cleaner'])->andWhere(['in', 'status', ['New', 'Pending', 'Unpaid', 'In Progress']])->one();
+//                    if (!empty($requestexist)) {
+//                        Yii::$app->session->setFlash('error', "Cleaner request already exist in system.");
+//                        return $this->redirect(['createmoverorder']);
+//
+//                    }
+                    if ($model->request_to == 'Tenant' && !isset($model->request->user_id)) {
+                        Yii::$app->session->setFlash('error', "This property is not rented");
+                        return $this->redirect(['createmoverorder']);
 
-                $model->created_at = date('Y-m-d h:i:s');
-                $model->save();
+                    }
+                    $priceperhour = 40;
+                    $addonprice = (!empty($model->addons)) ? 28 : 0;
+                    //print_r($addonprice);exit;
+                    $model->addons = null;
+                    $propertydetails = Properties::findOne($model->property_id);
+                    $model->user_id = ($model->request_to == 'Tenant') ? $model->request->user_id : $propertydetails->user_id;
+                    $model->request_to = null;
+                    $model->date = date('Y-m-d', strtotime($model->date));
+                    $model->reftype = 'Cleaner';
+                    $model->status = 'New';
+                    $model->created_at = date('Y-m-d H:i:s');
+                    $model->booked_at = date('Y-m-d H:i:s');
+                    if ($model->save(false)) {
+                        $request_id = $model->id;
+                        $reference_no = Yii::$app->common->generatereferencenumber($request_id);
+                        $model->reference_no = $reference_no;
+                        if ($model->save(false)) {
+                            $todolist = new TodoList();
+                            $todolist->user_id = $model->user_id;
+                            $todolist->service_request_id = $request_id;
+                            $todolist->property_id = $model->property_id;
+                            $todolist->vendor_id = $model->vendor_id;
+                            $todolist->reftype = 'Service';
+                            $todolist->service_type = 'Cleaner';
+                            $todolist->created_at = date("Y-m-d H:i:s");
+                            $todolist->updated_at = date("Y-m-d H:i:s");
+                            $todolist->status = 'New';
+                            if ($todolist->save(false)) {
+                                $todoitems = new TodoItems();
+                                $todoitems->todo_id = $todolist->id;
+                                $todoitems->description = 'Cleaning Services (' . $model->hours . ' hours)';
+                                $todoitems->price = $priceperhour * $model->hours;
+                                $todoitems->created_at = date("Y-m-d H:i:s");
+                                $todoitems->save(false);
+                                if ($addonprice > 0) {
+                                    $todoitems1 = new TodoItems();
+                                    $todoitems1->todo_id = $todolist->id;
+                                    $todoitems1->description = 'Cleaning Tools ';
+                                    $todoitems1->price = $addonprice;
+                                    $todoitems1->created_at = date("Y-m-d H:i:s");
+                                    $todoitems1->save(false);
+                                }
+                                $subtotal = ($priceperhour * $model->hours) + $addonprice;
+                                $sst = Yii::$app->common->calculatesst($subtotal);
+                                $total_amount = $subtotal + $sst;
+                                $model->subtotal = $subtotal;
+                                $model->sst = $sst;
+                                $model->total_amount = $total_amount;
+                                $model->todo_id = $todolist->id;
+                                if ($model->save(false)) {
+                                    $todolist->subtotal = $subtotal;
+                                    $todolist->sst = $sst;
+                                    $todolist->total = $total_amount;
+                                    $todolist->save(false);
+                                    $cleaner = Users::findOne($model->vendor_id);
+                                    $cleaner->current_status = 'Busy';
+                                    if($cleaner->save(false)){
+                                        $transaction->commit();
+                                        return $this->redirect(['index']);
+                                    }else{
+                                        $transaction->rollBack();
 
-                return $this->redirect(['index']);
-            }else{
+                                        return $this->render('create', [
+                                            'model' => $model
+                                        ]);
+                                    }
+
+                                }
+
+                            } else {
+                                $transaction->rollBack();
+
+                                return $this->render('create', [
+                                    'model' => $model
+                                ]);
+                            }
+                        }
+                    } else {
+                        $transaction->rollBack();
+
+                        return $this->render('create', [
+                            'model' => $model
+                        ]);
+                    }
+                } else {
+                    $transaction->rollBack();
+
+                    return $this->render('create', [
+                        'model' => $model
+                    ]);
+                }
+            } else {
+                $transaction->rollBack();
+
                 return $this->render('create', [
-                    'model' => $model
+                    'model' => $model,
                 ]);
             }
-        } else {
+        }catch (Exception $e) {
+            // # if error occurs then rollback all transactions
+            $transaction->rollBack();
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -315,7 +418,7 @@ class ServicerequestsController extends Controller
             if($model->validate()) {
                 $requestexist = ServiceRequests::find()->where(['property_id'=>$model->property_id,'reftype'=>'Mover'])->andWhere(['in','status',['New','Pending','Unpaid','Confirmed']])->one();
                 if (!empty($requestexist)){
-                    Yii::$app->session->setFlash('error', "Move request already exist in system.");
+                    Yii::$app->session->setFlash('error', "Mover request already exist in system.");
                     return $this->redirect(['createmoverorder']);
 
                 }
@@ -330,8 +433,8 @@ class ServicerequestsController extends Controller
                 $model->date = date('Y-m-d',strtotime($model->date));
                 $model->reftype = 'Mover';
                 $model->status = 'New';
-                $model->created_at = date('Y-m-d h:i:s');
-                $model->booked_at = date('Y-m-d h:i:s');
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->booked_at = date('Y-m-d H:i:s');
                 if($model->save()) {
                     $request_id = $model->id;
                     $reference_no = Yii::$app->common->generatereferencenumber($request_id);
@@ -341,12 +444,13 @@ class ServicerequestsController extends Controller
                         $todolist->user_id = $model->user_id;
                         $todolist->service_request_id = $request_id;
                         $todolist->property_id = $model->property_id;
+                        $todolist->vendor_id = $model->vendor_id;
                         $todolist->reftype = 'Service';
                         $todolist->service_type = 'Mover';
                         $todolist->created_at =  date("Y-m-d H:i:s");
                         $todolist->updated_at =  date("Y-m-d H:i:s");
                         $todolist->status = 'New';
-                        if($todolist->save()){
+                        if($todolist->save(false)){
                             $model->todo_id = $todolist->id;
                             $model->save(false);
                             return $this->redirect(['index']);
@@ -491,7 +595,7 @@ class ServicerequestsController extends Controller
 
 
         if ($merchantmodel->load(Yii::$app->request->post()) ) {
-            $oldvendormodel = Users::findOne($oldvendor);
+            $oldvendormodel = Users::findOne($merchantmodel->vendor_id);
             if($oldvendormodel->current_status=='Busy'){
                 throw new NotFoundHttpException('This Vendor already assigned to other request.Please try different');
 
@@ -500,7 +604,7 @@ class ServicerequestsController extends Controller
             if($merchantmodel->validate()) {
                 $merchantmodel->updated_at = date('Y-m-d H:i:s');
                 if($merchantmodel->save(false)) {
-                    $vendormodel = Users::findOne($merchantmodel->vendor_id);
+                    $vendormodel = Users::findOne($oldvendor);
                     $todolist = $merchantmodel->todo;
                     $todolist->vendor_id = $merchantmodel->vendor_id;
                     $todolist->updated_at = date('Y-m-d H:i:s');
@@ -508,6 +612,7 @@ class ServicerequestsController extends Controller
                         $vendormodel->current_status = 'Free';
                         $vendormodel->updated_at = date('Y-m-d H:i:s');
                         $vendormodel->save(false);
+
                         $oldvendormodel->current_status = 'Busy';
                         $oldvendormodel->updated_at = date('Y-m-d H:i:s');
                         $oldvendormodel->save(false);

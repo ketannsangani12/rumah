@@ -23,6 +23,7 @@ return array(
     'phpnt\\summernote\\' => array($vendorDir . '/phpnt/yii2-summernote'),
     'phpnt\\fontAwesome\\' => array($vendorDir . '/phpnt/font-awesome'),
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
+    'marqu3s\\summernote\\' => array($vendorDir . '/marqu3s/yii2-summernote'),
     'kartik\\sortable\\' => array($vendorDir . '/kartik-v/yii2-sortable/src'),
     'kartik\\select2\\' => array($vendorDir . '/kartik-v/yii2-widget-select2/src'),
     'kartik\\plugins\\fileinput\\' => array($vendorDir . '/kartik-v/bootstrap-fileinput'),

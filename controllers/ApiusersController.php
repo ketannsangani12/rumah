@@ -528,6 +528,36 @@ class ApiusersController extends ActiveController
 
 
     }
+    public function actionReportproperty()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST) && isset($_POST['property_id']) && $_POST['property_id']!=''){
+                $model = Properties::findOne($_POST['property_id']);
+                $usermodel = Users::findOne($this->user_id);
+                $emailtemplate = EmailTemplates::findOne(['name' => 'Report Property']);
+                $content = EmailTemplates::getemailtemplate($emailtemplate, $model,$usermodel);
+                $send = Yii::$app->mailer->compose()
+                    ->setFrom('rumahimy@gmail.com')
+                    ->setTo('rumahimy@gmail.com')
+                    ->setSubject($emailtemplate->subject)
+                    ->setHtmlBody($content)
+                    ->send();
+
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+
+
+
+        }
+
+
+    }
     public function actionDashboard()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -731,7 +761,7 @@ class ApiusersController extends ActiveController
             }
             $myvacantproperties = BookingRequests::find()->select(['id','property_id','user_id','landlord_id','monthly_rental','commencement_date','tenancy_period'])->with([
                 'property'=>function ($query) {
-                    $query->select('id,property_no,title');
+                    $query->select('id,property_no,title,doorlock_code');
                 },
                 'property.pictures'=>function ($query) use($baseurl) {
                     $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->all();

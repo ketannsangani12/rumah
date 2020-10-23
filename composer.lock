@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3fc9ceceeb347dd6d0b5779e15b1a19f",
+    "content-hash": "5e9774fc2a73c12fcacf16fc47af7901",
     "packages": [
         {
             "name": "2amigos/qrcode-library",
@@ -286,6 +286,21 @@
             ]
         },
         {
+            "name": "bower-asset/codemirror",
+            "version": "5.57.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:components/codemirror.git",
+                "reference": "4532696973a4c93fd6752fdbc54da21d261fa611"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/components/codemirror/zipball/4532696973a4c93fd6752fdbc54da21d261fa611",
+                "reference": "4532696973a4c93fd6752fdbc54da21d261fa611"
+            },
+            "type": "bower-asset"
+        },
+        {
             "name": "bower-asset/fontawesome",
             "version": "5.13.1",
             "source": {
@@ -305,7 +320,7 @@
             "version": "3.3.11",
             "source": {
                 "type": "git",
-                "url": "https://github.com/RobinHerbots/Inputmask.git",
+                "url": "git@github.com:RobinHerbots/Inputmask.git",
                 "reference": "5e670ad62f50c738388d4dcec78d2888505ad77b"
             },
             "dist": {
@@ -365,7 +380,7 @@
             "version": "1.12.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:components/jqueryui.git",
+                "url": "https://github.com/components/jqueryui.git",
                 "reference": "44ecf3794cc56b65954cc19737234a3119d036cc"
             },
             "dist": {
@@ -2080,6 +2095,64 @@
                 "vector"
             ],
             "time": "2019-10-06T11:29:25+00:00"
+        },
+        {
+            "name": "marqu3s/yii2-summernote",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marqu3s/yii2-summernote.git",
+                "reference": "28daacd5c981a8a221a2dd551c170af36346ed33"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/marqu3s/yii2-summernote/zipball/28daacd5c981a8a221a2dd551c170af36346ed33",
+                "reference": "28daacd5c981a8a221a2dd551c170af36346ed33",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/codemirror": "@stable",
+                "bower-asset/summernote": "0.*",
+                "yiisoft/yii2": "~2"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "asset-installer-paths": {
+                    "npm-asset-library": "vendor/npm",
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "marqu3s\\summernote\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aleksandr Zelenin",
+                    "email": "aleksandr@zelenin.me",
+                    "homepage": "http://zelenin.me",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Joao Marques",
+                    "email": "joao@jjmf.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Yii2 Summernote widget. Super simple WYSIWYG editor on Bootstrap",
+            "homepage": "https://github.com/marqu3s/yii2-summernote",
+            "keywords": [
+                "summernote",
+                "widget",
+                "wysiwyg",
+                "yii2"
+            ],
+            "time": "2020-08-15T00:51:12+00:00"
         },
         {
             "name": "mpdf/mpdf",
@@ -5195,6 +5268,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
@@ -7040,7 +7114,8 @@
         "kartik-v/yii2-mpdf": 20,
         "kartik-v/yii2-widget-select2": 20,
         "bburim/daterangepicker": 20,
-        "kartik-v/yii2-export": 20
+        "kartik-v/yii2-export": 20,
+        "marqu3s/yii2-summernote": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

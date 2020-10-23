@@ -58,7 +58,7 @@ class EmailTemplates extends \yii\db\ActiveRecord
     }
 
 
-    public static function getemailtemplate($template,$model,$type=''){
+    public static function getemailtemplate($template,$model,$usermodel,$type=''){
 
         if(!empty($template)){
            $content = $template->body;
@@ -76,11 +76,17 @@ class EmailTemplates extends \yii\db\ActiveRecord
             if(isset($model->email)) {
                 $content = str_replace("@email@", $model->email, $content);
             }
+            if(isset($model->title)) {
+                $content = str_replace("@property@", $model->property_no." - ".$model->title, $content);
+            }
             if(isset($model->secondary_password)) {
                 $content = str_replace("@pin@", $model->secondary_password, $content);
             }
             if(isset($model->full_name)) {
                 $content = str_replace("@name@", $model->full_name, $content);
+            }
+            if(isset($usermodel->full_name)) {
+                $content = str_replace("@name@", $usermodel->full_name, $content);
             }
             if(isset($model->first_name)) {
                 $content = str_replace("@name@", $model->first_name . " " . $model->last_name, $content);
