@@ -1525,7 +1525,8 @@ class ApipartnersController extends ActiveController
 
 
             case "Appointment";
-                if($status=='Completed') {
+                if($status=='Accepted') {
+                    $todomodel->description = 'Successfully Sealed Deal';
                     $todomodel->status = 'Completed';
                     $todomodel->updated_at = date("Y-m-d H:i:s");
                     if ($todomodel->save(false)) {
@@ -1533,10 +1534,18 @@ class ApipartnersController extends ActiveController
 
                     }
                 }else if($status=='Cancelled'){
+                    $todomodel->description = 'Viewing Unsuccessful due to prospect not intersted';
                     $todomodel->status = 'Cancelled';
                     $todomodel->updated_at = date("Y-m-d H:i:s");
                     if ($todomodel->save(false)) {
                         return array('status' => 1, 'message' => 'You have cancelled appointment successfully.');
+
+                    }
+                }else{
+                    $todomodel->description = 'Follow up in 72 hours';
+                    $todomodel->updated_at = date("Y-m-d H:i:s");
+                    if ($todomodel->save(false)) {
+                        return array('status' => 1, 'message' => 'You have updated appointment successfully.');
 
                     }
                 }

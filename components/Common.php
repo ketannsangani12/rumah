@@ -2,6 +2,7 @@
 namespace app\components;
 
 
+use app\models\GoldTransactions;
 use app\models\PlatformFees;
 use app\models\Users;
 use Yii;
@@ -248,6 +249,54 @@ class Common extends Component
 
         return $platformfees;
 
+
+    }
+    public function addgoldcoinspurchase($user_id,$goldcoins,$transaction_id){
+        $usercoinsbalance = Users::getcoinsbalance($user_id);
+        $goldtransaction = new GoldTransactions();
+        $goldtransaction->user_id = $user_id;
+        $goldtransaction->gold_coins = $goldcoins;
+        $goldtransaction->transaction_id = $transaction_id;
+        $goldtransaction->olduserbalance =$usercoinsbalance;
+        $goldtransaction->newuserbalance = $usercoinsbalance+$goldcoins;
+        $goldtransaction->incoming = 1;
+        $goldtransaction->reftype = 'In App Purchase';
+        $goldtransaction->reftype = 'Completed';
+        $goldtransaction->created_at = date('Y-m-d H:i:s');
+        if($goldtransaction->save(false)){
+            $update = Users::updatecoinsbalance($usercoinsbalance+$goldcoins,$user_id);
+            if($update){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+
+    }
+    public function deductgoldcoinspurchase($user_id,$goldcoins,$transaction_id){
+        $usercoinsbalance = Users::getcoinsbalance($user_id);
+        $goldtransaction = new GoldTransactions();
+        $goldtransaction->user_id = $user_id;
+        $goldtransaction->gold_coins = $goldcoins;
+        $goldtransaction->transaction_id = $transaction_id;
+        $goldtransaction->olduserbalance =$usercoinsbalance;
+        $goldtransaction->newuserbalance = $usercoinsbalance-$goldcoins;
+        $goldtransaction->incoming = 1;
+        $goldtransaction->reftype = 'In App Purchase';
+        $goldtransaction->status = 'Completed';
+        $goldtransaction->created_at = date('Y-m-d H:i:s');
+        if($goldtransaction->save(false)){
+            $update = Users::updatecoinsbalance($usercoinsbalance-$goldcoins,$user_id);
+            if($update){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
 
     }
 

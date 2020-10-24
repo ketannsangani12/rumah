@@ -1988,20 +1988,13 @@ class ApiusersController extends ActiveController
                                         $model->property->status = 'Rented';
                                         $model->property->request_id = $model->id;
                                         if($model->property->save(false)){
-                                            if($goldcoins>0){
-                                                $usercoinsbalance = Users::getcoinsbalance($model->user_id);
-                                                $goldtransaction = new GoldTransactions();
-                                                $goldtransaction->user_id = $model->user_id;
-                                                $goldtransaction->gold_coins = $goldcoins;
-                                                $goldtransaction->transaction_id = $lastid;
-                                                $goldtransaction->olduserbalance =$usercoinsbalance;
-                                                $goldtransaction->newuserbalance = $usercoinsbalance-$goldcoins;
-                                                $goldtransaction->reftype = 'In App Purchase';
-                                                $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                                if($goldtransaction->save(false)){
-                                                    Users::updatecoinsbalance($usercoinsbalance-$goldcoins,$model->user_id);
-                                                }
+
+                                            if($goldcoins>0) {
+                                                Yii::$app->common->deductgoldcoinspurchase($model->user_id, $goldcoins, $lastid);
                                             }
+                                            $gold_coins = $totalamountafterdiscount*1.5;
+                                            Yii::$app->common->addgoldcoinspurchase($model->user_id,$gold_coins,$lastid);
+
                                             $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
                                             $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->booking_fees+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                             $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
@@ -2112,7 +2105,6 @@ class ApiusersController extends ActiveController
                     },
 
                 ])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->orderBy(['updated_at'=>SORT_DESC])->asArray()->all();
-            //echo "<pre>";print_r($todolists);exit;
 
             $data = array();
             if(!empty($todolists)){
@@ -3121,20 +3113,26 @@ class ApiusersController extends ActiveController
                                            }
                                            //var_dump($flag);exit;
                                            if ($flag) {
-                                               if ($goldcoins > 0) {
-                                                   $usercoinsbalance = Users::getcoinsbalance($user_id);
-                                                   $goldtransaction = new GoldTransactions();
-                                                   $goldtransaction->user_id = $user_id;
-                                                   $goldtransaction->gold_coins = $goldcoins;
-                                                   $goldtransaction->transaction_id = $lastid;
-                                                   $goldtransaction->olduserbalance = $usercoinsbalance;
-                                                   $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
-                                                   $goldtransaction->reftype = 'In App Purchase';
-                                                   $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                                   if ($goldtransaction->save(false)) {
-                                                       Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
-                                                   }
+                                               if($goldcoins>0) {
+                                                   Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                }
+                                               $gold_coins = $totalamountafterdiscount*1.5;
+                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
+
+//                                               if ($goldcoins > 0) {
+//                                                   $usercoinsbalance = Users::getcoinsbalance($user_id);
+//                                                   $goldtransaction = new GoldTransactions();
+//                                                   $goldtransaction->user_id = $user_id;
+//                                                   $goldtransaction->gold_coins = $goldcoins;
+//                                                   $goldtransaction->transaction_id = $lastid;
+//                                                   $goldtransaction->olduserbalance = $usercoinsbalance;
+//                                                   $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
+//                                                   $goldtransaction->reftype = 'In App Purchase';
+//                                                   $goldtransaction->created_at = date('Y-m-d H:i:s');
+//                                                   if ($goldtransaction->save(false)) {
+//                                                       Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
+//                                                   }
+//                                               }
                                                $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->landlord_id);
                                                $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                if ($updatereceiverbalance && $updatesenderbalance) {
@@ -3260,20 +3258,12 @@ class ApiusersController extends ActiveController
 
                                            }
                                            if ($flag) {
-                                               if ($goldcoins > 0) {
-                                                   $usercoinsbalance = Users::getcoinsbalance($user_id);
-                                                   $goldtransaction = new GoldTransactions();
-                                                   $goldtransaction->user_id = $user_id;
-                                                   $goldtransaction->gold_coins = $goldcoins;
-                                                   $goldtransaction->transaction_id = $lastid;
-                                                   $goldtransaction->olduserbalance = $usercoinsbalance;
-                                                   $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
-                                                   $goldtransaction->reftype = 'In App Purchase';
-                                                   $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                                   if ($goldtransaction->save(false)) {
-                                                       Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
-                                                   }
+
+                                               if($goldcoins>0) {
+                                                   Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                }
+                                               $gold_coins = $totalamountafterdiscount*1.5;
+                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->landlord_id);
                                                $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                if ($updatereceiverbalance && $updatesenderbalance) {
@@ -3417,20 +3407,11 @@ class ApiusersController extends ActiveController
 
                                            }
                                            if ($flag) {
-                                               if ($goldcoins > 0) {
-                                                   $usercoinsbalance = Users::getcoinsbalance($user_id);
-                                                   $goldtransaction = new GoldTransactions();
-                                                   $goldtransaction->user_id = $user_id;
-                                                   $goldtransaction->gold_coins = $goldcoins;
-                                                   $goldtransaction->transaction_id = $lastid;
-                                                   $goldtransaction->olduserbalance = $usercoinsbalance;
-                                                   $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
-                                                   $goldtransaction->reftype = 'In App Purchase';
-                                                   $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                                   if ($goldtransaction->save(false)) {
-                                                       Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
-                                                   }
+                                               if($goldcoins>0) {
+                                                   Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                }
+                                               $gold_coins = $totalamountafterdiscount*1.5;
+                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, ($todomodel->pay_from == 'Tenant') ? $todomodel->user_id : $todomodel->landlord_id);
                                                $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                if ($updatereceiverbalance && $updatesenderbalance) {
@@ -3567,20 +3548,11 @@ class ApiusersController extends ActiveController
 
                                            }
                                            if ($flag) {
-                                               if ($goldcoins > 0) {
-                                                   $usercoinsbalance = Users::getcoinsbalance($user_id);
-                                                   $goldtransaction = new GoldTransactions();
-                                                   $goldtransaction->user_id = $user_id;
-                                                   $goldtransaction->gold_coins = $goldcoins;
-                                                   $goldtransaction->transaction_id = $lastid;
-                                                   $goldtransaction->olduserbalance = $usercoinsbalance;
-                                                   $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
-                                                   $goldtransaction->reftype = 'In App Purchase';
-                                                   $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                                   if ($goldtransaction->save(false)) {
-                                                       Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
-                                                   }
+                                               if($goldcoins>0) {
+                                                   Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                }
+                                               $gold_coins = $totalamountafterdiscount*1.5;
+                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, ($todomodel->pay_from == 'Tenant') ? $todomodel->user_id : $todomodel->user_id);
                                                $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                if ($updatereceiverbalance && $updatesenderbalance) {
@@ -3812,20 +3784,11 @@ class ApiusersController extends ActiveController
 
                                            }
                                            if ($flag) {
-                                               if ($goldcoins > 0) {
-                                                   $usercoinsbalance = Users::getcoinsbalance($user_id);
-                                                   $goldtransaction = new GoldTransactions();
-                                                   $goldtransaction->user_id = $user_id;
-                                                   $goldtransaction->gold_coins = $goldcoins;
-                                                   $goldtransaction->transaction_id = $lastid;
-                                                   $goldtransaction->olduserbalance = $usercoinsbalance;
-                                                   $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
-                                                   $goldtransaction->reftype = 'In App Purchase';
-                                                   $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                                   if ($goldtransaction->save(false)) {
-                                                       Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
-                                                   }
+                                               if($goldcoins>0) {
+                                                   Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                }
+                                               $gold_coins = $totalamountafterdiscount*1.5;
+                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
                                                $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                if ($updatereceiverbalance && $updatesenderbalance) {
@@ -4028,20 +3991,11 @@ class ApiusersController extends ActiveController
 
                                        }
                                        if ($flag) {
-                                           if ($goldcoins > 0) {
-                                               $usercoinsbalance = Users::getcoinsbalance($user_id);
-                                               $goldtransaction = new GoldTransactions();
-                                               $goldtransaction->user_id = $user_id;
-                                               $goldtransaction->gold_coins = $goldcoins;
-                                               $goldtransaction->transaction_id = $lastid;
-                                               $goldtransaction->olduserbalance = $usercoinsbalance;
-                                               $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
-                                               $goldtransaction->reftype = 'In App Purchase';
-                                               $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                               if ($goldtransaction->save(false)) {
-                                                   Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
-                                               }
+                                           if($goldcoins>0) {
+                                               Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                            }
+                                           $gold_coins = $totalamountafterdiscount*1.5;
+                                           Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                            $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
                                            $updatereceiverbalance = Users::updatebalance($receiverbalance + $totaladdedtovendor, $todomodel->vendor_id);
                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$totalplatform_added+$sst,$systemaccount->id);
@@ -4246,20 +4200,11 @@ class ApiusersController extends ActiveController
 
                                        }
                                        if ($flag) {
-                                           if ($goldcoins > 0) {
-                                               $usercoinsbalance = Users::getcoinsbalance($user_id);
-                                               $goldtransaction = new GoldTransactions();
-                                               $goldtransaction->user_id = $user_id;
-                                               $goldtransaction->gold_coins = $goldcoins;
-                                               $goldtransaction->transaction_id = $lastid;
-                                               $goldtransaction->olduserbalance = $usercoinsbalance;
-                                               $goldtransaction->newuserbalance = $usercoinsbalance - $goldcoins;
-                                               $goldtransaction->reftype = 'In App Purchase';
-                                               $goldtransaction->created_at = date('Y-m-d H:i:s');
-                                               if ($goldtransaction->save(false)) {
-                                                   Users::updatecoinsbalance($usercoinsbalance - $goldcoins, $user_id);
-                                               }
+                                           if($goldcoins>0) {
+                                               Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                            }
+                                           $gold_coins = $totalamountafterdiscount*1.5;
+                                           Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                            $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
                                            $updatereceiverbalance = Users::updatebalance($receiverbalance + $totaladdedtovendor, $todomodel->vendor_id);
                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$totalplatform_added+$sst,$systemaccount->id);
@@ -4970,6 +4915,406 @@ class ApiusersController extends ActiveController
 
 
     }
+    public function actionVerifypassport()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['selfie']) && $_POST['selfie']!=''){
+                $journeyid = $this->createjourneyid();
+                if($journeyid!=''){
+                    $document = $_POST['document'];
+                    $selfie = $_POST['selfie'];
+                    $checkmycad = $this->mykadokaydoc($journeyid,$document);
+                    if(!empty($checkmycad)){
+                        if($checkmycad->status=='success' && $checkmycad->messageCode=='api.success'){
+                            $checkscoreandface = $this->okayface($journeyid,$document,$selfie);
+                            if(!empty($checkscoreandface)){
+                                if($checkmycad->status=='success' && $checkmycad->messageCode=='api.success'){
+                                    $getscorecardresult = $this->getscorecard($journeyid);
+
+                                    if(!empty($getscorecardresult)){
+                                        if($getscorecardresult->status=='success'){
+                                            $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
+                                            if($status=='clear'){
+                                                return array('status' => 1, 'message' => 'Done');
+
+                                            } else{
+                                                return array('status' => 0, 'message' => $getscorecardresult->scorecardResultList[0]->scorecardStatus);
+
+                                            }
+                                        }else{
+                                            return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                                        }
+
+                                    }else{
+                                        return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                                    }
+                                }else{
+                                    return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                                }
+
+                            }else{
+                                return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                            }
+                        }else{
+                            return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                        }
+                    }else{
+                        return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                    }
+                }else{
+                    return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes.');
+
+                }
+
+            }
+
+
+        }
+
+
+    }
+
+    public function actionVerifydocument()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+           if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['selfie']) && $_POST['selfie']!=''){
+              $journeyid = $this->createjourneyid();
+              if($journeyid!=''){
+                  $document = $_POST['document'];
+                  $selfie = $_POST['selfie'];
+                  $checkmycad = $this->mykadokaydoc($journeyid,$document);
+                  if(!empty($checkmycad)){
+                      if($checkmycad->status=='success' && $checkmycad->messageCode=='api.success'){
+                        $checkscoreandface = $this->okayface($journeyid,$document,$selfie);
+                          if(!empty($checkscoreandface)){
+                              if($checkscoreandface->status=='success' && $checkscoreandface->messageCode=='api.success'){
+                               $getscorecardresult = $this->getscorecard($journeyid);
+
+                                  if(!empty($getscorecardresult)){
+                                   if($getscorecardresult->status=='success'){
+                                      $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
+                                      if($status=='clear'){
+                                          return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
+
+                                      } else{
+                                          return array('status' => 0, 'message' => $getscorecardresult->scorecardResultList[0]->scorecardStatus,'response'=>$getscorecardresult,'here'=>'there');
+
+                                      }
+                                   }else{
+                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                                   }
+
+                               }else{
+                                      $journeyid = $this->createjourneyid();
+                              if($journeyid!=''){
+                                  $document = $_POST['document'];
+                                  $selfie = $_POST['selfie'];
+                                  $checkpassport = $this->passportokaydoc($journeyid, $document);
+                                  if(!empty($checkpassport)){
+                                      $checkscoreandface = $this->okayface($journeyid,$document,$selfie);
+                                      if(!empty($checkscoreandface)) {
+                                          if($checkscoreandface->status=='success' && $checkscoreandface->messageCode=='api.success'){
+
+                                           $checkokayid = $this->okayid($journeyid,$document);
+                                           if(!empty($checkokayid)){
+                                               $getscorecardresult = $this->getscorecard($journeyid);
+
+                                               if(!empty($getscorecardresult)){
+                                                   if($getscorecardresult->status=='success'){
+                                                       $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
+                                                       if($status=='clear'){
+                                                           return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
+
+                                                       } else{
+                                                           return array('status' => 0, 'message' => $getscorecardresult->scorecardResultList[0]->scorecardStatus,'response'=>$getscorecardresult,'here'=>'here');
+
+                                                       }
+                                                   }else{
+                                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+
+                                                   }
+
+                                               }else{
+                                                   return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+
+                                               }
+
+                                           }else{
+                                               return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+
+                                           }
+                                          }else{
+                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+
+                                          }
+
+                                      }else{
+                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+
+                                      }
+                                      }else{
+                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+
+                                  }
+                              }else{
+                                  return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes.');
+
+                              }
+                                   //return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document4545');
+
+                               }
+                              }else{
+                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                              }
+
+                          }else{
+                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                          }
+                      }else{
+                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                      }
+                  }else{
+                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+
+                  }
+              }else{
+                  return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes.');
+
+              }
+
+           }
+
+
+        }
+
+
+    }
+
+    private function createjourneyid(){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/journeyid",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS =>"{\r\n    \"username\":\"Rumah-i\",\r\n    \"password\":\"Gg(8b8\"\r\n}",
+            CURLOPT_HTTPHEADER => array(
+                "Content-Type: application/json"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+            return '';
+        } else {
+            $response = json_decode($response);
+            if(!empty($response) && isset($response->message) && $response->message=='api.success'){
+                return $response->journeyId;
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
+
+    }
+
+    private function mykadokaydoc($journeyid,$doc){
+
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/okaydoc",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS =>"{\n    \"journeyId\":\"$journeyid\",\n    \"type\":\"nonpassport\",\n    \"idImageBase64Image\": \"$doc\",\n    \"version\": \"7\",\n    \"docType\":\"mykad\",\n    \"landmarkCheck\":\"true\",\n    \"fontCheck\":\"true\",\n    \"microprintCheck\":\"true\",\n    \"photoSubstitutionCheck\":\"true\",\n    \"icTypeCheck\":\"true\",\n    \"colorMode\":\"true\",\n    \"hologram\":\"true\"\n    \n}",
+                    CURLOPT_HTTPHEADER => array(
+                        "Content-Type: application/json"
+                    ),
+                ));
+
+                $response = curl_exec($curl);
+        $err = curl_error($curl);
+                curl_close($curl);
+        if ($err) {
+            return '';
+        } else {
+            $response = json_decode($response);
+            if(!empty($response) && isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'){
+                return $response;
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
+
+    }
+
+    private function passportokaydoc($journeyid,$doc){
+
+          $curl = curl_init();
+
+          curl_setopt_array($curl, array(
+              CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/okaydoc",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 0,
+              CURLOPT_FOLLOWLOCATION => true,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "POST",
+              CURLOPT_POSTFIELDS =>"{\r\n    \"journeyId\":\"$journeyid\",\r\n    \"type\":\"passport\",\r\n    \"country\": \"IND\",\r\n    \"halfSizeImage\":\"$doc\",\r\n    \"fullSizeImage\":\"\"\r\n}",
+          CURLOPT_HTTPHEADER => array(
+                    "Content-Type: application/json"
+                ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        //echo $response;
+        if ($err) {
+                    return '';
+                } else {
+                    $response = json_decode($response);
+                    if(!empty($response) && isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'){
+                        return $response;
+                    }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
+
+    }
+
+    private function okayface($journeyid,$doc,$selfie){
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/okayface",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => array('journeyId' => $journeyid,'imageBestBase64 ' => $selfie,
+                    'imageIdCardBase64'=>$doc,'livenessDetection ' => 'true'),
+            ));
+
+            $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        if ($err) {
+            return '';
+        } else {
+            $response = json_decode($response);
+            if(!empty($response) && isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'){
+                return $response;
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
+
+    }
+   private function okayid($journeyid,$doc){
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/okayid",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS =>"{\r\n    \"journeyId\":\"$journeyid\",\r\n    \"base64ImageString\": \"$doc\",\r\n    \"imageFormat\":\"\",\r\n    \"imageEnabled\":false,\r\n    \"faceImageEnabled\":false,\r\n    \"cambodia\":false\r\n}",
+                CURLOPT_HTTPHEADER => array(
+                    "Content-Type: application/json"
+                ),
+            ));
+
+            $response = curl_exec($curl);
+       $err = curl_error($curl);
+            curl_close($curl);
+       if ($err) {
+           return '';
+       } else {
+           $response = json_decode($response);
+           if(!empty($response) &&  isset($response->status) &&  $response->status=='success'){
+               return $response;
+           }else{
+               return '';
+           }
+           //echo $response;exit;
+       }
+   }
+    private function getscorecard($journeyid){
+
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/scorecard",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "GET",
+                    CURLOPT_POSTFIELDS => array('journeyId' => $journeyid),
+                ));
+
+                $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        if ($err) {
+            return '';
+        } else {
+            $response = json_decode($response);
+            if(!empty($response) &&  isset($response->status)  && $response->status=='success'){
+                return $response;
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
+
+    }
+
 
 
 }
