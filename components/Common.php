@@ -251,7 +251,7 @@ class Common extends Component
 
 
     }
-    public function addgoldcoinspurchase($user_id,$goldcoins,$transaction_id){
+    public function addgoldcoinspurchase($user_id,$goldcoins,$transaction_id,$type=''){
         $usercoinsbalance = Users::getcoinsbalance($user_id);
         $goldtransaction = new GoldTransactions();
         $goldtransaction->user_id = $user_id;
@@ -260,8 +260,8 @@ class Common extends Component
         $goldtransaction->olduserbalance =$usercoinsbalance;
         $goldtransaction->newuserbalance = $usercoinsbalance+$goldcoins;
         $goldtransaction->incoming = 1;
-        $goldtransaction->reftype = 'In App Purchase';
-        $goldtransaction->reftype = 'Completed';
+        $goldtransaction->reftype = ($type!='')?$type:'In App Purchase';
+        $goldtransaction->status = 'Completed';
         $goldtransaction->created_at = date('Y-m-d H:i:s');
         if($goldtransaction->save(false)){
             $update = Users::updatecoinsbalance($usercoinsbalance+$goldcoins,$user_id);
@@ -275,7 +275,7 @@ class Common extends Component
         }
 
     }
-    public function deductgoldcoinspurchase($user_id,$goldcoins,$transaction_id){
+    public function deductgoldcoinspurchase($user_id,$goldcoins,$transaction_id,$type=''){
         $usercoinsbalance = Users::getcoinsbalance($user_id);
         $goldtransaction = new GoldTransactions();
         $goldtransaction->user_id = $user_id;

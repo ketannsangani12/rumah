@@ -419,9 +419,21 @@ class ApiusersController extends ActiveController
                 } else {
                     $response = json_decode($response);
                     if(!empty($response) && $response->StatusCode==200){
+
                         $model->status = 1;
-                        $model->save(false);
-                        return array('status' => 1, 'message' => 'Your account have Verified Successfully.');
+                        if($model->save(false)){
+                            $userid = $model->referred_by;
+                            $user_id = $model->id;
+                            $gold_coins = 188;
+                            Yii::$app->common->addgoldcoinspurchase($userid,$gold_coins,null,'Onboarding');
+                            Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding');
+
+                            return array('status' => 1, 'message' => 'Your account have Verified Successfully.');
+
+                        }else{
+                            return array('status' => 0, 'message' => 'You have entered wrong OTP.Please enter correct OTP.');
+
+                        }
 
                     }else{
                         return array('status' => 0, 'message' => 'You have entered wrong OTP.Please enter correct OTP.');
