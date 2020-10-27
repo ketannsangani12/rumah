@@ -791,6 +791,22 @@ class ApipartnersController extends ActiveController
 
 
     }
+    public function actionWorkers()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+
+            $user_id = $this->user_id;
+            $workers = Workers::find()->where(['vendor_id'=>$user_id])->asArray()->all();
+            return array('status' => 1, 'data' => $workers);
+
+
+        }
+
+
+    }
 
     public function actionTopup()
     {
