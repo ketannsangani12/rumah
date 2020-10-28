@@ -536,6 +536,9 @@ class ApipartnersController extends ActiveController
                         'property'=>function($query){
                             $query->select('id,property_no,title');
                         },
+                        'property.pictures'=>function ($query) use($baseurl) {
+                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
+                        },
                         'user'=>function($query){
                             $query->select("id,full_name");
                         },
@@ -1061,6 +1064,7 @@ class ApipartnersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             $user_id = $this->user_id;
+            $baseurl = $this->baseurl;
             // echo $user_id;exit;
             $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                 ->with([
@@ -1075,6 +1079,9 @@ class ApipartnersController extends ActiveController
                     },
                     'property'=>function($query){
                         $query->select('id,property_no,title');
+                    },
+                    'property.pictures'=>function ($query) use($baseurl) {
+                        $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
                     },
                     'user'=>function($query){
                         $query->select("id,full_name");
