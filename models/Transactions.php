@@ -141,4 +141,9 @@ class Transactions extends \yii\db\ActiveRecord
     {
         return $this->hasMany(TransactionsItems::className(), ['transaction_id' => 'id']);
     }
+
+    public function getVendor()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'vendor_id']);
+    }
 }

@@ -69,7 +69,7 @@ class ServiceRequests extends \yii\db\ActiveRecord
             [['user_id' , 'property_id' ,'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'bookmover'],
             [['property_id' ,'date' , 'time' , 'truck_size' ,'pickup_location','dropoff_location'], 'required','on'=>'createmoverorder'],
             [['property_id' , 'date' , 'time' ,'hours'], 'required','on'=>'bookcleaner'],
-            [[ 'date' , 'time','latitude','longitude','pickup_location'], 'required','on'=>'booklaundry'],
+            [[ 'date' , 'time','property_id','pickup_location'], 'required','on'=>'booklaundry'],
 
             [['quote',], 'required','on' => 'uploadquote'],
             [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],

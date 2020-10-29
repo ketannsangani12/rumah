@@ -2191,7 +2191,7 @@ class ApiusersController extends ActiveController
                             }
                             break;
                         case "Service";
-                            if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid' || $todolist['status']=='In Progress' || $todolist['status']=='Completed') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                            if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid' || $todolist['status']=='In Progress' || $todolist['status']=='Completed' || $todolist['status']=='Refund Requested') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
                                 if($todolist['status']=='Completed'){
                                     $reviewexist = VendorRatings::find()->where(['request_id'=>$todolist['service_request_id'],'user_id'=>$user_id])->one();
                                     if(empty($reviewexist)){
@@ -2341,7 +2341,7 @@ class ApiusersController extends ActiveController
                                 }
                                 break;
                             case "Service";
-                                if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
+                                if(($todolist['status']=='Pending' || $todolist['status']=='Unpaid' || $todolist['status']=='Refund Requested') && ($todolist['service_type']=='Handyman' || $todolist['service_type']=='Mover')){
                                     $data[] = $todolist;
                                 }elseif (($todolist['status']=='Unpaid' || $todolist['status']=='In Progress') && ($todolist['service_type']=='Cleaner' || $todolist['service_type']=='Laundry')){
                                     $data[] = $todolist;
@@ -4296,7 +4296,141 @@ class ApiusersController extends ActiveController
                    }
 
 
-               }else{
+               }else if (($todomodel->service_type == 'Handyman' || $todomodel->service_type == 'Mover') && $todomodel->status == 'Refund Requested') {
+                   $transaction = Yii::$app->db->beginTransaction();
+
+                   try {
+
+                       if ($status == 'Accepted') {
+                           $todoitems = $todomodel->todoItems;
+                           $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
+
+                           if (!empty($todoitems)) {
+
+                               $transactionmodel = new Transactions();
+                               $transactionmodel->user_id = $user_id;
+                               $transactionmodel->property_id = $todomodel->property_id;
+                               $transactionmodel->todo_id = $todo_id;
+                               $transactionmodel->amount = $todomodel->total;
+                               $transactionmodel->sst = $todomodel->sst;
+                               $transactionmodel->total_amount = $todomodel->total;
+                               $transactionmodel->type = 'Refund';
+                               $transactionmodel->reftype = 'Cancellation Refund';
+                               $transactionmodel->status = 'Completed';
+                               $transactionmodel->created_at = date('Y-m-d H:i:s');
+                               if ($transactionmodel->save(false)) {
+                                   $flag = false;
+                                   $lastid = $transactionmodel->id;
+                                   $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
+                                   $transactionmodel->reference_no = $reference_no;
+                                   $transactionmodel->save(false);
+                                   if (!empty($todoitems)) {
+                                       $totalplatform_deductible = 0;
+                                       $totaldeductfromuser = 0;
+                                       $receiverbalance = Users::getbalance($user_id);
+                                       $systemaccount = Yii::$app->common->getsystemaccount();
+                                       $senderbalance = Users::getbalance($systemaccount->id);
+                                       foreach ($todoitems as $todoitem) {
+
+                                               $totaldeductfromuser += $todoitem->price;
+                                               $transactionitemmodel = new TransactionsItems();
+                                               $transactionitemmodel->transaction_id = $lastid;
+                                               $transactionitemmodel->sender_id = $systemaccount->id;
+                                               $transactionitemmodel->receiver_id = $user_id;
+                                               $transactionitemmodel->amount = $todoitem->price;
+                                               $transactionitemmodel->total_amount = $todoitem->price;
+
+                                               $transactionitemmodel->oldsenderbalance = $senderbalance;
+                                               $transactionitemmodel->newsenderbalance = $senderbalance - $todoitem->price;
+                                               $transactionitemmodel->oldreceiverbalance = $receiverbalance;
+                                               $transactionitemmodel->newreceiverbalance = $receiverbalance + $todoitem->price;
+                                               $transactionitemmodel->type = 'Refund';
+                                               $transactionitemmodel->status = 'Completed';
+                                               $transactionitemmodel->description = $todoitem->description;
+                                               $transactionitemmodel->created_at = date('Y-m-d H:i:s');
+                                               if (!($flag = $transactionitemmodel->save(false))) {
+                                                   $transaction->rollBack();
+                                                   break;
+                                               }
+
+
+
+
+                                       }
+                                       if ($flag) {
+                                           $updatesenderbalance = Users::updatebalance($systemaccount->wallet_balance - $todomodel->sst - $totaldeductfromuser, $systemaccount->id);
+                                           $updatereceiverbalance = Users::updatebalance($receiverbalance + $totaldeductfromuser + $totalplatform_deductible + $todomodel->sst, $user_id);
+                                           if ($updatereceiverbalance && $updatesenderbalance) {
+                                               $todomodel->status = 'Refunded';
+                                               if ($todomodel->save(false)) {
+                                                   $servicerequestmodel->status = 'Refunded';
+                                                   $servicerequestmodel->updated_at = date('Y-m-d H:i:s');
+                                                   $servicerequestmodel->save(false);
+                                                   $transaction->commit();
+                                                   return array('status' => 1, 'message' => 'You have accepted refund request successfully.');
+
+                                               } else {
+                                                   $transaction->rollBack();
+                                                   return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                               }
+
+                                           } else {
+                                               $transaction->rollBack();
+                                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                           }
+                                       } else {
+                                           $transaction->rollBack();
+
+                                           return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                       }
+                                   }
+
+                               } else {
+                                   $transaction->rollBack();
+                                   return array('status' => 0, 'message' => $transactionmodel->getErrors());
+
+                               }
+
+                           } else {
+                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                           }
+
+
+                       } else if ($status == 'Rejected') {
+                           $todomodel->status = 'Refund Rejected';
+                           $todomodel->updated_at = date("Y-m-d H:i:s");
+                           if ($todomodel->save(false)) {
+                               $todomodel->servicerequest->status = 'Refund Rejected';
+                               $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
+                               if ($todomodel->servicerequest->save(false)) {
+                                   $vendor = Users::findOne($todomodel->vendor_id);
+                                   $vendor->current_status = 'Free';
+                                   $vendor->save(false);
+                                   $transaction->commit();
+                                   return array('status' => 1, 'message' => 'You have Rejected Refund request successfully.');
+
+                               } else {
+                                   return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                               }
+                           } else {
+                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                           }
+                       }
+                   } catch (Exception $e) {
+                       $transaction->rollBack();
+
+                       return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                       // # if error occurs then rollback all transactions
+                   }
+
+           }else{
                    return array('status' => 0, 'message' => 'Data not found.');
 
                }
@@ -4708,8 +4842,9 @@ class ApiusersController extends ActiveController
                             $model->reftype = $type;
                             $model->scenario = 'booklaundry';
                             if ($model->validate()) {
-                                $lat = $model->latitude;
-                                $long = $model->longitude;
+                                $propertydetails = Properties::findOne($model->property_id);
+                                $lat = $propertydetails->latitude;
+                                $long = $propertydetails->longitude;
                                 $harvesformula = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance' : '';
                                 $harvesformula1 = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
                                 $distance = 50;
@@ -4810,7 +4945,6 @@ class ApiusersController extends ActiveController
                 //echo $transactions->createCommand()->getRawSql();exit;
 
                 //->all();
-                //echo "<pre>";print_r($transactions);exit;
                 $mytransactions = array();
                 if(!empty($transactions)){
                     foreach ($transactions as $key=>$transaction){
@@ -4829,7 +4963,7 @@ class ApiusersController extends ActiveController
                                 //$amountarray['rental_deposit']
                                 $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                                 $mytransactions[$key]['title'] = $transaction->reftype;
-                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
                                 $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                                 $mytransactions[$key]['incoming'] = ($user_id==$transaction->landlord_id)?1:0;
                                 $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
@@ -4913,6 +5047,46 @@ class ApiusersController extends ActiveController
                                 $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
                                 $mytransactions[$key]['items'] = $items;
 
+                                break;
+                            case "Service";
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['description'] = $transaction->todo->service_type;
+                                $mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name))?$transaction->vendor->full_name:'';
+                                $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = 0;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                $items = array();
+                                if(!empty($transactionitems)){
+                                    foreach ($transactionitems as $k=>$transactionitem){
+                                        $items[$k]['description'] = $transactionitem->description;
+                                        $items[$k]['amount'] = $transactionitem->total_amount;
+                                        $items[$k]['incoming'] = 0;
+
+                                    }
+                                }
+                                $mytransactions[$key]['items'] = $items;
+                                break;
+                            case "Cancellation Refund";
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['description'] = $transaction->todo->service_type;
+                                $mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name))?$transaction->vendor->full_name:'';
+                                $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
+                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                $mytransactions[$key]['incoming'] = 1;
+                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                $items = array();
+                                if(!empty($transactionitems)){
+                                    foreach ($transactionitems as $k=>$transactionitem){
+                                        $items[$k]['description'] = $transactionitem->description;
+                                        $items[$k]['amount'] = $transactionitem->total_amount;
+                                        $items[$k]['incoming'] = 1;
+
+                                    }
+                                }
+                                $mytransactions[$key]['items'] = $items;
                                 break;
                         }
 
