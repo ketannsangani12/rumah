@@ -425,8 +425,8 @@ class ApiusersController extends ActiveController
                             $userid = $model->referred_by;
                             $user_id = $model->id;
                             $gold_coins = 188;
-                            Yii::$app->common->addgoldcoinspurchase($userid,$gold_coins,null,'Onboarding');
-                            Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding');
+                            Yii::$app->common->addgoldcoinspurchase($userid,$gold_coins,null,'Onboarding',$user_id);
+                            //Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding');
 
                             return array('status' => 1, 'message' => 'Your account have Verified Successfully.');
 
@@ -4922,6 +4922,27 @@ class ApiusersController extends ActiveController
 
         }
     }
+    public function actionReviews()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST) && isset($_POST['type']) && $_POST['type']!=''){
+
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+
+
+
+        }
+
+
+    }
+
     public function actionTransactions()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -5088,6 +5109,28 @@ class ApiusersController extends ActiveController
                                 }
                                 $mytransactions[$key]['items'] = $items;
                                 break;
+                            case "Withdrawal";
+                                switch ($transaction->withdrawal->status){
+                                    case 1;
+                                        $status = "Pending";
+                                        break;
+                                    case 2;
+                                        $status = "Completed";
+                                        break;
+                                    case 3;
+                                        $status = "Rejected";
+                                        break;
+
+                                }
+                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                $mytransactions[$key]['name'] = "";
+                                $mytransactions[$key]['title'] = "Withdrawal";
+                                $mytransactions[$key]['description'] = $status;
+                                $mytransactions[$key]['incoming'] = 0;
+                                $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
+                                $mytransactions[$key]['date'] = date('Y-m-d H:i:s',strtotime($transaction->created_at));
+                                break;
+
                         }
 
                     }

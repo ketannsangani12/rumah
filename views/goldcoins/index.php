@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'user_id',
 
                     'value' => 'user.full_name',
-                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->asArray()->all(), 'id', function($model) {
+                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in','role',['User']])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
@@ -41,8 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'refferer_id',
 
-                    'value' => 'user.full_name',
-                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->asArray()->all(), 'id', function($model) {
+                    'value' => 'reffererser.full_name',
+                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in','role',['User']])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],

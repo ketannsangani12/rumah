@@ -66,4 +66,13 @@ class GoldTransactions extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
         ];
     }
+
+    public function getUser()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'user_id']);
+    }
+    public function getReffererser()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'refferer_id']);
+    }
 }

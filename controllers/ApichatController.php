@@ -244,7 +244,7 @@ class ApichatController extends ActiveController
 //                ])
                  $sender_id = $_POST['sender_id'];
                  $receiver_id = $_POST['receiver_id'];
-                 $query->where('(sender_id = '.$sender_id.' OR receiver_id = '.$receiver_id.') OR (sender_id = '.$receiver_id.' OR receiver_id = '.$sender_id.')');
+                 $query->where('(sender_id = '.$sender_id.' AND receiver_id = '.$receiver_id.') OR (sender_id = '.$receiver_id.' AND receiver_id = '.$sender_id.')');
                  $query->andWhere(['property_id'=>$_POST['property_id']]);
            // }
 
@@ -290,7 +290,7 @@ class ApichatController extends ActiveController
             $property_id = $_POST['property_id'];
             $delete = Yii::$app->db->createCommand("
     DELETE FROM rumah_chats 
-    WHERE ((sender_id = '$sender_id' OR receiver_id = '$receiver_id') OR (sender_id = '$receiver_id' OR receiver_id = '$sender_id')) AND property_id = '$property_id'
+    WHERE ((sender_id = '$sender_id' AND receiver_id = '$receiver_id') OR (sender_id = '$receiver_id' AND receiver_id = '$sender_id')) AND property_id = '$property_id'
 ")->execute();
            if($delete){
                return array('status' => 1, 'message' => 'You have deleted chat successfully.');
