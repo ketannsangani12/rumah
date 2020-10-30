@@ -118,7 +118,7 @@ class ApichatController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
 
-            $query = Chats::find()->select(['case when (sender_id = '.$this->userId.') then receiver_id else sender_id end as opponent_id','id','msg','msg_type','created_at','property_id','sender_id','receiver_id'])
+            $query = Chats::find()->select(['case when (sender_id = '.$this->userId.') then receiver_id else sender_id end as opponent_id','rumah_chats.id','msg','msg_type','rumah_chats.created_at','rumah_chats.property_id','rumah_chats.sender_id','rumah_chats.receiver_id'])
                 ->orderBy([
                     'rumah_chats.created_at' => SORT_DESC
                 ])
