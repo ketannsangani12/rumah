@@ -118,7 +118,7 @@ class ApichatController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
 
-            $query = Chats::find()
+            $query = Chats::find()->select(['case when(sender_id == '.$this->userId.') then receiver_id else sender_id end as opponent_id','id','msg','msg_type','created_at','property_id','sender_id','receiver_id'])
                 ->orderBy([
                     'rumah_chats.created_at' => SORT_DESC
                 ])
@@ -133,14 +133,16 @@ class ApichatController extends ActiveController
                 }]);
 
             if($this->userId != null){
-                $query->where(['or',
-                    ['sender_id'=>$this->userId],
-                    ['receiver_id'=>$this->userId]
-                ]);
+                $query->where('(sender_id = '.$this->userId.' OR receiver_id = '.$this->userId.')');
+
+//                $query->where(['or',
+//                    ['sender_id'=>$this->userId],
+//                    ['receiver_id'=>$this->userId]
+//                ]);
                     //->andWhere('rumah_chats.id in (select tc.id from rumah_chats as tc where tc.sender_id = '.$this->userId.' or tc.receiver_id = '.$this->userId.')');
             }
 
-            $query->groupBy(['property_id']);
+            $query->groupBy(['property_id','opponent_id']);
 
             if(isset($_POST['offset'])){
                 $query->offset($_POST['offset']);
