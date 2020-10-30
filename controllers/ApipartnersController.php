@@ -1578,7 +1578,7 @@ class ApipartnersController extends ActiveController
                 $transaction1 = Yii::$app->db->beginTransaction();
 
                 try {
-                    if (($todomodel->service_type == 'Handyman' || $todomodel->service_type == 'Mover') && $todomodel->status == 'Pending') {
+                    if (($todomodel->service_type == 'Handyman' || $todomodel->service_type == 'Mover') && $todomodel->status == 'In Progress') {
 
                         if ($status == 'Accepted') {
                             $todomodel->status = 'Accepted';
