@@ -552,6 +552,7 @@ class ServicerequestsController extends Controller
                 if($merchantmodel->save(false)) {
                     $todolist = $merchantmodel->todo;
                     $todolist->status = $merchantmodel->status;
+                    $todolist->vendor_id = $merchantmodel->vendor_id;
                     $todolist->updated_at = date('Y-m-d H:i:s');
                     if($todolist->save(false)) {
                         $vendormodel->current_status = 'Busy';
