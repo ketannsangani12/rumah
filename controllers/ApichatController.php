@@ -123,10 +123,10 @@ class ApichatController extends ActiveController
                     'rumah_chats.created_at' => SORT_DESC
                 ])
                 ->joinWith(['sender'=>function($q) use ($baseurl){
-                    $q->select(['id','full_name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
+                    $q->select(['id','full_name','role','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                 }])
                 ->joinWith(['receiver'=>function($q) use ($baseurl){
-                    $q->select(['id','full_name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
+                    $q->select(['id','full_name','role','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                 }])
                 ->joinWith(['property'=>function($q) use ($baseurl){
                     $q->select(['id','property_no','title','user_id']);
