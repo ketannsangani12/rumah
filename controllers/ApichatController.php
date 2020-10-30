@@ -186,10 +186,10 @@ class ApichatController extends ActiveController
                                 'rumah_chats.id' => SORT_DESC
                             ])
                             ->joinWith(['sender'=>function($q) use ($baseurl){
-                                $q->select(['id','full_name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
+                                $q->select(['id','full_name','role','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                             }])
                             ->joinWith(['receiver'=>function($q) use ($baseurl){
-                                $q->select(['id','full_name','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
+                                $q->select(['id','full_name','role','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                             }])->where(['rumah_chats.id'=>$model->id])->asArray()->one();
                         return array('status' => 1, 'message' => 'You have added chat msg successfully.','data'=>$lastmessage);
                     }else{
