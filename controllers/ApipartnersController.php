@@ -2027,7 +2027,7 @@ class ApipartnersController extends ActiveController
                 $user_id = $this->user_id;
 
                 $mobile_no = $_POST['mobile_no'];
-                $landlorddetails = Users::find()->select('id,full_name')->where(['contact_no'=>trim($_POST['mobile_no']),'status'=>'Active','role'=>'User'])->asArray()->one();
+                $landlorddetails = Users::find()->select('id,full_name')->where(['contact_no'=>trim($mobile_no),'status'=>'1','role'=>'User'])->asArray()->one();
                 if(!empty($landlorddetails)){
                     return array('status' => 1, 'data' => $landlorddetails);
 

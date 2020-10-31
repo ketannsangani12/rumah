@@ -4533,7 +4533,7 @@ class ApiusersController extends ActiveController
                 $user_id = $this->user_id;
 
                 $mobile_no = $_POST['mobile_no'];
-                $landlorddetails = Users::find()->select('id,full_name')->where(['contact_no'=>trim($_POST['mobile_no']),'status'=>'Active'])->asArray()->one();
+                $landlorddetails = Users::find()->select('id,full_name')->where(['contact_no'=>trim($mobile_no),'status'=>'1','role'=>'User'])->asArray()->one();
                 if(!empty($landlorddetails)){
                     return array('status' => 1, 'data' => $landlorddetails);
 
@@ -4551,6 +4551,73 @@ class ApiusersController extends ActiveController
         }
     }
 
+    public function actionDeleteproperty(){
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && isset($_POST['property_id']) && $_POST['property_id']!='') {
+
+                $user_id = $this->user_id;
+
+                $property_id = $_POST['property_id'];
+                $propertydetails = Properties::find()->where(['id'=>$property_id,'user_id'=>$user_id])->one();
+                if(!empty($propertydetails)){
+                    $propertydetails->status = 'Deleted';
+                    $propertydetails->updated_at = date('Y-m-d H:i:s');
+                    if($propertydetails->save(false)){
+                        return array('status' => 1, 'message' => 'You have deleted property successfully.');
+
+                    }else{
+                        return array('status' => 0, 'message' => $propertydetails->getErrors());
+
+                    }
+
+                }else{
+                    return array('status' => 0, 'message' => 'Data Not Found.');
+
+                }
+
+
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+        }
+    }
+    public function actionReportsproperty(){
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && isset($_POST['property_id']) && $_POST['property_id']!='') {
+
+                $user_id = $this->user_id;
+
+                $property_id = $_POST['property_id'];
+                $propertydetails = Properties::find()->where(['id'=>$property_id,'user_id'=>$user_id])->one();
+                if(!empty($propertydetails)){
+                    $fromdate = date('Y-m-01 00:00:00'); // hard-coded '01' for first day
+                    $todate  = date('Y-m-t 11:59:59');
+                    $data['cleaningorders'] = ServiceRequests::find()->where(['property_id'=>$property_id,'reftype'=>'Cleaner','status'=>'Completed'])->andWhere(['>=','DATE(created_at)', $fromdate])->andWhere(['<=','DATE(created_at)', $todate])->count();
+                    $data['repairs'] = 0;
+                    return array('status' => 0, 'data' => $data);
+
+
+                }else{
+                    return array('status' => 0, 'message' => 'Data Not Found.');
+
+                }
+
+
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+        }
+    }
     public function actionReportdefect(){
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method != 'POST') {
