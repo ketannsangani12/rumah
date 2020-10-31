@@ -2252,7 +2252,7 @@ class ApiusersController extends ActiveController
 
                         },
                         'agent'=>function($query){
-                            $query->select("id,full_name");
+                            $query->select("id,full_name,company_name");
 
                         },
                         'renovationquote' => function ($query) {
