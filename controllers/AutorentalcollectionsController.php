@@ -2,11 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\GoldTransactions;
 use app\models\Properties;
 use app\models\TodoDocuments;
 use app\models\TodoItems;
 use app\models\TodoList;
 use app\models\TodoListSearch;
+use app\models\Users;
 use Yii;
 use app\models\RenovationQuotes;
 use app\models\RenovationQuotesSearch;
@@ -164,10 +166,32 @@ class AutorentalcollectionsController extends Controller
                 $model->updated_at = date('Y-m-d h:i:s');
                 if($model->save()) {
                     if ($model->status=='Paid'){
-                        Yii::$app->common->addgoldcoinspurchase($userid,$gold_coins,null,'Onboarding',$user_id);
+                        $goldcoins = 188;
+                        $usercoinsbalance1 = Users::getcoinsbalance($model->user_id);
+                        $goldtransaction = new GoldTransactions();
+                        $goldtransaction->user_id = $model->user_id;
+                        $goldtransaction->autorental_id = $model->id;
+                        $goldtransaction->gold_coins = $goldcoins;
+                        $goldtransaction->olduserbalance = $usercoinsbalance1;
+                        $goldtransaction->newuserbalance = $usercoinsbalance1 + $goldcoins;
+                        $goldtransaction->incoming = 1;
+                        $goldtransaction->reftype = 'Rental On Time';
+                        $goldtransaction->status = 'Completed';
+                        $goldtransaction->created_at = date('Y-m-d H:i:s');
+                        if ($goldtransaction->save(false)){
+                            $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $model->user_id);
 
+                            if ($update) {
+                                return $this->redirect(['index']);
+                            } else {
+                                return $this->render('update', [
+                                    'model' => $model
+                                ]);                            }
+                        } else {
+                            return $this->render('update', [
+                                'model' => $model
+                            ]);                        }
                     }
-                    return $this->redirect(['index']);
                 }
             }else{
                 return $this->render('update', [

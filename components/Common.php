@@ -56,10 +56,26 @@ class Common extends Component
     }
     public function replaceLetterContent($content,$model){
         $content = str_replace("#tenantname#",$model->user->full_name,$content);
+        $content = str_replace("#TENANTNAME#",$model->user->full_name,$content);
+
         $content = str_replace("#landlordname#",$model->landlord->full_name,$content);
-        $content = str_replace("@property@",$model->property->title,$content);
-        $content = str_replace("#landlordid#",$model->landlord->document_no,$content);
-        $content = str_replace("#tenantid#",$model->user->document_no,$content);
+        $content = str_replace("#LANDLORDNAME#",$model->landlord->full_name,$content);
+
+        $content = str_replace("#landlordidentitycardno#",$model->landlord->document_no,$content);
+        $content = str_replace("#tenantidentitycardno#",$model->user->document_no,$content);
+        $content = str_replace("#agreementcreationdate#",date('d/m/Y',strtotime($model->updated_at)),$content);
+        $content = str_replace("#propertydetails#",$model->property->title,$content);
+        $content = str_replace("#landlordcontactno#",$model->landlord->contact_no,$content);
+        $content = str_replace("#tenantcontactno#",$model->user->contact_no,$content);
+        $content = str_replace("#rentalcommencementdate#",date('d/m/Y',strtotime($model->commencement_date)),$content);
+        $effectiveDate = date('d/m/Y', strtotime("+".$model->tenancy_period." months", strtotime($model->commencement_date)));
+
+        $content = str_replace("#tenancyperiod#",$model->tenancy_period." Months",$content);
+        $content = str_replace("#rentalexpirydate#",$effectiveDate,$content);
+        $content = str_replace("#monthlyrental#",$model->monthly_rental.".00",$content);
+        $content = str_replace("#securitydeposit#",$model->security_deposit.".00",$content);
+        $content = str_replace("#utilitydeposit#",$model->utilities_deposit.".00",$content);
+        $content = str_replace("#keycarddeposit#",$model->keycard_deposit.".00",$content);
 
 
         return $content;

@@ -75,4 +75,9 @@ class GoldTransactions extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'refferer_id']);
     }
+
+    public function getAutorental()
+    {
+        return $this->hasOne(TodoList::className(), ['id' => 'autorental_id']);
+    }
 }
