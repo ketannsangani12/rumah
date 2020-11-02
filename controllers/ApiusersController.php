@@ -720,7 +720,14 @@ class ApiusersController extends ActiveController
 
             $userdetails = Users::find()->select(['id','full_name', 'coins',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where(['id'=>$this->user_id])->asArray()->one();
             $transactions = GoldTransactions::find()->where(['user_id'=>$this->user_id])->orWhere(['refferer_id'=>$this->user_id])->andWhere(['status'=>'Completed'])->asArray()->all();
+            $goldtransactions = array();
+            if(!empty($transactions)){
+                foreach ($transactions as $transaction){
+                    if($transaction['reftype']=='1st Property Listed'){
 
+                    }
+                }
+            }
             return array('status' => 1, 'userdetails' => $userdetails,'data'=>$transactions);
 
 
@@ -1156,6 +1163,16 @@ class ApiusersController extends ActiveController
                         }
                         $propertymodel->property_no = "PR".Yii::$app->common->generatereferencenumber($property_id);
                         if($propertymodel->save(false)){
+                            $countproperties = Properties::find()->where(['user_id'=>$this->user_id])->count();
+                            if($countproperties==1) {
+                                $userdetails = Users::findOne($this->user_id);
+                                if($userdetails->referred_by!=''){
+                                    $gold_coins = 188;
+                                    Yii::$app->common->addgoldcoinspurchase($this->user_id,$gold_coins,null,'1st Property Listed',$userdetails->referred_by);
+
+
+                                }
+                            }
                             return array('status' => 1, 'message' => 'You have added property successfully.');
 
                         }
@@ -5309,7 +5326,7 @@ class ApiusersController extends ActiveController
 
                                       }
                                    }else{
-                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document5');
 
                                    }
 
@@ -5339,30 +5356,30 @@ class ApiusersController extends ActiveController
 
                                                        }
                                                    }else{
-                                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport1');
 
                                                    }
 
                                                }else{
-                                                   return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                                   return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport2');
 
                                                }
 
                                            }else{
-                                               return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                               return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport3');
 
                                            }
                                           }else{
-                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport4');
 
                                           }
 
                                       }else{
-                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport5');
 
                                       }
                                       }else{
-                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport6');
 
                                   }
                               }else{
@@ -5373,20 +5390,20 @@ class ApiusersController extends ActiveController
 
                                }
                               }else{
-                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document1');
 
                               }
 
                           }else{
-                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document2');
 
                           }
                       }else{
-                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document3');
 
                       }
                   }else{
-                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document4');
 
                   }
               }else{

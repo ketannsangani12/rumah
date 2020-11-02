@@ -281,6 +281,30 @@ class Common extends Component
             } else {
                 return false;
             }
+        }elseif($type=='1st Property Listed'){
+            $usercoinsbalance1 = Users::getcoinsbalance($reffer_id);
+            $goldtransaction = new GoldTransactions();
+            $goldtransaction->user_id = $user_id;
+            $goldtransaction->refferer_id = $reffer_id;
+            $goldtransaction->gold_coins = $goldcoins;
+            $goldtransaction->olduserbalance = $usercoinsbalance1;
+            $goldtransaction->newuserbalance = $usercoinsbalance1 + $goldcoins;
+            $goldtransaction->incoming = 1;
+            $goldtransaction->reftype = ($type != '') ? $type : 'In App Purchase';
+            $goldtransaction->status = 'Completed';
+            $goldtransaction->created_at = date('Y-m-d H:i:s');
+            if ($goldtransaction->save(false)) {
+                $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
+
+                if ($update) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
         }else {
             $usercoinsbalance = Users::getcoinsbalance($user_id);
             $goldtransaction = new GoldTransactions();
