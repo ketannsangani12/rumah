@@ -4621,7 +4621,7 @@ class ApiusersController extends ActiveController
                     $fromdate = date('Y-m-01 00:00:00'); // hard-coded '01' for first day
                     $todate  = date('Y-m-t 11:59:59');
                     $data['cleaningorders'] = ServiceRequests::find()->where(['property_id'=>$property_id,'reftype'=>'Cleaner','status'=>'Completed'])->andWhere(['>=','DATE(created_at)', $fromdate])->andWhere(['<=','DATE(created_at)', $todate])->count();
-                    $data['repairs'] = 0;
+                    $data['repairs'] = TodoList::find()->where(['property_id'=>$property_id,'reftype'=>'Defect Report','status'=>'Completed'])->andWhere(['>=','DATE(created_at)', $fromdate])->andWhere(['<=','DATE(created_at)', $todate])->count();;
                     return array('status' => 0, 'data' => $data);
 
 
