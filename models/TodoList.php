@@ -102,6 +102,7 @@ class TodoList extends \yii\db\ActiveRecord
             'photo'=>'Photo',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'updated_by' =>'Updated by',
         ];
     }
 
@@ -188,6 +189,11 @@ class TodoList extends \yii\db\ActiveRecord
     public function getAgent()
     {
         return $this->hasOne(Users::className(), ['id' => 'agent_id']);
+    }
+
+    public function getUpdatedby()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'updated_by']);
     }
 
     public function getWorker()

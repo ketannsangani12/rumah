@@ -3588,6 +3588,7 @@ class ApiusersController extends ActiveController
                                                $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, ($todomodel->pay_from == 'Tenant') ? $todomodel->user_id : $todomodel->user_id);
                                                $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                if ($updatereceiverbalance && $updatesenderbalance) {
+                                                   $todomodel->updated_by = $todomodel->user_id;
                                                    $todomodel->status = 'In Progress';
                                                    $todomodel->save(false);
                                                    $transaction->commit();
@@ -3621,6 +3622,7 @@ class ApiusersController extends ActiveController
                            }
                        } else if ($status == 'Rejected') {
                            $todomodel->status = 'Closed';
+                           $todomodel->updated_by = $todomodel->user_id;
                            if ($todomodel->save()) {
                                $transaction->commit();
                                return array('status' => 1, 'message' => 'You have rejected payment successfully.');

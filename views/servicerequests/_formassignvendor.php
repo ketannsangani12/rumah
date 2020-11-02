@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
 
             <?php
             $properties = \app\models\Users::find()->where(['role'=>$propertymodel->reftype,'current_status'=>'Free'])->asArray()->all();
-            //print_r($properties);exit;
+            //`print_r($properties);exit;
             if(!empty($properties)){
                 foreach ($properties as $property){
                     $data[$property['id']] = $property['full_name'];

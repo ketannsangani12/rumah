@@ -80,6 +80,7 @@ class DefectreportsController extends Controller
                 if($model->status=='New'){
                     $model->status = 'Pending';
                 }
+                $model->updated_by = Yii::$app->user->id;
                 $model->updated_at = date('Y-m-d H:i:s');
                 if($model->save()){
                     $model->quote->saveAs('uploads/tododocuments/' . $newFileName);
@@ -144,6 +145,7 @@ class DefectreportsController extends Controller
                 try {
                     //$modelCustomer->pay_from = $_POST['TodoList']['pay_from'];
                     $modelCustomer->status = "Unpaid";
+                    $modelCustomer->updated_by = Yii::$app->user->id;
                     $modelCustomer->updated_at = date('Y-m-d H:i:s');
                     if ($flag = $modelCustomer->save(false)){
                         $total = 0;
@@ -274,8 +276,11 @@ class DefectreportsController extends Controller
             $model->scenario = 'changestatus';
 
         if ($model->load(Yii::$app->request->post()) ) {
+
             // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
             if($model->validate()) {
+                $model->updated_by = Yii::$app->user->id;
+
                 if($model->save(false)) {
                     return $this->redirect(['index']);
                 }
