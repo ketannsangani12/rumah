@@ -146,4 +146,9 @@ class Transactions extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'vendor_id']);
     }
+
+    public function getWithdrawal()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'withdrawal_id']);
+    }
 }

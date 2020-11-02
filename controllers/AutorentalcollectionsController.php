@@ -160,8 +160,13 @@ class AutorentalcollectionsController extends Controller
         if ($model->load(Yii::$app->request->post()) ) {
             // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
             if($model->validate()) {
+
                 $model->updated_at = date('Y-m-d h:i:s');
                 if($model->save()) {
+                    if ($model->status=='Paid'){
+                        Yii::$app->common->addgoldcoinspurchase($userid,$gold_coins,null,'Onboarding',$user_id);
+
+                    }
                     return $this->redirect(['index']);
                 }
             }else{
