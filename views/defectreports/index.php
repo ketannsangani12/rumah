@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ],
             // 'status',
-            'created_at:datetime',
+            'updated_at:datetime',
             [
                 'label' => 'Last Updated By',
                 'attribute' => 'updated_by',
