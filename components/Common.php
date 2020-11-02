@@ -290,10 +290,10 @@ class Common extends Component
             $goldtransaction->olduserbalance = $usercoinsbalance1;
             $goldtransaction->newuserbalance = $usercoinsbalance1 + $goldcoins;
             $goldtransaction->incoming = 1;
-            $goldtransaction->reftype = ($type != '') ? $type : 'In App Purchase';
+            $goldtransaction->reftype = '1st Property Listed';
             $goldtransaction->status = 'Completed';
             $goldtransaction->created_at = date('Y-m-d H:i:s');
-            if ($goldtransaction->save(false)) {
+            if ($goldtransaction->save(false)){
                 $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
 
                 if ($update) {

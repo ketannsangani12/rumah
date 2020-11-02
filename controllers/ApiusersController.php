@@ -723,8 +723,12 @@ class ApiusersController extends ActiveController
             $goldtransactions = array();
             if(!empty($transactions)){
                 foreach ($transactions as $transaction){
-                    if($transaction['reftype']=='1st Property Listed'){
-
+                    if($transaction['reftype']=='1st Property Listed' ){
+                        if($transaction['refferer_id']==$this->user_id) {
+                            $goldtransactions[] = $transaction;
+                        }
+                    }else{
+                        $goldtransactions[] = $transaction;
                     }
                 }
             }
@@ -1138,7 +1142,6 @@ class ApiusersController extends ActiveController
                 $propertymodel->attributes = Yii::$app->request->post();
                 $propertymodel->amenities = implode(',',$propertymodel->amenities);
                 $propertymodel->commute = implode(',',$propertymodel->commute);
-                //$propertymodel->pictures = $uploads = UploadedFile::getInstances('images');
                 if($propertymodel->validate()){
                     $pictures = $propertymodel->pictures;
                     $propertymodel->pictures = null;
