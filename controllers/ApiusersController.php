@@ -1772,6 +1772,11 @@ class ApiusersController extends ActiveController
                                 $model->scenario = 'bookingprocesssecondstep';
                                 $model->attributes = Yii::$app->request->post();
                                 if ($model->validate()) {
+                                    $checkidexist = Users::find()->where(['identification_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
+                                    if(!empty($checkidexist)){
+                                        return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
+
+                                    }
                                     $kyc_document = $model->kyc_document;
                                     $spa_document = $model->spa_document;
                                     $model->kyc_document = null;
@@ -1851,6 +1856,11 @@ class ApiusersController extends ActiveController
                             $useridtenant = $model->user_id;
                             $model->attributes = Yii::$app->request->post();
                             if ($model->validate()) {
+                                $checkidexist = Users::find()->where(['identification_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->landlord_id])->one();
+                                if(!empty($checkidexist)){
+                                    return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
+
+                                }
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
                                     $subtotal = $model->tenancy_fees+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;

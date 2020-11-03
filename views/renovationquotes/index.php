@@ -16,12 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Add Renovation Quote', ['create'], ['class' => 'btn btn-primary btn-flat']) ?>
     </div>
     <div class="box-body table-responsive">
-        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'layout' => "{items}\n{summary}\n{pager}",
-            'columns' => [
+        <?php
+        $gridColumns = [
+
                 ['class' => 'yii\grid\SerialColumn'],
                 [
                     'attribute' => 'property_id',
@@ -61,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     //'filter'=>false
                 ],
-               // 'id',
+                // 'id',
                 //'property_id',
                 //'landlord_id',
                 //'quote_document',
@@ -84,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'filter' => false
                 ],
-                 //'created_at:date',
+                //'created_at:date',
                 // 'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
@@ -143,7 +140,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     ],
                 ],
-            ],
+
+        ];
+        echo \kartik\export\ExportMenu::widget([
+            'dataProvider' => $dataProvider,
+            'columns' => $gridColumns,
+
+        ]);
+        ?><?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'layout' => "{items}\n{summary}\n{pager}",
+            'columns' => $gridColumns,
         ]); ?>
     </div>
     <?php Pjax::end(); ?>
