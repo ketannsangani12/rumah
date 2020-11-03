@@ -1173,8 +1173,8 @@ class ApiusersController extends ActiveController
                 $propertymodel = new Properties();
                 $propertymodel->scenario = 'addproperty';
                 $propertymodel->attributes = Yii::$app->request->post();
-                $propertymodel->amenities = implode(',',$propertymodel->amenities);
-                $propertymodel->commute = implode(',',$propertymodel->commute);
+                //$propertymodel->amenities = implode(',',$propertymodel->amenities);
+                //$propertymodel->commute = implode(',',$propertymodel->commute);
                 if($propertymodel->validate()){
                     $pictures = $propertymodel->pictures;
                     $propertymodel->pictures = null;
@@ -1199,6 +1199,15 @@ class ApiusersController extends ActiveController
                         }
                         $propertymodel->property_no = "PR".Yii::$app->common->generatereferencenumber($property_id);
                         if($propertymodel->save(false)){
+                            if($propertymodel->insurance==1){
+                                $modelCustomer = new TodoList();
+                                $modelCustomer->property_id = $propertymodel->id;
+                                $modelCustomer->landlord_id = $this->user_id;
+                                $modelCustomer->reftype = "Insurance";
+                                $modelCustomer->status = "Pending";
+                                $modelCustomer->created_at = date('Y-m-d H:i:s');
+                                $modelCustomer->save(false);
+                            }
                             $countproperties = Properties::find()->where(['user_id'=>$this->user_id])->count();
                             if($countproperties==1) {
                                 $userdetails = Users::findOne($this->user_id);

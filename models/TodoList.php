@@ -59,7 +59,7 @@ class TodoList extends \yii\db\ActiveRecord
             ['property_id', 'checkhavealreadyrequest','on' => 'addinsurance'],
             [['title','property_id','pay_from','due_date'], 'required','on'=>'addinvoice'],
             [['request_id', 'property_id', 'user_id', 'landlord_id', 'vendor_id'], 'integer'],
-            [['reftype', 'status'], 'string'],
+            [['reftype', 'status','remarks'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['document'], 'string', 'max' => 255],
             [['landlord_id'], 'exist', 'skipOnError' => false, 'targetClass' => Users::className(), 'targetAttribute' => ['landlord_id' => 'id']],
@@ -103,6 +103,7 @@ class TodoList extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'updated_by' =>'Updated by',
+            'remarks' =>'Remarks'
         ];
     }
 

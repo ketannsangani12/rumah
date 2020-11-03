@@ -36,6 +36,12 @@ use yii\widgets\ActiveForm;
                             ]); ?>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <?= $form->field($modelCustomer, 'remarks')->textarea() ?>
+
+                        </div>
+                        </div>
 
                     <?php \wbraganca\dynamicform\DynamicFormWidget::begin([
                         'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]

@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="todo-list-index box box-primary">
     <?php Pjax::begin(); ?>
     <div class="box-header with-border">
-        <h3>Insurances         <?= Html::a('Add Insurance Quote', ['create'], ['class' => 'btn btn-primary btn-flat pull-right']) ?>
+        <h3>Insurances
         </h3>
     </div>
     <div class="box-body table-responsive">
@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'template'=>'{view} {update} {uploaddocument}',
                     'visibleButtons' => [
                         'update' => function ($model) {
-                            return ($model->status=='Unpaid');
+                            return ($model->status=='Unpaid' || $model->status=='Pending');
                         },
                         'uploaddocument' => function ($model) {
                             return ($model->status=='Paid' || $model->status=='Completed');

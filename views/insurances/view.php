@@ -50,6 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return (isset($model->landlord->contact_no))?$model->landlord->contact_no:'';
                         }
                     ],
+                    'remarks',
                     'status',
                     'created_at:datetime',
 

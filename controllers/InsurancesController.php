@@ -164,12 +164,11 @@ class InsurancesController extends Controller
     {
 
 
-        $modelCustomer = TodoList::find()->where(['id'=>$id,'reftype'=>'Insurance','status'=>'Unpaid'])->one();
+        $modelCustomer = TodoList::find()->where(['id'=>$id,'reftype'=>'Insurance'])->andWhere(['in','status',['Pending','Unpaid']])->one();
         if ($modelCustomer == null) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         $modelsAddress = $modelCustomer->todoItems;
-
         if (!empty($_POST)) {
 
             $oldIDs = ArrayHelper::map($modelsAddress, 'id', 'id');
@@ -209,6 +208,8 @@ class InsurancesController extends Controller
                         }
                         $sst = Yii::$app->common->calculatesst($total);
                         $grandtotal = $total+$sst;
+                        $modelCustomer->remarks = $_POST['TodoList']['remarks'];
+                        $modelCustomer->status = "Unpaid";
                         $modelCustomer->subtotal = $total;
                         $modelCustomer->sst = $sst;
                         $modelCustomer->total = $grandtotal;
