@@ -5100,7 +5100,13 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if(!empty($_POST) && isset($_POST['type']) && $_POST['type']!=''){
-
+             $reviews = VendorRatings::find()->joinWith(['vendor' => function (ActiveQuery $query) {
+                 return $query->select('id,full_name')
+                     ->andWhere(['=', 'rumah_users.role', $_POST['type']]);
+             }])->joinWith(['user' => function (ActiveQuery $query) {
+                 return $query->select(['id','full_name',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+             }])->asArray()->all();
+                return array('status' => 1, 'data' => $reviews);
 
             }else{
                 return array('status' => 0, 'message' => 'Please enter mandatory fields.');
