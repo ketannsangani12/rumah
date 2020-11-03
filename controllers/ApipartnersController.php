@@ -515,15 +515,17 @@ class ApipartnersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if (!empty($_POST) && !empty($_POST['picture'])) {
-                $model = Users::findOne(['id'=>$this->user_id]);
-                $picture = $_POST['picture'];
-                $filename = uniqid();
+            $model = Users::findOne(['id'=>$this->user_id]);
+            $model->scenario = 'changepicture';
+            $model->attributes = Yii::$app->request->post();
+            $model->picture = $uploads = UploadedFile::getInstanceByName('picture');
+            if($model->validate()){
 
-                $data = Yii::$app->common->processBase64($picture);
-
-                file_put_contents('uploads/users/' . $filename . '.' . $data['type'], $data['data']);
-                $model->image = $filename . '.' . $data['type'];
+                $newFileName = \Yii::$app->security
+                        ->generateRandomString().'.'.$model->picture->extension;
+                $model->image = $newFileName;
+                $model->picture->saveAs('uploads/users/' . $newFileName);
+                $model->picture = null;
                 if ($model->save(false)){
                     return array('status' => 1, 'message' => 'You have changed your profile picture successfully.');
 
@@ -531,10 +533,10 @@ class ApipartnersController extends ActiveController
                     return array('status' => 0, 'message' => $model->getErrors());
                 }
 
-
-            } else {
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }else{
+                return array('status' => 0, 'message' => $model->getErrors());
             }
+
         }
 
 

@@ -28,6 +28,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public $newpassword;
     public $agentcard;
     public $agent_card;
+    public $picture = '';
+
     /**
      * {@inheritdoc}
      */
@@ -78,6 +80,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             //[['oldpassword'], 'checkoldpassword','on' => 'changepassword'],
             [['secondary_password'], 'required', 'on' => 'createsecondarypassword'],
             [['wallet_balance'], 'number'],
+            [['picture'], 'required', 'on' => 'changepicture'],
+            [['picture'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'changepicture'],
 
             //[['name', 'username', 'password', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
