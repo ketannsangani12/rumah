@@ -155,7 +155,7 @@ class UsersController extends Controller
     {
         $model = $this->findModel($id);
         $model->status = 3;
-        $model->save();
+        $model->save(false);
         // $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

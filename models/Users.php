@@ -103,6 +103,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'company_state'=>'Company State',
             'address'=>'Address',
             'state'=>'State',
+            'document_no'=>'IC No.',
             'registration_no'=>'Registration No',
             'bank_account_name'=>'Bank Account Name',
             'bank_account_no'=>'Bank Account No.',

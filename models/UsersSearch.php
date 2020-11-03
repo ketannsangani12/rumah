@@ -42,7 +42,7 @@ class UsersSearch extends Users
      */
     public function search($params)
     {
-        $query = Users::find();
+        $query = Users::find()->where(['!=','status',3]);
 
         // add conditions that should always apply here
 
