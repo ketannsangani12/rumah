@@ -81,8 +81,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
             //[['name', 'username', 'password', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
-            [['password'], 'string', 'max' => 255],
-            [['username','current_status'], 'string', 'max' => 40],
+            [['password','education_level','nationality','race','occupation','annual_income'], 'string', 'max' => 255],
+            [['username','current_status','emergency_contact'], 'string', 'max' => 40],
         ];
     }
 

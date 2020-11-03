@@ -213,7 +213,7 @@ class TodoList extends \yii\db\ActiveRecord
     public function checkhavealreadyrequest($attribute, $params)
     {
         if (!$this->hasErrors()) {
-            $request = TodoList::find()->where(['reftype'=>'Insurance'])->andWhere(['in', 'status', ['Unpaid','Paid']])->count();
+            $request = TodoList::find()->where(['property_id'=>$this->property_id,'reftype'=>'Insurance'])->andWhere(['in', 'status', ['Unpaid','Paid']])->count();
 
             if ($request>0) {
                 $this->addError($attribute, 'You already submitted Insurance Quote for this Property.');

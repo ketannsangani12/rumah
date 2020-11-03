@@ -523,7 +523,7 @@ class ApiusersController extends ActiveController
         } else {
            $model = Users::findOne($this->user_id);
             //$model->scenario = 'updateprofileuser';
-            $model->attributes = Yii::$app->request->post();
+               $model->attributes = Yii::$app->request->post();
                $model->dob = (isset($model->dob) && $model->dob!='')?date('Y-m-d',strtotime($model->dob)):NULL;
                $model->updated_at = date('Y-m-d h:i:s');
                if($model->save(false)){
@@ -540,6 +540,39 @@ class ApiusersController extends ActiveController
 
 
     }
+
+    public function actionUploadprofilepicture()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && !empty($_POST['picture'])) {
+                $model = Users::findOne(['id'=>$this->user_id]);
+                $picture = $_POST['picture'];
+                $filename = uniqid();
+
+                $data = Yii::$app->common->processBase64($picture);
+
+                file_put_contents('uploads/users/' . $filename . '.' . $data['type'], $data['data']);
+                $model->image = $filename . '.' . $data['type'];
+                if ($model->save(false)){
+                        return array('status' => 1, 'message' => 'You have changed your profile picture successfully.');
+
+                    }else{
+                        return array('status' => 0, 'message' => $model->getErrors());
+                    }
+
+
+            } else {
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+
+
+    }
+
     public function actionReportproperty()
     {
         $method = $_SERVER['REQUEST_METHOD'];

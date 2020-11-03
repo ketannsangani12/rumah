@@ -37,6 +37,7 @@ class RenovationQuotes extends \yii\db\ActiveRecord
     {
         return [
             [['property_id','document'], 'required','on' => 'addquote'],
+            [['remarks'], 'required','on' => 'updateremarks'],
             ['property_id', 'checkhavealreadyrequest','on' => 'addquote'],
             [['property_id', 'landlord_id'], 'integer'],
             [['document'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
@@ -62,6 +63,7 @@ class RenovationQuotes extends \yii\db\ActiveRecord
             'status' => 'Status',
             'created_at' => 'Date',
             'updated_at' => 'Updated At',
+            'remarks' =>'Remarks'
         ];
     }
 

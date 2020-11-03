@@ -45,6 +45,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     //'filter'=>false
                 ],
+                [
+                    'label' => 'Email',
+
+                    'value' => 'landlord.email',
+                    'filter'=>false,
+
+                    //'filter'=>false
+                ],
+                [
+                    'label' => 'Phone No.',
+
+                    'value' => 'landlord.contact_no',
+                    'filter'=>false,
+
+                    //'filter'=>false
+                ],
                // 'id',
                 //'property_id',
                 //'landlord_id',
@@ -72,13 +88,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{addmilestone}',
+                    'template'=>'{view} {update} {addmilestone}',
                     'visibleButtons' => [
                         'addmilestone' => function ($model) {
                             return ($model->status=='Approved' || $model->status=='Work In Progress' || $model->status=='Completed');
                         }
                     ],
                     'buttons'=>[
+                        'view' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-eye" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/view', 'id' => $model->id])], [
+
+                                'title' => 'View',
+                                'class'=>'btn btn-sm bg-olive datatable-operation-btn'
+
+                            ]);
+
+                        },
                         'update' => function ($url, $model) {
 
                             return Html::a('<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/update', 'id' => $model->id])], [

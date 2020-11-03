@@ -124,6 +124,27 @@ class RenovationquotesController extends Controller
             ]);
         }
     }
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $model->scenario = 'updateremarks';
+        if ($model->load(Yii::$app->request->post())) {
+            $model->status = 'Completed';
+            $model->updated_at  = date('Y-m-d H:i:s');
+            if ($model->save(false)){
+                return $this->redirect(['index']);
+
+            }else{
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
+    }
 
     /**
      * Updates an existing RenovationQuotes model.
