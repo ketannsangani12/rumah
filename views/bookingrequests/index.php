@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value'=> function($model){
                     return Yii::$app->common->getStatus($model->status);
                 },
-                'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Processing"=>"Processing","Processed"=>"Processed","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Cancelled"=>"Cancelled","Payment Requested"=>"Payment Requested","Rented"=>"Rented"),
+                'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Processing"=>"Processing","Processed"=>"Processed","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Cancelled"=>"Cancelled","Payment Requested"=>"Payment Requested","Rented"=>"Rented","Moved Out"=>"Moved Out"),
                 'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 
             ],

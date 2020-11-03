@@ -3093,7 +3093,8 @@ class ApiusersController extends ActiveController
                                                    if ($todomodel->save(false)) {
                                                        $todomodel->property->status = 'Active';
                                                        $todomodel->property->save(false);
-                                                       $todomodel->request->status = 'Completed';
+                                                       $todomodel->request->status = 'Moved Out';
+                                                       $todomodel->request->updated_by = $user_id;
                                                        $todomodel->request->save(false);
                                                        $transaction->commit();
                                                        return array('status' => 1, 'message' => 'You have accepted refund request successfully.');

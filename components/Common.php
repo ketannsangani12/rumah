@@ -191,6 +191,9 @@ class Common extends Component
             case "Refunded";
                 return "<span class='btn bg-green btn-xs'>Refunded</span>";
                 break;
+            case "Moved Out";
+                return "<span class='btn bg-blue btn-xs'>Moved Out</span>";
+                break;
             case "Payment Requested";
                 return "<span class='btn bg-blue btn-xs'>Payment Requested</span>";
                 break;
