@@ -129,7 +129,6 @@ class RenovationquotesController extends Controller
         $model = $this->findModel($id);
         $model->scenario = 'updateremarks';
         if ($model->load(Yii::$app->request->post())) {
-            $model->status = 'Completed';
             $model->updated_at  = date('Y-m-d H:i:s');
             if ($model->save(false)){
                 return $this->redirect(['index']);
@@ -437,8 +436,10 @@ class RenovationquotesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+         $model = $this->findModel($id);
+        $model->status = 'Completed';
+        $model->updated_at  = date('Y-m-d H:i:s');
+        $model->save(false);
         return $this->redirect(['index']);
     }
 

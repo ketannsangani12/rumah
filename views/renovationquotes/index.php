@@ -85,11 +85,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'updated_at',
 
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{view} {update} {addmilestone}',
+                    'template'=>'{view} {update} {addmilestone} {delete}',
                     'visibleButtons' => [
                         'addmilestone' => function ($model) {
                             return ($model->status=='Approved' || $model->status=='Work In Progress' || $model->status=='Completed');
-                        }
+                        },
+                        'delete' =>function ($model) {
+                            return ($model->status=='Approved' || $model->status=='Work In Progress');
+                        },
                     ],
                     'buttons'=>[
                         'view' => function ($url, $model) {
@@ -125,11 +128,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'delete' => function ($url, $model) {
 
-                            return Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/delete', 'id' => $model->id])], [
+                            return Html::a('<i class="fa fa-times-circle" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/delete', 'id' => $model->id])], [
 
-                                'title' => 'Delete',
+                                'title' => 'Close Renovation',
                                 'class' =>'btn btn-sm btn-danger datatable-operation-btn',
-                                'data-confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+                                'data-confirm' => \Yii::t('yii', 'Are you sure you want to Close this Renovation?'),
                                 'data-method'  => 'post',
 
                             ]);

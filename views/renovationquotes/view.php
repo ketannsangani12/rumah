@@ -29,6 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'label'=>'Property Address',
+
+                    'value'=>function($model){
+                        return (isset($model->property->location))?$model->property->location:'';
+                    }
+                ],
+                [
                     'label'=>'Landlord',
 
                     'value'=>function($model){

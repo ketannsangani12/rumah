@@ -1704,6 +1704,7 @@ class ApiusersController extends ActiveController
 
                             try {
                                 $model->status = $_POST['status'];
+                                $model->updated_by = $this->user_id;
                                 $model->updated_at = date('Y-m-d H:i:s');
                                 if ($model->save(false)) {
                                     $todomodel->status = $_POST['status'];
@@ -1738,6 +1739,7 @@ class ApiusersController extends ActiveController
                             try {
                                 $model->status = $_POST['status'];
                                 $model->updated_at = date('Y-m-d H:i:s');
+                                $model->updated_by = $this->user_id;
                                 if ($model->save(false)) {
                                     $todomodel->status = $_POST['status'];
                                     $todomodel->updated_at = date('Y-m-d H:i:s');
@@ -1804,6 +1806,7 @@ class ApiusersController extends ActiveController
                                     $model->identification_no = null;
                                     $model->status = 'Processing';
                                     $model->updated_at = date('Y-m-d H:i:s');
+                                    $model->updated_by = $this->user_id;
                                     if ($model->save(false)) {
 
                                         $documents->save(false);
@@ -1901,6 +1904,7 @@ class ApiusersController extends ActiveController
 
                                 $model->status = 'Processed';
                                 $model->updated_at = date('Y-m-d H:i:s');
+                                $model->updated_by = $this->user_id;
                                 if ($model->save(false)) {
                                     $todomodel->status = 'Processed';
                                     $todomodel->updated_at = date('Y-m-d H:i:s');
@@ -2061,6 +2065,7 @@ class ApiusersController extends ActiveController
                                         $transactionitems->created_at = date('Y-m-d H:i:s');
                                         $transactionitems->save(false);
                                     }
+                                    $model->updated_by = $this->user_id;
                                     $model->status = 'Rented';
                                     $model->rented_at = date('Y-m-d H:i:s');
                                     if ($model->save(false)) {
@@ -2497,7 +2502,7 @@ class ApiusersController extends ActiveController
             $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'worker_id' ,'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                 ->with([
                     'request' => function ($query) {
-                        $query->select(['id','commencement_date','tenancy_period','status', new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
+                        $query->select(['id','commencement_date','tenancy_period','status',new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `stampduty_certificate`) as stampduty_certificate"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                     },
                     'servicerequest'=>function ($query) {
                         $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
@@ -2555,6 +2560,18 @@ class ApiusersController extends ActiveController
                                          $data[] = $agreementdocument;
 
                                      }
+                                     if($todolist['request']['stampduty_certificate']!=''){
+                                         $agreementdocument['document'] = $todolist['request']['stampduty_certificate'];
+                                         $agreementdocument['type'] = 'Stamp Duty Certificate';
+                                         $agreementdocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
+                                         $agreementdocument['location'] = $todolist['property']['location'];
+                                         $commencmentdate = $todolist['request']['commencement_date'];
+                                         $months = $todolist['request']['tenancy_period'];
+                                         $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
+                                         $agreementdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                         $data[] = $agreementdocument;
+
+                                     }
                                      if($todolist['request']['moveout_document']!=''){
                                          $moveoutdocument['document'] = $todolist['request']['moveout_document'];
                                          $moveoutdocument['type'] = 'Moveout Document';
@@ -2584,6 +2601,18 @@ class ApiusersController extends ActiveController
                                     if($todolist['request']['agreement_document']!=''){
                                         $agreementdocument['document'] = $todolist['request']['agreement_document'];
                                         $agreementdocument['type'] = 'Agreement';
+                                        $agreementdocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
+                                        $agreementdocument['location'] = $todolist['property']['location'];
+                                        $commencmentdate = $todolist['request']['commencement_date'];
+                                        $months = $todolist['request']['tenancy_period'];
+                                        $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
+                                        $agreementdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                        $data[] = $agreementdocument;
+
+                                    }
+                                    if($todolist['request']['stampduty_certificate']!=''){
+                                        $agreementdocument['document'] = $todolist['request']['stampduty_certificate'];
+                                        $agreementdocument['type'] = 'Stamp Duty Certificate';
                                         $agreementdocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
                                         $agreementdocument['location'] = $todolist['property']['location'];
                                         $commencmentdate = $todolist['request']['commencement_date'];

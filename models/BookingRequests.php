@@ -44,6 +44,7 @@ class BookingRequests extends \yii\db\ActiveRecord
     public $identification_no;
     public $kyc_document;
     public $spa_document;
+    public $stampdutycertificate;
 
     /**
      * {@inheritdoc}
@@ -71,6 +72,7 @@ class BookingRequests extends \yii\db\ActiveRecord
             [['moveout_date','moveout'], 'required','on' => 'uploadmoveout'],
             [['template_id','document_content'], 'required','on' => 'choosetemplate'],
             [['agreement'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpeg,jpg,png,pdf'],
+            [['stampdutycertificate'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpeg,jpg,png,pdf'],
             [['report','movein','moveout'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             [['property_id', 'user_id', 'landlord_id', 'template_id'], 'integer'],
             [['credit_score', 'booking_fees', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'sst', 'rental_deposit', 'utilities_deposit', 'security_deposit'], 'number'],
@@ -118,6 +120,8 @@ class BookingRequests extends \yii\db\ActiveRecord
             'credit_score_report'=>'Credit Score Report',
             'movein_document'=>'Move In Checklist',
             'moveout_document'=>'Move Out Checklist',
+            'stampduty_certificate'=>'Stamp Duty Certificate',
+            'stampdutycertificate'=> 'Stamp Duty Certificate',
             'movein'=>'Move In Checklist',
             'moveout'=>'Move Out Checklist',
             'report'=>'Credit Score Report',
@@ -126,7 +130,8 @@ class BookingRequests extends \yii\db\ActiveRecord
             'full_name'=>'Full Name',
             'identification_no'=>'Identification No.',
             'spa_document'=> 'Supporting Document',
-            'kyc_document'=>'EKYC Document'
+            'kyc_document'=>'EKYC Document',
+            'updated_by' => 'Updated By'
         ];
     }
 
@@ -178,6 +183,11 @@ class BookingRequests extends \yii\db\ActiveRecord
     public function getTransactions()
     {
         return $this->hasMany(Transactions::className(), ['request_id' => 'id']);
+    }
+
+    public function getUpdatedby()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'updated_by']);
     }
     public function getStatus($status)
     {

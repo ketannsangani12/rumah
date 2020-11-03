@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
         <div class="renovation-quotes-form box box-primary">
             <div class="box-header with-border">
-                <h3>Close Renovation Quote</h3>
+                <h3>Add Remark to Renovation</h3>
             </div>
             <?php $form = ActiveForm::begin(); ?>
             <div class="box-body table-responsive">

@@ -30,6 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'label'=>'Property Address',
+
+                    'value'=>function($model){
+                        return (isset($model->property->location))?$model->property->location:'';
+                    }
+                ],
+                [
                     'label'=>'Tenant',
 
                     'value'=>function($model){
@@ -41,6 +48,34 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     'value'=>function($model){
                         return (isset($model->landlord->full_name))?$model->landlord->full_name:'';
+                    }
+                ],
+                [
+                    'label'=>'Landlord Mobile No.',
+
+                    'value'=>function($model){
+                        return (isset($model->landlord->contact_no))?$model->landlord->contact_no:'';
+                    }
+                ],
+                [
+                    'label'=>'Tenant Mobile No.',
+
+                    'value'=>function($model){
+                        return (isset($model->user->contact_no))?$model->user->contact_no:'';
+                    }
+                ],
+                [
+                    'label'=>'Landlord Email',
+
+                    'value'=>function($model){
+                        return (isset($model->landlord->email))?$model->landlord->email:'';
+                    }
+                ],
+                [
+                    'label'=>'Tenant Email',
+
+                    'value'=>function($model){
+                        return (isset($model->user->email))?$model->user->email:'';
                     }
                 ],
                 [
@@ -123,6 +158,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'label' => 'Agreement document(Stamped)',
                         'value' => function ($model) {
                             return ($model->agreement_document!='')?Html::a('Print', Yii::$app->homeUrl.'uploads/agreements/'.$model->agreement_document):'Not Uploaded';
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'stampduty_certificate',
+                        'label' => 'Stamp Duty Certificate',
+                        'value' => function ($model) {
+                            return ($model->stampduty_certificate!='')?Html::a('Print', Yii::$app->homeUrl.'uploads/agreements/'.$model->stampduty_certificate):'Not Uploaded';
                         },
                         'format' => 'raw',
                     ],

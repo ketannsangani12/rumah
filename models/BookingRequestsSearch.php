@@ -18,9 +18,9 @@ class BookingRequestsSearch extends BookingRequests
     public function rules()
     {
         return [
-            [['id', 'property_id', 'user_id', 'landlord_id', 'template_id', 'status'], 'integer'],
+            [['id', 'property_id', 'user_id', 'landlord_id', 'template_id'], 'integer'],
             [['credit_score', 'booking_fees', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'sst', 'rental_deposit', 'utilities_deposit', 'security_deposit','reference_no'], 'number'],
-            [['commencement_date', 'tenancy_period', 'created_at', 'updated_at'], 'safe'],
+            [['commencement_date', 'tenancy_period', 'created_at', 'updated_at','status'], 'safe'],
         ];
     }
 

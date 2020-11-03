@@ -144,7 +144,8 @@ class BookingrequestsController extends Controller
                if($model->status=='Confirmed'){
                    $model->status = 'Pending';
                }
-               $model->updated_at = date('Y-m-d H:i:s');
+                $model->updated_by = Yii::$app->user->id;
+                $model->updated_at = date('Y-m-d H:i:s');
                if($model->save(false)){
                    $todomodel->status = 'Pending';
                    $todomodel->save();
@@ -179,6 +180,7 @@ class BookingrequestsController extends Controller
                 $total_amount = $model->subtotal+$sst;
                 $model->total = $total_amount;
                 $model->updated_at = date('Y-m-d H:i:s');
+                $model->updated_by = Yii::$app->user->id;
                 if($model->save()){
                     return $this->redirect(['index']);
 
@@ -253,20 +255,37 @@ class BookingrequestsController extends Controller
         $model->scenario = 'uploadagreement';
         if ($model->load(Yii::$app->request->post())) {
             $model->agreement = \yii\web\UploadedFile::getInstance($model, 'agreement');
+            if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
+                $model->stampdutycertificate = \yii\web\UploadedFile::getInstance($model, 'stampdutycertificate');
+            }
             if($model->validate()) {
                 $newFileName = \Yii::$app->security
                         ->generateRandomString().'.'.$model->agreement->extension;
                 $model->agreement_document = $newFileName;
-                if($model->status=='Agreement Processed'){
+                if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
+                    $newFileName1 = \Yii::$app->security
+                            ->generateRandomString().'.'.$model->stampdutycertificate->extension;
+                    $model->stampduty_certificate = $newFileName1;
+
+                }
+                $oldstatus = $model->status;
+                    if($model->status=='Agreement Processed'){
                     $model->status = 'Payment Requested';
                 }
                 $model->updated_at = date('Y-m-d H:i:s');
-                if($model->save()){
-                    $todomodel->status = 'Unpaid';
-                    $todomodel->updated_at = date('Y-m-d H:i:s');
-                    $todomodel->save(false);
+                $model->updated_by = Yii::$app->user->id;
+                if($model->save(false)){
+                    if($oldstatus =='Agreement Processed') {
+                        $todomodel->status = 'Unpaid';
+                        $todomodel->updated_at = date('Y-m-d H:i:s');
+                        $todomodel->save(false);
+                    }
                     $model->agreement->saveAs('uploads/agreements/' . $newFileName);
-                    return $this->redirect(['index']);
+                    if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
+                        $model->stampdutycertificate->saveAs('uploads/agreements/' . $newFileName1);
+
+                    }
+                        return $this->redirect(['index']);
 
                 }else{
                     return $this->render('uploadagreement', [
@@ -297,6 +316,8 @@ class BookingrequestsController extends Controller
                 $model->movein_document = $newFileName1;
 
                 $model->updated_at = date('Y-m-d H:i:s');
+                $model->updated_by = Yii::$app->user->id;
+
                 if($model->save()){
                     $model->movein->saveAs('uploads/moveinout/' . $newFileName1);
                     return $this->redirect(['index']);
@@ -333,6 +354,8 @@ class BookingrequestsController extends Controller
                 $model->moveout_document = $newFileName1;
                 $model->moveout_date = date('Y-m-d',strtotime($model->moveout_date));
                 $model->updated_at = date('Y-m-d H:i:s');
+                $model->updated_by = Yii::$app->user->id;
+
                 if($model->save()){
                     $model->moveout->saveAs('uploads/moveinout/' . $newFileName1);
                     return $this->redirect(['index']);
@@ -535,6 +558,7 @@ class BookingrequestsController extends Controller
                 try {
                     $model->status = 'Refund Requested';
                     $model->updated_at = date('Y-m-d H:i:s');
+                    $model->updated_by = Yii::$app->user->id;
                     $model->save(false);
                     $modelCustomer->property_id = $model->property_id;
                     $modelCustomer->request_id = $id;
