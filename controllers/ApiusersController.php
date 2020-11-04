@@ -172,7 +172,7 @@ class ApiusersController extends ActiveController
                 $model->scenario = 'login';
                 $model->attributes = Yii::$app->request->post();
                 if($model->validate()){
-                    $userexist = Users::find()->where([
+                    $userexist = Users::find()->select(['*',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where([
                         'email' => $model->email,
                         'password' => md5($model->password)
                     ])->andWhere(['in','role',['User']])->asArray()->one();
@@ -215,6 +215,7 @@ class ApiusersController extends ActiveController
                             $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
 
                             $token = (string) Users::generateToken($userexist);
+
                             return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist,'token'=>$token);
 
                         }
@@ -705,7 +706,7 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if(!empty($_POST) && isset($_POST['property_id']) && $_POST['property_id']!=''){
+            if(!empty($_POST) && isset($_POST['property_id']) && $_POST['property_id']!='' && isset($_POST['message']) && $_POST['message']!=''){
                 $model = Properties::findOne($_POST['property_id']);
                 $usermodel = Users::findOne($this->user_id);
                 $emailtemplate = EmailTemplates::findOne(['name' => 'Report Property']);
