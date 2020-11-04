@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\AgentRatings;
+use app\models\AppRatings;
 use app\models\BankAccounts;
 use app\models\BookingRequests;
 use app\models\Chats;
@@ -2947,6 +2948,35 @@ class ApiusersController extends ActiveController
         }
     }
 
+    public function actionRankapp()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+
+                $user_id = $this->user_id;
+                $model = new AppRatings();
+                $model->scenario = 'addrating';
+                $model->attributes = Yii::$app->request->post();
+                $model->user_id =  $user_id;
+                if($model->validate()){
+                    $model->created_at = date('Y-m-d H:i:s');
+                    if($model->save()){
+                        return array('status' => 1, 'message' => 'You have reviewed app successfully.');
+                    }else{
+                        return array('status' => 0, 'data' => $model->getErrors());
+
+                    }
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+
+                }
+
+
+        }
+    }
 
     public function actionRefundmoveout()
     {
@@ -4837,8 +4867,8 @@ class ApiusersController extends ActiveController
                 if(!empty($propertydetails)){
                     $fromdate = date('Y-m-01 00:00:00'); // hard-coded '01' for first day
                     $todate  = date('Y-m-t 11:59:59');
-                    $data['cleaningorders'] = ServiceRequests::find()->where(['property_id'=>$property_id,'reftype'=>'Cleaner','status'=>'Completed'])->andWhere(['>=','DATE(created_at)', $fromdate])->andWhere(['<=','DATE(created_at)', $todate])->count();
-                    $data['repairs'] = TodoList::find()->where(['property_id'=>$property_id,'reftype'=>'Defect Report','status'=>'Completed'])->andWhere(['>=','DATE(created_at)', $fromdate])->andWhere(['<=','DATE(created_at)', $todate])->count();;
+                    $data['cleaningorders'] = ServiceRequests::find()->where(['property_id'=>$property_id,'reftype'=>'Cleaner','status'=>'Completed'])->count();
+                    $data['repairs'] = TodoList::find()->where(['property_id'=>$property_id,'reftype'=>'Defect Report','status'=>'Completed'])->count();;
                     return array('status' => 0, 'data' => $data);
 
 
