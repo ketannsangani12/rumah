@@ -1998,7 +1998,9 @@ class ApiusersController extends ActiveController
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
                                     $subtotal = $model->tenancy_fees+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;
-                                    $sst = Yii::$app->common->calculatesst($subtotal);
+                                    $sst = number_format($model->tenancy_fees * 6 / 100, 2, '.', '');
+
+                                // $sst = Yii::$app->common->calculatesst($subtotal);
                                     $model->subtotal = $subtotal;
                                     $model->sst = $sst;
                                     $model->total = $subtotal+$sst;

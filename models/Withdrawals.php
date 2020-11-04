@@ -25,6 +25,7 @@ use Yii;
 class Withdrawals extends \yii\db\ActiveRecord
 {
     public $password;
+    public $proof;
     /**
      * {@inheritdoc}
      */
@@ -43,7 +44,7 @@ class Withdrawals extends \yii\db\ActiveRecord
             [['status'], 'required','on'=>'updatewithdrawal'],
             [['user_id', 'bank_id'], 'integer'],
             [['amount', 'fees', 'total_amount', 'old_balance', 'new_balance'], 'number'],
-            [['status'], 'string'],
+            [['status','remarks'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['reference_no'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -62,6 +63,8 @@ class Withdrawals extends \yii\db\ActiveRecord
             'reference_no' => 'Reference No',
             'amount' => 'Amount',
             'fees' => 'Fees',
+            'remarks'=>'Remarks',
+            'proof' =>'File',
             'total_amount' => 'Total Amount',
             'old_balance' => 'Old Balance',
             'new_balance' => 'New Balance',

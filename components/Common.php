@@ -247,7 +247,7 @@ class Common extends Component
     }
     public function calculatesst($amount)
     {
-        $total_fees = number_format($amount * 6 / 100, 2, '.', '');
+        $total_fees = number_format($amount * 0 / 100, 2, '.', '');
         return $total_fees;
 
 

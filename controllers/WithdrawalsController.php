@@ -2,14 +2,17 @@
 
 namespace app\controllers;
 
+use app\models\EmailTemplates;
 use app\models\Transactions;
 use app\models\Users;
 use Yii;
 use app\models\Withdrawals;
 use app\models\WithdrawalsSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * WithdrawalsController implements the CRUD actions for Withdrawals model.
@@ -22,6 +25,17 @@ class WithdrawalsController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','create','delete','update','view'],
+                'rules' => [
+                    [
+                        'actions' => ['index','delete','create','update','view'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -89,24 +103,51 @@ class WithdrawalsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if($model->validate()){
                 if($model->status=='Completed'){
+                    $userdetails = Users::findOne($model->user_id);
+
+                    $model->proof = UploadedFile::getInstance($model, 'proof');
+                    $model->proof->saveAs('uploads/withdrawals/' . $model->proof->baseName . '.' . $model->proof->extension);
+                    $document = 'uploads/withdrawals/' . $model->proof->baseName . '.' . $model->proof->extension;
+
                     $model->save(false);
                     $transactionmodel = Transactions::findOne(['withdrawal_id' => $id]);
-                    $transactionmodel->status = 'Declined';
+                    $transactionmodel->status = 'Completed';
                     $transactionmodel->save(false);
+                    $emailtemplate = EmailTemplates::findOne(['name'=>'User Withdrawal']);
+                    $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
+
+                    $send = Yii::$app->mailer->compose()
+                        ->setFrom('rumahimy@gmail.com')
+                        ->setTo($userdetails->email)
+                        ->setSubject($emailtemplate->subject)
+                        ->setHtmlBody($content)
+                        ->attach($document)
+                        ->send();
                     return $this->redirect(['index']);
 
                 }else if($model->status=='Declined'){
                     $model->save(false);
                     $transactionmodel = Transactions::findOne(['withdrawal_id' => $id]);
                     $transactionmodel->status = 'Declined';
-                    if ($transactionmodel->save()) {
+                    if ($transactionmodel->save(false)) {
                             $userbalance = Users::getbalance($model->user_id);
+                            $userdetails = Users::findOne($model->user_id);
                             $model->old_balance = $userbalance;
                             $model->new_balance = $userbalance + $model->amount;
                             if ($model->save(false)) {
                                 Users::updatebalance($model->new_balance,$model->user_id);
+                                $emailtemplate = EmailTemplates::findOne(['name'=>'Merchant Withdrawal']);
+                                $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
 
+                                $send = Yii::$app->mailer->compose()
+                                    ->setFrom('rumahimy@gmail.com')
+                                    ->setTo($userdetails->email)
+                                    ->setSubject($emailtemplate->subject)
+                                    ->setHtmlBody($content)
+                                    ->send();
                             }
+
+
 
                         return $this->redirect(['index']);
 

@@ -85,6 +85,9 @@ class EmailTemplates extends \yii\db\ActiveRecord
             if(isset($model->full_name)) {
                 $content = str_replace("@name@", $model->full_name, $content);
             }
+            if(isset($model->remarks)) {
+                $content = str_replace("@remarks@", $model->remarks, $content);
+            }
             if(isset($usermodel->full_name)) {
                 $content = str_replace("@name@", $usermodel->full_name, $content);
             }

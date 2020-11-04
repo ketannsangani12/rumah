@@ -13,6 +13,8 @@ use yii\widgets\ActiveForm;
     <div class="box-body table-responsive">
 
         <?= $form->field($model, 'status')->dropDownList([ 'Completed' => 'Approved', 'Declined' => 'Declined', ], ['prompt' => '']) ?>
+        <?= $form->field($model, 'remarks')->textarea() ?>
+        <?= $form->field($model, 'proof')->fileInput() ?>
 
     </div>
     <div class="box-footer">
