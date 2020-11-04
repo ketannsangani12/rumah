@@ -73,9 +73,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn',
                 'template'=>'{update}',
                 'visibleButtons' => [
-                    //'update' => function ($model) {
-                    // return ($model->status=='Pending');
-                    // },
+                    'update' => function ($model) {
+                     return ($model->status=='Pending');
+                     },
                 ],
                 'buttons'=>[
 
