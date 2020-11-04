@@ -12,6 +12,7 @@ use app\models\GoldTransactions;
 use app\models\Ilifestyle;
 use app\models\Images;
 use app\models\Istories;
+use app\models\Packages;
 use app\models\PromoCodes;
 use app\models\Properties;
 use app\models\PropertyRatings;
@@ -24,6 +25,7 @@ use app\models\TodoList;
 use app\models\Topups;
 use app\models\Transactions;
 use app\models\TransactionsItems;
+use app\models\UserPackages;
 use app\models\UsersDocuments;
 use app\models\VendorRatings;
 use app\models\Withdrawals;
@@ -426,6 +428,17 @@ class ApiusersController extends ActiveController
                             $user_id = $model->id;
                             $gold_coins = 188;
                             Yii::$app->common->addgoldcoinspurchase($userid,$gold_coins,null,'Onboarding',$user_id);
+                            $package = Packages::findOne(1);
+                            $packagemodel = new UserPackages();
+                            $packagemodel->user_id = $this->user_id;
+                            $packagemodel->start_date = date('Y-m-d');
+                            $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                            $packagemodel->created_at = date('Y-m-d H:i:s');
+                            if($packagemodel->save(false)){
+                                $model->property_credited = $package->quantity;
+                                $model->save(false);
+
+                            }
                             //Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding');
 
                             return array('status' => 1, 'message' => 'Your account have Verified Successfully.');
@@ -488,6 +501,116 @@ class ApiusersController extends ActiveController
             } else {
                 return array('status' => 0, 'message' => 'Please enter mandatory fields.');
             }
+        }
+
+
+    }
+
+    public function actionPackages()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+           $packages = Packages::find()->all();
+           $currentpackage = UserPackages::find()->where(['user_id'=>$this->user_id])->orderBy(['id'=>SORT_DESC])->one();
+           $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
+            $userdetails = Users::findOne($this->user_id);
+            $currentpackageid = '';
+           if(!empty($currentpackage)){
+               $currentpackageid = $currentpackage->package_id;
+           }
+            $data = array();
+           if(!empty($packages)){
+               foreach ($packages as $key=>$package){
+                   $data[$key]['id'] = $package->id;
+                   $data[$key]['package'] = $package->name;
+                   $data[$key]['price'] = $package->price;
+                   $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
+                   $data[$key]['total'] = $package->quantity;
+                   $data[$key]['remaining'] = $userdetails->property_credited-$mypropertiescount;
+
+
+               }
+           }
+
+           return array('status' => 1, 'data' => $data);
+
+
+        }
+
+
+    }
+
+    public function actionPurchasepackage()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST) && $_POST['package_id']!='') {
+                $model = new UserPackages();
+                $model->attributes = Yii::$app->request->post();
+                if($model->validate()){
+                    $packagedetails = Packages::findOne($_POST['package_id']);
+                    $userbalance = Users::getbalance($this->user_id);
+                    if($packagedetails->price>$userbalance){
+                        return array('status' => 0, 'message' => 'You do not have enough balance to upgrade package.');
+                    }
+
+                    $model->user_id = $this->user_id;
+                    $model->start_date = date('Y-m-d');
+                    $model->end_date = date('Y-m-d', strtotime('+1 years'));
+                    $model->created_at = date('Y-m-d H:i:s');
+                    $model->updated_at = date('Y-m-d H:i:s');
+                    if ($model->save()) {
+                        $transactionmodel = new Transactions();
+                        $transactionmodel->user_id = $model->user_id;
+                        $transactionmodel->amount = $packagedetails->price;
+                        $transactionmodel->total_amount = $packagedetails->price;
+                        $transactionmodel->package_id = $model->id;
+                        $transactionmodel->created_at = date('Y-m-d H:i:s');
+                        $transactionmodel->reftype = 'Package Purchase';
+                        $transactionmodel->status = 'Completed';
+                        if($transactionmodel->save()){
+                            $lastid = $transactionmodel->id;
+                            $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                            $transactionmodel->reference_no = "TR".$reference_no;
+                            $transactionmodel->save(false);
+                            $user = Users::findOne($model->user_id);
+                            if ($user->membership_expire_date == NULL) {
+                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
+                            } else {
+                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime($user->membership_expire_date)));
+                            }
+                            $user->property_credited += $packagedetails->quantity;
+                            if($user->save(false)){
+                                Users::updatebalance($userbalance-$packagedetails->price,$this->user_id);
+                                return array('status' => 1, 'message' => 'You have purchased package successfully.');
+
+                            }else{
+                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                            }
+
+                        }else{
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                        }
+
+                        }else{
+                        return array('status' => 0, 'message' => $model->getErrors());
+
+                        }
+                    }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+
+                }
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+
         }
 
 
@@ -1178,6 +1301,12 @@ class ApiusersController extends ActiveController
                 //$propertymodel->amenities = implode(',',$propertymodel->amenities);
                 //$propertymodel->commute = implode(',',$propertymodel->commute);
                 if($propertymodel->validate()){
+                    $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
+                    $userdetails = Users::findOne($this->user_id);
+                    if($mypropertiescount >= $userdetails->property_credited){
+                        return array('status' => 0, 'message' => 'You have already exceeded limit of Post Property. So Please purchase package');
+
+                    }
                     $pictures = $propertymodel->pictures;
                     $propertymodel->pictures = null;
                     $propertymodel->user_id = $this->user_id;
