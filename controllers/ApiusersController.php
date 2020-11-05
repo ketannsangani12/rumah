@@ -944,7 +944,7 @@ class ApiusersController extends ActiveController
             }
             $myvacantproperties = BookingRequests::find()->select(['id','property_id','user_id','landlord_id','monthly_rental','commencement_date','tenancy_period'])->with([
                 'property'=>function ($query) {
-                    $query->select('id,property_no,title,doorlock_code');
+                    $query->select('id,property_no,title,doorlock_code,is_managed');
                 },
                 'property.pictures'=>function ($query) use($baseurl) {
                     $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->all();
