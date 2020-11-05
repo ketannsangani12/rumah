@@ -4,59 +4,6 @@
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/Properties.php" afterPath="$PROJECT_DIR$/models/Properties.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/agreementtemplates/_form.php" afterPath="$PROJECT_DIR$/views/agreementtemplates/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/autorentalcollections/_form.php" afterPath="$PROJECT_DIR$/views/autorentalcollections/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/autorentalcollections/view.php" afterPath="$PROJECT_DIR$/views/autorentalcollections/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/_form.php" afterPath="$PROJECT_DIR$/views/bookingrequests/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/_formagreement.php" afterPath="$PROJECT_DIR$/views/bookingrequests/_formagreement.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/_formchoosetemplate.php" afterPath="$PROJECT_DIR$/views/bookingrequests/_formchoosetemplate.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/_formmovein.php" afterPath="$PROJECT_DIR$/views/bookingrequests/_formmovein.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/_formmoveout.php" afterPath="$PROJECT_DIR$/views/bookingrequests/_formmoveout.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/_formmoveoutinvoice.php" afterPath="$PROJECT_DIR$/views/bookingrequests/_formmoveoutinvoice.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/view.php" afterPath="$PROJECT_DIR$/views/bookingrequests/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/bookingrequests/viewcancelbooking.php" afterPath="$PROJECT_DIR$/views/bookingrequests/viewcancelbooking.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/categories/_form.php" afterPath="$PROJECT_DIR$/views/categories/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/defectreports/_form.php" afterPath="$PROJECT_DIR$/views/defectreports/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/defectreports/_formquote.php" afterPath="$PROJECT_DIR$/views/defectreports/_formquote.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/defectreports/_formupdatestatus.php" afterPath="$PROJECT_DIR$/views/defectreports/_formupdatestatus.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/defectreports/view.php" afterPath="$PROJECT_DIR$/views/defectreports/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/ilifestyle/_form.php" afterPath="$PROJECT_DIR$/views/ilifestyle/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/ilifestyle/view.php" afterPath="$PROJECT_DIR$/views/ilifestyle/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/images/_form.php" afterPath="$PROJECT_DIR$/views/images/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/insurances/_form.php" afterPath="$PROJECT_DIR$/views/insurances/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/insurances/_formuploadcovernote.php" afterPath="$PROJECT_DIR$/views/insurances/_formuploadcovernote.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/insurances/view.php" afterPath="$PROJECT_DIR$/views/insurances/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/invoices/_form.php" afterPath="$PROJECT_DIR$/views/invoices/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/invoices/view.php" afterPath="$PROJECT_DIR$/views/invoices/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/istories/_form.php" afterPath="$PROJECT_DIR$/views/istories/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/istories/view.php" afterPath="$PROJECT_DIR$/views/istories/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/managedproperties/_form.php" afterPath="$PROJECT_DIR$/views/managedproperties/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/managedproperties/index.php" afterPath="$PROJECT_DIR$/views/managedproperties/index.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/managedproperties/view.php" afterPath="$PROJECT_DIR$/views/managedproperties/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/packages/_form.php" afterPath="$PROJECT_DIR$/views/packages/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/packages/view.php" afterPath="$PROJECT_DIR$/views/packages/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/promocodes/_form.php" afterPath="$PROJECT_DIR$/views/promocodes/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/promocodes/view.php" afterPath="$PROJECT_DIR$/views/promocodes/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/properties/_form.php" afterPath="$PROJECT_DIR$/views/properties/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/properties/view.php" afterPath="$PROJECT_DIR$/views/properties/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/renovationquotes/_form.php" afterPath="$PROJECT_DIR$/views/renovationquotes/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/renovationquotes/_form1.php" afterPath="$PROJECT_DIR$/views/renovationquotes/_form1.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/renovationquotes/_formaddmilestone.php" afterPath="$PROJECT_DIR$/views/renovationquotes/_formaddmilestone.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/renovationquotes/_formuploadmilestonedocument.php" afterPath="$PROJECT_DIR$/views/renovationquotes/_formuploadmilestonedocument.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/renovationquotes/view.php" afterPath="$PROJECT_DIR$/views/renovationquotes/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/servicerequestimages/_form.php" afterPath="$PROJECT_DIR$/views/servicerequestimages/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/servicerequests/_form.php" afterPath="$PROJECT_DIR$/views/servicerequests/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/servicerequests/_formassignvendor.php" afterPath="$PROJECT_DIR$/views/servicerequests/_formassignvendor.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/servicerequests/_formcleaningorder.php" afterPath="$PROJECT_DIR$/views/servicerequests/_formcleaningorder.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/servicerequests/_formissueinvoice.php" afterPath="$PROJECT_DIR$/views/servicerequests/_formissueinvoice.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/servicerequests/_formmoverorder.php" afterPath="$PROJECT_DIR$/views/servicerequests/_formmoverorder.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/servicerequests/_formquote.php" afterPath="$PROJECT_DIR$/views/servicerequests/_formquote.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/servicerequests/view.php" afterPath="$PROJECT_DIR$/views/servicerequests/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/users/_form.php" afterPath="$PROJECT_DIR$/views/users/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/users/view.php" afterPath="$PROJECT_DIR$/views/users/view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/withdrawals/_form.php" afterPath="$PROJECT_DIR$/views/withdrawals/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/withdrawals/view.php" afterPath="$PROJECT_DIR$/views/withdrawals/view.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -77,12 +24,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="view.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/renovationquotes/view.php">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="587">
-              <caret line="67" column="0" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="350">
+              <caret line="4950" column="0" selection-start-line="4950" selection-start-column="0" selection-end-line="4950" selection-end-column="0" />
+              <folding>
+                <element signature="e#35#63#0#PHP" expanded="true" />
+                <element signature="e#128023#130010#0#PHP" expanded="false" />
+                <element signature="e#148310#149889#0#PHP" expanded="false" />
+                <element signature="e#237316#251832#0#PHP" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -107,11 +59,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_form.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="_form.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/views/servicerequestimages/_form.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="407">
-              <caret line="224" column="8" selection-start-line="224" selection-start-column="0" selection-end-line="225" selection-end-column="0" />
+            <state relative-caret-position="287">
+              <caret line="216" column="0" selection-start-line="216" selection-start-column="0" selection-end-line="216" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -199,7 +151,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/views/users/view.php" />
         <option value="$PROJECT_DIR$/views/agreementtemplates/_form.php" />
         <option value="$PROJECT_DIR$/views/autorentalcollections/_form.php" />
         <option value="$PROJECT_DIR$/views/autorentalcollections/view.php" />
@@ -250,6 +201,7 @@
         <option value="$PROJECT_DIR$/views/servicerequests/view.php" />
         <option value="$PROJECT_DIR$/views/servicerequests/_formassignvendor.php" />
         <option value="$PROJECT_DIR$/views/servicerequestimages/_form.php" />
+        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
       </list>
     </option>
   </component>
@@ -1020,12 +972,12 @@
       <workItem from="1604416787272" duration="1989000" />
       <workItem from="1604461785523" duration="8371000" />
       <workItem from="1604485666697" duration="344000" />
-      <workItem from="1604548015392" duration="5090000" />
+      <workItem from="1604548015392" duration="5334000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="712462000" />
+    <option name="totallyTimeSpent" value="712706000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -1128,14 +1080,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/views/packages/_form.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/autorentalcollections/view.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -1530,9 +1474,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/views/servicerequestimages/_form.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="407">
-          <caret line="224" column="8" selection-start-line="224" selection-start-column="0" selection-end-line="225" selection-end-column="0" />
+        <state relative-caret-position="287">
+          <caret line="216" column="0" selection-start-line="216" selection-start-column="0" selection-end-line="216" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="4950" column="0" selection-start-line="4950" selection-start-column="0" selection-end-line="4950" selection-end-column="0" />
+          <folding>
+            <element signature="e#35#63#0#PHP" expanded="true" />
+            <element signature="e#128023#130010#0#PHP" expanded="false" />
+            <element signature="e#148310#149889#0#PHP" expanded="false" />
+            <element signature="e#237316#251832#0#PHP" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

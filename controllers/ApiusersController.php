@@ -4897,28 +4897,7 @@ class ApiusersController extends ActiveController
             $model->attributes = Yii::$app->request->post();
 
             $property = Properties::findOne($model->property_id);
-            if ($property->is_managed == 0 || $property->is_managed==null) {
-                if (isset($_POST['message']) && $_POST['message']!=''){
-                    $usermodel = Users::findOne($this->user_id);
-                    $landlordemail = $property->user->email;
-
-                    $emailtemplate = EmailTemplates::findOne(['name'=>'Report Defect']);
-
-                    $content = EmailTemplates::getemailtemplate($emailtemplate,$property,$usermodel,'',$_POST['message']);
-
-                    $send = Yii::$app->mailer->compose()
-                        ->setFrom('rumahimy@gmail.com')
-                        ->setTo($landlordemail)
-                        ->setSubject($emailtemplate->subject)
-                        ->setHtmlBody($content)
-                        ->send();
-                }else{
-                    return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-                }
-
-            } else {
-
+            if ($property->is_managed == 1 ) {
                 if ($model->validate()) {
                     $photo = $model->photo;
                     $model->photo = null;
@@ -4951,6 +4930,30 @@ class ApiusersController extends ActiveController
                     return array('status' => 0, 'message' => $model->getErrors());
 
                 }
+
+
+            } else {
+                if (isset($_POST['message']) && $_POST['message']!=''){
+                    $usermodel = Users::findOne($this->user_id);
+                    $landlordemail = $property->user->email;
+
+                    $emailtemplate = EmailTemplates::findOne(['name'=>'Report Defect']);
+
+                    $content = EmailTemplates::getemailtemplate($emailtemplate,$property,$usermodel,'',$_POST['message']);
+
+                    $send = Yii::$app->mailer->compose()
+                        ->setFrom('rumahimy@gmail.com')
+                        ->setTo($landlordemail)
+                        ->setSubject($emailtemplate->subject)
+                        ->setHtmlBody($content)
+                        ->send();
+                    return array('status' => 1, 'message' => 'You have submitted defect report successfully.');
+
+                }else{
+                    return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+                }
+
             }
         }
     }
