@@ -4896,38 +4896,61 @@ class ApiusersController extends ActiveController
             $model->scenario = 'reportdefect';
             $model->attributes = Yii::$app->request->post();
 
-            if($model->validate()){
-                $property = Properties::findOne($model->property_id);
-                $photo = $model->photo;
-                $model->photo = null;
-                $model->landlord_id = $property->user_id;
-                $model->reftype = 'Defect Report';
-                $model->status = 'New';
-                $model->created_at = date('Y-m-d H:i:s');
-                if($model->save(false)) {
-                    $filename = uniqid();
-                    $data = Yii::$app->common->processBase64($photo);
-                    file_put_contents('uploads/tododocuments/' . $filename . '.' . $data['type'], $data['data']);
-                    $tododocument = new TodoDocuments();
-                    $tododocument->todo_id = $model->id;
-                    $tododocument->document = $filename . '.' . $data['type'];
-                    $tododocument->created_at = date('Y-m-d H:i:s');
-                    if ($tododocument->save(false)){
-                        return array('status' => 1, 'message' => 'You have submitted defect report successfully.');
+            $property = Properties::findOne($model->property_id);
+            if ($property->is_managed == 0 || $property->is_managed==null) {
+                if (isset($_POST['message']) && $_POST['message']!=''){
+                    $usermodel = Users::findOne($this->user_id);
+                    $landlordemail = $property->user->email;
 
-                    }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                    $emailtemplate = EmailTemplates::findOne(['name'=>'Report Defect']);
 
-                    }
+                    $content = EmailTemplates::getemailtemplate($emailtemplate,$property,$usermodel,'',$_POST['message']);
 
+                    $send = Yii::$app->mailer->compose()
+                        ->setFrom('rumahimy@gmail.com')
+                        ->setTo($landlordemail)
+                        ->setSubject($emailtemplate->subject)
+                        ->setHtmlBody($content)
+                        ->send();
                 }else{
-                    return array('status' => 0, 'message' => $model->getErrors());
+                    return array('status' => 0, 'message' => 'Please enter mandatory fields.');
 
                 }
 
-            }else{
-                return array('status' => 0, 'message' => $model->getErrors());
+            } else {
 
+                if ($model->validate()) {
+                    $photo = $model->photo;
+                    $model->photo = null;
+                    $model->landlord_id = $property->user_id;
+                    $model->reftype = 'Defect Report';
+                    $model->status = 'New';
+                    $model->created_at = date('Y-m-d H:i:s');
+                    if ($model->save(false)) {
+                        $filename = uniqid();
+                        $data = Yii::$app->common->processBase64($photo);
+                        file_put_contents('uploads/tododocuments/' . $filename . '.' . $data['type'], $data['data']);
+                        $tododocument = new TodoDocuments();
+                        $tododocument->todo_id = $model->id;
+                        $tododocument->document = $filename . '.' . $data['type'];
+                        $tododocument->created_at = date('Y-m-d H:i:s');
+                        if ($tododocument->save(false)) {
+                            return array('status' => 1, 'message' => 'You have submitted defect report successfully.');
+
+                        } else {
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                        }
+
+                    } else {
+                        return array('status' => 0, 'message' => $model->getErrors());
+
+                    }
+
+                } else {
+                    return array('status' => 0, 'message' => $model->getErrors());
+
+                }
             }
         }
     }
