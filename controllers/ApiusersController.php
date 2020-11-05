@@ -2637,7 +2637,7 @@ class ApiusersController extends ActiveController
             $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'worker_id' ,'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                 ->with([
                     'request' => function ($query) {
-                        $query->select(['id','commencement_date','tenancy_period','status',new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `stampduty_certificate`) as stampduty_certificate"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
+                        $query->select(['id','commencement_date','tenancy_period','status',new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `stampduty_certificate`) as stampduty_certificate"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document"),'updated_at']);
                     },
                     'servicerequest'=>function ($query) {
                         $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
@@ -2681,6 +2681,7 @@ class ApiusersController extends ActiveController
                                          $months = $todolist['request']['tenancy_period'];
                                          $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
                                          $moveindocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                         $moveindocument['date'] = date('d-m-Y',strtotime($todolist['request']['updated_at']));
                                          $data[] = $moveindocument;
                                      }
                                      if($todolist['request']['agreement_document']!=''){
@@ -2692,6 +2693,8 @@ class ApiusersController extends ActiveController
                                          $months = $todolist['request']['tenancy_period'];
                                          $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
                                          $agreementdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                         $agreementdocument['date'] = date('d-m-Y',strtotime($todolist['request']['updated_at']));
+
                                          $data[] = $agreementdocument;
 
                                      }
@@ -2716,6 +2719,8 @@ class ApiusersController extends ActiveController
                                          $months = $todolist['request']['tenancy_period'];
                                          $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
                                          $moveoutdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                         $moveoutdocument['date'] = date('d-m-Y',strtotime($todolist['request']['updated_at']));
+
                                          $data[] = $moveoutdocument;
 
                                      }
@@ -2731,6 +2736,8 @@ class ApiusersController extends ActiveController
                                         $months = $todolist['request']['tenancy_period'];
                                         $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
                                         $moveindocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                        $moveindocument['date'] = date('d-m-Y',strtotime($todolist['request']['updated_at']));
+
                                         $data[] = $moveindocument;
                                     }
                                     if($todolist['request']['agreement_document']!=''){
@@ -2742,6 +2749,7 @@ class ApiusersController extends ActiveController
                                         $months = $todolist['request']['tenancy_period'];
                                         $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
                                         $agreementdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                        $agreementdocument['date'] = date('d-m-Y',strtotime($todolist['request']['updated_at']));
                                         $data[] = $agreementdocument;
 
                                     }
@@ -2754,6 +2762,8 @@ class ApiusersController extends ActiveController
                                         $months = $todolist['request']['tenancy_period'];
                                         $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
                                         $agreementdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                        $agreementdocument['date'] = date('d-m-Y',strtotime($todolist['request']['updated_at']));
+
                                         $data[] = $agreementdocument;
 
                                     }
@@ -2766,6 +2776,8 @@ class ApiusersController extends ActiveController
                                         $months = $todolist['request']['tenancy_period'];
                                         $effectiveDate = date('Y-m-d', strtotime("+" . $months . " months", strtotime($commencmentdate)));
                                         $moveoutdocument['agreement_period'] = date('M-Y', strtotime($commencmentdate)) . " - " . date('M-Y', strtotime($effectiveDate));
+                                        $moveoutdocument['date'] = date('d-m-Y',strtotime($todolist['request']['updated_at']));
+
                                         $data[] = $moveoutdocument;
 
                                     }
@@ -2781,6 +2793,8 @@ class ApiusersController extends ActiveController
                                 $covernotedocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
                                 $covernotedocument['location'] = $todolist['property']['location'];
                                 $covernotedocument['agreement_period'] = '';
+                                $covernotedocument['date'] = date('d-m-Y',strtotime($todolist['updated_at']));
+
                                 $data[] = $covernotedocument;
 
                             }
