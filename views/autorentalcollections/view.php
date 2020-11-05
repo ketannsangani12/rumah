@@ -10,14 +10,17 @@ use yii\widgets\Pjax;
 $this->title = 'View Auto Rental Details - '.$model->property->title;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="renovation-quotes-index box box-primary">
+<div class="row">
+    <div class="col-md-6">
+
+    <div class="renovation-quotes-index box box-primary">
     <?php Pjax::begin(); ?>
     <div class="box-header with-border">
         <h3><?php echo "View Auto Rental "." - ".$model->property->title;?></h3>
     </div>
     <div class="box-body table-responsive">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
                 <?= \yii\widgets\DetailView::widget([
                     'model' => $model,
@@ -76,10 +79,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ])  ?>
             </div>
-            <div class="col-md-6">
 
-            </div>
         </div>
+        <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
     </div>
     <?php Pjax::end(); ?>
 </div>
+</div>
+    </div>

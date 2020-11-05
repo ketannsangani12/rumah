@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         'gallery' => function ($url, $model) {
 
-                            return Html::a('<i class="fa fa-picture-o" aria-hidden="true"></i>', ['images/add','id'=>$model->id], [
+                            return Html::a('<i class="fa fa-picture-o" aria-hidden="true"></i>', ['images/create','id'=>$model->id], [
 
                                 'title' => 'Images',
                                 'class'=>'btn btn-sm bg-olive datatable-operation-btn'

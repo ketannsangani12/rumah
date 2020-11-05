@@ -55,6 +55,9 @@ use yii\widgets\ActiveForm;
                 <?= Html::a('Print', \yii\helpers\Url::to([Yii::$app->controller->id.'/printagreement', 'id' => $model->id]),['class' => 'btn bg-orange btn-flat']) ?>
 
                 <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-flat']) ?>
+
+                <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
             </div>
             <?php ActiveForm::end(); ?>
         </div>

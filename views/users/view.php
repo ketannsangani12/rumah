@@ -17,9 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-
-    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -44,7 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
             //'updated_at',
         ],
     ]) ?>
+        <p>
+            <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
 
-</div>
+        </p>
+
+
+    </div>
 </div>
 </div>

@@ -1999,7 +1999,7 @@ class ApiusersController extends ActiveController
                                 }
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
-                                    $subtotal = $model->tenancy_fees+$model->booking_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit;
+                                    $subtotal = $model->tenancy_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit-$model->booking_fees;
                                     $sst = number_format($model->tenancy_fees * 6 / 100, 2, '.', '');
 
                                 // $sst = Yii::$app->common->calculatesst($subtotal);
@@ -2116,20 +2116,20 @@ class ApiusersController extends ActiveController
                                 $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
                                 $transaction->reference_no = $reference_no;
                                 if ($transaction->save(false)) {
-                                    if($model->booking_fees>0){
-                                        $transactionitems = new TransactionsItems();
-                                        $transactionitems->sender_id = $model->user_id;
-                                        $transactionitems->receiver_id = $model->landlord_id;
-                                        $transactionitems->amount = $model->booking_fees;
-                                        $transactionitems->total_amount = $model->booking_fees;
-                                        $transactionitems->oldsenderbalance = $senderbalance;
-                                        $transactionitems->newsenderbalance = $senderbalance-$model->booking_fees;
-                                        $transactionitems->oldreceiverbalance = $receiverbalance;
-                                        $transactionitems->newreceiverbalance = $receiverbalance+$model->booking_fees;
-                                        $transactionitems->description = 'Booking Fees';
-                                        $transactionitems->created_at = date('Y-m-d H:i:s');
-                                        $transactionitems->save(false);
-                                    }
+//                                    if($model->booking_fees>0){
+//                                        $transactionitems = new TransactionsItems();
+//                                        $transactionitems->sender_id = $model->user_id;
+//                                        $transactionitems->receiver_id = $model->landlord_id;
+//                                        $transactionitems->amount = $model->booking_fees;
+//                                        $transactionitems->total_amount = $model->booking_fees;
+//                                        $transactionitems->oldsenderbalance = $senderbalance;
+//                                        $transactionitems->newsenderbalance = $senderbalance-$model->booking_fees;
+//                                        $transactionitems->oldreceiverbalance = $receiverbalance;
+//                                        $transactionitems->newreceiverbalance = $receiverbalance+$model->booking_fees;
+//                                        $transactionitems->description = 'Booking Fees';
+//                                        $transactionitems->created_at = date('Y-m-d H:i:s');
+//                                        $transactionitems->save(false);
+//                                    }
                                     if($model->rental_deposit>0){
                                         $transactionitems = new TransactionsItems();
                                         $transactionitems->sender_id = $model->user_id;

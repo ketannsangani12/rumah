@@ -43,7 +43,9 @@ use yii\widgets\ActiveForm;
         <div class="row">
         <div class="col-md-8">
         <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-flat']) ?>
-            </div>
+        <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
+        </div>
             </div>
     </div>
     <?php ActiveForm::end(); ?>

@@ -26,9 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'discount',
                 'expiry_date',
                 'created_at:datetime',
-                'updated_at:datetime',
+                //'updated_at:datetime',
             ],
         ]) ?>
+        <br>
+        <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
     </div>
 </div>
 </div>

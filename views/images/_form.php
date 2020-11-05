@@ -129,6 +129,7 @@ use yii\widgets\ActiveForm;
     <div class="box-footer">
 
                 <?php //Html::submitButton('Save', ['class' => 'btn btn-primary btn-flat']) ?>
+                <?= Html::a('Back', ['properties/index'], ['class' => 'btn btn-warning btn-flat']) ?>
 
     </div>
     <?php ActiveForm::end(); ?>

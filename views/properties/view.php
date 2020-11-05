@@ -81,6 +81,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ]) ?>
             </div>
-            </div>
+            <br>
+            <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
+        </div>
     </div>
 </div>

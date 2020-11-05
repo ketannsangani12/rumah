@@ -18,6 +18,7 @@ use kartik\date\DatePicker;
         <?= $form->field($model, 'title')->textInput(['rows' => 6]) ?>
 
         <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+        <?= $form->field($model, 'remarks')->textarea(['rows' => 6]) ?>
 
         <?= $form->field($model, 'location')->widget(\fv\yii\geocomplete\Widget::class); ?>
 
@@ -84,6 +85,8 @@ use kartik\date\DatePicker;
     </div>
     <div class="box-footer">
         <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-flat']) ?>
+        <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
     </div>
     <?php ActiveForm::end(); ?>
 </div>

@@ -10,16 +10,12 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Packages', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<div class="row">
+    <div class="col-md-6">
+
 <div class="packages-view box box-primary">
     <div class="box-header">
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger btn-flat',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+       <h4><?php echo $this->title;?></h4>
     </div>
     <div class="box-body table-responsive no-padding">
         <?= DetailView::widget([
@@ -33,6 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 //'created_at:datetime',
                 //'updated_at:datetime',
             ],
-        ]) ?>
+        ]) ?><br>
+        <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
     </div>
 </div>
+</div></div>

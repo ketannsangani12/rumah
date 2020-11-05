@@ -15,19 +15,20 @@ use yii\widgets\ActiveForm;
         <div class="box-body table-responsive">
 
             <?php
-            $properties = \app\models\Users::find()->where(['role'=>$propertymodel->reftype,'current_status'=>'Free'])->asArray()->all();
-            //`print_r($properties);exit;
+            $properties = \yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>$propertymodel->reftype,'current_status'=>'Free'])->asArray()->all(),'id', 'full_name');
+
             if(!empty($properties)){
                 foreach ($properties as $property){
-                    $data[$property['id']] = $property['full_name'];
+                    $data[] = $property;
                 }
             }else{
                 $data = array();
             }
+            $propertymodel->vendor_id = null;
             ?>
 
             <?= $form->field($propertymodel, 'vendor_id')->widget(\kartik\select2\Select2::classname(), [
-                'data' => $data,
+                'data' => $properties,
                 'options' => ['placeholder' => 'Select a Vendor ...'],
                 'pluginOptions' => [
                     'allowClear' => true
@@ -38,6 +39,8 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="box-footer">
             <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
+            <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
         </div>
         <?php ActiveForm::end(); ?>
     </div>

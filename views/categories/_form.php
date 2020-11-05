@@ -21,6 +21,8 @@ use yii\widgets\ActiveForm;
             </div>
             <div class="box-footer">
                 <?= Html::submitButton('Save', ['class' => 'btn btn-circle btn-info btn-flat']) ?>
+                <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
             </div>
             <?php ActiveForm::end(); ?>
         </div>

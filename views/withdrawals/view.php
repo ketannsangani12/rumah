@@ -39,5 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'updated_at:datetime',
             ],
         ]) ?>
+        <br>
+        <?= Html::a('Back', ['index'], ['class' => 'btn btn-warning btn-flat']) ?>
+
     </div>
 </div>
