@@ -710,7 +710,7 @@ class ApiusersController extends ActiveController
                 $model = Properties::findOne($_POST['property_id']);
                 $usermodel = Users::findOne($this->user_id);
                 $emailtemplate = EmailTemplates::findOne(['name' => 'Report Property']);
-                $content = EmailTemplates::getemailtemplate($emailtemplate, $model,$usermodel);
+                $content = EmailTemplates::getemailtemplate($emailtemplate, $model,$usermodel,'',$_POST['message']);
                 $send = Yii::$app->mailer->compose()
                     ->setFrom('rumahimy@gmail.com')
                     ->setTo('rumahimy@gmail.com')
