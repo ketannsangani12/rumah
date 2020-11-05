@@ -1515,7 +1515,7 @@ class ApiusersController extends ActiveController
                 $baseurl = $this->baseurl;
                 $user_id = $this->user_id;
                 $query1 = Properties::find()
-                    ->select('id,user_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,carparks,amenities,commute,status')
+                    ->select('id,user_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,carparks,amenities,commute,status,digital_tenancy')
                     ->with([
                         'images'=>function ($query) use($baseurl) {
                             $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")]);
@@ -5585,8 +5585,11 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-           if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['selfie']) && $_POST['selfie']!=''){
-              $journeyid = $this->createjourneyid();
+           if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['selfie']) && $_POST['selfie']!='' && isset($_POST['request_id']) && $_POST['request_id']!=''){
+              $requestmodel = BookingRequests::findOne($_POST['request_id']);
+               $user_id = $this->user_id;
+
+               $journeyid = $this->createjourneyid();
               if($journeyid!=''){
                   $document = $_POST['document'];
                   $selfie = $_POST['selfie'];
@@ -5600,8 +5603,20 @@ class ApiusersController extends ActiveController
 
                                   if(!empty($getscorecardresult)){
                                    if($getscorecardresult->status=='success'){
+                                       if($user_id==$requestmodel->landlord_id){
+                                           $requestmodel->landlord_ekyc_response = json_encode($getscorecardresult);
+                                           $requestmodel->save(false);
+                                       }
+                                       if($user_id==$requestmodel->user_id){
+                                           $requestmodel->tenant_ekyc_response = json_encode($getscorecardresult);
+                                           $requestmodel->save(false);
+                                       }
                                       $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
                                       if($status=='clear'){
+                                          $usermodel = Users::findOne($user_id);
+                                          $usermodel->ekyc_response = json_encode($getscorecardresult);
+                                          $usermodel->identity_status = 'Verified';
+                                          $usermodel->save(false);
                                           return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
 
                                       } else{
@@ -5630,8 +5645,20 @@ class ApiusersController extends ActiveController
 
                                                if(!empty($getscorecardresult)){
                                                    if($getscorecardresult->status=='success'){
+                                                       if($user_id==$requestmodel->landlord_id){
+                                                           $requestmodel->landlord_ekyc_response = json_encode($getscorecardresult);
+                                                           $requestmodel->save(false);
+                                                       }
+                                                       if($user_id==$requestmodel->user_id){
+                                                           $requestmodel->tenant_ekyc_response = json_encode($getscorecardresult);
+                                                           $requestmodel->save(false);
+                                                       }
                                                        $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
                                                        if($status=='clear'){
+                                                           $usermodel = Users::findOne($user_id);
+                                                           $usermodel->ekyc_response = json_encode($getscorecardresult);
+                                                           $usermodel->identity_status = 'Verified';
+                                                           $usermodel->save(false);
                                                            return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
 
                                                        } else{
@@ -5702,8 +5729,20 @@ class ApiusersController extends ActiveController
 
                                           if(!empty($getscorecardresult)){
                                               if($getscorecardresult->status=='success'){
+                                                  if($user_id==$requestmodel->landlord_id){
+                                                      $requestmodel->landlord_ekyc_response = json_encode($getscorecardresult);
+                                                      $requestmodel->save(false);
+                                                  }
+                                                  if($user_id==$requestmodel->user_id){
+                                                      $requestmodel->tenant_ekyc_response = json_encode($getscorecardresult);
+                                                      $requestmodel->save(false);
+                                                  }
                                                   $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
                                                   if($status=='clear'){
+                                                      $usermodel = Users::findOne($user_id);
+                                                      $usermodel->ekyc_response = json_encode($getscorecardresult);
+                                                      $usermodel->identity_status = 'Verified';
+                                                      $usermodel->save(false);
                                                       return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
 
                                                   } else{
