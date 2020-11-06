@@ -1979,7 +1979,7 @@ class ApiusersController extends ActiveController
                             }catch (Exception $e) {
                                 // # if error occurs then rollback all transactions
                                 $transaction1->rollBack();
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes123.');
+                                return array('status' => 0, 'message' => $model->getErrors());
 
                             }
                         }else{
