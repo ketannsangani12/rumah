@@ -1907,7 +1907,7 @@ class ApiusersController extends ActiveController
                                 $model->scenario = 'bookingprocesssecondstep';
                                 $model->attributes = Yii::$app->request->post();
                                 if ($model->validate()) {
-                                    $checkidexist = Users::find()->where(['identification_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
+                                    $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
                                     if(!empty($checkidexist)){
                                         $transaction1->rollBack();
 
@@ -1960,7 +1960,7 @@ class ApiusersController extends ActiveController
                                         }else{
                                             $transaction1->rollBack();
 
-                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes34.');
+                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                         }
                                     } else {
@@ -1984,7 +1984,7 @@ class ApiusersController extends ActiveController
                             }
                         }else{
 
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes67.');
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                         }
 
@@ -1999,7 +1999,7 @@ class ApiusersController extends ActiveController
                             $useridtenant = $model->user_id;
                             $model->attributes = Yii::$app->request->post();
                             if ($model->validate()) {
-                                $checkidexist = Users::find()->where(['identification_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->landlord_id])->one();
+                                $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->landlord_id])->one();
                                 if(!empty($checkidexist)){
                                     return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
 
