@@ -1909,6 +1909,8 @@ class ApiusersController extends ActiveController
                                 if ($model->validate()) {
                                     $checkidexist = Users::find()->where(['identification_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
                                     if(!empty($checkidexist)){
+                                        $transaction1->rollBack();
+
                                         return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
 
                                     }
@@ -1956,6 +1958,8 @@ class ApiusersController extends ActiveController
 
 
                                         }else{
+                                            $transaction1->rollBack();
+
                                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                         }
@@ -1975,8 +1979,11 @@ class ApiusersController extends ActiveController
                             }catch (Exception $e) {
                                 // # if error occurs then rollback all transactions
                                 $transaction1->rollBack();
+                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
                             }
                         }else{
+
                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                         }
