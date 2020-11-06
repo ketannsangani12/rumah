@@ -1999,7 +1999,7 @@ class ApiusersController extends ActiveController
                                 }
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
-                                    $subtotal = $model->tenancy_fees+$model->security_deposit+$model->keycard_deposit+$model->rental_deposit+$model->utilities_deposit-$model->booking_fees;
+                                    $subtotal = $model->tenancy_fees+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit-$model->booking_fees;
                                     $sst = number_format($model->tenancy_fees * 6 / 100, 2, '.', '');
 
                                 // $sst = Yii::$app->common->calculatesst($subtotal);
@@ -2130,16 +2130,16 @@ class ApiusersController extends ActiveController
 //                                        $transactionitems->created_at = date('Y-m-d H:i:s');
 //                                        $transactionitems->save(false);
 //                                    }
-                                    if($model->rental_deposit>0){
+                                    if($model->security_deposit>0){
                                         $transactionitems = new TransactionsItems();
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $model->landlord_id;
-                                        $transactionitems->amount = $model->rental_deposit;
-                                        $transactionitems->total_amount = $model->rental_deposit;
+                                        $transactionitems->amount = $model->security_deposit;
+                                        $transactionitems->total_amount = $model->security_deposit;
                                         $transactionitems->oldsenderbalance = $senderbalance;
-                                        $transactionitems->newsenderbalance = $senderbalance-$model->rental_deposit;
+                                        $transactionitems->newsenderbalance = $senderbalance-$model->security_deposit;
                                         $transactionitems->oldreceiverbalance = $receiverbalance;
-                                        $transactionitems->newreceiverbalance = $receiverbalance+$model->rental_deposit;
+                                        $transactionitems->newreceiverbalance = $receiverbalance+$model->security_deposit;
                                         $transactionitems->description = 'Deposit';
                                         $transactionitems->created_at = date('Y-m-d H:i:s');
                                         $transactionitems->save(false);
