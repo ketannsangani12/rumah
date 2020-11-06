@@ -4892,7 +4892,7 @@ class ApiusersController extends ActiveController
                     $todate  = date('Y-m-t 11:59:59');
                     $data['cleaningorders'] = ServiceRequests::find()->where(['property_id'=>$property_id,'reftype'=>'Cleaner','status'=>'Completed'])->count();
                     $data['repairs'] = TodoList::find()->where(['property_id'=>$property_id,'reftype'=>'Defect Report','status'=>'Completed'])->count();;
-                    return array('status' => 0, 'data' => $data);
+                    return array('status' => 1, 'data' => $data);
 
 
                 }else{
