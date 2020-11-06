@@ -106,6 +106,7 @@
                     ['label' => 'Service Requests', 'icon' => '   fa-gear', 'url' => ['/servicerequests'],'active'=>($item == 'servicerequests')],
                     ['label' => 'Promo Codes', 'icon' => '    fa-tags', 'url' => ['/promocodes'],'active'=>($item == 'promocodes')],
                     ['label' => 'Gold Coins', 'icon' => '     fa-sun-o', 'url' => ['/goldcoins'],'active'=>($item == 'goldcoins')],
+                    ['label' => 'Transactions', 'icon' => ' fa-money', 'url' => ['/transactions'],'active'=>($item == 'transactions')],
 
 
 
