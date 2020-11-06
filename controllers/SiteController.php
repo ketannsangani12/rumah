@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\BookingRequests;
 use app\models\Properties;
 use app\models\Users;
 use Yii;
@@ -158,12 +159,23 @@ class SiteController extends Controller
         $todaydate = date('Y-m-d 11:59:59');
         $days_ago = date('Y-m-d 00:00:00', strtotime('-45 days', strtotime(date('Y-m-d'))));
 
-        $properties = Properties::find()->where(['digital_tenancy'=>0])->andWhere(['>=','DATE(created_at)', $days_ago])->andWhere(['<=','DATE(created_at)', $todaydate])->all();
+        $properties = Properties::find()->where(['digital_tenancy'=>0,'status'=>'Active'])->andWhere(['>=','DATE(created_at)', $days_ago])->andWhere(['<=','DATE(created_at)', $todaydate])->all();
        if(!empty($properties)){
+           foreach ($properties as $property){
+               $property->status = 'Inactive';
+               $property->updated_at = date('Y-m-d H:i:s');
+               $property->save(false);
+           }
 
        }
     }
+  public function actionAddautorental()
+{
+    $todaydate = date('Y-m-d 11:59:59');
+    $days_ago = date('Y-m-d 00:00:00', strtotime('-45 days', strtotime(date('Y-m-d'))));
 
+    $buyerrequests = BookingRequests::find()->where(['status'=>'Rented'])->all();
+}
     /**
      * Displays about page.
      *

@@ -718,6 +718,7 @@ class ApiusersController extends ActiveController
                     ->setHtmlBody($content)
                     ->send();
 
+                return array('status' => 1, 'message' => 'You have reported property successfully.');
 
             }else{
                 return array('status' => 0, 'message' => 'Please enter mandatory fields.');
