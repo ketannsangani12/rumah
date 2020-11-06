@@ -60,9 +60,9 @@ class BookingRequests extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['tenant_id','property_id','booking_fees','rental_deposit','utilities_deposit','commencement_date','tenancy_period'], 'required','on' => 'bookfirststep'],
+            [['tenant_id','property_id','booking_fees','utilities_deposit','commencement_date','tenancy_period'], 'required','on' => 'bookfirststep'],
             [['full_name','identification_no','kyc_document','spa_document'], 'required','on' => 'bookconfirm'],
-            [['identification_no','full_name','commencement_date','tenancy_period','monthly_rental','rental_deposit','utilities_deposit','keycard_deposit','booking_fees','kyc_document','spa_document'], 'required','on' => 'bookingprocessfirststepapprove'],
+            [['identification_no','full_name','commencement_date','tenancy_period','monthly_rental','security_deposit','utilities_deposit','keycard_deposit','booking_fees','kyc_document','spa_document'], 'required','on' => 'bookingprocessfirststepapprove'],
             [['status'], 'required','on' => 'bookingprocessfirststepreject'],
             [['identification_no','full_name','kyc_document','spa_document'], 'required','on' => 'bookingprocesssecondstep'],
 

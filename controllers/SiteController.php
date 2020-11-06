@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Properties;
 use app\models\Users;
 use Yii;
 use yii\filters\AccessControl;
@@ -146,6 +147,21 @@ class SiteController extends Controller
         return $this->render('contact', [
             'model' => $model,
         ]);
+    }
+    /**
+     * Displays contact page.
+     *
+     * @return Response|string
+     */
+    public function actionRemoveproperties()
+    {
+        $todaydate = date('Y-m-d 11:59:59');
+        $days_ago = date('Y-m-d 00:00:00', strtotime('-45 days', strtotime(date('Y-m-d'))));
+
+        $properties = Properties::find()->where(['digital_tenancy'=>0])->andWhere(['>=','DATE(created_at)', $days_ago])->andWhere(['<=','DATE(created_at)', $todaydate])->all();
+       if(!empty($properties)){
+
+       }
     }
 
     /**
