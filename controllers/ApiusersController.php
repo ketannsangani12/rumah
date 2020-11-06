@@ -965,6 +965,7 @@ class ApiusersController extends ActiveController
                     $months = $myvacantproperty['tenancy_period'];
                     $effectiveDate = date('Y-m-d', strtotime("+".$months." months", strtotime($commencmentdate)));
                     $myrentedproperties[] = $myvacantproperty['property'];
+                    $myrentedproperties[$key]['landlord_id'] =  $myvacantproperty['landlord']['id'];
                     $myrentedproperties[$key]['landlord'] =  $myvacantproperty['landlord']['full_name'];
                     $myrentedproperties[$key]['rental'] =  $myvacantproperty['monthly_rental'];
                     $myrentedproperties[$key]['date'] =  $effectiveDate;
