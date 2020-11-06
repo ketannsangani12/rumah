@@ -3,7 +3,9 @@
 namespace app\controllers;
 
 use app\models\BookingRequests;
+use app\models\Cronjobs;
 use app\models\Properties;
+use app\models\TodoList;
 use app\models\Users;
 use Yii;
 use yii\filters\AccessControl;
@@ -168,13 +170,62 @@ class SiteController extends Controller
            }
 
        }
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Remove Properties';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
     }
   public function actionAddautorental()
 {
-    $todaydate = date('Y-m-d 11:59:59');
-    $days_ago = date('Y-m-d 00:00:00', strtotime('-45 days', strtotime(date('Y-m-d'))));
+    
+    $requests = BookingRequests::find()->select('id,property_id,user_id,landlord_id,monthly_rental,commencement_date,tenancy_period')->where(['status'=>'Rented'])->all();
+   // echo "<pre>";print_r($requests);exit;
 
-    $buyerrequests = BookingRequests::find()->where(['status'=>'Rented'])->all();
+    if(!empty($requests)){
+        foreach ($requests as $request){
+            $commencement_date = $request->commencement_date;
+            $tenancy_period = $request->tenancy_period;
+            $firstdate = date('Y-m-d',strtotime($commencement_date));
+            $lastdate = date('Y-m-d', strtotime("+" . $tenancy_period . " months", strtotime($commencement_date)));
+            $interval = new \DateInterval('P1M');
+            $realEnd = new \DateTime($lastdate);
+            $realEnd->add($interval);
+
+            $period = new \DatePeriod(new \DateTime($firstdate), $interval, $realEnd);
+            $format = 'Y-m-d';
+            $dates = array();
+            foreach($period as $date) {
+                      $dates[] = $date->format($format);
+            }
+            if(!empty($dates)){
+                foreach ($dates as $date){
+                    if($date==date('Y-m-d')){
+                        $rentalmodel = new TodoList();
+                        $rentalmodel->request_id = $request->id;
+                        $rentalmodel->property_id = $request->property_id;
+                        $rentalmodel->user_id = $request->user_id;
+                        $rentalmodel->landlord_id = $request->landlord_id;
+                        $rentalmodel->rent_startdate = date('Y-m-d', strtotime("-1 months", strtotime($date)));
+                        $rentalmodel->rent_enddate = $date;
+                        $rentalmodel->pay_from = 'Tenant';
+                        $rentalmodel->subtotal = $request->monthly_rental;
+                        $rentalmodel->total = $request->monthly_rental;
+                        $rentalmodel->reftype = 'Monthly Rental';
+                        $rentalmodel->status = 'Unpaid';
+                        $rentalmodel->created_at = date('Y-m-d H:i:s');
+                        $rentalmodel->save(false);
+                    }
+                }
+
+            }
+
+
+        }
+    }
+    $cronjob = new Cronjobs();
+    $cronjob->type = 'Auto Rental';
+    $cronjob->created_at = date('Y-m-d H:i:s');
+    $cronjob->save(false);
 }
     /**
      * Displays about page.
