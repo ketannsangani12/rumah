@@ -429,7 +429,7 @@ class ApiusersController extends ActiveController
                             $userid = $model->referred_by;
                             $user_id = $model->id;
                             $gold_coins = 188;
-                            Yii::$app->common->addgoldcoinspurchase($userid,$gold_coins,null,'Onboarding',$user_id);
+                            Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding',$userid);
                             $package = Packages::findOne(1);
                             $packagemodel = new UserPackages();
                             $packagemodel->user_id = $this->user_id;
