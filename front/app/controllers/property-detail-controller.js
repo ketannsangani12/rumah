@@ -28,8 +28,7 @@ angular.module('app.controllers').controller('propertyDetailCtrl', ['$rootScope'
   };
 
   $scope.openDetail = function (id) {
-    $stateParams.propertyid = id;
-    $state.reload();
+    $state.go('property-detail',{propertyid: id});
   };
 
   $scope.getSimplifyLocation = function (location) {
