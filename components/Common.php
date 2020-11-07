@@ -279,7 +279,9 @@ class Common extends Component
             $usercoinsbalance1 = Users::getcoinsbalance($reffer_id);
             $goldtransaction = new GoldTransactions();
             $goldtransaction->user_id = $user_id;
-            $goldtransaction->refferer_id = $reffer_id;
+            if($reffer_id!='') {
+                $goldtransaction->refferer_id = $reffer_id;
+            }
             $goldtransaction->gold_coins = $goldcoins;
             $goldtransaction->transaction_id = $transaction_id;
             $goldtransaction->olduserbalance = $usercoinsbalance;
@@ -290,7 +292,9 @@ class Common extends Component
             $goldtransaction->created_at = date('Y-m-d H:i:s');
             if ($goldtransaction->save(false)) {
                 $update = Users::updatecoinsbalance($usercoinsbalance + $goldcoins, $user_id);
-                $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
+                if($reffer_id!='') {
+                    $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
+                }
 
                 if ($update) {
                     return true;
