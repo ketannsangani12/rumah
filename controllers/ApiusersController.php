@@ -432,7 +432,8 @@ class ApiusersController extends ActiveController
                             Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding',$userid);
                             $package = Packages::findOne(1);
                             $packagemodel = new UserPackages();
-                            $packagemodel->user_id = $this->user_id;
+                            $packagemodel->user_id = $user_id;
+                            $packagemodel->package_id = 1;
                             $packagemodel->start_date = date('Y-m-d');
                             $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
                             $packagemodel->created_at = date('Y-m-d H:i:s');
