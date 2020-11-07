@@ -3,12 +3,12 @@ angular.module('app.routes', ['ngAnimate'])
     $stateProvider
       .state('search', {
           url: '/search',
-          templateUrl: 'front/pages/search.html',
+          templateUrl: 'pages/search.html',
           controller: 'searchCtrl'
       })
       .state('property-detail', {
         url: '/property-detail/:propertyid',
-        templateUrl: 'front/pages/property-detail.html',
+        templateUrl: 'pages/property-detail.html',
         controller: 'propertyDetailCtrl'
       });
     $urlRouterProvider.otherwise('/search');

@@ -4,7 +4,7 @@
     <div class="search-box text-center pdr-10 width-100">
       <input type="text" style="background: #fff !important;border: 1px solid #eee;" class="pdr-50" options="autoCompleteOption" placeholder="Type location" ng-model="formData.location" autocomplete="off" ng-change="search()" g-places-autocomplete force-selection="true" name="location">
       <!--<input type="text" style="background: #fff !important;border: 1px solid #eee;" class="pdr-50" autofocus autocomplete="off" ng-model="formData.search" ng-model-options="{'debounce': 500}" ng-change="search()" placeholder="Search by Location or property name">-->
-      <img src="front/img/search.svg" style="position: absolute; left: 15px; top: 15px;">
+      <img src="img/search.svg" style="position: absolute; left: 15px; top: 15px;">
       <span class="red-text font-16" style="position: absolute; top: 17px; right: 20px;" ng-click="filter.show()">Filter</span>
     </div>
   </ion-content>
@@ -27,7 +27,7 @@
         </div>
         <div class="flex flex-dc width-100">
           <div ng-repeat="(k,v) in properties" class="flex white-bg width-100 mrt-10 mrb-10">
-            <img ng-click="openDetail(v.id)" src="front/img/sample/default.png" ng-if="!v.pictures" class="list-img" style="max-width: 46%;">
+            <img ng-click="openDetail(v.id)" src="img/sample/default.png" ng-if="!v.pictures" class="list-img" style="max-width: 46%;">
             <img ng-click="openDetail(v.id)" src="{{v.pictures.image}}" ng-if="v.pictures" class="list-img" style="max-width: 46%;">
             <div class="flex flex-dc br-5 pdl-15 pdr-15 pdt-15 pdb-15" style="width: 54%;">
               <div class="flex width-100">

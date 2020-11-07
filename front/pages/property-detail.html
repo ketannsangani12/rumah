@@ -7,7 +7,7 @@
   <ion-content class="pdb-20">
     <div class="width-100" ng-swipe-right="changeImgNo('right')" ng-swipe-left="changeImgNo('left')" style="position: relative;">
       <img ng-show="k+1 == imgIndex" ng-repeat="(k,v) in propertyDetail.images" src="{{v.image}}" class="width-100">
-      <img ng-if="propertyDetail.images.length == 0" src="front/img/sample/default.png" class="width-100">
+      <img ng-if="propertyDetail.images.length == 0" src="img/sample/default.png" class="width-100">
       <label class="width-100 text-center white-text fw-600 font-18" style="position: absolute; left: 0; bottom: 20px;">{{imgIndex}}/{{propertyDetail.images.length}}</label>
     </div>
     <div class="width-100 pdl-15 pdr-15 pdt-10 pdb-15 flex flex-dc">
@@ -36,15 +36,15 @@
       </div>
       <div class="width-100 flex pdt-20 pdb-20 pdr-10" style="justify-content: space-between;">
         <div class="flex flex-dc text-left">
-          <img src="front/img/bed.svg" style="width: 40px;height: 40px;">
+          <img src="img/bed.svg" style="width: 40px;height: 40px;">
           <label class="opacity-70 mrt-5 font-16">{{propertyDetail.bedroom}} Bedroom</label>
         </div>
         <div class="flex flex-dc text-left ">
-          <img src="front/img/bathroom.svg" style="width: 40px;height: 40px;">
+          <img src="img/bathroom.svg" style="width: 40px;height: 40px;">
           <label class="opacity-70 mrt-5 font-16">{{propertyDetail.bathroom}} Bathroom</label>
         </div>
         <div class="flex flex-dc text-left ">
-          <img src="front/img/carpark.svg" style="width: 40px;height: 40px;">
+          <img src="img/carpark.svg" style="width: 40px;height: 40px;">
           <label class="opacity-70 mrt-5 font-16">{{propertyDetail.carparks}} Carpark</label>
         </div>
       </div>
@@ -73,7 +73,7 @@
             <div style="display: inline-flex;">
               <div class="flex white-bg mrl-10 mrr-10" style="width: 350px;margin-left: -10px;position: relative;" ng-repeat="v in similarProperties">
                 <img ng-click="openDetail(v.id)" src="{{v.pictures.image}}" ng-if="v.pictures && v.pictures.image" class="width-50" style="height: 192px;">
-                <img ng-click="openDetail(v.id)" src="front/img/sample/default.png" ng-if="!(v.pictures && v.pictures.image)" class="width-50" style="height: 192px;">
+                <img ng-click="openDetail(v.id)" src="img/sample/default.png" ng-if="!(v.pictures && v.pictures.image)" class="width-50" style="height: 192px;">
                 <div class="flex flex-dc pdt-15 pdl-10 pdr-5" ng-click="openDetail(v.id)">
                   <label class="font-16 fw-600">{{v.title}}</label>
                   <span class="opacity-50">{{getSimplifyLocation(v.location)}}</span>

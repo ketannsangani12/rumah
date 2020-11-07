@@ -96,7 +96,7 @@ class ApiwebController extends ActiveController
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
         parent::beforeAction($action);
-  return true;
+
 
     }
 
@@ -106,6 +106,7 @@ class ApiwebController extends ActiveController
     public function actionSearch()
 {
 
+    echo "sdsd";exit;
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method != 'POST') {
         return array('status' => 0, 'message' => 'Bad request.');
@@ -250,6 +251,7 @@ class ApiwebController extends ActiveController
                     return array('status' => 0, 'message' => 'No property details found.');
 
                 }
+                $propertydata['favourite'] = Properties::checkfavourite($_POST['property_id'],$user_id);
                 $lat = $propertydata['latitude'];
                 $long = $propertydata['longitude'];
                 $harvesformula = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance': '';
@@ -263,7 +265,7 @@ class ApiwebController extends ActiveController
                     ]);
                 $distance = 20;
                 $propertytype = $propertydata['property_type'];
-                $query1->andWhere(['!=', 'id', $_POST['property_id']]);
+                $query1->where(['!=', 'user_id', $user_id])->andWhere(['!=', 'id', $_POST['property_id']]);
 
                 $query1->andWhere(['property_type'=>$propertytype]);
                 if($distance!='' && $lat!='' && $long!=''){
@@ -271,7 +273,12 @@ class ApiwebController extends ActiveController
 
                 }
                 $properties =  $query1->asArray()->all();
+                if(!empty($properties)){
+                    foreach ($properties as $key=>$property){
+                        $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
 
+                    }
+                }
                 $data['propertydata'] = $propertydata;
                 $data['similarproperties'] = $properties;
 
