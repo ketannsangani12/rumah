@@ -27,8 +27,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'user_id',
 
                     'value' => 'user.full_name',
-                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->asArray()->all(), 'id', function($model) {
+                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>'User'])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
+                    }),
+
+                    //'filter'=>false
+                ],
+                [
+                    'attribute' => 'agent_id',
+
+                    'value' => 'agent.company_name',
+                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>'Agent'])->asArray()->all(), 'id', function($model) {
+                        return $model['company_name'];
                     }),
 
                     //'filter'=>false

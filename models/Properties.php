@@ -77,6 +77,7 @@ class Properties extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User',
+            'agent_id'=>'Agent',
             'property_no'=>'Property No.',
             'pe_userid' => 'Pe Userid',
             'title' => 'Title',
@@ -147,7 +148,7 @@ class Properties extends \yii\db\ActiveRecord
 
     public function getAgent()
     {
-        return $this->hasOne(Users::className(), ['id' => 'user_id']);
+        return $this->hasOne(Users::className(), ['id' => 'agent_id']);
     }
 
     public function getViews()
