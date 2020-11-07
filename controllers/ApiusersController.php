@@ -422,7 +422,7 @@ class ApiusersController extends ActiveController
 
                 } else {
                     $response = json_decode($response);
-                    if(!empty($response) && $response->StatusCode==200){
+                    if(!empty($response) && $response->StatusCode==200 || $response->StatusCode==506){
 
                         $model->status = 1;
                         if($model->save(false)){

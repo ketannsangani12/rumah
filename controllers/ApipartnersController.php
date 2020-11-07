@@ -394,7 +394,7 @@ class ApipartnersController extends ActiveController
 
                 } else {
                     $response = json_decode($response);
-                    if(!empty($response) && $response->StatusCode==200){
+                    if(!empty($response) && $response->StatusCode==200 || $response->StatusCode==506){
                         $model->status = 1;
                         $model->save(false);
                         return array('status' => 1, 'message' => 'Your account have Verified Successfully.');

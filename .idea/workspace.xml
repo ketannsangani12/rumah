@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/app/controllers/property-detail-controller.js" afterPath="$PROJECT_DIR$/front/app/controllers/property-detail-controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApipartnersController.php" afterPath="$PROJECT_DIR$/controllers/ApipartnersController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,16 +28,26 @@
       <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20325">
-              <caret line="1583" column="4" selection-start-line="1380" selection-start-column="4" selection-end-line="1583" selection-end-column="4" />
+            <state relative-caret-position="345">
+              <caret line="424" column="74" selection-start-line="424" selection-start-column="74" selection-end-line="424" selection-end-column="100" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
-                <element signature="e#59834#66157#0#PHP" expanded="false" />
-                <element signature="e#66163#70387#0#PHP" expanded="false" />
-                <element signature="e#128496#130483#0#PHP" expanded="false" />
-                <element signature="e#149816#151395#0#PHP" expanded="false" />
-                <element signature="e#238822#253338#0#PHP" expanded="false" />
+                <element signature="e#59864#66187#0#PHP" expanded="false" />
+                <element signature="e#66193#70417#0#PHP" expanded="false" />
+                <element signature="e#128526#130513#0#PHP" expanded="false" />
+                <element signature="e#149846#151425#0#PHP" expanded="false" />
+                <element signature="e#238852#253368#0#PHP" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ApipartnersController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="495">
+              <caret line="396" column="100" selection-start-line="396" selection-start-column="100" selection-end-line="396" selection-end-column="100" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -67,7 +78,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="property-detail-controller.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="property-detail-controller.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/front/app/controllers/property-detail-controller.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="129">
@@ -147,7 +158,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/views/managedproperties/view.php" />
         <option value="$PROJECT_DIR$/views/managedproperties/index.php" />
         <option value="$PROJECT_DIR$/views/bookingrequests/_form.php" />
         <option value="$PROJECT_DIR$/views/bookingrequests/_formagreement.php" />
@@ -190,7 +200,6 @@
         <option value="$PROJECT_DIR$/controllers/BookingrequestsController.php" />
         <option value="$PROJECT_DIR$/controllers/SiteController.php" />
         <option value="$PROJECT_DIR$/commands/HelloController.php" />
-        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
         <option value="$PROJECT_DIR$/controllers/ApilandlordsController.php" />
         <option value="$PROJECT_DIR$/front/pages/search.html" />
         <option value="$PROJECT_DIR$/front/pages/property-detail.html" />
@@ -198,6 +207,8 @@
         <option value="$PROJECT_DIR$/front/index.html" />
         <option value="$PROJECT_DIR$/controllers/ApiwebController.php" />
         <option value="$PROJECT_DIR$/front/app/controllers/property-detail-controller.js" />
+        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
+        <option value="$PROJECT_DIR$/controllers/ApipartnersController.php" />
       </list>
     </option>
   </component>
@@ -303,6 +314,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rumah" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rumah" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -565,12 +590,12 @@
       <workItem from="1604558503561" duration="3468000" />
       <workItem from="1604636161531" duration="9325000" />
       <workItem from="1604658958883" duration="10586000" />
-      <workItem from="1604726780136" duration="2709000" />
+      <workItem from="1604726780136" duration="3258000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="741254000" />
+    <option name="totallyTimeSpent" value="741803000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="0" />
@@ -583,7 +608,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293011" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293011" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -862,14 +887,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/renovationquotes/index.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -1033,21 +1050,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20325">
-          <caret line="1583" column="4" selection-start-line="1380" selection-start-column="4" selection-end-line="1583" selection-end-column="4" />
-          <folding>
-            <element signature="e#35#63#0#PHP" expanded="true" />
-            <element signature="e#59834#66157#0#PHP" expanded="false" />
-            <element signature="e#66163#70387#0#PHP" expanded="false" />
-            <element signature="e#128496#130483#0#PHP" expanded="false" />
-            <element signature="e#149816#151395#0#PHP" expanded="false" />
-            <element signature="e#238822#253338#0#PHP" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiwebController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -1077,6 +1079,29 @@
           <folding>
             <marker date="1604734990916" expanded="true" signature="2248:2267" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="424" column="74" selection-start-line="424" selection-start-column="74" selection-end-line="424" selection-end-column="100" />
+          <folding>
+            <element signature="e#35#63#0#PHP" expanded="true" />
+            <element signature="e#59864#66187#0#PHP" expanded="false" />
+            <element signature="e#66193#70417#0#PHP" expanded="false" />
+            <element signature="e#128526#130513#0#PHP" expanded="false" />
+            <element signature="e#149846#151425#0#PHP" expanded="false" />
+            <element signature="e#238852#253368#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="396" column="100" selection-start-line="396" selection-start-column="100" selection-end-line="396" selection-end-column="100" />
+          <folding />
         </state>
       </provider>
     </entry>
