@@ -106,7 +106,6 @@ class ApiwebController extends ActiveController
     public function actionSearch()
 {
 
-    echo "sdsd";exit;
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method != 'POST') {
         return array('status' => 0, 'message' => 'Bad request.');
