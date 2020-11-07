@@ -1417,7 +1417,7 @@ class ApiusersController extends ActiveController
                         $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
                     },
                 ]);
-                $query1->where(['!=', 'user_id', $user_id]);
+                $query1->where(['!=', 'user_id', $user_id])->andWhere(['status'=>'Active']);
                 if(!empty($commute)){
                     foreach ($commute as $key=>$item){
                         if($key==0) {

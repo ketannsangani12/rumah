@@ -27,13 +27,13 @@
       <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="431">
-              <caret line="967" column="97" selection-start-line="967" selection-start-column="97" selection-end-line="967" selection-end-column="97" />
+            <state relative-caret-position="401">
+              <caret line="1419" column="88" selection-start-line="1419" selection-start-column="88" selection-end-line="1419" selection-end-column="88" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
-                <element signature="e#128464#130451#0#PHP" expanded="false" />
-                <element signature="e#149784#151363#0#PHP" expanded="false" />
-                <element signature="e#238790#253306#0#PHP" expanded="false" />
+                <element signature="e#128496#130483#0#PHP" expanded="false" />
+                <element signature="e#149816#151395#0#PHP" expanded="false" />
+                <element signature="e#238822#253338#0#PHP" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -42,7 +42,7 @@
       <file leaf-file-name="Users.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/Users.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
+            <state relative-caret-position="1275">
               <caret line="88" column="69" selection-start-line="88" selection-start-column="69" selection-end-line="88" selection-end-column="69" />
               <folding />
             </state>
@@ -62,7 +62,7 @@
       <file leaf-file-name="SiteController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/SiteController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="157">
+            <state relative-caret-position="2400">
               <caret line="229" column="3" selection-start-line="158" selection-start-column="3" selection-end-line="229" selection-end-column="3" />
               <folding>
                 <element signature="e#35#66#0#PHP" expanded="true" />
@@ -76,7 +76,7 @@
       <file leaf-file-name="HelloController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/commands/HelloController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="347">
+            <state relative-caret-position="720">
               <caret line="57" column="39" selection-start-line="57" selection-start-column="26" selection-end-line="57" selection-end-column="39" />
               <folding>
                 <element signature="e#177#208#0#PHP" expanded="true" />
@@ -88,7 +88,7 @@
       <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/views/autorentalcollections/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
+            <state relative-caret-position="2100">
               <caret line="143" column="55" selection-start-line="143" selection-start-column="49" selection-end-line="143" selection-end-column="55" />
               <folding />
             </state>
@@ -98,7 +98,7 @@
       <file leaf-file-name="AutorentalcollectionsController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/AutorentalcollectionsController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-480">
+            <state relative-caret-position="0">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
@@ -118,7 +118,7 @@
       <file leaf-file-name="BookingRequests.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/BookingRequests.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
+            <state relative-caret-position="960">
               <caret line="64" column="254" selection-start-line="64" selection-start-column="224" selection-end-line="64" selection-end-column="254" />
               <folding />
             </state>
@@ -128,7 +128,7 @@
       <file leaf-file-name="BookingrequestsController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/BookingrequestsController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
+            <state relative-caret-position="2460">
               <caret line="180" column="42" selection-start-line="180" selection-start-column="42" selection-end-line="180" selection-end-column="42" />
               <folding />
             </state>
@@ -248,7 +248,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -440,10 +439,11 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/PhpstormProjects/sinhvienquocte" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
@@ -690,18 +690,19 @@
       <workItem from="1604557626260" duration="613000" />
       <workItem from="1604558503561" duration="3468000" />
       <workItem from="1604636161531" duration="9325000" />
-      <workItem from="1604658958883" duration="10440000" />
+      <workItem from="1604658958883" duration="10586000" />
+      <workItem from="1604726780136" duration="131000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="738399000" />
+    <option name="totallyTimeSpent" value="738676000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25965664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26323318" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42876345" sideWeight="0.5028612" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1005,7 +1006,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8715">
           <caret line="597" column="64" selection-start-line="597" selection-start-column="64" selection-end-line="597" selection-end-column="64" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1050,7 +1050,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="88" column="20" selection-start-line="88" selection-start-column="20" selection-end-line="95" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1058,7 +1057,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="497">
           <caret line="351" column="16" selection-start-line="351" selection-start-column="0" selection-end-line="352" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1073,7 +1071,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="68" column="12" selection-start-line="68" selection-start-column="12" selection-end-line="77" selection-end-column="14" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1103,7 +1100,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/models/BookingRequests.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
+        <state relative-caret-position="960">
           <caret line="64" column="254" selection-start-line="64" selection-start-column="224" selection-end-line="64" selection-end-column="254" />
           <folding />
         </state>
@@ -1111,7 +1108,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/BookingrequestsController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
+        <state relative-caret-position="2460">
           <caret line="180" column="42" selection-start-line="180" selection-start-column="42" selection-end-line="180" selection-end-column="42" />
           <folding />
         </state>
@@ -1119,7 +1116,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/models/Users.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
+        <state relative-caret-position="1275">
           <caret line="88" column="69" selection-start-line="88" selection-start-column="69" selection-end-line="88" selection-end-column="69" />
           <folding />
         </state>
@@ -1135,7 +1132,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/AutorentalcollectionsController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-480">
+        <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
@@ -1143,7 +1140,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/views/autorentalcollections/index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
+        <state relative-caret-position="2100">
           <caret line="143" column="55" selection-start-line="143" selection-start-column="49" selection-end-line="143" selection-end-column="55" />
           <folding />
         </state>
@@ -1151,7 +1148,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/SiteController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
+        <state relative-caret-position="2400">
           <caret line="229" column="3" selection-start-line="158" selection-start-column="3" selection-end-line="229" selection-end-column="3" />
           <folding>
             <element signature="e#35#66#0#PHP" expanded="true" />
@@ -1163,7 +1160,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/commands/HelloController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
+        <state relative-caret-position="720">
           <caret line="57" column="39" selection-start-line="57" selection-start-column="26" selection-end-line="57" selection-end-column="39" />
           <folding>
             <element signature="e#177#208#0#PHP" expanded="true" />
@@ -1173,13 +1170,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="431">
-          <caret line="967" column="97" selection-start-line="967" selection-start-column="97" selection-end-line="967" selection-end-column="97" />
+        <state relative-caret-position="401">
+          <caret line="1419" column="88" selection-start-line="1419" selection-start-column="88" selection-end-line="1419" selection-end-column="88" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
-            <element signature="e#128464#130451#0#PHP" expanded="false" />
-            <element signature="e#149784#151363#0#PHP" expanded="false" />
-            <element signature="e#238790#253306#0#PHP" expanded="false" />
+            <element signature="e#128496#130483#0#PHP" expanded="false" />
+            <element signature="e#149816#151395#0#PHP" expanded="false" />
+            <element signature="e#238822#253338#0#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
