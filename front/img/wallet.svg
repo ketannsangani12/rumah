@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="16px" viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>wallet</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Vendor" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Dashboard" transform="translate(-58.000000, -319.000000)" fill="#FFFFFF">
+            <g id="wallet" transform="translate(58.000000, 319.000000)">
+                <path d="M16.41672,7.74968889 L15.02496,5.68888889 L16.56,5.68888889 L16.56,4.26666667 L0.72,4.26666667 L0.72,5.68888889 L2.25504,5.68888889 L0.864,7.74968889 C0.2988,8.58595556 0,9.56017778 0,10.5671111 C0,13.3667556 2.30616,15.6444444 5.1408,15.6444444 L12.13992,15.6444444 C14.97456,15.6444444 17.28072,13.3667556 17.28072,10.5664 C17.28,9.56017778 16.9812,8.58595556 16.41672,7.74968889 Z" id="Path"></path>
+                <ellipse id="Oval" cx="5.76" cy="1.42222222" rx="1.44" ry="1.42222222"></ellipse>
+                <ellipse id="Oval" cx="11.52" cy="1.42222222" rx="1.44" ry="1.42222222"></ellipse>
+            </g>
+        </g>
+    </g>
+</svg>

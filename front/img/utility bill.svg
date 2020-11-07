@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="26px" viewBox="0 0 27 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>bulb-63 (1)</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="To-Do" transform="translate(-84.000000, -83.000000)" fill="#F5B403">
+            <g id="bulb-63-(1)" transform="translate(84.000000, 83.000000)">
+                <rect id="Rectangle" x="0" y="12.375" width="3.375" height="2.25"></rect>
+                <polygon id="Rectangle" transform="translate(5.146723, 5.147100) rotate(-45.000000) translate(-5.146723, -5.147100) " points="4.02173391 3.45961618 6.27171234 3.45961618 6.27171234 6.83458382 4.02173391 6.83458382"></polygon>
+                <rect id="Rectangle" x="12.375" y="0" width="2.25" height="3.375"></rect>
+                <polygon id="Rectangle" transform="translate(21.852675, 5.146948) rotate(-45.000000) translate(-21.852675, -5.146948) " points="20.1651912 4.02195891 23.5401588 4.02195891 23.5401588 6.27193734 20.1651912 6.27193734"></polygon>
+                <rect id="Rectangle" x="23.625" y="12.375" width="3.375" height="2.25"></rect>
+                <path d="M13.5,5.625 C9.1575,5.625 5.625,9.158625 5.625,13.5 C5.625,16.55325 7.403625,19.31625 10.125,20.608875 L10.125,25.875 L16.875,25.875 L16.875,20.608875 C19.596375,19.317375 21.375,16.554375 21.375,13.5 C21.375,9.158625 17.8425,5.625 13.5,5.625 Z" id="Path"></path>
+            </g>
+        </g>
+    </g>
+</svg>

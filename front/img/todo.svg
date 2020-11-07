@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="20px" viewBox="0 0 22 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>list-bullet</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Vendor" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="Rental-Marketplace" transform="translate(-181.000000, -1066.000000)" stroke="#0B0320" stroke-width="1.4">
+            <g id="Group-9" transform="translate(0.000000, 1033.000000)">
+                <g id="list-bullet" transform="translate(182.000000, 34.000000)">
+                    <ellipse id="Oval" cx="2.17391304" cy="2.14285714" rx="1.73913043" ry="1.71428571"></ellipse>
+                    <ellipse id="Oval" cx="2.17391304" cy="9" rx="1.73913043" ry="1.71428571"></ellipse>
+                    <ellipse id="Oval" cx="2.17391304" cy="15.8571429" rx="1.73913043" ry="1.71428571"></ellipse>
+                    <path d="M7.39130435,2.14285714 L19.5652174,2.14285714" id="Path"></path>
+                    <path d="M7.39130435,9 L19.5652174,9" id="Path"></path>
+                    <path d="M7.39130435,15.8571429 L19.5652174,15.8571429" id="Path"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

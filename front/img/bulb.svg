@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="23px" viewBox="0 0 24 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>bulb-63 (1)</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Vendor" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Bills" transform="translate(-40.000000, -245.000000)" fill="#F5B403">
+            <g id="Group-8-Copy-2" transform="translate(24.000000, 229.000000)">
+                <g id="Group-6-Copy-2">
+                    <g id="bulb-63-(1)" transform="translate(16.000000, 16.000000)">
+                        <rect id="Rectangle" x="0" y="11" width="3" height="2"></rect>
+                        <polygon id="Rectangle" transform="translate(4.574865, 4.575200) rotate(-45.000000) translate(-4.574865, -4.575200) " points="3.57487459 3.07521439 5.57485541 3.07521439 5.57485541 6.07518561 3.57487459 6.07518561"></polygon>
+                        <rect id="Rectangle" x="11" y="0" width="2" height="3"></rect>
+                        <polygon id="Rectangle" transform="translate(19.424600, 4.575065) rotate(-45.000000) translate(-19.424600, -4.575065) " points="17.9246144 3.57507459 20.9245856 3.57507459 20.9245856 5.57505541 17.9246144 5.57505541"></polygon>
+                        <rect id="Rectangle" x="21" y="11" width="3" height="2"></rect>
+                        <path d="M12,5 C8.14,5 5,8.141 5,12 C5,14.714 6.581,17.17 9,18.319 L9,23 L15,23 L15,18.319 C17.419,17.171 19,14.715 19,12 C19,8.141 15.86,5 12,5 Z" id="Path"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
