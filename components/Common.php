@@ -276,7 +276,9 @@ class Common extends Component
     public function addgoldcoinspurchase($user_id,$goldcoins,$transaction_id,$type='',$reffer_id=''){
         if($type=='Onboarding'){
             $usercoinsbalance = Users::getcoinsbalance($user_id);
-            $usercoinsbalance1 = Users::getcoinsbalance($reffer_id);
+            if($reffer_id!='') {
+                $usercoinsbalance1 = Users::getcoinsbalance($reffer_id);
+            }
             $goldtransaction = new GoldTransactions();
             $goldtransaction->user_id = $user_id;
             if($reffer_id!='') {
