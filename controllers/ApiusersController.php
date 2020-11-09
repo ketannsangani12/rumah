@@ -2308,7 +2308,7 @@ class ApiusersController extends ActiveController
                         $query->select(['id','service_request_id','description','image','reftype','created_at']);
                     },
                     'property'=>function($query){
-                        $query->select('id,property_no,title');
+                        $query->select('id,property_no,title,location');
                     },
                     'user' => function ($query) {
                         $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);

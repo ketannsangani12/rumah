@@ -51,9 +51,10 @@ class Transactions extends \yii\db\ActiveRecord
     {
         return [
             [['reference_no', 'property_id', 'user_id', 'landlord_id', 'promo_code', 'request_id', 'coins'], 'integer'],
+            [['user_id','amount'],'required','on'=>'createtopup'],
             [['amount', 'discount', 'total_amount', 'olduserbalance', 'oldlandlordbalance', 'oldvendorbalance', 'newuserbalance', 'newlandlordbalance', 'newvendorcbalance'], 'number'],
             [['reftype', 'status'], 'string'],
-            [['status'], 'required'],
+            //[['status'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
             [['landlord_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['landlord_id' => 'id']],
             [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Properties::className(), 'targetAttribute' => ['property_id' => 'id']],
@@ -89,6 +90,7 @@ class Transactions extends \yii\db\ActiveRecord
             'reftype' => 'Reftype',
             'status' => 'Status',
             'created_at' => 'Created At',
+            'updated_by' =>'Updated by',
             'updated_at' => 'Updated At',
         ];
     }
@@ -151,5 +153,9 @@ class Transactions extends \yii\db\ActiveRecord
     public function getWithdrawal()
     {
         return $this->hasOne(Users::className(), ['id' => 'withdrawal_id']);
+    }
+    public function getUpdatedby()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'updated_by']);
     }
 }

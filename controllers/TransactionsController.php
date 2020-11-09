@@ -2,6 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Topups;
+use app\models\Users;
+use Complex\Exception;
 use Yii;
 use app\models\Transactions;
 use app\models\TransactionsSearch;
@@ -63,11 +66,79 @@ class TransactionsController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Transactions();
+        $transaction = Yii::$app->db->beginTransaction();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        try {
+            $model = new Transactions();
+            $model->scenario = 'createtopup';
+            if ($model->load(Yii::$app->request->post())) {
+                if ($model->validate()) {
+                    $userbalance = Users::getbalance($model->user_id);
+                    $topupmodel = new Topups();
+                    $topupmodel->user_id = $model->user_id;
+                    $topupmodel->amount = $model->amount;
+                    $topupmodel->oldbalance = $userbalance;
+                    $topupmodel->newbalance = $userbalance + $model->amount;
+                    $topupmodel->created_at = date('Y-m-d H:i:s');
+                    if ($topupmodel->save(false)) {
+                        $transactionmodel = new Transactions();
+                        $transactionmodel->user_id = $model->user_id;
+                        $transactionmodel->amount = $model->amount;
+                        $transactionmodel->total_amount = $model->amount;
+                        $transactionmodel->topup_id = $topupmodel->id;
+                        $transactionmodel->type = 'Payment';
+                        $transactionmodel->reftype = 'Topup';
+                        $transactionmodel->status = 'Completed';
+                        $transactionmodel->created_at = date('Y-m-d H:i:s');
+                        $transactionmodel->updated_at = date('Y-m-d H:i:s');
+                        $transactionmodel->updated_by = Yii::$app->user->id;
+                        if ($transactionmodel->save(false)) {
+                            $lastid = $transactionmodel->id;
+                            $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
+                            $transactionmodel->reference_no = $reference_no;
+                            $transactionmodel->save(false);
+                            $updatesenderbalance = Users::updatebalance($topupmodel->newbalance, $model->user_id);
+                            $transaction->commit();
+
+                            return $this->redirect(['index']);
+
+                        } else {
+                            $transaction->rollBack();
+                            return $this->render('create', [
+                                'model' => $model,
+                            ]);
+
+                        }
+
+
+                    } else {
+                        $transaction->rollBack();
+
+                        return $this->render('create', [
+                            'model' => $model,
+                        ]);
+                    }
+
+
+                } else {
+
+                    $transaction->rollBack();
+
+                    return $this->render('create', [
+                        'model' => $model,
+                    ]);
+                }
+            } else {
+
+                $transaction->rollBack();
+
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
+        }catch (Exception $e) {
+            // # if error occurs then rollback all transactions
+            $transaction->rollBack();
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -84,8 +155,13 @@ class TransactionsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) ) {
+                if($model->validate()) {
+                    return $this->redirect(['index']);
+
+                }else{
+
+                }
         } else {
             return $this->render('update', [
                 'model' => $model,
