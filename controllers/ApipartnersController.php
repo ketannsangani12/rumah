@@ -399,6 +399,19 @@ class ApipartnersController extends ActiveController
                     if(!empty($response) && $response->StatusCode==200 || $response->StatusCode==506){
                         $model->status = 1;
                         $model->save(false);
+                        $user_id = $model->id;
+                        $package = Packages::findOne(1);
+                        $packagemodel = new UserPackages();
+                        $packagemodel->user_id = $user_id;
+                        $packagemodel->package_id = 1;
+                        $packagemodel->start_date = date('Y-m-d');
+                        $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                        $packagemodel->created_at = date('Y-m-d H:i:s');
+                        if($packagemodel->save(false)){
+                            $model->property_credited = $package->quantity;
+                            $model->save(false);
+
+                        }
                         return array('status' => 1, 'message' => 'Your account have Verified Successfully.');
 
                     }else{
