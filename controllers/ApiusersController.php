@@ -2300,7 +2300,7 @@ class ApiusersController extends ActiveController
             $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','worker_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total', new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),"commission"])
                 ->with([
                     'request'=>function ($query) {
-                        $query->select(['id','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','sst','total','commencement_date','tenancy_period','security_deposit','status',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
+                        $query->select(['id','reference_no','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','sst','total','commencement_date','tenancy_period','security_deposit','status',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                     },
                     'servicerequest'=>function ($query) {
                         $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount','pickup_time','checkin_time','checkout_time']);
@@ -6031,28 +6031,33 @@ class ApiusersController extends ActiveController
         }
 
     }
+public function actionMsctrusgate()
+{
+    if (!empty($_POST) && isset($_POST['document']) && $_POST['document'] != '' && isset($_POST['selfie']) && $_POST['selfie'] != '' && isset($_POST['request_id']) && $_POST['request_id'] != '') {
 
+    }
+}
 
     public function actionRequestcertificatewithekyc(){
 
-$curl = curl_init();
+        $curl = curl_init();
 
-curl_setopt_array($curl, array(
-    CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING => "",
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => "POST",
-    CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>821228106003</UserID>\n         <IDType>N</IDType>\n         <FullName>Vinay Ashok Gorasia</FullName>\n         <Nationality>MY</Nationality>\n         <EmailAddress>vgorasia@outlook.com</EmailAddress>\n         <MobileNo>0129365049</MobileNo>\n         <CertValidity>S</CertValidity>\n         <PassportImage></PassportImage>\n         <NRICFront></NRICFront>\n         <NRICBack></NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
-    CURLOPT_HTTPHEADER => array(
-        "Username: rumahi",
-        "Password: YcuLxvMMcXWPLRaW",
-        "Content-Type: text/xml"
-    ),
-));
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>821228106003</UserID>\n         <IDType>N</IDType>\n         <FullName>Vinay Ashok Gorasia</FullName>\n         <Nationality>MY</Nationality>\n         <EmailAddress>vgorasia@outlook.com</EmailAddress>\n         <MobileNo>0129365049</MobileNo>\n         <CertValidity>S</CertValidity>\n         <PassportImage></PassportImage>\n         <NRICFront></NRICFront>\n         <NRICBack></NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_HTTPHEADER => array(
+                "Username: rumahi",
+                "Password: YcuLxvMMcXWPLRaW",
+                "Content-Type: text/xml"
+            ),
+        ));
 
         $response = curl_exec($curl);
         $err = curl_error($curl);
@@ -6070,6 +6075,93 @@ curl_setopt_array($curl, array(
         }
     }
 
+    public function actionGetrequeststatus()
+    {
 
 
-}
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetRequestStatus>\n         <!--1 or more repetitions:-->\n         <UserRequestList>\n            <!--Optional:-->\n            <requestID>448</requestID>\n            <!--Optional:-->\n            <userID>821228106003</userID>\n         </UserRequestList>\n      </mtsa:GetRequestStatus>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                CURLOPT_HTTPHEADER => array(
+                    "Username: rumahi",
+                    "Password: YcuLxvMMcXWPLRaW",
+                    "Content-Type: text/xml"
+                ),
+            ));
+
+            $response = curl_exec($curl);
+        $err = curl_error($curl);
+            curl_close($curl);
+           // echo $response;
+        if ($err) {
+            return '';
+        } else {
+            $response = json_decode($response);
+            if(!empty($response) &&  isset($response->status)  && $response->status=='success'){
+                return $response;
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
+
+
+    }
+
+    public function actionGetactivationlink()
+    {
+
+
+
+
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetActivation>\n         <UserID>821228106003</UserID>\n         <RequestID>448</RequestID>\n      </mtsa:GetActivation>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                    CURLOPT_HTTPHEADER => array(
+                        "Username: rumahi",
+                        "Password: YcuLxvMMcXWPLRaW",
+                        "Content-Type: text/xml"
+                    ),
+                ));
+
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+                curl_close($curl);
+
+        // echo $response;
+                if ($err) {
+                    return '';
+                } else {
+                    $response = json_decode($response);
+                    if(!empty($response) &&  isset($response->status)  && $response->status=='success'){
+                        return $response;
+                    }else{
+                        return '';
+                    }
+                    //echo $response;exit;
+                }
+
+
+    }
+
+
+    }
