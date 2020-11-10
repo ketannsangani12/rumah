@@ -1518,7 +1518,7 @@ class ApiusersController extends ActiveController
                 $baseurl = $this->baseurl;
                 $user_id = $this->user_id;
                 $query1 = Properties::find()
-                    ->select('id,user_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,carparks,amenities,commute,status,digital_tenancy')
+                    ->select('id,user_id,agent_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,carparks,amenities,commute,status,digital_tenancy')
                     ->with([
                         'images'=>function ($query) use($baseurl) {
                             $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")]);
