@@ -5690,30 +5690,30 @@ class ApiusersController extends ActiveController
 
                                                        }
                                                    }else{
-                                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport1');
+                                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                                    }
 
                                                }else{
-                                                   return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport2');
+                                                   return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                                }
 
                                            }else{
-                                               return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport3');
+                                               return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                            }
                                           }else{
-                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport4');
+                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                           }
 
                                       }else{
-                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport5');
+                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                       }
                                       }else{
-                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport6');
+                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                   }
                               }else{
@@ -5724,16 +5724,16 @@ class ApiusersController extends ActiveController
 
                                }
                               }else{
-                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document1');
+                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
 
                               }
 
                           }else{
-                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document2');
+                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
 
                           }
                       }else{
-                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document3');
+                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
 
                       }
                   }else{
@@ -5774,30 +5774,30 @@ class ApiusersController extends ActiveController
 
                                                   }
                                               }else{
-                                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport1');
+                                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                               }
 
                                           }else{
-                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport2');
+                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                           }
 
                                       }else{
-                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport3');
+                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                       }
                                   }else{
-                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport4');
+                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                                   }
 
                               }else{
-                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport5');
+                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                               }
                           }else{
-                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport6');
+                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
 
                           }
                       }else{
