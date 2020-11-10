@@ -1560,6 +1560,40 @@ class ApipartnersController extends ActiveController
             }
         }
     }
+    public function actionAppointment(){
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $user_id = $this->user_id;
+            $model = new TodoList();
+            $model->scenario = 'appointment';
+            $model->attributes = Yii::$app->request->post();
+            $model->user_id = $model->tenant_id;
+            if($model->validate()){
+                $model->tenant_id = null;
+                $property = Properties::findOne($model->property_id);
+                $photo = $model->photo;
+                $model->photo = null;
+                $model->agent_id = $user_id;
+                $model->reftype = 'Appointment';
+                $model->status = 'Pending';
+                $model->created_at = date('Y-m-d H:i:s');
+                if($model->save(false)) {
+                    return array('status' => 1, 'message' => 'You have submitted appointment successfully.');
+
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+
+                }
+
+            }else{
+                return array('status' => 0, 'message' => $model->getErrors());
+
+            }
+        }
+    }
+
 
     public function actionUpdatetodostatus($todo_id,$status,$reftype,$post=array()){
         $systemaccount = Yii::$app->common->getsystemaccount();

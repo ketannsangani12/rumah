@@ -1546,10 +1546,10 @@ class ApiusersController extends ActiveController
                         },
                     ]);
                 $distance = 20;
-                $propertytype = $propertydata['property_type'];
+                $propertytype = $propertydata['room_type'];
                 $query1->where(['!=', 'user_id', $user_id])->andWhere(['!=', 'id', $_POST['property_id']]);
 
-                $query1->andWhere(['property_type'=>$propertytype]);
+                $query1->andWhere(['room_type'=>$propertytype]);
                 if($distance!='' && $lat!='' && $long!=''){
                     $query1->andWhere(['<=', $harvesformula1, $distance]);
 
@@ -1591,8 +1591,9 @@ class ApiusersController extends ActiveController
             $model = new TodoList();
             $model->scenario = 'appointment';
             $model->attributes = Yii::$app->request->post();
-            $model->user_id = $user_id;
+            $model->user_id = $model->tenant_id;
             if($model->validate()){
+                $model->tenant_id = null;
                 $property = Properties::findOne($model->property_id);
                 $photo = $model->photo;
                 $model->photo = null;

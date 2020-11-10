@@ -31,6 +31,7 @@ class TodoList extends \yii\db\ActiveRecord
     public $datetime_range;
     public $quote;
     public $photo;
+    public $tenant_id;
     /**
      * {@inheritdoc}
      */
@@ -52,7 +53,7 @@ class TodoList extends \yii\db\ActiveRecord
             [['status'], 'required','on'=>'changestatus'],
             //[['property_id','landlord_id','user_id','receive_via','commission'], 'required','on'=>'addinsurance'],
             [['description','property_id','user_id','photo'], 'required','on'=>'reportdefect'],
-            [['appointment_date','property_id','user_id','appointment_time'], 'required','on'=>'appointment'],
+            [['appointment_date','property_id','tenant_id','appointment_time'], 'required','on'=>'appointment'],
             [['agent_id','user_id','landlord_id','receive_via','commission','property_id'], 'required','on'=>'transferrequest'],
 
             [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
@@ -85,6 +86,7 @@ class TodoList extends \yii\db\ActiveRecord
             'request_id' => 'Request ID',
             'property_id' => 'Property',
             'user_id' => 'Tenant',
+            'tenant_id'=>'Tenant',
             'landlord_id' => 'Landlord',
             'pay_from'=>'Payment From',
             'due_date' => 'Due Date',
