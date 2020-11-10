@@ -5811,6 +5811,9 @@ class ApiusersController extends ActiveController
 
               }
 
+           }else{
+               return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
            }
 
 
@@ -6026,6 +6029,44 @@ class ApiusersController extends ActiveController
             //echo $response;exit;
         }
 
+    }
+
+
+    public function actionRequestcertificatewithekyc(){
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>821228106003</UserID>\n         <IDType>N</IDType>\n         <FullName>Vinay Ashok Gorasia</FullName>\n         <Nationality>MY</Nationality>\n         <EmailAddress>vgorasia@outlook.com</EmailAddress>\n         <MobileNo>0129365049</MobileNo>\n         <CertValidity>S</CertValidity>\n         <PassportImage></PassportImage>\n         <NRICFront></NRICFront>\n         <NRICBack></NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
+    CURLOPT_HTTPHEADER => array(
+        "Username: rumahi",
+        "Password: YcuLxvMMcXWPLRaW",
+        "Content-Type: text/xml"
+    ),
+));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        if ($err) {
+            return '';
+        } else {
+            $response = json_decode($response);
+            if(!empty($response) &&  isset($response->status)  && $response->status=='success'){
+                return $response;
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
     }
 
 

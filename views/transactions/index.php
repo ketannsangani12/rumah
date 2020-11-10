@@ -163,15 +163,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 //'coins',
                  //'coins_savings',
                  'total_amount',
-                // 'olduserbalance',
-                // 'oldlandlordbalance',
-                // 'oldagentbalance',
-                // 'oldvendorbalance',
-                // 'newuserbalance',
-                // 'newlandlordbalance',
-                // 'newagentbalance',
-                // 'newvendorcbalance',
-                // 'type',
+                
                 [
                     'attribute' => 'reftype',
 
