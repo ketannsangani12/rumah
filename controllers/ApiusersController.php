@@ -1524,7 +1524,10 @@ class ApiusersController extends ActiveController
                             $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")]);
                         },
                         'user'=>function($query){
-                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                            $query->select(["id","full_name",'contact_no',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                        },
+                        'agent'=>function($query){
+                            $query->select(["id","company_name",'contact_no',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
                         }
                     ])->where(['id'=>$_POST['property_id']]);
 
