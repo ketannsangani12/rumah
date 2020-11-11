@@ -120,7 +120,7 @@ class ApiwebController extends ActiveController
             $room_type = (isset($_POST['room_type']) && $_POST['room_type']!='')?$_POST['room_type']:'';
             $preference = (isset($_POST['preference']) && $_POST['preference']!='')?$_POST['preference']:'';
             $price = (isset($_POST['price']) && $_POST['price']!='')?explode(",",$_POST['price']):'';
-            $distance = (isset($_POST['distance']) && $_POST['distance']!='')?$_POST['distance']:'';
+            $distance = (isset($_POST['distance']) && $_POST['distance']!='')?$_POST['distance']:60;
             $commute = (isset($_POST['commute']) && $_POST['commute']!='')?explode(",",$_POST['commute']):'';
             $amenities = (isset($_POST['amenities']) && $_POST['amenities']!='')?explode(",",$_POST['amenities']):'';
             $rooms = (isset($_POST['rooms']) && $_POST['rooms']!='')?$_POST['rooms']:'';
