@@ -13,6 +13,7 @@ use app\models\GoldTransactions;
 use app\models\Ilifestyle;
 use app\models\Images;
 use app\models\Istories;
+use app\models\Msc;
 use app\models\Packages;
 use app\models\PromoCodes;
 use app\models\Properties;
@@ -6034,17 +6035,139 @@ class ApiusersController extends ActiveController
         }
 
     }
-public function actionMsctrusgate()
+public function actionMsctrustgate()
 {
-    if (!empty($_POST) && isset($_POST['document']) && $_POST['document'] != '' && isset($_POST['selfie']) && $_POST['selfie'] != '' && isset($_POST['request_id']) && $_POST['request_id'] != '') {
+    if (!empty($_POST) && isset($_POST['full_name']) && $_POST['full_name'] != '' && isset($_POST['identification_no']) && $_POST['identification_no'] != '' && isset($_POST['document']) && $_POST['document'] != '' && isset($_POST['type']) && $_POST['type'] != '' && isset($_POST['request_id']) && $_POST['request_id'] != '') {
+           $requestmodel = BookingRequests::findOne($_POST['request_id']);
+            $type = $_POST['type'];
+            $document_front =  $_POST['document'];
+            $full_name = $_POST['full_name'];
+            $identification_no = $_POST['identification_no'];
+            $user_id = $this->user_id;
+            $userdetails = Users::findOne($user_id);
+            $mobile_no  = $userdetails->contact_no;
+            $dataarray['type'] = $type;
+            $dataarray['document_front'] = $document_front;
+            $dataarray['document_back'] = '';
+            $dataarray['full_name'] = $full_name;
+            $dataarray['identification_no'] = $identification_no;
+            $dataarray['mobile_no'] = $mobile_no;
+            $dataarray['email'] = $userdetails->email;
+            $dataarray['validity'] = ($requestmodel->user_id==$user_id)?'S':'L';
+        $document_back = '';
+            if($type=='N'){
+                if(empty($_POST['document_back'])){
+                    return array('status' => 0, 'message' => 'Please upload back image of MyCad.');
+
+                }
+                $document_back =  $_POST['document_back'];
+                $dataarray['document_back'] = $document_back;
+
+
+            }
+           $requestcertificatewithkycresponse = $this->Requestcertificatewithekyc($dataarray,$_POST['request_id'],$user_id);
+           if(!empty($requestcertificatewithkycresponse)){
+               if($requestcertificatewithkycresponse['statusCode']=='CR101' || $requestcertificatewithkycresponse['statusCode']=='000'){
+                   if($requestcertificatewithkycresponse['statusCode']=='000'){
+                       $mscmodel = New Msc();
+                       $mscmodel->user_id = $user_id;
+                       $mscmodel->request_id = $_POST['request_id'];
+                       $mscmodel->document_front = $document_front;
+                       $mscmodel->document_back = ($document_back!='')?$document_back:null;
+                       $mscmodel->full_name = $full_name;
+                       $mscmodel->document_no = $identification_no;
+                       $mscmodel->type = $type;
+                       $mscmodel->mobile_no = $mobile_no;
+                       $mscmodel->created_at = date('Y-m-d H:i:s');
+                       $mscmodel->mscrequest_id = $requestcertificatewithkycresponse['certRequestID'];
+                       $mscmodel->requestekyc_response = json_encode($requestcertificatewithkycresponse);
+                       $mscmodel->status = 'Pending';
+                       $mscmodel->save(false);
+
+
+                   }else{
+                       $mscrequestmodel = Msc::find()->where(['request_id'=>$_POST['request_id'],'user_id'=>$user_id])->orderBy(['id'=>SORT_DESC])->one();
+                       if(!empty($mscrequestmodel)){
+                           $getrequeststatus = $this->Getrequeststatus($mscrequestmodel);
+                           if(!empty($getrequeststatus)){
+                               $mscrequestmodel->getrequeststatus_response = json_encode($getrequeststatus);
+                               $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
+                               $mscrequestmodel->save(false);
+                               if($getrequeststatus['statusCode']==000 && $getrequeststatus['dataList']['requestStatus']=='Pending Activation'){
+                                  $mscrequestmodel->status = 'Pending Activation';
+                                  $mscrequestmodel->save(false);
+                                $getactivationlink = $this->Getactivationlink($mscrequestmodel);
+                                if(!empty($getactivationlink)){
+                                    $mscrequestmodel->getactivationlink_response = json_encode($getactivationlink);
+                                    $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
+                                    $mscrequestmodel->save(false);
+                                    if($getactivationlink['statusCode']==000 && $getactivationlink['statusMsg']=='Success'){
+                                        $mscrequestmodel->activation_link = $getactivationlink['activationLink'];
+                                        $mscrequestmodel->status = 'Approve Activation';
+                                        $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
+                                        $mscrequestmodel->save(false);
+                                        return array('status' => 1, 'message' =>'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.' ,'errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getactivationlink');
+
+
+                                    }else{
+                                        return array('status' => 0, 'message' => $getrequeststatus['statusMsg'],'error'=>json_encode($getrequeststatus),'typeapi'=>'getrequeststatus');
+
+                                    }
+
+                                }else{
+                                    return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'getactivationlink');
+
+                                }
+
+                              }else{
+                                  return array('status' => 0, 'message' => $getrequeststatus['statusMsg'],'errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getrequeststatus');
+
+                              }
+                           }else{
+                               return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'getrequeststatus');
+
+                           }
+
+                       }else{
+                           return array('status' => 0, 'message' => 'Data not found.');
+
+                       }
+
+                   }
+
+               }else{
+                   return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse));
+
+               }
+               //echo "<pre>";print_r($requestcertificatewithkycresponse);exit;
+
+           }else{
+               return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
+
+           }
+
+
+
+
+
+    }else{
+        return array('status' => 0, 'message' => 'Please enter mandatory fields.');
 
     }
 }
 
-    public function actionRequestcertificatewithekyc(){
+    private function Requestcertificatewithekyc($userdata,$request_id,$user_id){
 
         $curl = curl_init();
-
+        $document_front = '';
+        $document_back = '';
+        $passportimage = '';
+        if($userdata['type']=='N'){
+            $document_front = $userdata['document_front'];
+            $document_back = $userdata['document_back'];
+        }else{
+            $passportimage = $userdata['document_front'];
+        }
         curl_setopt_array($curl, array(
             CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
             CURLOPT_RETURNTRANSFER => true,
@@ -6054,7 +6177,7 @@ public function actionMsctrusgate()
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>821228106003</UserID>\n         <IDType>N</IDType>\n         <FullName>Vinay Ashok Gorasia</FullName>\n         <Nationality>MY</Nationality>\n         <EmailAddress>vgorasia@outlook.com</EmailAddress>\n         <MobileNo>0129365049</MobileNo>\n         <CertValidity>S</CertValidity>\n         <PassportImage></PassportImage>\n         <NRICFront></NRICFront>\n         <NRICBack></NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>".$userdata['identification_no']."</UserID>\n         <IDType>".$userdata['type']."</IDType>\n         <FullName>".$userdata['full_name']."</FullName>\n         <Nationality>MY</Nationality>\n         <EmailAddress>".$userdata['email']."</EmailAddress>\n         <MobileNo>".$userdata['full_name']."</MobileNo>\n         <CertValidity>".$userdata['validity']."</CertValidity>\n         <PassportImage>".$passportimage."</PassportImage>\n         <NRICFront>".$document_front."</NRICFront>\n         <NRICBack>".$document_back."</NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
             CURLOPT_HTTPHEADER => array(
                 "Username: rumahi",
                 "Password: YcuLxvMMcXWPLRaW",
@@ -6068,9 +6191,14 @@ public function actionMsctrusgate()
         if ($err) {
             return '';
         } else {
-            $response = json_decode($response);
-            if(!empty($response) &&  isset($response->status)  && $response->status=='success'){
-                return $response;
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+
+            //$response = json_decode($response);
+            if(!empty($responsearray) &&  isset($responsearray['ns2RequestCertificateWithEKYCResponse'])  && !empty($responsearray['ns2RequestCertificateWithEKYCResponse'])){
+                return $responsearray['ns2RequestCertificateWithEKYCResponse']['return'];
             }else{
                 return '';
             }
@@ -6078,9 +6206,10 @@ public function actionMsctrusgate()
         }
     }
 
-    public function actionGetrequeststatus()
+    private function Getrequeststatus($mscrequestmodel)
     {
-
+           $certificaterequest_id = $mscrequestmodel->mscrequest_id;
+           $userID = $mscrequestmodel->document_no;
 
 
             $curl = curl_init();
@@ -6094,7 +6223,7 @@ public function actionMsctrusgate()
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetRequestStatus>\n         <!--1 or more repetitions:-->\n         <UserRequestList>\n            <!--Optional:-->\n            <requestID>448</requestID>\n            <!--Optional:-->\n            <userID>821228106003</userID>\n         </UserRequestList>\n      </mtsa:GetRequestStatus>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetRequestStatus>\n         <!--1 or more repetitions:-->\n         <UserRequestList>\n            <!--Optional:-->\n            <requestID>".$certificaterequest_id."</requestID>\n            <!--Optional:-->\n            <userID>".$userID."</userID>\n         </UserRequestList>\n      </mtsa:GetRequestStatus>\n   </soapenv:Body>\n</soapenv:Envelope>",
                 CURLOPT_HTTPHEADER => array(
                     "Username: rumahi",
                     "Password: YcuLxvMMcXWPLRaW",
@@ -6109,9 +6238,12 @@ public function actionMsctrusgate()
         if ($err) {
             return '';
         } else {
-            $response = json_decode($response);
-            if(!empty($response) &&  isset($response->status)  && $response->status=='success'){
-                return $response;
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+            if(!empty($responsearray) &&  isset($responsearray['ns2GetRequestStatusResponse'])  && !empty($responsearray['ns2GetRequestStatusResponse'])){
+                return $responsearray['ns2GetRequestStatusResponse']['return'];
             }else{
                 return '';
             }
@@ -6121,11 +6253,13 @@ public function actionMsctrusgate()
 
     }
 
-    public function actionGetactivationlink()
+    private function Getactivationlink($mscrequestmodel)
     {
 
 
 
+        $certificaterequest_id = $mscrequestmodel->mscrequest_id;
+        $userID = $mscrequestmodel->document_no;
 
                 $curl = curl_init();
 
@@ -6138,7 +6272,7 @@ public function actionMsctrusgate()
                     CURLOPT_FOLLOWLOCATION => true,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => "POST",
-                    CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetActivation>\n         <UserID>821228106003</UserID>\n         <RequestID>448</RequestID>\n      </mtsa:GetActivation>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                    CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetActivation>\n         <UserID>".$userID."</UserID>\n         <RequestID>".$certificaterequest_id."</RequestID>\n      </mtsa:GetActivation>\n   </soapenv:Body>\n</soapenv:Envelope>",
                     CURLOPT_HTTPHEADER => array(
                         "Username: rumahi",
                         "Password: YcuLxvMMcXWPLRaW",
@@ -6154,9 +6288,13 @@ public function actionMsctrusgate()
                 if ($err) {
                     return '';
                 } else {
-                    $response = json_decode($response);
-                    if(!empty($response) &&  isset($response->status)  && $response->status=='success'){
-                        return $response;
+                    $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+                    $xml = new \SimpleXMLElement($response);
+                    $body = $xml->xpath('//SBody')[0];
+                    $responsearray = json_decode(json_encode((array)$body), TRUE);
+
+                    if(!empty($responsearray) &&  isset($responsearray['ns2GetActivationResponse'])  && !empty($responsearray['ns2GetActivationResponse'])){
+                        return $responsearray['ns2GetActivationResponse']['return'];
                     }else{
                         return '';
                     }
