@@ -123,7 +123,6 @@ class UsersController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) ) {
             // $model->picture = \yii\web\UploadedFile::getInstance($model, 'picture');
             if($model->validate()) {

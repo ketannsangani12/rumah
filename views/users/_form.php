@@ -14,14 +14,13 @@ use yii\widgets\ActiveForm;
     <div class="box-body table-responsive ">
         <div class="row">
          <div class="col-md-8">
-        <?= $form->field($model, 'role')->dropDownList(['Superadmin'=>'Superadmin','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry','Handyman'=>'Handyman'], ['id'=>'role']); ?>
+        <?= $form->field($model, 'role')->dropDownList(['Superadmin'=>'Superadmin','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry','Handyman'=>'Handyman','Agent'=>'Agent'], ['id'=>'role']); ?>
 
         <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-             <?= $form->field($model, 'wallet_balance')->textInput(['maxlength' => true]) ?>
 
-             <div id="companydetails" style="<?php echo ($model->role=='Cleaner' || $model->role=='Mover' || $model->role=='Handyman' || $model->role=='Laundry')?"display: block;":"display: none;"?>">
+             <div id="companydetails" style="<?php echo ($model->role=='Cleaner' || $model->role=='Mover' || $model->role=='Handyman' || $model->role=='Laundry' || $model->role=='Agent')?"display: block;":"display: none;"?>">
             <?= $form->field($model, 'contact_no')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'company_name')->textInput(['maxlength' => true]) ?>
 
