@@ -262,7 +262,18 @@ class ApiusersController extends ActiveController
 
                     if($save){
                         $contact_no = $model->contact_no;
+                        $package = Packages::findOne(1);
+                        $packagemodel = new UserPackages();
+                        $packagemodel->user_id = $model->id;
+                        $packagemodel->package_id = 1;
+                        $packagemodel->start_date = date('Y-m-d');
+                        $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                        $packagemodel->created_at = date('Y-m-d H:i:s');
+                        if($packagemodel->save(false)){
+                            $model->property_credited = $package->quantity;
+                            $model->save(false);
 
+                        }
                         if($contact_no!=''){
                             $curl = curl_init();
 //60126479285
@@ -431,18 +442,7 @@ class ApiusersController extends ActiveController
                             $user_id = $model->id;
                             $gold_coins = 188;
                             Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding',$userid);
-                            $package = Packages::findOne(1);
-                            $packagemodel = new UserPackages();
-                            $packagemodel->user_id = $user_id;
-                            $packagemodel->package_id = 1;
-                            $packagemodel->start_date = date('Y-m-d');
-                            $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
-                            $packagemodel->created_at = date('Y-m-d H:i:s');
-                            if($packagemodel->save(false)){
-                                $model->property_credited = $package->quantity;
-                                $model->save(false);
 
-                            }
                             //Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding');
 
                             return array('status' => 1, 'message' => 'Your account have Verified Successfully.');

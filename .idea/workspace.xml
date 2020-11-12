@@ -5,8 +5,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApipartnersController.php" afterPath="$PROJECT_DIR$/controllers/ApipartnersController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/TodoList.php" afterPath="$PROJECT_DIR$/models/TodoList.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/Users.php" afterPath="$PROJECT_DIR$/models/Users.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,30 +25,30 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="181" column="24" selection-start-line="181" selection-start-column="24" selection-end-line="214" selection-end-column="25" />
+            <state relative-caret-position="210">
+              <caret line="275" column="25" selection-start-line="275" selection-start-column="25" selection-end-line="275" selection-end-column="25" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
-                <element signature="e#20249#21574#0#PHP" expanded="false" />
-                <element signature="e#21580#25245#0#PHP" expanded="false" />
-                <element signature="e#131648#133635#0#PHP" expanded="false" />
-                <element signature="e#152968#154547#0#PHP" expanded="false" />
-                <element signature="e#241974#256490#0#PHP" expanded="false" />
-                <element signature="e#269417#270684#0#PHP" expanded="false" />
-                <element signature="e#270689#272042#0#PHP" expanded="false" />
+                <element signature="e#20207#21532#0#PHP" expanded="false" />
+                <element signature="e#21538#25203#0#PHP" expanded="false" />
+                <element signature="e#131606#133593#0#PHP" expanded="false" />
+                <element signature="e#152926#154505#0#PHP" expanded="false" />
+                <element signature="e#241932#256448#0#PHP" expanded="false" />
+                <element signature="e#269375#270642#0#PHP" expanded="false" />
+                <element signature="e#270647#272000#0#PHP" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ApipartnersController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ApipartnersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="433" column="102" selection-start-line="433" selection-start-column="102" selection-end-line="433" selection-end-column="102" />
+            <state relative-caret-position="65">
+              <caret line="270" column="24" selection-start-line="270" selection-start-column="24" selection-end-line="281" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -212,8 +210,8 @@
         <option value="$PROJECT_DIR$/controllers/ApiwebController.php" />
         <option value="$PROJECT_DIR$/models/TodoList.php" />
         <option value="$PROJECT_DIR$/models/Users.php" />
-        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
         <option value="$PROJECT_DIR$/controllers/ApipartnersController.php" />
+        <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
       </list>
     </option>
   </component>
@@ -698,12 +696,12 @@
       <workItem from="1604990716051" duration="8245000" />
       <workItem from="1605065603742" duration="11081000" />
       <workItem from="1605093650225" duration="1131000" />
-      <workItem from="1605153393691" duration="5109000" />
+      <workItem from="1605153393691" duration="5521000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="774056000" />
+    <option name="totallyTimeSpent" value="774468000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -1197,28 +1195,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+    <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="181" column="24" selection-start-line="181" selection-start-column="24" selection-end-line="214" selection-end-column="25" />
-          <folding>
-            <element signature="e#35#63#0#PHP" expanded="true" />
-            <element signature="e#20249#21574#0#PHP" expanded="false" />
-            <element signature="e#21580#25245#0#PHP" expanded="false" />
-            <element signature="e#131648#133635#0#PHP" expanded="false" />
-            <element signature="e#152968#154547#0#PHP" expanded="false" />
-            <element signature="e#241974#256490#0#PHP" expanded="false" />
-            <element signature="e#269417#270684#0#PHP" expanded="false" />
-            <element signature="e#270689#272042#0#PHP" expanded="false" />
-          </folding>
+        <state relative-caret-position="65">
+          <caret line="270" column="24" selection-start-line="270" selection-start-column="24" selection-end-line="281" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
+    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="433" column="102" selection-start-line="433" selection-start-column="102" selection-end-line="433" selection-end-column="102" />
-          <folding />
+        <state relative-caret-position="210">
+          <caret line="275" column="25" selection-start-line="275" selection-start-column="25" selection-end-line="275" selection-end-column="25" />
+          <folding>
+            <element signature="e#35#63#0#PHP" expanded="true" />
+            <element signature="e#20207#21532#0#PHP" expanded="false" />
+            <element signature="e#21538#25203#0#PHP" expanded="false" />
+            <element signature="e#131606#133593#0#PHP" expanded="false" />
+            <element signature="e#152926#154505#0#PHP" expanded="false" />
+            <element signature="e#241932#256448#0#PHP" expanded="false" />
+            <element signature="e#269375#270642#0#PHP" expanded="false" />
+            <element signature="e#270647#272000#0#PHP" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
