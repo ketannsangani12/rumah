@@ -130,7 +130,10 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'current_status'=>'Current Status',
             'latitude'=>'Latitude',
             'longitude'=>'Longitude',
-            'wallet_balance'=>'Wallet Balance'
+            'wallet_balance'=>'Wallet Balance',
+            'document_front'=>'Document Front',
+            'document_back'=>'Document Back',
+            'document_type'=>'Document type'
         ];
     }
 

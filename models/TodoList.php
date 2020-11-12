@@ -94,6 +94,7 @@ class TodoList extends \yii\db\ActiveRecord
             'quote' => 'Quote',
             'appointment_date'=>'Appointment Date',
             'appointment_time'=>'Appointment Time',
+            'msc_id'=>'MSC',
             //'title' => 'Title',
             'vendor_id' => 'Vendor ID',
             'document' => 'Document',
@@ -202,6 +203,10 @@ class TodoList extends \yii\db\ActiveRecord
     public function getWorker()
     {
         return $this->hasOne(Workers::className(), ['id' => 'worker_id']);
+    }
+    public function getMsc()
+    {
+        return $this->hasOne(Msc::className(), ['id' => 'msc_id']);
     }
     /**
      * Gets query for [[Request]].

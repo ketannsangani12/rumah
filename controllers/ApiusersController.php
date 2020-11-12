@@ -2301,7 +2301,7 @@ class ApiusersController extends ActiveController
         } else {
             $user_id = $this->user_id;
            // echo $user_id;exit;
-            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','worker_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total', new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),"commission"])
+            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','worker_id','msc_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total', new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),"commission"])
                 ->with([
                     'request'=>function ($query) {
                         $query->select(['id','reference_no','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','sst','total','commencement_date','tenancy_period','security_deposit','status',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
@@ -2342,6 +2342,10 @@ class ApiusersController extends ActiveController
                         $query->select("id,full_name");
 
                     },
+                    'msc'=>function($query){
+                        $query->select("*");
+
+                    },
 
                 ])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->orderBy(['updated_at'=>SORT_DESC])->asArray()->all();
 
@@ -2366,6 +2370,47 @@ class ApiusersController extends ActiveController
                                     $data[] = $todolist;
                                 }
                             }
+
+                        break;
+                        case "Activation Link";
+                            if($todolist['status']=='Pending'){
+                                $mscrequestmodel = Msc::findOne($todolist['msc_id']);
+                                if(!empty($mscrequestmodel)) {
+                                    $getrequeststatus = $this->Getrequeststatus($mscrequestmodel);
+                                    if (!empty($getrequeststatus)) {
+                                        $mscrequestmodel->getrequeststatus_response = json_encode($getrequeststatus);
+                                        $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
+                                        $mscrequestmodel->save(false);
+                                        if ($getrequeststatus['statusCode'] == 000 && $getrequeststatus['dataList']['requestStatus'] == 'Completed') {
+                                            $mscrequestmodel->status = 'Approved';
+                                            $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
+                                            $mscrequestmodel->save(false);
+                                            $todomodel = TodoList::findOne($todolist['id']);
+                                            $todomodel->status = 'Completed';
+                                            $todomodel->updated_at = date('Y-m-d H:i:s');
+                                            $todomodel->save(false);
+                                            $usermodel = Users::findOne($this->user_id);
+                                            $usermodel->document_type = $mscrequestmodel->type;
+                                            $usermodel->document_front = $mscrequestmodel->document_front;
+                                            $usermodel->document_back = $mscrequestmodel->document_back;
+                                            $usermodel->document_no = $mscrequestmodel->document_no;
+                                            $usermodel->updated_at = date('Y-m-d H:i:s');
+                                            $usermodel->save(false);
+
+                                        }else{
+                                            $data[] = $todolist;
+
+                                        }
+                                    }else{
+                                        $data[] = $todolist;
+
+                                    }
+                                }else{
+                                    $data[] = $todolist;
+
+                                }
+
+                                }
 
                         break;
                         case "Transfer Request";
@@ -6103,9 +6148,19 @@ public function actionMsctrustgate()
                                     $mscrequestmodel->save(false);
                                     if($getactivationlink['statusCode']==000 && $getactivationlink['statusMsg']=='Success'){
                                         $mscrequestmodel->activation_link = $getactivationlink['activationLink'];
-                                        $mscrequestmodel->status = 'Approve Activation';
+                                        $mscrequestmodel->status = 'Need Activation';
                                         $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
                                         $mscrequestmodel->save(false);
+                                        $todomodel = new TodoList();
+                                        $todomodel->user_id = $user_id;
+                                        $todomodel->msc_id = $mscrequestmodel->id;
+                                        $todomodel->property_id = $requestmodel->property_id;
+                                        $todomodel->request_id = $mscrequestmodel->request_id;
+                                        $todomodel->reftype = 'Activation Link';
+                                        $todomodel->created_at = date('Y-m-d H:i:s');
+                                        $todomodel->updated_at = date('Y-m-d H:i:s');
+                                        $todomodel->status = 'Pending';
+                                        $todomodel->save(false);
                                         return array('status' => 1, 'message' =>'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.' ,'errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getactivationlink');
 
 

@@ -177,13 +177,47 @@ class ApipartnersController extends ActiveController
                     ])->andWhere(['in','role',['Cleaner','Mover','Agent','Laundry','Handyman']])->asArray()->one();
 
                     if(!empty($userexist)){
+                        if($userexist['status']==2 && $userexist['role']=='Agent'){
+                            $contact_no = $userexist['contact_no'];
+                            if($contact_no!=''){
+                                $curl = curl_init();
+//60126479285
+                                curl_setopt_array($curl, array(
+                                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => "",
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => "GET",
+                                ));
+                                curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
+
+
+
+                                $response = curl_exec($curl);
+                                $err = curl_error($curl);
+
+                                curl_close($curl);
+
+                                if ($err) {
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                } else {
+                                    return array('status' => 1, 'message' => 'Your account is not verified.Please verify using OTP.', 'data' => $contact_no);
+
+                                    //echo $response;exit;
+                                }
+
+                            }
+                        }else {
 
                             $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
 
-                            $token = (string) Users::generateToken($userexist);
-                            return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist,'token'=>$token);
+                            $token = (string)Users::generateToken($userexist);
+                            return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist, 'token' => $token);
 
-
+                        }
 
 
                     }else{
@@ -366,6 +400,7 @@ class ApipartnersController extends ActiveController
                 $otp = $_POST['otp'];
                 $curl = curl_init();
                 $model = Users::find()->where(['contact_no'=>$contact_no])->one();
+
                 if(empty($model)){
                     return array('status' => 0, 'message' => 'User details not found.');
 
