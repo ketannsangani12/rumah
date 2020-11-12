@@ -49,8 +49,9 @@ class Msc extends \yii\db\ActiveRecord
             [['user_id', 'request_id'], 'integer'],
             [['document_front', 'document_back', 'full_name', 'activation_link', 'requestekyc_response', 'getrequeststatus_response', 'getactivationlink_response', 'signpdf_response', 'signedpdf'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
-            [['type'], 'string', 'max' => 20],
+            [['type','page_no'], 'string', 'max' => 20],
             [['document_no', 'mobile_no', 'mscrequest_id', 'status'], 'string', 'max' => 255],
+            [['x1', 'y1', 'x2', 'y2'], 'string', 'max' => 200],
             [['request_id'], 'exist', 'skipOnError' => true, 'targetClass' => BookingRequests::className(), 'targetAttribute' => ['request_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];

@@ -94,13 +94,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['style' => 'width:18%'],
-                'template'=>'{view} {update} {choosetemplate} {uploadagreement} {uploadmovein} {uploadmoveout} {moveoutinvoice} {cancel}',
+                'template'=>'{view} {update} {choosetemplate} {msctrustgate} {uploadagreement} {uploadmovein} {uploadmoveout} {moveoutinvoice} {cancel}',
                 'visibleButtons' => [
                     'update' => function ($model) {
                         return ($model->status=='Confirmed');
                     },
                     'choosetemplate' => function ($model) {
-                        return ($model->status=='Processed' || $model->status=='Agreement Processed');
+                        return ($model->status=='Processed' || $model->status=='Agreement Processing');
+                    },
+                    'msctrustgate' => function ($model) {
+                        return ($model->status=='Agreement Processing');
                     },
                     'uploadagreement' => function ($model) {
                         return ($model->status=='Agreement Processed' || $model->status=='Payment Requested' || $model->status=='Rented');
@@ -117,7 +120,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return ($model->status=='Rented' && $model->moveout_document!='');
                     },
                     'cancel' => function ($model){
-                        return ($model->status=='Agreement Processed' || $model->status=='Cancelled');
+                        return ($model->status=='Agreement Processed' || $model->status=='Agreement Processing' || $model->status=='Cancelled');
                     },
                 ],
                 'buttons'=>[
@@ -159,6 +162,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             'title' => 'Choose Template',
                             'class' =>'btn btn-sm bg-blue datatable-operation-btn'
+
+                        ]);
+
+                    },
+                    'msctrustgate' => function ($url, $model) {
+
+                        return Html::a('<i class="fa fa-certificate" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadtomsc', 'id' => $model->id])], [
+
+                            'title' => 'Send Agreement For Signing',
+                            'class' =>'btn btn-sm bg-red datatable-operation-btn'
 
                         ]);
 

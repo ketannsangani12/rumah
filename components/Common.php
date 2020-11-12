@@ -146,6 +146,9 @@ class Common extends Component
             case "Agreement Processed";
                 return "<span class='btn bg-orange btn-xs'>Agreement Processed</span>";
                 break;
+            case "Agreement Processing";
+                return "<span class='btn bg-blue btn-xs'>Agreement Processing</span>";
+                break;
             case "Refund Requested";
                 return "<span class='btn bg-orange btn-xs'>Refund Requested</span>";
                 break;

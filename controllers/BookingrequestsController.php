@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\AgreementTemplates;
+use app\models\Msc;
 use app\models\TodoItems;
 use app\models\TodoList;
 use kartik\mpdf\Pdf;
@@ -15,6 +16,7 @@ use yii\base\Response;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -138,7 +140,7 @@ class BookingrequestsController extends Controller
                     throw new NotFoundHttpException('The requested page does not exist.');
 
                 }
-                $newFileName = \Yii::$app->security
+               $newFileName = \Yii::$app->security
                         ->generateRandomString().'.'.$model->report->extension;
                $model->credit_score_report = $newFileName;
                if($model->status=='Confirmed'){
@@ -174,7 +176,7 @@ class BookingrequestsController extends Controller
         $model->scenario = 'choosetemplate';
         if ($model->load(Yii::$app->request->post())) {
             if($model->validate()) {
-                $model->status = 'Agreement Processed';
+                $model->status = 'Agreement Processing';
                 $model->subtotal += $model->stamp_duty;
                 //$sst = Yii::$app->common->calculatesst($model->subtotal);
                 $total_amount = $model->subtotal;
@@ -200,6 +202,54 @@ class BookingrequestsController extends Controller
             ]);
         }
     }
+    public function actionUploadtomsc($id)
+    {
+        $model = $this->findModel($id);
+        $model->scenario = 'uploadtomsc';
+        if ($model->load(Yii::$app->request->post())) {
+            $model->pdf = \yii\web\UploadedFile::getInstance($model, 'pdf');
+
+            if($model->validate()) {
+                $tenantmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->user_id,'status'=>'Approved'])->orderBy(['id'=>SORT_DESC])->one();
+                $landlordmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->landlord_id,'status'=>'Approved'])->orderBy(['id'=>SORT_DESC])->one();
+                //if(empty($tenantmscmodel) || empty($landlordmscmodel)){
+                    //Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
+                    //return $this->redirect(['index']);
+
+                //}
+                $newFileName = \Yii::$app->security
+                        ->generateRandomString().'.'.$model->pdf->extension;
+                $model->pdf->saveAs('uploads/agreements/' . $newFileName);
+                if($_SERVER['HTTP_HOST'] != 'rumah.test') {
+                    $baseurl = Url::base('https');
+                }else{
+                    $baseurl = Url::base(true);
+                }
+                $b64Doc = chunk_split(base64_encode(file_get_contents('uploads/agreements/' . $newFileName)));
+                print_r($b64Doc);exit;
+
+                $landlordmscmodel->x1 = $model->landlordx1;
+                $landlordmscmodel->y1 = $model->landlordy1;
+                $landlordmscmodel->x2 = $model->landlordx2;
+                $landlordmscmodel->y2 = $model->landlordy2;
+                $landlordmscmodel->page_no = $model->landlordpageno;
+                $landlordmscmodel->pdf = $b64Doc;
+                $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
+                $landlordmscmodel->save(false);
+
+
+            }else{
+                return $this->render('uploadtomsc', [
+                    'model' => $model,
+                ]);
+            }
+        } else {
+            return $this->render('uploadtomsc', [
+                'model' => $model,
+            ]);
+        }
+    }
+
     public function actionPrintagreement($id)
     {
         $model = $this->findModel($id);

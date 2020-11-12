@@ -45,7 +45,17 @@ class BookingRequests extends \yii\db\ActiveRecord
     public $kyc_document;
     public $spa_document;
     public $stampdutycertificate;
-
+    public $pdf;
+    public $tenantx1;
+    public $tenantx2;
+    public $tenanty1;
+    public $tenanty2;
+    public $landlordx1;
+    public $landlordx2;
+    public $landlordy1;
+    public $landlordy2;
+    public $tenantpageno;
+    public $landlordpageno;
     /**
      * {@inheritdoc}
      */
@@ -64,18 +74,20 @@ class BookingRequests extends \yii\db\ActiveRecord
             [['full_name','identification_no','kyc_document','spa_document'], 'required','on' => 'bookconfirm'],
             [['identification_no','full_name','commencement_date','tenancy_period','monthly_rental','security_deposit','utilities_deposit','keycard_deposit','booking_fees','kyc_document','spa_document'], 'required','on' => 'bookingprocessfirststepapprove'],
             [['status'], 'required','on' => 'bookingprocessfirststepreject'],
-            [['identification_no','full_name','kyc_document','spa_document'], 'required','on' => 'bookingprocesssecondstep'],
+            [['pdf','tenantx1','tenantx2','tenanty1','tenanty2','landlordx1','landlordx2','landlordy1','landlordy2','tenantpageno','landlordpageno'], 'required','on' => 'uploadtomsc'],
 
             [['credit_score','report'], 'required','on' => 'updatecreditscore'],
+            [['identification_no','full_name','kyc_document','spa_document'], 'required','on' => 'bookingprocesssecondstep'],
             [['agreement'], 'required','on' => 'uploadagreement'],
             [['movein'], 'required','on' => 'uploadmovein'],
             [['moveout_date','moveout'], 'required','on' => 'uploadmoveout'],
             [['template_id','document_content'], 'required','on' => 'choosetemplate'],
             [['agreement'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpeg,jpg,png,pdf'],
             [['stampdutycertificate'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpeg,jpg,png,pdf'],
+            [['pdf'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             [['report','movein','moveout'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             [['property_id', 'user_id', 'landlord_id', 'template_id'], 'integer'],
-            [['credit_score', 'booking_fees', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'sst', 'rental_deposit', 'utilities_deposit', 'security_deposit'], 'number'],
+            [['credit_score', 'booking_fees', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'sst', 'rental_deposit', 'utilities_deposit', 'security_deposit','tenantpageno','landlordpageno'], 'number'],
             [['commencement_date', 'created_at', 'updated_at'], 'safe'],
             [['tenancy_period'], 'string', 'max' => 100],
             [['landlord_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['landlord_id' => 'id']],
@@ -107,6 +119,7 @@ class BookingRequests extends \yii\db\ActiveRecord
             'subtotal'=>'Sub total',
             'total' => 'Total',
             'sst' => 'Sst',
+            'pdf'=> 'PDF',
             'agreement_document'=>'Agreement document',
             'document_content'=>'Agreement content',
             'agreement'=>'Agreement',
@@ -131,7 +144,18 @@ class BookingRequests extends \yii\db\ActiveRecord
             'identification_no'=>'Identification No.',
             'spa_document'=> 'Supporting Document',
             'kyc_document'=>'EKYC Document',
-            'updated_by' => 'Updated By'
+            'updated_by' => 'Updated By',
+            'tenantx1' => 'X1',
+            'tenantx2' => 'X2',
+            'tenanty1' => 'Y1',
+            'tenanty2' => 'Y2',
+            'landlordx1' => 'X1',
+            'landlordx2' => 'X2',
+            'landlordy1' => 'Y1',
+            'landlordy2' => 'Y2',
+            'tenantpageno' => 'Page No.(For Tenant)',
+            'landlordpageno' => 'Page No.(For Landlord)',
+
         ];
     }
 

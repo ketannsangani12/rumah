@@ -214,9 +214,10 @@ class ApiusersController extends ActiveController
                             }
                         }else{
                             $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
+                            unset($userexist['document_front']);
+                            unset($userexist['document_back']);
 
                             $token = (string) Users::generateToken($userexist);
-
                             return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist,'token'=>$token);
 
                         }
@@ -6191,7 +6192,7 @@ public function actionMsctrustgate()
                    }
 
                }else{
-                   return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse));
+                   return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse),'typeapi'=>'requestcertificatewithkycresponse');
 
                }
                //echo "<pre>";print_r($requestcertificatewithkycresponse);exit;
@@ -6232,7 +6233,7 @@ public function actionMsctrustgate()
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>".$userdata['identification_no']."</UserID>\n         <IDType>".$userdata['type']."</IDType>\n         <FullName>".$userdata['full_name']."</FullName>\n         <Nationality>MY</Nationality>\n         <EmailAddress>".$userdata['email']."</EmailAddress>\n         <MobileNo>".$userdata['full_name']."</MobileNo>\n         <CertValidity>".$userdata['validity']."</CertValidity>\n         <PassportImage>".$passportimage."</PassportImage>\n         <NRICFront>".$document_front."</NRICFront>\n         <NRICBack>".$document_back."</NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>".$userdata['identification_no']."</UserID>\n         <IDType>".$userdata['type']."</IDType>\n         <FullName>".$userdata['full_name']."</FullName>\n         <Nationality>ZZ</Nationality>\n         <EmailAddress>".$userdata['email']."</EmailAddress>\n         <MobileNo>".$userdata['full_name']."</MobileNo>\n         <CertValidity>".$userdata['validity']."</CertValidity>\n         <PassportImage>".$passportimage."</PassportImage>\n         <NRICFront>".$document_front."</NRICFront>\n         <NRICBack>".$document_back."</NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
             CURLOPT_HTTPHEADER => array(
                 "Username: rumahi",
                 "Password: YcuLxvMMcXWPLRaW",
@@ -6356,6 +6357,48 @@ public function actionMsctrustgate()
                     //echo $response;exit;
                 }
 
+
+    }
+
+    private function signpdf(){
+
+         $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:SignPDF>\n         <UserID>940827086333</UserID>\n         <FullName>thomas shelby</FullName>\n         <!--Optional:-->\n         <AuthFactor></AuthFactor>\n\t\t<SignatureInfo>\n            <!--Optional:-->\n            <pageNo>1</pageNo>\n            <!--Optional:-->\n            <pdfInBase64></sigImageInBase64>\n            <!--Optional:-->\n            <visibility>false</visibility>\n            <!--Optional:-->\n            <x1>300</x1>\n            <!--Optional:-->\n            <x2>500</x2>\n            <!--Optional:-->\n            <y1>20</y1>\n            <!--Optional:-->\n            <y2>100</y2>\n         </SignatureInfo>\n      </mtsa:SignPDF>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_HTTPHEADER => array(
+                "Username: rumahi",
+                "Password: YcuLxvMMcXWPLRaW",
+                "Content-Type: text/xml"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        if ($err) {
+            return '';
+        } else {
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+
+            if(!empty($responsearray) &&  isset($responsearray['ns2GetActivationResponse'])  && !empty($responsearray['ns2GetActivationResponse'])){
+                return $responsearray['ns2GetActivationResponse']['return'];
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
 
     }
 

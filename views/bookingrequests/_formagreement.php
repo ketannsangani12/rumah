@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
             <div class="box-body table-responsive">
                 <div class="row">
                     <div class="col-md-10">
-                        <?= $form->field($model, 'agreement')->fileInput() ?>
+                        <?= $form->field($model, 'pdf')->fileInput() ?>
                         <?= $form->field($model, 'stampdutycertificate')->fileInput() ?>
 
                     </div>
