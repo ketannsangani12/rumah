@@ -135,11 +135,7 @@ class ApichatController extends ActiveController
             if($this->userId != null){
                 $query->where('(sender_id = '.$this->userId.' OR receiver_id = '.$this->userId.')');
 
-//                $query->where(['or',
-//                    ['sender_id'=>$this->userId],
-//                    ['receiver_id'=>$this->userId]
-//                ]);
-                    //->andWhere('rumah_chats.id in (select tc.id from rumah_chats as tc where tc.sender_id = '.$this->userId.' or tc.receiver_id = '.$this->userId.')');
+
             }
 
             $query->groupBy(['property_id','opponent_id']);

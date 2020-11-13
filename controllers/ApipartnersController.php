@@ -2415,7 +2415,7 @@ class ApipartnersController extends ActiveController
             $user_id = $this->user_id;
             $fromdate = (isset($_POST['fromdate']) && !empty($_POST['fromdate']))?(date('Y-m-d 00:00:00',strtotime($_POST['fromdate']))):'';
             $todate = (isset($_POST['todate']) && !empty($_POST['todate']))?(date('Y-m-d 11:59:59',strtotime($_POST['todate']))):'';
-            $query = Transactions::find()->where(['vendor_id'=>$user_id]);
+            $query = Transactions::find()->where(['vendor_id'=>$user_id])->orWhere(['user_id'=>$user_id]);
             if($fromdate!='' && $todate!=''){
                 // $start = Yii::$app->formatter->asTimestamp($fromdate);
                 //$end = Yii::$app->formatter->asTimestamp($todate);
@@ -2476,6 +2476,18 @@ class ApipartnersController extends ActiveController
                             $mytransactions[$key]['incoming'] = 0;
                             $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
                             $mytransactions[$key]['date'] = date('Y-m-d H:i:s',strtotime($transaction->created_at));
+                            break;
+                        case "Agent Commision";
+                            $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                            $mytransactions[$key]['name'] = "";
+                            $mytransactions[$key]['title'] = "Booking Commision";
+                            $mytransactions[$key]['description'] = "";
+                            $mytransactions[$key]['incoming'] = 1;
+                            $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
+                            $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
+                            $mytransactions[$key]['date'] = date('Y-m-d H:i:s',strtotime($transaction->created_at));
+
+
                             break;
                     }
 

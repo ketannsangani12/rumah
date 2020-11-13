@@ -2228,6 +2228,39 @@ class ApiusersController extends ActiveController
                                         $model->property->status = 'Rented';
                                         $model->property->request_id = $model->id;
                                         if($model->property->save(false)){
+                                            if($model->property->agent_id!=''){
+                                                $todorequest = TodoList::find()->where(['landlord_id'=>$model->landlord_id,'agent_id'=>$model->property->agent_id,'reftype'=>'Transfer Request','status'=>'Accepted','property_id'=>$model->property_id,'user_id'=>$model->user_id])->orderBy(['id'=>SORT_DESC])->one();
+                                                if(!empty($todorequest)){
+                                                    $todorequest->status = 'Completed';
+                                                    $todorequest->save(false);
+                                                    if($todorequest->receive_via=='Rumah-i') {
+                                                        $commision = $todorequest->commission;
+                                                        $agentbalance = Users::getbalance($model->property->agent_id);
+                                                        $commisiontransaction = new Transactions();
+                                                        $commisiontransaction->reftype = 'Agent Commision';
+                                                        $commisiontransaction->user_id = $model->property->agent_id;
+                                                        $commisiontransaction->property_id = $model->property_id;
+                                                        $commisiontransaction->todo_id = $todorequest->id;
+                                                        $commisiontransaction->amount = $commision;
+                                                        $commisiontransaction->total_amount = $commision;
+                                                        $commisiontransaction->type = 'Payment';
+                                                        $commisiontransaction->status = 'Completed';
+                                                        $commisiontransaction->created_at = date('Y-m-d H:i:s');
+                                                        if($commisiontransaction->save(false)){
+                                                            $lastid1 = $commisiontransaction->id;
+                                                            $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid1);
+                                                            $commisiontransaction->reference_no = $reference_no;
+                                                            $commisiontransaction->save(false);
+                                                            Users::updatebalance($agentbalance+$commision,$model->property->agent_id);
+                                                        }else{
+                                                            $transaction1->rollBack();
+                                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                                        }
+
+                                                    }
+                                                }
+                                            }
 
                                             if($goldcoins>0) {
                                                 Yii::$app->common->deductgoldcoinspurchase($model->user_id, $goldcoins, $lastid);
@@ -2245,7 +2278,7 @@ class ApiusersController extends ActiveController
 
                                         }else{
                                             $transaction1->rollBack();
-                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes23.');
+                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                         }
 
@@ -2253,14 +2286,14 @@ class ApiusersController extends ActiveController
                                     }else{
                                         $transaction1->rollBack();
 
-                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes45.');
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                     }
 
                                 }else{
                                     $transaction1->rollBack();
 
-                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes67.');
+                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                                 }
 
@@ -2268,7 +2301,7 @@ class ApiusersController extends ActiveController
                             } else {
                                 $transaction1->rollBack();
 
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes89.');
+                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                             }
                         }catch (Exception $e) {
@@ -2882,7 +2915,7 @@ class ApiusersController extends ActiveController
                 $auto_rental = (isset($_POST['auto_rental']) && $_POST['auto_rental']!='')?1:0;
                 $insurance = (isset($_POST['insurance']) && $_POST['insurance']!='')?1:0;
 
-                $todorequestexist = TodoList::find()->where(['landlord_id'=>$user_id,'status'=>'Pending'])->one();
+                $todorequestexist = TodoList::find()->where(['id'=>$_POST['todo_id'],'status'=>'Pending'])->one();
                 if(empty($todorequestexist)){
                     return array('status' => 0, 'message' => 'No trasnfer request details found.');
                 }
@@ -2892,7 +2925,15 @@ class ApiusersController extends ActiveController
                     $todorequestexist->property->user_id = $user_id;
                     $todorequestexist->property->auto_rental = $auto_rental;
                     $todorequestexist->property->insurance = $insurance;
-                    $todorequestexist->property->save(false);   
+                    $todorequestexist->property->save(false);
+                    $chat = new Chats();
+                    $chat->receiver_id = $user_id;
+                    $chat->sender_id = $todorequestexist->user_id;
+                    $chat->property_id = $todorequestexist->property_id;
+                    $chat->msg = 'Please Send me Booking Request';
+                    $chat->msg_type = 'text';
+                    $chat->created_at = date('Y-m-d H:i:s');
+                    $chat->save(false);
                     return array('status' => 1, 'message' => 'You have accepted transfer request.');
                 }else{
                     return array('status' => 0, 'data' => $todorequestexist->getErrors());
