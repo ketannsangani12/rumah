@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['style' => 'width:18%'],
-                'template'=>'{view} {update} {choosetemplate} {msctrustgate} {uploadagreement} {uploadmovein} {uploadmoveout} {moveoutinvoice} {cancel}',
+                'template'=>'{view} {update} {choosetemplate} {msctrustgate} {download} {uploadagreement} {uploadmovein} {uploadmoveout} {moveoutinvoice} {cancel}',
                 'visibleButtons' => [
                     'update' => function ($model) {
                         return ($model->status=='Confirmed');
@@ -104,6 +104,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'msctrustgate' => function ($model) {
                         return ($model->status=='Agreement Processing');
+                    },
+                    'download' => function ($model) {
+                        return ($model->status=='Agreement Processed');
                     },
                     'uploadagreement' => function ($model) {
                         return ($model->status=='Agreement Processed' || $model->status=='Payment Requested' || $model->status=='Rented');
@@ -172,6 +175,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             'title' => 'Send Agreement For Signing',
                             'class' =>'btn btn-sm bg-red datatable-operation-btn'
+
+                        ]);
+
+                    },
+                    'download' => function ($url, $model) {
+
+                        return Html::a('<i class="fa fa-download" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/download', 'id' => $model->id])], [
+                            'data-pjax' => 0,
+                            'title' => 'Download Signed Agreement',
+                            'class' =>'btn btn-sm bg-green datatable-operation-btn',
+                            //'target' => '_blank'
 
                         ]);
 

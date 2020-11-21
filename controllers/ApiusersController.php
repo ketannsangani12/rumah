@@ -6154,7 +6154,7 @@ public function actionMsctrustgate()
             }
            $requestcertificatewithkycresponse = $this->Requestcertificatewithekyc($dataarray,$_POST['request_id'],$user_id);
            if(!empty($requestcertificatewithkycresponse)){
-               if($requestcertificatewithkycresponse['statusCode']=='CR101' || $requestcertificatewithkycresponse['statusCode']=='000'){
+               if(($requestcertificatewithkycresponse['statusCode']=='CR101' || $requestcertificatewithkycresponse['statusCode']=='CR100')  || $requestcertificatewithkycresponse['statusCode']=='000'){
                    if($requestcertificatewithkycresponse['statusCode']=='000'){
                        $mscmodel = New Msc();
                        $mscmodel->user_id = $user_id;
@@ -6216,10 +6216,17 @@ public function actionMsctrustgate()
 
                                 }
 
-                              }else{
-                                  return array('status' => 0, 'message' => $getrequeststatus['statusMsg'],'errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getrequeststatus');
+                              }else if($getrequeststatus['statusCode']==000 && ($getrequeststatus['dataList']['requestStatus']=='Submitted' || $getrequeststatus['dataList']['requestStatus']=='Verified')){
+                                   $mscrequestmodel->status = 'Pending MSC Approval';
+                                   $mscrequestmodel->save(false);
+                                   $requestmodel->status = 'Pending MSC Approval';
+                                   $requestmodel->save(false);
+                                   return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done','errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getrequeststatus');
 
-                              }
+                              }else{
+                                   return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getrequeststatus');
+
+                               }
                            }else{
                                return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'getrequeststatus');
 

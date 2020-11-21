@@ -205,6 +205,9 @@ class BookingrequestsController extends Controller
     public function actionUploadtomsc($id)
     {
         $model = $this->findModel($id);
+        if ($model->status!='Agreement Processing') {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
         $model->scenario = 'uploadtomsc';
         if ($model->load(Yii::$app->request->post())) {
             $model->pdf = \yii\web\UploadedFile::getInstance($model, 'pdf');
@@ -212,11 +215,11 @@ class BookingrequestsController extends Controller
             if($model->validate()) {
                 $tenantmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->user_id,'status'=>'Approved'])->orderBy(['id'=>SORT_DESC])->one();
                 $landlordmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->landlord_id,'status'=>'Approved'])->orderBy(['id'=>SORT_DESC])->one();
-                //if(empty($tenantmscmodel) || empty($landlordmscmodel)){
-                    //Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
-                    //return $this->redirect(['index']);
+                if(empty($tenantmscmodel) || empty($landlordmscmodel)){
+                    Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
+                    return $this->redirect(['index']);
 
-                //}
+                }
                 $newFileName = \Yii::$app->security
                         ->generateRandomString().'.'.$model->pdf->extension;
                 $model->pdf->saveAs('uploads/agreements/' . $newFileName);
@@ -226,7 +229,6 @@ class BookingrequestsController extends Controller
                     $baseurl = Url::base(true);
                 }
                 $b64Doc = chunk_split(base64_encode(file_get_contents('uploads/agreements/' . $newFileName)));
-                print_r($b64Doc);exit;
 
                 $landlordmscmodel->x1 = $model->landlordx1;
                 $landlordmscmodel->y1 = $model->landlordy1;
@@ -235,7 +237,71 @@ class BookingrequestsController extends Controller
                 $landlordmscmodel->page_no = $model->landlordpageno;
                 $landlordmscmodel->pdf = $b64Doc;
                 $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
-                $landlordmscmodel->save(false);
+                if($landlordmscmodel->save(false)){
+                    $tenantmscmodel->x1 = $model->tenantx1;
+                    $tenantmscmodel->x2 = $model->tenantx2;
+                    $tenantmscmodel->y1 = $model->tenanty1;
+                    $tenantmscmodel->y2 = $model->tenanty2;
+                    $tenantmscmodel->page_no = $model->tenantpageno;
+                    $tenantmscmodel->save(false);
+                   $signpdfresponse = $this->actionSignpdf($landlordmscmodel,$model);
+                   if(!empty($signpdfresponse) &&  isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode']='000'){
+                       $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                       $landlordmscmodel->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
+                       $landlordmscmodel->status = 'Completed';
+                       $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
+                       $landlordmscmodel->save(false);
+                       if(isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64']!=''){
+                           $tenantmscmodel->pdf = $signpdfresponse['return']['signedPdfInBase64'];
+                           $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                           $tenantmscmodel->save(false);
+                           $signpdftenantresponse = $this->actionSignpdf($tenantmscmodel,$model);
+                           if(!empty($signpdftenantresponse) &&  isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode']='000') {
+                               $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                               $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
+                               $tenantmscmodel->status = 'Completed';
+                               $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                               if($tenantmscmodel->save(false)){
+                                   $model->signed_agreement = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                   $model->updated_at = date('Y-m-d H:i:s');
+                                   $model->status = 'Agreement Processed';
+                                   $model->save(false);
+                                   Yii::$app->session->setFlash('success', "You have done with Digital Signing.You can download Signed Agreement.");
+
+                                   return $this->redirect(['index']);
+
+                               }
+
+                           }else{
+                               $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                               $tenantmscmodel->save(false);
+                               Yii::$app->session->setFlash('success', "Signing process is still in Pending.MSC will send Signed Agreement Once it is done");
+                               return $this->redirect(['index']);
+//
+                           }
+
+                       }else{
+                           $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                           $landlordmscmodel->save(false);
+                           Yii::$app->session->setFlash('error', "There is something went wrong with MSC.Please check with them.");
+                           return $this->redirect(['index']);
+
+
+                       }
+
+                   }else{
+                       $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                       $landlordmscmodel->save(false);
+                       Yii::$app->session->setFlash('error', "There is something went wrong with MSC.Please check with them.");
+                       return $this->redirect(['index']);
+
+                   }
+
+                }else{
+                    return $this->render('uploadtomsc', [
+                        'model' => $model,
+                    ]);
+                }
 
 
             }else{
@@ -247,6 +313,46 @@ class BookingrequestsController extends Controller
             return $this->render('uploadtomsc', [
                 'model' => $model,
             ]);
+        }
+    }
+    private function actionSignpdf($mscmodel,$model){
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:SignPDF>\n         <UserID>".$mscmodel->document_no."</UserID>\n         <FullName>".$mscmodel->full_name."</FullName>\n         <!--Optional:-->\n         <AuthFactor></AuthFactor>\n\t\t<SignatureInfo>\n            <!--Optional:-->\n            <pageNo>".$mscmodel->page_no."</pageNo>\n            <!--Optional:-->\n            <pdfInBase64>".$mscmodel->pdf."</pdfInBase64>\n            <sigImageInBase64></sigImageInBase64>\n            <!--Optional:-->\n            <visibility>true</visibility>\n            <!--Optional:-->\n            <x1>".$mscmodel->x1."</x1>\n            <!--Optional:-->\n            <x2>".$mscmodel->x2."</x2>\n            <!--Optional:-->\n            <y1>".$mscmodel->y1."</y1>\n            <!--Optional:-->\n            <y2>".$mscmodel->y2."</y2>\n         </SignatureInfo>\n      </mtsa:SignPDF>\n   </soapenv:Body>\n</soapenv:Envelope>",
+    CURLOPT_HTTPHEADER => array(
+        "Username: rumahi",
+        "Password: YcuLxvMMcXWPLRaW",
+        "Content-Type: text/xml"
+    ),
+));
+
+     $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+        if ($err) {
+            return false;
+        } else {
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+            if(!empty($responsearray) &&  isset($responsearray['ns2SignPDFResponse'])  && !empty($responsearray['ns2SignPDFResponse'])){
+                return $responsearray['ns2SignPDFResponse'];
+            }else{
+                return false;
+            }
+            //echo $response;exit;
         }
     }
 
@@ -285,6 +391,37 @@ class BookingrequestsController extends Controller
 
         // return the pdf output as per the destination setting
         return $pdf->render();
+    }
+    public function actionDownload($id){
+        $model = $this->findModel($id);
+        if ($model->status!='Agreement Processed' || $model->signed_agreement=='') {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $decoded = base64_decode($model->signed_agreement);
+        $pdf_base64 = 'samplerumah.pdf';
+        //$pdf_base64 = "base64pdf.txt";
+//Get File content from txt file
+
+//Decode pdf content
+        $pdf_decoded = $decoded;
+//Write data back to pdf file
+        $pdf = fopen ('samplerumah.pdf','r');
+        fwrite ($pdf,$pdf_decoded);
+        fclose ($pdf);
+
+        header('Content-Description: File Transfer');
+        header('Content-Disposition: attachment; filename='.basename($pdf_base64));
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($pdf_base64));
+        header("Content-Type: application/pdf");
+        readfile($pdf_base64);
+
+//close output file
+        echo 'Done';
+
+
     }
     public function actionContent()
     {

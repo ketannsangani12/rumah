@@ -152,6 +152,9 @@ class Common extends Component
             case "Refund Requested";
                 return "<span class='btn bg-orange btn-xs'>Refund Requested</span>";
                 break;
+            case "Pending MSC Approval";
+                return "<span class='btn bg-orange btn-xs'>Pending MSC Approval</span>";
+                break;
             case "Confirmed";
                 return "<span class='btn bg-orange btn-xs'>Confirmed</span>";
                 break;
