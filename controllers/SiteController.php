@@ -344,27 +344,66 @@ class SiteController extends Controller
 
                                     }
 
-                                }else{
+                                } else {
                                     $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
                                     $tenantmscmodel->save(false);
 
                                 }
 
                             } else {
-                                $signpdfresponse = $this->signpdf($mscrequest, $model);
-                                if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] = '000') {
-                                    $mscrequest->signpdf_response = json_encode($signpdfresponse);
+
+
+                            }
+                        } else if ($mscrequest->status == 'Approved' && $mscrequest->x1!='' && $mscrequest->y1!='') {
+                            $signpdfresponse = $this->signpdf($mscrequest, $model);
+                            if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] = '000') {
+                                $mscrequest->signpdf_response = json_encode($signpdfresponse);
+                                $mscrequest->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
+                                $mscrequest->status = 'Completed';
+                                $mscrequest->updated_at = date('Y-m-d H:i:s');
+                                $mscrequest->save(false);
+                                if (isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64'] != '') {                             $mscrequest->signpdf_response = json_encode($signpdfresponse);
                                     $mscrequest->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
                                     $mscrequest->status = 'Completed';
                                     $mscrequest->updated_at = date('Y-m-d H:i:s');
                                     $mscrequest->save(false);
-                                    if (isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64']        != '') {
+                                    if(isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64']!=''){
+                                        $tenantmscmodel = Msc::find()->where(['user_id' => $tenant_id, 'request_id' => $request_id, 'status' => 'Approved'])->one();
+
+                                        $tenantmscmodel->pdf = $signpdfresponse['return']['signedPdfInBase64'];
+                                        $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                        $tenantmscmodel->save(false);
+                                        $signpdftenantresponse = $this->signpdf($tenantmscmodel,$model);
+                                        if(!empty($signpdftenantresponse) &&  isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode']='000') {
+                                            $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                            $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                            $tenantmscmodel->status = 'Completed';
+                                            $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                            if($tenantmscmodel->save(false)){
+                                                $model->signed_agreement = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                                $model->updated_at = date('Y-m-d H:i:s');
+                                                $model->status = 'Agreement Processed';
+                                                $model->save(false);
+
+                                            }
+
+                                        }else{
+                                            $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                            $tenantmscmodel->save(false);
+//
+                                        }
+
+                                    }else{
+                                        $mscrequest->signpdf_response = json_encode($signpdfresponse);
+                                        $mscrequest->save(false);
 
 
                                     }
 
 
+
                                 }
+
                             }
                         }
                     }
@@ -374,6 +413,7 @@ class SiteController extends Controller
             }
         }
     }
+
     private function signpdf($mscmodel,$model){
 
         $curl = curl_init();

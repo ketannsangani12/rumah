@@ -6233,7 +6233,7 @@ public function actionMsctrustgate()
                            }
 
                        }else{
-                           return array('status' => 0, 'message' => 'Data not found.');
+                           return array('status' => 0, 'message' => json_encode($requestcertificatewithkycresponse));
 
                        }
 
