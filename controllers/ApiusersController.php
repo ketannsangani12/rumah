@@ -6154,7 +6154,6 @@ public function actionMsctrustgate()
             }
            $requestcertificatewithkycresponse = $this->Requestcertificatewithekyc($dataarray,$_POST['request_id'],$user_id);
            if(!empty($requestcertificatewithkycresponse)){
-               return array('status' => 0, 'message' => json_encode($requestcertificatewithkycresponse));
 
                if(($requestcertificatewithkycresponse['statusCode']=='CR101' || $requestcertificatewithkycresponse['statusCode']=='CR100')  || $requestcertificatewithkycresponse['statusCode']=='000'){
                    if($requestcertificatewithkycresponse['statusCode']=='000'){
