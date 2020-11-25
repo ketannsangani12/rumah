@@ -6188,7 +6188,9 @@ public function actionMsctrustgate()
                            $mscmodel->requestekyc_response = null;
                            $mscmodel->status = 'Approved';
                            $mscmodel->save(false);
-                       }else{
+                       return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will informed when Signing done.', 'errorresponse' => '', 'typeapi' => 'getrequestid');
+
+                   }else{
                           $mscrequestmodel = Msc::find()->where(['request_id' => $_POST['request_id'], 'user_id' => $user_id])->orderBy(['id' => SORT_DESC])->one();
                            if (!empty($mscrequestmodel)) {
                                $getrequeststatus = $this->Getrequeststatus($mscrequestmodel);
