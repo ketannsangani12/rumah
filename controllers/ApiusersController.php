@@ -6173,7 +6173,12 @@ public function actionMsctrustgate()
                        $userdetails->msccertificate = $requestcertificatewithkycresponse['certRequestID'];
                        $userdetails->save(false);
                    }else if($requestcertificatewithkycresponse['statusCode']=='CR100'){
-                           $msccertificateid = $userdetails->msccertificate;
+                       $mscrequestmodel = Msc::find()->where(['request_id' => $_POST['request_id'], 'user_id' => $user_id,'status'=>'Approved'])->orderBy(['id' => SORT_DESC])->one();
+                       if(!empty($mscrequestmodel)){
+                           return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will informed when Signing done.', 'errorresponse' => '', 'typeapi' => 'getrequestid');
+
+                       }
+                       $msccertificateid = $userdetails->msccertificate;
                            $mscmodel = New Msc();
                            $mscmodel->user_id = $user_id;
                            $mscmodel->request_id = $_POST['request_id'];
@@ -6188,7 +6193,7 @@ public function actionMsctrustgate()
                            $mscmodel->requestekyc_response = null;
                            $mscmodel->status = 'Approved';
                            $mscmodel->save(false);
-                       return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will informed when Signing done.', 'errorresponse' => '', 'typeapi' => 'getrequestid');
+                           return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will informed when Signing done.', 'errorresponse' => '', 'typeapi' => 'getrequestid');
 
                    }else{
                           $mscrequestmodel = Msc::find()->where(['request_id' => $_POST['request_id'], 'user_id' => $user_id])->orderBy(['id' => SORT_DESC])->one();

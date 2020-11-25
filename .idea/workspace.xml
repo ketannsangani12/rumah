@@ -27,8 +27,8 @@
       <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="6190" column="145" selection-start-line="6190" selection-start-column="145" selection-end-line="6190" selection-end-column="145" />
+            <state relative-caret-position="-43">
+              <caret line="6179" column="24" selection-start-line="6179" selection-start-column="24" selection-end-line="6179" selection-end-column="24" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
                 <element signature="e#20335#21660#0#PHP" expanded="false" />
@@ -38,7 +38,7 @@
                 <element signature="e#245690#260206#0#PHP" expanded="false" />
                 <element signature="e#273133#274400#0#PHP" expanded="false" />
                 <element signature="e#274405#275758#0#PHP" expanded="false" />
-                <element signature="e#354801#357110#0#PHP" expanded="false" />
+                <element signature="e#355268#357577#0#PHP" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -559,12 +559,12 @@
       <workItem from="1606191859068" duration="757000" />
       <workItem from="1606209130481" duration="3592000" />
       <workItem from="1606225994301" duration="655000" />
-      <workItem from="1606276193111" duration="18032000" />
+      <workItem from="1606276193111" duration="18272000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="835386000" />
+    <option name="totallyTimeSpent" value="835626000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="0" />
@@ -577,7 +577,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293011" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293011" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34274194" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1063,8 +1063,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="6190" column="145" selection-start-line="6190" selection-start-column="145" selection-end-line="6190" selection-end-column="145" />
+        <state relative-caret-position="-43">
+          <caret line="6179" column="24" selection-start-line="6179" selection-start-column="24" selection-end-line="6179" selection-end-column="24" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
             <element signature="e#20335#21660#0#PHP" expanded="false" />
@@ -1074,7 +1074,7 @@
             <element signature="e#245690#260206#0#PHP" expanded="false" />
             <element signature="e#273133#274400#0#PHP" expanded="false" />
             <element signature="e#274405#275758#0#PHP" expanded="false" />
-            <element signature="e#354801#357110#0#PHP" expanded="false" />
+            <element signature="e#355268#357577#0#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
