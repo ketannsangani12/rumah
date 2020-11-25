@@ -6154,6 +6154,8 @@ public function actionMsctrustgate()
             }
            $requestcertificatewithkycresponse = $this->Requestcertificatewithekyc($dataarray,$_POST['request_id'],$user_id);
            if(!empty($requestcertificatewithkycresponse)){
+               return array('status' => 0, 'message' => json_encode($requestcertificatewithkycresponse));
+
                if(($requestcertificatewithkycresponse['statusCode']=='CR101' || $requestcertificatewithkycresponse['statusCode']=='CR100')  || $requestcertificatewithkycresponse['statusCode']=='000'){
                    if($requestcertificatewithkycresponse['statusCode']=='000'){
                        $mscmodel = New Msc();
@@ -6178,7 +6180,7 @@ public function actionMsctrustgate()
                            return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will informed when Signing done.', 'errorresponse' => '', 'typeapi' => 'getrequestid');
 
                        }
-                       $msccertificateid = $userdetails->msccertificate;
+                           $msccertificateid = $userdetails->msccertificate;
                            $mscmodel = New Msc();
                            $mscmodel->user_id = $user_id;
                            $mscmodel->request_id = $_POST['request_id'];
