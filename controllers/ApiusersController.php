@@ -6258,7 +6258,7 @@ public function actionMsctrustgate()
 
                            } else {
 
-                               return array('status' => 0, 'message' => json_encode($requestcertificatewithkycresponse));
+                               return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse));
 
                            }
 
