@@ -301,6 +301,7 @@ class SiteController extends Controller
                             $usermodel->document_front = $mscrequest->document_front;
                             $usermodel->document_back = $mscrequest->document_back;
                             $usermodel->document_no = $mscrequest->document_no;
+                            $usermodel->msccertificate = $mscrequest->mscrequest_id;
                             $usermodel->updated_at = date('Y-m-d H:i:s');
                             $usermodel->save(false);
 

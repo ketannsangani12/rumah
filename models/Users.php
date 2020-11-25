@@ -133,7 +133,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'wallet_balance'=>'Wallet Balance',
             'document_front'=>'Document Front',
             'document_back'=>'Document Back',
-            'document_type'=>'Document type'
+            'document_type'=>'Document type',
+            'msccertificate'=>'MSC Certificate'
         ];
     }
 

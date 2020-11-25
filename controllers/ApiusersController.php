@@ -6141,7 +6141,7 @@ public function actionMsctrustgate()
             $dataarray['mobile_no'] = $mobile_no;
             $dataarray['email'] = $userdetails->email;
             $dataarray['validity'] = ($requestmodel->user_id==$user_id)?'S':'L';
-        $document_back = '';
+            $document_back = '';
             if($type=='N'){
                 if(empty($_POST['document_back'])){
                     return array('status' => 0, 'message' => 'Please upload back image of MyCad.');
@@ -6170,72 +6170,90 @@ public function actionMsctrustgate()
                        $mscmodel->requestekyc_response = json_encode($requestcertificatewithkycresponse);
                        $mscmodel->status = 'Pending';
                        $mscmodel->save(false);
-
-
-                   }else{
-                       $mscrequestmodel = Msc::find()->where(['request_id'=>$_POST['request_id'],'user_id'=>$user_id])->orderBy(['id'=>SORT_DESC])->one();
-                       if(!empty($mscrequestmodel)){
-                           $getrequeststatus = $this->Getrequeststatus($mscrequestmodel);
-                           if(!empty($getrequeststatus)){
-                               $mscrequestmodel->getrequeststatus_response = json_encode($getrequeststatus);
-                               $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
-                               $mscrequestmodel->save(false);
-                               if($getrequeststatus['statusCode']==000 && $getrequeststatus['dataList']['requestStatus']=='Pending Activation'){
-                                  $mscrequestmodel->status = 'Pending Activation';
-                                  $mscrequestmodel->save(false);
-                                $getactivationlink = $this->Getactivationlink($mscrequestmodel);
-                                if(!empty($getactivationlink)){
-                                    $mscrequestmodel->getactivationlink_response = json_encode($getactivationlink);
-                                    $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
-                                    $mscrequestmodel->save(false);
-                                    if($getactivationlink['statusCode']==000 && $getactivationlink['statusMsg']=='Success'){
-                                        $mscrequestmodel->activation_link = $getactivationlink['activationLink'];
-                                        $mscrequestmodel->status = 'Need Activation';
-                                        $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
-                                        $mscrequestmodel->save(false);
-                                        $todomodel = new TodoList();
-                                        $todomodel->user_id = $user_id;
-                                        $todomodel->msc_id = $mscrequestmodel->id;
-                                        $todomodel->property_id = $requestmodel->property_id;
-                                        $todomodel->request_id = $mscrequestmodel->request_id;
-                                        $todomodel->reftype = 'Activation Link';
-                                        $todomodel->created_at = date('Y-m-d H:i:s');
-                                        $todomodel->updated_at = date('Y-m-d H:i:s');
-                                        $todomodel->status = 'Pending';
-                                        $todomodel->save(false);
-                                        return array('status' => 1, 'message' =>'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.' ,'errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getactivationlink');
-
-
-                                    }else{
-                                        return array('status' => 0, 'message' => $getrequeststatus['statusMsg'],'error'=>json_encode($getrequeststatus),'typeapi'=>'getrequeststatus');
-
-                                    }
-
-                                }else{
-                                    return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'getactivationlink');
-
-                                }
-
-                              }else if($getrequeststatus['statusCode']==000 && ($getrequeststatus['dataList']['requestStatus']=='Submitted' || $getrequeststatus['dataList']['requestStatus']=='Verified')){
-                                   $mscrequestmodel->status = 'Pending MSC Approval';
+                       $userdetails->msccertificate = $requestcertificatewithkycresponse['certRequestID'];
+                       $userdetails->save(false);
+                   }else if($requestcertificatewithkycresponse['statusCode']=='CR100'){
+                           $msccertificateid = $userdetails->msccertificate;
+                           $mscmodel = New Msc();
+                           $mscmodel->user_id = $user_id;
+                           $mscmodel->request_id = $_POST['request_id'];
+                           $mscmodel->document_front = $document_front;
+                           $mscmodel->document_back = ($document_back!='')?$document_back:null;
+                           $mscmodel->full_name = $full_name;
+                           $mscmodel->document_no = $identification_no;
+                           $mscmodel->type = $type;
+                           $mscmodel->mobile_no = $mobile_no;
+                           $mscmodel->created_at = date('Y-m-d H:i:s');
+                           $mscmodel->mscrequest_id = $msccertificateid;
+                           $mscmodel->requestekyc_response = null;
+                           $mscmodel->status = 'Approved';
+                           $mscmodel->save(false);
+                       }else{
+                          $mscrequestmodel = Msc::find()->where(['request_id' => $_POST['request_id'], 'user_id' => $user_id])->orderBy(['id' => SORT_DESC])->one();
+                           if (!empty($mscrequestmodel)) {
+                               $getrequeststatus = $this->Getrequeststatus($mscrequestmodel);
+                               if (!empty($getrequeststatus)) {
+                                   $mscrequestmodel->getrequeststatus_response = json_encode($getrequeststatus);
+                                   $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
                                    $mscrequestmodel->save(false);
-                                   $requestmodel->status = 'Pending MSC Approval';
-                                   $requestmodel->save(false);
-                                   return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done','errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getrequeststatus');
+                                   if ($getrequeststatus['statusCode'] == 000 && $getrequeststatus['dataList']['requestStatus'] == 'Pending Activation') {
+                                       $mscrequestmodel->status = 'Pending Activation';
+                                       $mscrequestmodel->save(false);
+                                       $getactivationlink = $this->Getactivationlink($mscrequestmodel);
+                                       if (!empty($getactivationlink)) {
+                                           $mscrequestmodel->getactivationlink_response = json_encode($getactivationlink);
+                                           $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
+                                           $mscrequestmodel->save(false);
+                                           if ($getactivationlink['statusCode'] == 000 && $getactivationlink['statusMsg'] == 'Success') {
+                                               $mscrequestmodel->activation_link = $getactivationlink['activationLink'];
+                                               $mscrequestmodel->status = 'Need Activation';
+                                               $mscrequestmodel->updated_at = date('Y-m-d H:i:s');
+                                               $mscrequestmodel->save(false);
+                                               $todomodel = new TodoList();
+                                               $todomodel->user_id = $user_id;
+                                               $todomodel->msc_id = $mscrequestmodel->id;
+                                               $todomodel->property_id = $requestmodel->property_id;
+                                               $todomodel->request_id = $mscrequestmodel->request_id;
+                                               $todomodel->reftype = 'Activation Link';
+                                               $todomodel->created_at = date('Y-m-d H:i:s');
+                                               $todomodel->updated_at = date('Y-m-d H:i:s');
+                                               $todomodel->status = 'Pending';
+                                               $todomodel->save(false);
+                                               return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getactivationlink');
 
-                              }else{
-                                   return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','errorresponse'=>json_encode($getrequeststatus),'typeapi'=>'getrequeststatus');
+
+                                           } else {
+                                               return array('status' => 0, 'message' => $getrequeststatus['statusMsg'], 'error' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+
+                                           }
+
+                                       } else {
+                                           return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
+
+                                       }
+
+                                   } else if ($getrequeststatus['statusCode'] == 000 && ($getrequeststatus['dataList']['requestStatus'] == 'Submitted' || $getrequeststatus['dataList']['requestStatus'] == 'Verified')) {
+                                       $mscrequestmodel->status = 'Pending MSC Approval';
+                                       $mscrequestmodel->save(false);
+                                       $requestmodel->status = 'Pending MSC Approval';
+                                       $requestmodel->save(false);
+                                       return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+
+                                   } else {
+                                       return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+
+                                   }
+                               } else {
+                                   return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getrequeststatus');
 
                                }
-                           }else{
-                               return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'getrequeststatus');
+
+                           } else {
+
+                               return array('status' => 0, 'message' => json_encode($requestcertificatewithkycresponse));
 
                            }
 
-                       }else{
-                           return array('status' => 0, 'message' => json_encode($requestcertificatewithkycresponse));
-
-                       }
 
                    }
 
@@ -6351,7 +6369,6 @@ public function actionMsctrustgate()
             }else{
                 return '';
             }
-            //echo $response;exit;
         }
 
 
@@ -6408,6 +6425,47 @@ public function actionMsctrustgate()
 
     }
 
+
+    private function Getcertinfo($certificate_id){
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetCertInfo>\n         <UserID>".$certificate_id."</UserID>\n      </mtsa:GetCertInfo>\n   </soapenv:Body>\n</soapenv:Envelope>",
+                CURLOPT_HTTPHEADER => array(
+                    "Username: rumahi",
+                    "Password: YcuLxvMMcXWPLRaW",
+                    "Content-Type: text/xml"
+                ),
+            ));
+
+            $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+            curl_close($curl);
+        if ($err) {
+            return '';
+        } else {
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+            if(!empty($responsearray) &&  isset($responsearray['ns2GetCertInfoResponse'])  && !empty($responsearray['ns2GetCertInfoResponse'])){
+                return $responsearray['ns2GetCertInfoResponse']['return'];
+            }else{
+                return '';
+            }
+        }
+
+    }
     private function signpdf(){
 
          $curl = curl_init();
