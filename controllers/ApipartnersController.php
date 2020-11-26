@@ -629,6 +629,7 @@ class ApipartnersController extends ActiveController
 
     }
 
+
     public function actionPurchasepackage()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -814,8 +815,48 @@ class ApipartnersController extends ActiveController
                         }
                     }
                 }
-                $data = array();
-                $data['userdetails'] = $userdetails;
+                $first_day_this_month1 = date('Y-m-01 00:00:00'); // hard-coded '01' for first day
+                $last_day_this_month1  = date('Y-m-t 11:59:59');
+            $query = TransactionsItems::find()->select('SUM(total_amount) as total')->where(['receiver_id'=>$user_id,'type'=>'Payment']);
+                //$query->andWhere(['between', 'date', $start, $end]);
+
+            $query->andWhere(['>=','DATE(created_at)', $first_day_this_month1])->andWhere(['<=','DATE(created_at)', $last_day_this_month1]);
+
+            $totalearning = $query->orderBy([
+                'created_at' => SORT_DESC
+            ])->asArray()->all();
+            $first_day_this_month = date('Y-m-01'); // hard-coded '01' for first day
+            $last_day_this_month  = date('Y-m-t');
+            $first_day_this_year = date('Y-m-d', strtotime('first day of january this year'));
+            $lasr_day_this_year = date('Y-m-d', strtotime('last day of december this year'));
+
+            $today = date('Y-m-d');
+            $todaystart = date('Y-m-d 00:00:00');
+            $todayend = date('Y-m-d 11:59:59');
+            $first_day_this_year1 = date('Y-m-d 00:00:00', strtotime('first day of january this year'));
+            $lasr_day_this_year1 = date('Y-m-d 11:59:59', strtotime('last day of december this year'));
+
+            $totalviewsmonth = TodoList::find()->where(['reftype'=>'Appointment','agent_id'=>$user_id])->andWhere(['>=','appointment_date', $first_day_this_month])->andWhere(['<=','appointment_date', $last_day_this_month])->count();
+            $totalviewsday = TodoList::find()->where(['reftype'=>'Appointment','agent_id'=>$user_id,'appointment_date'=>$today])->count();
+            $totalviewsyear = TodoList::find()->where(['reftype'=>'Appointment','agent_id'=>$user_id])->andWhere(['>=','appointment_date', $first_day_this_year])->andWhere(['<=','appointment_date', $lasr_day_this_year])->count();
+            $mypropertiescount = Properties::find()->where(['agent_id'=>$user_id])->count();
+            $totalsealeddealsmonth = BookingRequests::find()->where(['agent_id'=>$user_id,'status'=>'Rented'])->andWhere(['>=','DATE(created_at)', $first_day_this_month1])->andWhere(['<=','DATE(created_at)', $last_day_this_month1])->count();
+            $totalsealeddealsday = BookingRequests::find()->where(['agent_id'=>$user_id,'status'=>'Rented'])->andWhere(['>=','DATE(created_at)', $todaystart])->andWhere(['<=','DATE(created_at)', $todayend])->count();
+            $totalsealeddealsyear = BookingRequests::find()->where(['agent_id'=>$user_id,'status'=>'Rented'])->andWhere(['>=','DATE(created_at)', $first_day_this_year1])->andWhere(['<=','DATE(created_at)', $lasr_day_this_year1])->count();
+
+            $data = array();
+            $data['totalearning'] = $totalearning[0]['total'];
+            $data['totalviewsmonth'] = ($mypropertiescount>0)?$totalviewsmonth/$mypropertiescount:0;
+            $data['totalviewsday'] = ($mypropertiescount>0)?$totalviewsday/$mypropertiescount:0;
+            $data['totalviewsyear'] = ($mypropertiescount>0)?$totalviewsyear/$mypropertiescount:0;
+            $data['totalsealeddealsmonth'] = $totalsealeddealsmonth;
+            $data['totalsealeddealsday'] = $totalsealeddealsday;
+            $data['totalsealeddealsyear'] = $totalsealeddealsyear;
+            $data['totalconversionratemonth'] = ($totalviewsmonth>0)?$totalsealeddealsmonth/$totalviewsmonth*100:0;
+            $data['totalconversionrateday'] = ($totalviewsday>0)?$totalsealeddealsday/$totalviewsday*100:0;
+            $data['totalconversionrateyear'] = ($totalsealeddealsyear>0)?$totalsealeddealsyear/$totalsealeddealsyear*100:0;
+
+            $data['userdetails'] = $userdetails;
                 $data['upcoming'] = $upcoming;
                 $data['services'] = $services;
                 return array('status' => 1, 'data' => $data);

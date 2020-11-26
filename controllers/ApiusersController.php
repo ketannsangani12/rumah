@@ -1682,8 +1682,13 @@ class ApiusersController extends ActiveController
                             return array('status' => 0, 'message' => 'You already sent booking request for this property.');
 
                         }
+                        $propertymodel = Properties::findOne($model->property_id);
                         $model->user_id = $model->tenant_id;
                         $model->landlord_id = $this->user_id;
+                        if($propertymodel->agent_id!=''){
+                            $model->agent_id = $propertymodel->agent_id;
+
+                        }
                         $model->tenant_id = null;
                         $model->status = 'New';
                         $model->created_at = date('Y-m-d H:i:s');
@@ -6257,6 +6262,9 @@ public function actionMsctrustgate()
                                }
 
                            } else {
+                               if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
+
+                               }
 
                                return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse));
 
