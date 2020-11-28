@@ -9,8 +9,10 @@ namespace app\commands;
 
 use app\models\BookingRequests;
 use app\models\Cronjobs;
+use app\models\Msc;
 use app\models\Properties;
 use app\models\TodoList;
+use app\models\Users;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -106,6 +108,320 @@ class HelloController extends Controller
         $cronjob->type = 'Auto Rental';
         $cronjob->created_at = date('Y-m-d H:i:s');
         $cronjob->save(false);
+    }
+    public function actionUpdaterequeststatus()
+    {
+        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation']])->all();
+        if (!empty($mscrequests)) {
+            foreach ($mscrequests as $mscrequest) {
+                $getrequeststatus = array();
+                $getactivationlink = array();
+                if ($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') {
+                    $getrequeststatus = $this->Getrequeststatus($mscrequest);
+                    if (!empty($getrequeststatus)) {
+                        $mscrequest->getrequeststatus_response = json_encode($getrequeststatus);
+                        $mscrequest->updated_at = date('Y-m-d H:i:s');
+                        $mscrequest->save(false);
+                        if ($getrequeststatus['statusCode'] == 000 && $getrequeststatus['dataList']['requestStatus'] == 'Pending Activation') {
+                            $mscrequest->status = 'Pending Activation';
+                            $mscrequest->save(false);
+                            $getactivationlink = $this->Getactivationlink($mscrequest);
+                            if (!empty($getactivationlink)) {
+                                $mscrequest->getactivationlink_response = json_encode($getactivationlink);
+                                $mscrequest->updated_at = date('Y-m-d H:i:s');
+                                $mscrequest->save(false);
+                                if ($getactivationlink['statusCode'] == 000 && $getactivationlink['statusMsg'] == 'Success') {
+                                    $mscrequest->activation_link = $getactivationlink['activationLink'];
+                                    $mscrequest->status = 'Need Activation';
+                                    $mscrequest->updated_at = date('Y-m-d H:i:s');
+                                    $mscrequest->save(false);
+                                    $todomodel = new TodoList();
+                                    $todomodel->user_id = $mscrequest->user_id;
+                                    $todomodel->msc_id = $mscrequest->id;
+                                    $todomodel->property_id = $mscrequest->request->property_id;
+                                    $todomodel->request_id = $mscrequest->request_id;
+                                    $todomodel->reftype = 'Activation Link';
+                                    $todomodel->created_at = date('Y-m-d H:i:s');
+                                    $todomodel->updated_at = date('Y-m-d H:i:s');
+                                    $todomodel->status = 'Pending';
+                                    $todomodel->save(false);
+
+                                }
+
+                            }
+                        }
+
+                    }
+                } else if ($mscrequest->status == 'Need Activation') {
+
+                    $getrequeststatus = $this->Getrequeststatus($mscrequest);
+                    if (!empty($getrequeststatus)) {
+                        $mscrequest->getrequeststatus_response = json_encode($getrequeststatus);
+                        $mscrequest->updated_at = date('Y-m-d H:i:s');
+                        $mscrequest->save(false);
+                        if ($getrequeststatus['statusCode'] == 000 && $getrequeststatus['dataList']['requestStatus'] == 'Completed') {
+                            $mscrequest->status = 'Approved';
+                            $mscrequest->updated_at = date('Y-m-d H:i:s');
+                            $mscrequest->save(false);
+                            $todomodel = TodoList::find()->where(['msc_id'=>$mscrequest->id])->one();
+                            $todomodel->status = 'Completed';
+                            $todomodel->updated_at = date('Y-m-d H:i:s');
+                            $todomodel->save(false);
+                            $usermodel = Users::findOne($mscrequest->user_id);
+                            $usermodel->document_type = $mscrequest->type;
+                            $usermodel->document_front = $mscrequest->document_front;
+                            $usermodel->document_back = $mscrequest->document_back;
+                            $usermodel->document_no = $mscrequest->document_no;
+                            $usermodel->msccertificate = $mscrequest->mscrequest_id;
+                            $usermodel->updated_at = date('Y-m-d H:i:s');
+                            $usermodel->save(false);
+
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+    public function actionGetsignedpdf()
+    {
+        $mscrequests = Msc::find()->where(['status' => 'Approved'])->orderBy(['id' => SORT_DESC])->all();
+        if (!empty($mscrequests)) {
+            foreach ($mscrequests as $mscrequest) {
+                if ($mscrequest->request->status == 'Agreement Processing') {
+                    $landlord_id = $mscrequest->request->landlord_id;
+                    $tenant_id = $mscrequest->request->user_id;
+                    $request_id = $mscrequest->request_id;
+                    $model = BookingRequests::findOne($request_id);
+                    if ($mscrequest->user_id == $landlord_id && $mscrequest->pdf != '') {
+                        if ($mscrequest->status == 'Completed') {
+                            $tenantmscmodel = Msc::find()->where(['user_id' => $tenant_id, 'request_id' => $request_id, 'status' => 'Approved'])->one();
+                            if (!empty($tenantmscmodel)) {
+                                if ($tenantmscmodel->pdf != '') {
+                                    $tenantmscmodel->pdf = $mscrequest->signedpdf;
+                                    $tenantmscmodel->save(false);
+
+                                }
+                                $signpdftenantresponse = $this->signpdf($tenantmscmodel, $model);
+                                if (!empty($signpdftenantresponse) && isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode'] = '000') {
+                                    $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                    $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                    $tenantmscmodel->status = 'Completed';
+                                    $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                    if ($tenantmscmodel->save(false)) {
+                                        $model->signed_agreement = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                        $model->updated_at = date('Y-m-d H:i:s');
+                                        $model->status = 'Agreement Processed';
+                                        $model->save(false);
+
+                                    }
+
+                                } else {
+                                    $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                    $tenantmscmodel->save(false);
+
+                                }
+
+                            } else {
+
+
+                            }
+                        } else if ($mscrequest->status == 'Approved' && $mscrequest->x1!='' && $mscrequest->y1!='') {
+                            $signpdfresponse = $this->signpdf($mscrequest, $model);
+                            if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] = '000') {
+                                $mscrequest->signpdf_response = json_encode($signpdfresponse);
+                                $mscrequest->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
+                                $mscrequest->status = 'Completed';
+                                $mscrequest->updated_at = date('Y-m-d H:i:s');
+                                $mscrequest->save(false);
+                                if (isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64'] != '') {                             $mscrequest->signpdf_response = json_encode($signpdfresponse);
+                                    $mscrequest->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
+                                    $mscrequest->status = 'Completed';
+                                    $mscrequest->updated_at = date('Y-m-d H:i:s');
+                                    $mscrequest->save(false);
+                                    if(isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64']!=''){
+                                        $tenantmscmodel = Msc::find()->where(['user_id' => $tenant_id, 'request_id' => $request_id, 'status' => 'Approved'])->one();
+
+                                        $tenantmscmodel->pdf = $signpdfresponse['return']['signedPdfInBase64'];
+                                        $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                        $tenantmscmodel->save(false);
+                                        $signpdftenantresponse = $this->signpdf($tenantmscmodel,$model);
+                                        if(!empty($signpdftenantresponse) &&  isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode']='000') {
+                                            $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                            $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                            $tenantmscmodel->status = 'Completed';
+                                            $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                            if($tenantmscmodel->save(false)){
+                                                $model->signed_agreement = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                                $model->updated_at = date('Y-m-d H:i:s');
+                                                $model->status = 'Agreement Processed';
+                                                $model->save(false);
+
+                                            }
+
+                                        }else{
+                                            $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                            $tenantmscmodel->save(false);
+//
+                                        }
+
+                                    }else{
+                                        $mscrequest->signpdf_response = json_encode($signpdfresponse);
+                                        $mscrequest->save(false);
+
+
+                                    }
+
+
+
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    private function signpdf($mscmodel,$model){
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:SignPDF>\n         <UserID>".$mscmodel->document_no."</UserID>\n         <FullName>".$mscmodel->full_name."</FullName>\n         <!--Optional:-->\n         <AuthFactor></AuthFactor>\n\t\t<SignatureInfo>\n            <!--Optional:-->\n            <pageNo>".$mscmodel->page_no."</pageNo>\n            <!--Optional:-->\n            <pdfInBase64>".$mscmodel->pdf."</pdfInBase64>\n            <sigImageInBase64></sigImageInBase64>\n            <!--Optional:-->\n            <visibility>true</visibility>\n            <!--Optional:-->\n            <x1>".$mscmodel->x1."</x1>\n            <!--Optional:-->\n            <x2>".$mscmodel->x2."</x2>\n            <!--Optional:-->\n            <y1>".$mscmodel->y1."</y1>\n            <!--Optional:-->\n            <y2>".$mscmodel->y2."</y2>\n         </SignatureInfo>\n      </mtsa:SignPDF>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_HTTPHEADER => array(
+                "Username: rumahi",
+                "Password: YcuLxvMMcXWPLRaW",
+                "Content-Type: text/xml"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+        if ($err) {
+            return false;
+        } else {
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+            if(!empty($responsearray) &&  isset($responsearray['ns2SignPDFResponse'])  && !empty($responsearray['ns2SignPDFResponse'])){
+                return $responsearray['ns2SignPDFResponse'];
+            }else{
+                return false;
+            }
+            //echo $response;exit;
+        }
+    }
+
+    private function Getrequeststatus($mscrequestmodel)
+    {
+        $certificaterequest_id = $mscrequestmodel->mscrequest_id;
+        $userID = $mscrequestmodel->document_no;
+
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetRequestStatus>\n         <!--1 or more repetitions:-->\n         <UserRequestList>\n            <!--Optional:-->\n            <requestID>".$certificaterequest_id."</requestID>\n            <!--Optional:-->\n            <userID>".$userID."</userID>\n         </UserRequestList>\n      </mtsa:GetRequestStatus>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_HTTPHEADER => array(
+                "Username: rumahi",
+                "Password: YcuLxvMMcXWPLRaW",
+                "Content-Type: text/xml"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        // echo $response;
+        if ($err) {
+            return '';
+        } else {
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+            if(!empty($responsearray) &&  isset($responsearray['ns2GetRequestStatusResponse'])  && !empty($responsearray['ns2GetRequestStatusResponse'])){
+                return $responsearray['ns2GetRequestStatusResponse']['return'];
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
+
+
+    }
+    private function Getactivationlink($mscrequestmodel)
+    {
+
+
+
+        $certificaterequest_id = $mscrequestmodel->mscrequest_id;
+        $userID = $mscrequestmodel->document_no;
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetActivation>\n         <UserID>".$userID."</UserID>\n         <RequestID>".$certificaterequest_id."</RequestID>\n      </mtsa:GetActivation>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_HTTPHEADER => array(
+                "Username: rumahi",
+                "Password: YcuLxvMMcXWPLRaW",
+                "Content-Type: text/xml"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        // echo $response;
+        if ($err) {
+            return '';
+        } else {
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+
+            if(!empty($responsearray) &&  isset($responsearray['ns2GetActivationResponse'])  && !empty($responsearray['ns2GetActivationResponse'])){
+                return $responsearray['ns2GetActivationResponse']['return'];
+            }else{
+                return '';
+            }
+            //echo $response;exit;
+        }
+
+
     }
 
 }

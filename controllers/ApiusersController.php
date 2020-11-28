@@ -6262,11 +6262,13 @@ public function actionMsctrustgate()
                                }
 
                            } else {
-//                               if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
-//
-//                               }
+                              if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
+                                  return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
 
-                               return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse));
+                              }else {
+
+                                  return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'], 'errorresponse' => json_encode($requestcertificatewithkycresponse));
+                              }
 
                            }
 
