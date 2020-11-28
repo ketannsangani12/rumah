@@ -533,7 +533,7 @@ class ApiusersController extends ActiveController
                    $data[$key]['price'] = $package->price;
                    $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                    $data[$key]['total'] = $package->quantity;
-                   $data[$key]['remaining'] = $userdetails->property_credited-$mypropertiescount;
+                   $data[$key]['remaining'] = $package->quantity-$mypropertiescount;
 
 
                }
@@ -6262,9 +6262,9 @@ public function actionMsctrustgate()
                                }
 
                            } else {
-                               if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
-
-                               }
+//                               if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
+//
+//                               }
 
                                return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse));
 
@@ -6303,8 +6303,10 @@ public function actionMsctrustgate()
         if($userdata['type']=='N'){
             $document_front = $userdata['document_front'];
             $document_back = $userdata['document_back'];
+            $nationality = 'MY';
         }else{
             $passportimage = $userdata['document_front'];
+            $nationality = 'ZZ';
         }
         curl_setopt_array($curl, array(
             CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
@@ -6315,7 +6317,7 @@ public function actionMsctrustgate()
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>".$userdata['identification_no']."</UserID>\n         <IDType>".$userdata['type']."</IDType>\n         <FullName>".$userdata['full_name']."</FullName>\n         <Nationality>MY</Nationality>\n         <EmailAddress>".$userdata['email']."</EmailAddress>\n         <MobileNo>".$userdata['full_name']."</MobileNo>\n         <CertValidity>".$userdata['validity']."</CertValidity>\n         <PassportImage>".$passportimage."</PassportImage>\n         <NRICFront>".$document_front."</NRICFront>\n         <NRICBack>".$document_back."</NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>".$userdata['identification_no']."</UserID>\n         <IDType>".$userdata['type']."</IDType>\n         <FullName>".$userdata['full_name']."</FullName>\n         <Nationality>".$nationality."</Nationality>\n         <EmailAddress>".$userdata['email']."</EmailAddress>\n         <MobileNo>".$userdata['full_name']."</MobileNo>\n         <CertValidity>".$userdata['validity']."</CertValidity>\n         <PassportImage>".$passportimage."</PassportImage>\n         <NRICFront>".$document_front."</NRICFront>\n         <NRICBack>".$document_back."</NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
             CURLOPT_HTTPHEADER => array(
                 "Username: rumahi",
                 "Password: YcuLxvMMcXWPLRaW",
