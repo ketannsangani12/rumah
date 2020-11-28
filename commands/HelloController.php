@@ -182,6 +182,10 @@ class HelloController extends Controller
                 }
             }
         }
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Get MSC request status';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
     }
     public function actionGetsignedpdf()
     {
@@ -284,6 +288,10 @@ class HelloController extends Controller
 
             }
         }
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Get Signed PDF';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
     }
 
     private function signpdf($mscmodel,$model){
