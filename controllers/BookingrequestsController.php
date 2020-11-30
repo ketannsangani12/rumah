@@ -205,9 +205,9 @@ class BookingrequestsController extends Controller
     public function actionUploadtomsc($id)
     {
         $model = $this->findModel($id);
-        if ($model->status!='Agreement Processing') {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+//        if ($model->status!='Agreement Processing') {
+//            throw new NotFoundHttpException('The requested page does not exist.');
+//        }
         $model->scenario = 'uploadtomsc';
         if ($model->load(Yii::$app->request->post())) {
             $model->pdf = \yii\web\UploadedFile::getInstance($model, 'pdf');
