@@ -365,7 +365,7 @@ curl_setopt_array($curl, array(
             // set to use core fonts only
             'mode' => Pdf::MODE_CORE,
 
-            'filename' => 'agreement_'.$model->reference_no,
+            'filename' => 'agreement_'.$model->reference_no.'.pdf',
 
             // A4 paper format
             'format' => Pdf::FORMAT_A4,
