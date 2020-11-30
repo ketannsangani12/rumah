@@ -364,6 +364,9 @@ curl_setopt_array($curl, array(
         $pdf = new Pdf([
             // set to use core fonts only
             'mode' => Pdf::MODE_CORE,
+
+            'filename' => 'agreement_'.$model->reference_no,
+
             // A4 paper format
             'format' => Pdf::FORMAT_A4,
             // portrait orientation

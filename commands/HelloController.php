@@ -111,12 +111,12 @@ class HelloController extends Controller
     }
     public function actionUpdaterequeststatus()
     {
-        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation']])->all();
+        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation','Pending']])->all();
         if (!empty($mscrequests)) {
             foreach ($mscrequests as $mscrequest) {
                 $getrequeststatus = array();
                 $getactivationlink = array();
-                if ($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') {
+                if (($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') || $mscrequest->status=='Pending') {
                     $getrequeststatus = $this->Getrequeststatus($mscrequest);
                     if (!empty($getrequeststatus)) {
                         $mscrequest->getrequeststatus_response = json_encode($getrequeststatus);

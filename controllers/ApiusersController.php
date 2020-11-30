@@ -6100,7 +6100,7 @@ public function actionMsctrustgate()
             $dataarray['identification_no'] = $identification_no;
             $dataarray['mobile_no'] = $mobile_no;
             $dataarray['email'] = $userdetails->email;
-            $dataarray['validity'] = ($requestmodel->user_id==$user_id)?'S':'L';
+            $dataarray['validity'] = 'L';
             $document_back = '';
             if($type=='N'){
                 if(empty($_POST['document_back'])){
@@ -6133,6 +6133,8 @@ public function actionMsctrustgate()
                        $mscmodel->save(false);
                        $userdetails->msccertificate = $requestcertificatewithkycresponse['certRequestID'];
                        $userdetails->save(false);
+                       return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getactivationlink');
+
                    }else if($requestcertificatewithkycresponse['statusCode']=='CR100'){
                        $mscrequestmodel = Msc::find()->where(['request_id' => $_POST['request_id'], 'user_id' => $user_id,'status'=>'Approved'])->orderBy(['id' => SORT_DESC])->one();
                        if(!empty($mscrequestmodel)){
