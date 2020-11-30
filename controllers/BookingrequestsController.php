@@ -213,8 +213,8 @@ class BookingrequestsController extends Controller
             $model->pdf = \yii\web\UploadedFile::getInstance($model, 'pdf');
 
             if($model->validate()) {
-                $tenantmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->user_id,'status'=>'Approved'])->orderBy(['id'=>SORT_DESC])->one();
-                $landlordmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->landlord_id,'status'=>'Approved'])->orderBy(['id'=>SORT_DESC])->one();
+                $tenantmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->user_id,'status'=>'Completed'])->orderBy(['id'=>SORT_DESC])->one();
+                $landlordmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->landlord_id,'status'=>'Completed'])->orderBy(['id'=>SORT_DESC])->one();
 //                if(empty($tenantmscmodel) || empty($landlordmscmodel)){
 //                    Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
 //                    return $this->redirect(['index']);
