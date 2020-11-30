@@ -383,7 +383,8 @@ curl_setopt_array($curl, array(
             'cssInline' => '.kv-heading-1{font-size:18px}',
             // set mPDF properties on the fly
             'options' => ['defaultheaderline' => 0,  //for header
-                'defaulfooterline' => 0  //for footer
+                'defaulfooterline' => 0,  //for footer
+                'title' => 'Customer Invoice'
         ],
             // call mPDF methods on the fly
             'methods' => [
