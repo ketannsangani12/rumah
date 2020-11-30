@@ -5723,134 +5723,72 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-           if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['selfie']) && $_POST['selfie']!='' && isset($_POST['request_id']) && $_POST['request_id']!=''){
+           if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['selfie']) && $_POST['selfie']!='' && isset($_POST['request_id']) && $_POST['request_id']!='' && isset($_POST['type']) && $_POST['type']!=''){
               $requestmodel = BookingRequests::findOne($_POST['request_id']);
+               $type = $_POST['type'];
+
                $user_id = $this->user_id;
 
                $journeyid = $this->createjourneyid();
               if($journeyid!=''){
-                  $document = $_POST['document'];
-                  $selfie = $_POST['selfie'];
-                  $checkmycad = $this->mykadokaydoc($journeyid,$document);
-                  if(!empty($checkmycad)){
-                      if($checkmycad->status=='success' && $checkmycad->messageCode=='api.success'){
-                        $checkscoreandface = $this->okayface($journeyid,$document,$selfie);
-                          if(!empty($checkscoreandface)){
-                              if($checkscoreandface->status=='success' && $checkscoreandface->messageCode=='api.success'){
-                               $getscorecardresult = $this->getscorecard($journeyid);
+                  if($type=='N') {
+                      $document = $_POST['document'];
+                      $selfie = $_POST['selfie'];
+                      $checkmycad = $this->mykadokaydoc($journeyid, $document);
+                      if (!empty($checkmycad)) {
+                          if ($checkmycad->status == 'success' && $checkmycad->messageCode == 'api.success') {
+                              $checkscoreandface = $this->okayface($journeyid, $document, $selfie);
+                              if (!empty($checkscoreandface)) {
+                                  if ($checkscoreandface->status == 'success' && $checkscoreandface->messageCode == 'api.success') {
+                                      $getscorecardresult = $this->getscorecard($journeyid);
 
-                                  if(!empty($getscorecardresult)){
-                                   if($getscorecardresult->status=='success'){
-                                       if($user_id==$requestmodel->landlord_id){
-                                           $requestmodel->landlord_ekyc_response = json_encode($getscorecardresult);
-                                           $requestmodel->save(false);
-                                       }
-                                       if($user_id==$requestmodel->user_id){
-                                           $requestmodel->tenant_ekyc_response = json_encode($getscorecardresult);
-                                           $requestmodel->save(false);
-                                       }
-                                      $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
-                                      if($status=='clear'){
-                                          $usermodel = Users::findOne($user_id);
-                                          $usermodel->ekyc_response = json_encode($getscorecardresult);
-                                          $usermodel->identity_status = 'Verified';
-                                          $usermodel->save(false);
-                                          return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
+                                      if (!empty($getscorecardresult)) {
+                                          if ($getscorecardresult->status == 'success') {
+                                              if ($user_id == $requestmodel->landlord_id) {
+                                                  $requestmodel->landlord_ekyc_response = json_encode($getscorecardresult);
+                                                  $requestmodel->save(false);
+                                              }
+                                              if ($user_id == $requestmodel->user_id) {
+                                                  $requestmodel->tenant_ekyc_response = json_encode($getscorecardresult);
+                                                  $requestmodel->save(false);
+                                              }
+                                              $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus)) ? $getscorecardresult->scorecardResultList[0]->scorecardStatus : '';
+                                              if ($status == 'clear') {
+                                                  $usermodel = Users::findOne($user_id);
+                                                  $usermodel->ekyc_response = json_encode($getscorecardresult);
+                                                  $usermodel->identity_status = 'Verified';
+                                                  $usermodel->save(false);
+                                                  return array('status' => 1, 'message' => 'Done', 'response' => $getscorecardresult);
 
-                                      } else{
-                                          return array('status' => 0, 'message' => $getscorecardresult->scorecardResultList[0]->scorecardStatus,'response'=>$getscorecardresult,'here'=>'there');
+                                              } else {
+                                                  return array('status' => 0, 'message' => $getscorecardresult->scorecardResultList[0]->scorecardStatus, 'response' => $getscorecardresult, 'here' => 'there');
 
-                                      }
-                                   }else{
-                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document5');
-
-                                   }
-
-                               }else{
-                             $journeyid = $this->createjourneyid();
-                              if($journeyid!=''){
-                                  $document = $_POST['document'];
-                                  $selfie = $_POST['selfie'];
-                                  $checkpassport = $this->passportokaydoc($journeyid, $document);
-                                  if(!empty($checkpassport)){
-                                      $checkscoreandface = $this->okayface($journeyid,$document,$selfie);
-                                      if(!empty($checkscoreandface)) {
-                                          if($checkscoreandface->status=='success' && $checkscoreandface->messageCode=='api.success'){
-
-                                           $checkokayid = $this->okayid($journeyid,$document);
-                                           if(!empty($checkokayid)){
-                                               $getscorecardresult = $this->getscorecard($journeyid);
-
-                                               if(!empty($getscorecardresult)){
-                                                   if($getscorecardresult->status=='success'){
-                                                       if($user_id==$requestmodel->landlord_id){
-                                                           $requestmodel->landlord_ekyc_response = json_encode($getscorecardresult);
-                                                           $requestmodel->save(false);
-                                                       }
-                                                       if($user_id==$requestmodel->user_id){
-                                                           $requestmodel->tenant_ekyc_response = json_encode($getscorecardresult);
-                                                           $requestmodel->save(false);
-                                                       }
-                                                       $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
-                                                       if($status=='clear'){
-                                                           $usermodel = Users::findOne($user_id);
-                                                           $usermodel->ekyc_response = json_encode($getscorecardresult);
-                                                           $usermodel->identity_status = 'Verified';
-                                                           $usermodel->save(false);
-                                                           return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
-
-                                                       } else{
-                                                           return array('status' => 0, 'message' => $getscorecardresult->scorecardResultList[0]->scorecardStatus,'response'=>$getscorecardresult,'here'=>'here');
-
-                                                       }
-                                                   }else{
-                                                       return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
-
-                                                   }
-
-                                               }else{
-                                                   return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
-
-                                               }
-
-                                           }else{
-                                               return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
-
-                                           }
-                                          }else{
-                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                              }
+                                          } else {
+                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
 
                                           }
 
-                                      }else{
-                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                      } else {
+                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document.');
+
 
                                       }
-                                      }else{
-                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                  } else {
+                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
 
                                   }
-                              }else{
-                                  return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes.');
 
-                              }
-                                   //return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document4545');
-
-                               }
-                              }else{
+                              } else {
                                   return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
 
                               }
-
-                          }else{
+                          } else {
                               return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
 
                           }
-                      }else{
-                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
-
                       }
-                  }else{
+                  }else if($type=='P'){
                       $journeyid = $this->createjourneyid();
                       if($journeyid!=''){
                           $document = $_POST['document'];
