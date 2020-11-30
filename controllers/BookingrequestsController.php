@@ -205,29 +205,25 @@ class BookingrequestsController extends Controller
     public function actionUploadtomsc($id)
     {
         $model = $this->findModel($id);
-//        if ($model->status!='Agreement Processing') {
-//            throw new NotFoundHttpException('The requested page does not exist.');
-//        }
+        if ($model->status!='Agreement Processing') {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
         $model->scenario = 'uploadtomsc';
         if ($model->load(Yii::$app->request->post())) {
             $model->pdf = \yii\web\UploadedFile::getInstance($model, 'pdf');
 
             if($model->validate()) {
-                $tenantmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->user_id,'status'=>'Completed'])->orderBy(['id'=>SORT_DESC])->one();
-                $landlordmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->landlord_id,'status'=>'Completed'])->orderBy(['id'=>SORT_DESC])->one();
-//                if(empty($tenantmscmodel) || empty($landlordmscmodel)){
-//                    Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
-//                    return $this->redirect(['index']);
-//
-//                }
+                $tenantmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->user_id,'status'=>'Approved'])->orderBy(['id'=>SORT_DESC])->one();
+                $landlordmscmodel = Msc::find()->where(['request_id'=>$id,'user_id'=>$model->landlord_id,'status'=>'Approved'])->orderBy(['id'=>SORT_DESC])->one();
+                if(empty($tenantmscmodel) || empty($landlordmscmodel)){
+                    Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
+                    return $this->redirect(['index']);
+
+                }
                 $newFileName = \Yii::$app->security
                         ->generateRandomString().'.'.$model->pdf->extension;
                 $model->pdf->saveAs('uploads/agreements/' . $newFileName);
-                if($_SERVER['HTTP_HOST'] != 'rumah.test') {
-                    $baseurl = Url::base('https');
-                }else{
-                    $baseurl = Url::base(true);
-                }
+
                 $b64Doc = chunk_split(base64_encode(file_get_contents('uploads/agreements/' . $newFileName)));
 
                 $landlordmscmodel->x1 = $model->landlordx1;
@@ -401,15 +397,18 @@ curl_setopt_array($curl, array(
         if ($model->status!='Agreement Processed' || $model->signed_agreement=='') {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+        //echo "<pre>";print_r($model->signed_agreement);exit;
         $decoded = base64_decode($model->signed_agreement);
-        $pdf_base64 = 'samplerumah.pdf';
+        $pdf_base64 = 'blank.pdf';
+        file_put_contents('blank.pdf',$decoded);
+
         //$pdf_base64 = "base64pdf.txt";
 //Get File content from txt file
 
 //Decode pdf content
         $pdf_decoded = $decoded;
 //Write data back to pdf file
-        $pdf = fopen ('samplerumah.pdf','r');
+        $pdf = fopen ('blank.pdf','r');
         fwrite ($pdf,$pdf_decoded);
         fclose ($pdf);
 
