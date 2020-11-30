@@ -256,7 +256,7 @@ class BookingrequestsController extends Controller
                            $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
                            $tenantmscmodel->save(false);
                            $signpdftenantresponse = $this->actionSignpdf($tenantmscmodel,$model);
-                           echo "<pre>";print_r($signpdftenantresponse);exit;
+                           //echo "<pre>";print_r($signpdftenantresponse);exit;
                            if(!empty($signpdftenantresponse) &&  isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode']='000') {
                                $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
                                $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
