@@ -520,26 +520,43 @@ class ApiusersController extends ActiveController
            $packages = Packages::find()->all();
            $currentpackage = UserPackages::find()->where(['user_id'=>$this->user_id])->orderBy(['id'=>SORT_DESC])->one();
            $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
+           // $mypropertiescount = 100;
             $userdetails = Users::findOne($this->user_id);
             $currentpackageid = '';
            if(!empty($currentpackage)){
                $currentpackageid = $currentpackage->package_id;
            }
             $data = array();
-           if(!empty($packages)){
+            $remaining = null;
+
+            if(!empty($packages)){
                foreach ($packages as $key=>$package){
-                   $data[$key]['id'] = $package->id;
-                   $data[$key]['package'] = $package->name;
-                   $data[$key]['price'] = $package->price;
-                   $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
-                   $data[$key]['total'] = $package->quantity;
-                   $data[$key]['remaining'] = $package->quantity-$mypropertiescount;
+                   if($currentpackageid==$package->id) {
+                       $data[$key]['remaining'] = $package->quantity - $mypropertiescount;
+                       $data[$key]['id'] = $package->id;
+                       $data[$key]['package'] = $package->name;
+                       $data[$key]['price'] = $package->price;
+                       $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
+                       $data[$key]['total'] = $package->quantity;
+
+                       $remaining = $package->quantity - $mypropertiescount;
+                       $currentkey = $key;
+                   }
+                   if(($remaining==0 && $package->id>1) || $currentpackageid==''){
+                       $data[$key]['id'] = $package->id;
+                       $data[$key]['package'] = $package->name;
+                       $data[$key]['price'] = $package->price;
+                       $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
+                       $data[$key]['total'] = $package->quantity;
+
+                   }
+
 
 
                }
            }
 
-           return array('status' => 1, 'data' => $data);
+           return array('status' => 1, 'data' => $data,'remaining'=>$remaining);
 
 
         }
@@ -1529,7 +1546,7 @@ class ApiusersController extends ActiveController
                             $query->select(["id","full_name",'contact_no',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
                         },
                         'agent'=>function($query){
-                            $query->select(["id","company_name",'contact_no',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                            $query->select(["id","company_name",'contact_no','document_no',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
                         }
                     ])->where(['id'=>$_POST['property_id']]);
 

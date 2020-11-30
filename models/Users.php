@@ -47,7 +47,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['email','password'], 'required','on' => 'login'],
             [['role', 'full_name','email'], 'required','on' => 'adduser'],
             [['full_name','email','password','contact_no'], 'required','on' => 'register'],
-            [['company_name','email','password','contact_no','document_no','agentcard'], 'required','on' => 'registeragent'],
+            [['full_name','company_name','email','password','contact_no','document_no','agentcard'], 'required','on' => 'registeragent'],
             //[['agentcard'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'registeragent'],
 
             [['gender','dob','race','nationality','education_level','occupation','annual_income','contact_no','emergency_contact'], 'required','on' => 'updateprofileuser'],
