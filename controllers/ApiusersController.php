@@ -6142,6 +6142,13 @@ public function actionMsctrustgate()
 
                        }
                            $msccertificateid = $userdetails->msccertificate;
+                       $usermodel = Users::findOne($this->user_id);
+                       $usermodel->document_type = $type;
+                       $usermodel->document_front = $document_front;
+                       $usermodel->document_back = $document_back;
+                       $usermodel->document_no = $identification_no;
+                       $usermodel->updated_at = date('Y-m-d H:i:s');
+                       $usermodel->save(false);
                            $mscmodel = New Msc();
                            $mscmodel->user_id = $user_id;
                            $mscmodel->request_id = $_POST['request_id'];

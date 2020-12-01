@@ -244,6 +244,7 @@ class BookingrequestsController extends Controller
                    if(!empty($signpdfresponse) &&  isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode']='000'){
                        $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
                        $landlordmscmodel->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
+                       $landlordmscmodel->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
                        $landlordmscmodel->status = 'Completed';
                        $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
                        $landlordmscmodel->save(false);
