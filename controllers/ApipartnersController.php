@@ -863,15 +863,15 @@ class ApipartnersController extends ActiveController
 
             $data = array();
             $data['totalearning'] = $totalearning[0]['total'];
-            $data['totalviewsmonth'] = ($mypropertiescount>0)?$totalviewsmonth/$mypropertiescount:0;
-            $data['totalviewsday'] = ($mypropertiescount>0)?$totalviewsday/$mypropertiescount:0;
-            $data['totalviewsyear'] = ($mypropertiescount>0)?$totalviewsyear/$mypropertiescount:0;
+            $data['totalviewsmonth'] = ($mypropertiescount>0)?number_format((float)$totalviewsmonth/$mypropertiescount, 2, '.', ''):0;
+            $data['totalviewsday'] = ($mypropertiescount>0)?number_format((float)$totalviewsday/$mypropertiescount, 2, '.', ''):0;
+            $data['totalviewsyear'] = ($mypropertiescount>0)?number_format((float)$totalviewsyear/$mypropertiescount, 2, '.', ''):0;
             $data['totalsealeddealsmonth'] = $totalsealeddealsmonth;
             $data['totalsealeddealsday'] = $totalsealeddealsday;
             $data['totalsealeddealsyear'] = $totalsealeddealsyear;
-            $data['totalconversionratemonth'] = ($totalviewsmonth>0)?$totalsealeddealsmonth/$totalviewsmonth*100:0;
-            $data['totalconversionrateday'] = ($totalviewsday>0)?$totalsealeddealsday/$totalviewsday*100:0;
-            $data['totalconversionrateyear'] = ($totalsealeddealsyear>0)?$totalsealeddealsyear/$totalsealeddealsyear*100:0;
+            $data['totalconversionratemonth'] = ($totalviewsmonth>0)?number_format((float)$totalsealeddealsmonth/$totalviewsmonth*100, 2, '.', ''):0;
+            $data['totalconversionrateday'] = ($totalviewsday>0)?number_format((float)$totalsealeddealsday/$totalviewsday*100, 2, '.', ''):0;
+            $data['totalconversionrateyear'] = ($totalsealeddealsyear>0)?number_format((float)$totalsealeddealsyear/$totalsealeddealsyear*100, 2, '.', ''):0;
 
             $data['userdetails'] = $userdetails;
                 $data['upcoming'] = $upcoming;
