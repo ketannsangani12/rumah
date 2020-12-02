@@ -215,6 +215,7 @@ class ApipartnersController extends ActiveController
                             $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
 
                             $token = (string)Users::generateToken($userexist);
+                            $userexist['profile_picture'] = $userexist['image'];
                             return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist, 'token' => $token);
 
                         }

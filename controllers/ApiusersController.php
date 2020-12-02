@@ -1466,6 +1466,16 @@ class ApiusersController extends ActiveController
                 if($location!=''){
                     $query1->andWhere(['like', 'location', $location]);
                 }
+                if($distance!='' && $lat!='' && $long!=''){
+                    if($location!='') {
+
+                        $query1->orWhere(['<=', $harvesformula1, $distance]);
+                    }else{
+                        $query1->andWhere(['<=', $harvesformula1, $distance]);
+
+                    }
+
+                }
                 if($search!=''){
                     $query1->andWhere(['like', 'title', $search]);
                 }
@@ -1478,10 +1488,7 @@ class ApiusersController extends ActiveController
                 if($preference!=''){
                     $query1->andWhere(['preference'=>$preference]);
                 }
-                if($distance!='' && $lat!='' && $long!=''){
-                    $query1->andWhere(['<=', $harvesformula1, $distance]);
 
-                }
                 if($furnished_status!=''){
                    $query1->andWhere(['furnished_status'=>$furnished_status]);
                 }
