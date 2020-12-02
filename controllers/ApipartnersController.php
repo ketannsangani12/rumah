@@ -171,7 +171,7 @@ class ApipartnersController extends ActiveController
                 $model->scenario = 'login';
                 $model->attributes = Yii::$app->request->post();
                 if($model->validate()){
-                    $userexist = Users::find()->where([
+                    $userexist = Users::find()->select(['*',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where([
                         'email' => $model->email,
                         'password' => md5($model->password)
                     ])->andWhere(['in','role',['Cleaner','Mover','Agent','Laundry','Handyman']])->asArray()->one();
@@ -215,7 +215,6 @@ class ApipartnersController extends ActiveController
                             $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
 
                             $token = (string)Users::generateToken($userexist);
-                            $userexist['profile_picture'] = $userexist['image'];
                             return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist, 'token' => $token);
 
                         }
