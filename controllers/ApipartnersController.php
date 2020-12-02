@@ -609,7 +609,7 @@ class ApipartnersController extends ActiveController
                 $currentpackageid = $currentpackage->package_id;
             }
             $data = array();
-            $remaining = null;
+            $remaining = 0;
 
             if(!empty($packages)){
                 foreach ($packages as $key=>$package){
