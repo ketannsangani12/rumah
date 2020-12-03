@@ -185,7 +185,7 @@ class ApiusersController extends ActiveController
                                 $curl = curl_init();
 //60126479285
                                 curl_setopt_array($curl, array(
-                                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=homeplus2u&pass=$2zvDgjJ&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                                     CURLOPT_RETURNTRANSFER => true,
                                     CURLOPT_ENCODING => "",
                                     CURLOPT_MAXREDIRS => 10,
@@ -279,7 +279,7 @@ class ApiusersController extends ActiveController
                             $curl = curl_init();
 //60126479285
                             curl_setopt_array($curl, array(
-                                CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                                CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=homeplus2u&pass=$2zvDgjJ&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                                 CURLOPT_RETURNTRANSFER => true,
                                 CURLOPT_ENCODING => "",
                                 CURLOPT_MAXREDIRS => 10,
@@ -359,7 +359,7 @@ class ApiusersController extends ActiveController
                     $curl = curl_init();
 
                     curl_setopt_array($curl, array(
-                        CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                        CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=homeplus2u&pass=$2zvDgjJ&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => "",
                         CURLOPT_MAXREDIRS => 10,
@@ -411,7 +411,7 @@ class ApiusersController extends ActiveController
                 }
 //60126479285
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPVerify?user=TEST177&from=RUMAH&to=".$contact_no."&pincode=".$otp."&servid=MES01&ApiReturnType=2&pass=SyR%26PbN0",
+                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPVerify?user=homeplus2u&from=RUMAH&to=".$contact_no."&pincode=".$otp."&servid=MES01&ApiReturnType=2&pass=$2zvDgjJ",
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => "",
                     CURLOPT_MAXREDIRS => 10,
@@ -1416,7 +1416,7 @@ class ApiusersController extends ActiveController
                 $room_type = (isset($_POST['room_type']) && $_POST['room_type']!='')?$_POST['room_type']:'';
                 $preference = (isset($_POST['preference']) && $_POST['preference']!='')?$_POST['preference']:'';
                 $price = (isset($_POST['price']) && $_POST['price']!='')?explode(",",$_POST['price']):'';
-                $distance = (isset($_POST['distance']) && $_POST['distance']!='')?$_POST['distance']:20;
+                $distance = (isset($_POST['distance']) && $_POST['distance']!='')?$_POST['distance']:5;
                 $commute = (isset($_POST['commute']) && $_POST['commute']!='')?explode(",",$_POST['commute']):'';
                 $amenities = (isset($_POST['amenities']) && $_POST['amenities']!='')?explode(",",$_POST['amenities']):'';
                 $rooms = (isset($_POST['rooms']) && $_POST['rooms']!='')?$_POST['rooms']:'';
@@ -5732,64 +5732,72 @@ class ApiusersController extends ActiveController
 
                $user_id = $this->user_id;
 
-               $journeyid = $this->createjourneyid();
-              if($journeyid!=''){
                   if($type=='N') {
-                      $document = $_POST['document'];
-                      $selfie = $_POST['selfie'];
-                      $checkmycad = $this->mykadokaydoc($journeyid, $document);
-                      if (!empty($checkmycad)) {
-                          if ($checkmycad->status == 'success' && $checkmycad->messageCode == 'api.success') {
-                              $checkscoreandface = $this->okayface($journeyid, $document, $selfie);
-                              if (!empty($checkscoreandface)) {
-                                  if ($checkscoreandface->status == 'success' && $checkscoreandface->messageCode == 'api.success') {
-                                      $getscorecardresult = $this->getscorecard($journeyid);
+                      $journeyid = $this->createjourneyid();
+                      if($journeyid!='') {
 
-                                      if (!empty($getscorecardresult)) {
-                                          if ($getscorecardresult->status == 'success') {
-                                              if ($user_id == $requestmodel->landlord_id) {
-                                                  $requestmodel->landlord_ekyc_response = json_encode($getscorecardresult);
-                                                  $requestmodel->save(false);
-                                              }
-                                              if ($user_id == $requestmodel->user_id) {
-                                                  $requestmodel->tenant_ekyc_response = json_encode($getscorecardresult);
-                                                  $requestmodel->save(false);
-                                              }
-                                              $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus)) ? $getscorecardresult->scorecardResultList[0]->scorecardStatus : '';
-                                              if ($status == 'clear') {
-                                                  $usermodel = Users::findOne($user_id);
-                                                  $usermodel->ekyc_response = json_encode($getscorecardresult);
-                                                  $usermodel->identity_status = 'Verified';
-                                                  $usermodel->save(false);
-                                                  return array('status' => 1, 'message' => 'Done', 'response' => $getscorecardresult);
+                          $document = $_POST['document'];
+                          $selfie = $_POST['selfie'];
+                          $checkmycad = $this->mykadokaydoc($journeyid, $document);
+                          if (!empty($checkmycad)) {
+                              if ($checkmycad->status == 'success' && $checkmycad->messageCode == 'api.success') {
+                                  $checkscoreandface = $this->okayface($journeyid, $document, $selfie);
+                                  if (!empty($checkscoreandface)) {
+                                      if ($checkscoreandface->status == 'success' && $checkscoreandface->messageCode == 'api.success') {
+                                          $getscorecardresult = $this->getscorecard($journeyid);
 
+                                          if (!empty($getscorecardresult)) {
+                                              if ($getscorecardresult->status == 'success') {
+                                                  if ($user_id == $requestmodel->landlord_id) {
+                                                      $requestmodel->landlord_ekyc_response = json_encode($getscorecardresult);
+                                                      $requestmodel->save(false);
+                                                  }
+                                                  if ($user_id == $requestmodel->user_id) {
+                                                      $requestmodel->tenant_ekyc_response = json_encode($getscorecardresult);
+                                                      $requestmodel->save(false);
+                                                  }
+                                                  $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus)) ? $getscorecardresult->scorecardResultList[0]->scorecardStatus : '';
+                                                  if ($status == 'clear') {
+                                                      $usermodel = Users::findOne($user_id);
+                                                      $usermodel->ekyc_response = json_encode($getscorecardresult);
+                                                      $usermodel->identity_status = 'Verified';
+                                                      $usermodel->save(false);
+                                                      return array('status' => 1, 'message' => 'Done', 'response' => $getscorecardresult);
+
+                                                  } else {
+                                                      return array('status' => 0, 'message' => 'please upload MyKAD again.' , 'response' => $getscorecardresult, 'here' => 'there');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
+
+                                                  }
                                               } else {
-                                                  return array('status' => 0, 'message' => $getscorecardresult->scorecardResultList[0]->scorecardStatus, 'response' => $getscorecardresult, 'here' => 'there');
+                                                  return array('status' => 0, 'message' => 'please upload MyKAD again.');
 
                                               }
+
                                           } else {
-                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                                              return array('status' => 0, 'message' => 'please upload MyKAD again.');
+
 
                                           }
-
                                       } else {
-                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document.');
-
+                                          return array('status' => 0, 'message' => 'please upload MyKAD again.');
 
                                       }
+
                                   } else {
-                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                                      return array('status' => 0, 'message' => 'please upload MyKAD again.');
 
                                   }
-
                               } else {
-                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                                  return array('status' => 0, 'message' => 'please upload MyKAD again.');
 
                               }
-                          } else {
-                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Document');
+                          }else{
+                              return array('status' => 0, 'message' => 'please upload MyKAD again.');
 
                           }
+                      }else{
+                          return array('status' => 0, 'message' => 'please upload MyKAD again.');
+
                       }
                   }else if($type=='P'){
                       $journeyid = $this->createjourneyid();
@@ -5825,34 +5833,34 @@ class ApiusersController extends ActiveController
                                                       return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
 
                                                   } else{
-                                                      return array('status' => 0, 'message' => $getscorecardresult->scorecardResultList[0]->scorecardStatus,'response'=>$getscorecardresult,'here'=>'here');
+                                                      return array('status' => 0, 'message' => 'please upload passport again.','response'=>$getscorecardresult,'here'=>'here');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
 
                                                   }
                                               }else{
-                                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                                  return array('status' => 0, 'message' => 'please upload passport again.');
 
                                               }
 
                                           }else{
-                                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                              return array('status' => 0, 'message' => 'please upload passport again.');
 
                                           }
 
                                       }else{
-                                          return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                          return array('status' => 0, 'message' => 'please upload passport again.');
 
                                       }
                                   }else{
-                                      return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                      return array('status' => 0, 'message' => 'please upload passport again.');
 
                                   }
 
                               }else{
-                                  return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                                  return array('status' => 0, 'message' => 'please upload passport again.');
 
                               }
                           }else{
-                              return array('status' => 0, 'message' => 'You have not verified. Please upload valid Passport');
+                              return array('status' => 0, 'message' => 'please upload passport again.');
 
                           }
                       }else{
@@ -5861,10 +5869,7 @@ class ApiusersController extends ActiveController
                       }
 
                   }
-              }else{
-                  return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes.');
 
-              }
 
            }else{
                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
@@ -5933,7 +5938,7 @@ class ApiusersController extends ActiveController
                 ));
 
                 $response = curl_exec($curl);
-        $err = curl_error($curl);
+                $err = curl_error($curl);
                 curl_close($curl);
         if ($err) {
             return '';
@@ -6105,6 +6110,7 @@ public function actionMsctrustgate()
             $dataarray['email'] = $userdetails->email;
             $dataarray['validity'] = 'L';
             $document_back = '';
+            $errors1 = 'Document verification has failed, please upload passport again';
             if($type=='N'){
                 if(empty($_POST['document_back'])){
                     return array('status' => 0, 'message' => 'Please upload back image of MyCad.');
@@ -6113,6 +6119,7 @@ public function actionMsctrustgate()
                 $document_back =  $_POST['document_back'];
                 $dataarray['document_back'] = $document_back;
 
+                $errors1 = 'Document verification has failed, please upload myKAD again';
 
             }
            $requestcertificatewithkycresponse = $this->Requestcertificatewithekyc($dataarray,$_POST['request_id'],$user_id);
@@ -6203,12 +6210,12 @@ public function actionMsctrustgate()
 
 
                                            } else {
-                                               return array('status' => 0, 'message' => $getrequeststatus['statusMsg'], 'error' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+                                               return array('status' => 0, 'message'=>$errors1,'message1' => $getrequeststatus['statusMsg'], 'error' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                            }
 
                                        } else {
-                                           return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
+                                           return array('status' => 0, 'message'=>$errors1,'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
 
                                        }
 
@@ -6220,21 +6227,21 @@ public function actionMsctrustgate()
                                        return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                    } else {
-                                       return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+                                       return array('status' => 0, 'message'=>$errors1,'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                    }
                                } else {
-                                   return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getrequeststatus');
+                                   return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getrequeststatus');
 
                                }
 
                            } else {
                               if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
-                                  return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
+                                  return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
 
                               }else {
 
-                                  return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'], 'errorresponse' => json_encode($requestcertificatewithkycresponse));
+                                  return array('status' => 0,'message'=>$errors1, 'message1' => $requestcertificatewithkycresponse['statusMsg'], 'errorresponse' => json_encode($requestcertificatewithkycresponse));
                               }
 
                            }
@@ -6243,13 +6250,13 @@ public function actionMsctrustgate()
                    }
 
                }else{
-                   return array('status' => 0, 'message' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse),'typeapi'=>'requestcertificatewithkycresponse');
+                   return array('status' => 0,'message'=>$errors1, 'message1' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse),'typeapi'=>'requestcertificatewithkycresponse');
 
                }
                //echo "<pre>";print_r($requestcertificatewithkycresponse);exit;
 
            }else{
-               return array('status' => 0, 'message' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
+               return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
 
            }
 

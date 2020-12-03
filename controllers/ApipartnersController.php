@@ -183,7 +183,7 @@ class ApipartnersController extends ActiveController
                                 $curl = curl_init();
 //60126479285
                                 curl_setopt_array($curl, array(
-                                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=homeplus2u&pass=$2zvDgjJ&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                                     CURLOPT_RETURNTRANSFER => true,
                                     CURLOPT_ENCODING => "",
                                     CURLOPT_MAXREDIRS => 10,
@@ -286,7 +286,7 @@ class ApipartnersController extends ActiveController
                             $curl = curl_init();
 //60126479285
                             curl_setopt_array($curl, array(
-                                CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                                CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=homeplus2u&pass=$2zvDgjJ&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                                 CURLOPT_RETURNTRANSFER => true,
                                 CURLOPT_ENCODING => "",
                                 CURLOPT_MAXREDIRS => 10,
@@ -366,7 +366,7 @@ class ApipartnersController extends ActiveController
                     $curl = curl_init();
 
                     curl_setopt_array($curl, array(
-                        CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=TEST177&pass=SyR%26PbN0&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                        CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=homeplus2u&pass=$2zvDgjJ&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => "",
                         CURLOPT_MAXREDIRS => 10,
@@ -419,7 +419,7 @@ class ApipartnersController extends ActiveController
                 }
 //60126479285
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPVerify?user=TEST177&from=RUMAH&to=".$contact_no."&pincode=".$otp."&servid=MES01&ApiReturnType=2&pass=SyR%26PbN0",
+                    CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPVerify?user=homeplus2u&from=RUMAH&to=".$contact_no."&pincode=".$otp."&servid=MES01&ApiReturnType=2&pass=$2zvDgjJ",
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => "",
                     CURLOPT_MAXREDIRS => 10,
