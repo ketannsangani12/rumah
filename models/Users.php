@@ -51,7 +51,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             //[['agentcard'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'registeragent'],
 
             [['gender','dob','race','nationality','education_level','occupation','annual_income','contact_no','emergency_contact'], 'required','on' => 'updateprofileuser'],
-            [['company_name','bank_account_name','bank_account_no','bank_name'], 'required','on' => 'updateprofileagent'],
+            [['company_name'], 'required','on' => 'updateprofileagent'],
 
             ['referral_code', 'checkReferralcode'],
             [['contact_no','company_name','company_address','company_state','bank_account_name','bank_account_no','bank_name'], 'required','when' => function ($model) {

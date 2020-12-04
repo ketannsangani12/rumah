@@ -1597,6 +1597,17 @@ class ApiusersController extends ActiveController
                     $propertview->created_at = date('Y-m-d H:i:s');
                     $propertview->save(false);
                 }
+                $agentratings = 0;
+                if($propertydata['agent_id']!=''){
+                    $ratings = AgentRatings::find()->select(['(SUM(appearance)+SUM(attitude)+SUM(knowledge))/3 AS ratings'])->where(['agent_id'=>$propertydata['agent_id']])->asArray()->all();
+                    $totalratings = AgentRatings::find()->where(['agent_id'=>$propertydata['agent_id']])->count();
+
+                    if($totalratings>0){
+                        $ratings = $ratings[0]['ratings'];
+                        $agentratings = $ratings/$totalratings;
+                    }
+                }
+                $data['agentratings'] = $agentratings;
                 return array('status' => 1, 'data' => $data);
 
 
