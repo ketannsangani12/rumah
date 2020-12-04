@@ -913,6 +913,7 @@ class ApiusersController extends ActiveController
                     }
                 }
             }
+            $userdetails['coins'] = round($userdetails['coins']);
             return array('status' => 1, 'userdetails' => $userdetails,'data'=>$transactions);
 
 
@@ -5765,11 +5766,11 @@ class ApiusersController extends ActiveController
                                                       return array('status' => 1, 'message' => 'Done', 'response' => $getscorecardresult);
 
                                                   } else {
-                                                      return array('status' => 0, 'message' => 'please upload MyKAD again.' , 'response' => $getscorecardresult, 'here' => 'there');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
+                                                      return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : scorecardStatus is suspicious )' , 'response' => $getscorecardresult, 'here' => 'there');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
 
                                                   }
                                               } else {
-                                                  return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                                                  return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : '.$getscorecardresult->message.')');
 
                                               }
 
@@ -5779,7 +5780,7 @@ class ApiusersController extends ActiveController
 
                                           }
                                       } else {
-                                          return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                                          return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : '.$checkscoreandface->message.')');
 
                                       }
 
@@ -5788,7 +5789,7 @@ class ApiusersController extends ActiveController
 
                                   }
                               } else {
-                                  return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                                  return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : '.$checkmycad->message.')');
 
                               }
                           }else{
@@ -5806,6 +5807,8 @@ class ApiusersController extends ActiveController
                           $selfie = $_POST['selfie'];
                           $checkpassport = $this->passportokaydoc($journeyid, $document);
                           if(!empty($checkpassport)){
+                              //isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'
+                              if($checkpassport->messageCode=='api.success' && $checkpassport->status=='success'){
                               $checkscoreandface = $this->okayface($journeyid,$document,$selfie);
                               if(!empty($checkscoreandface)) {
                                   if($checkscoreandface->status=='success' && $checkscoreandface->messageCode=='api.success'){
@@ -5833,11 +5836,11 @@ class ApiusersController extends ActiveController
                                                       return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
 
                                                   } else{
-                                                      return array('status' => 0, 'message' => 'please upload passport again.','response'=>$getscorecardresult,'here'=>'here');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
+                                                      return array('status' => 0, 'message' => 'please upload passport again. (Error : scorecardStatus is suspicious )','response'=>$getscorecardresult,'here'=>'here');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
 
                                                   }
                                               }else{
-                                                  return array('status' => 0, 'message' => 'please upload passport again.');
+                                                  return array('status' => 0, 'message' => 'please upload passport again. (Error : '.$getscorecardresult->message.')');
 
                                               }
 
@@ -5851,12 +5854,16 @@ class ApiusersController extends ActiveController
 
                                       }
                                   }else{
-                                      return array('status' => 0, 'message' => 'please upload passport again.');
+                                      return array('status' => 0, 'message' => 'please upload passport again. (Error : '.$checkpassport->message.')');
 
                                   }
 
-                              }else{
+                              }else {
                                   return array('status' => 0, 'message' => 'please upload passport again.');
+
+                              }
+                              }else{
+                                  return array('status' => 0, 'message' => 'please upload passport again.  (Error : '.$checkpassport->message.')');
 
                               }
                           }else{
@@ -5943,8 +5950,8 @@ class ApiusersController extends ActiveController
         if ($err) {
             return '';
         } else {
-            $response = json_decode($response);
-            if(!empty($response) && isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'){
+            $response = json_decode($response);//&& isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'
+            if(!empty($response) ){
                 return $response;
             }else{
                 return '';
@@ -5981,7 +5988,7 @@ class ApiusersController extends ActiveController
                     return '';
                 } else {
                     $response = json_decode($response);
-                    if(!empty($response) && isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'){
+                    if(!empty($response)){
                         return $response;
                     }else{
                 return '';
@@ -6014,8 +6021,8 @@ class ApiusersController extends ActiveController
         if ($err) {
             return '';
         } else {
-            $response = json_decode($response);
-            if(!empty($response) && isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'){
+            $response = json_decode($response);//isset($response->messageCode) && isset($response->status) && $response->messageCode=='api.success' && $response->status=='success'
+            if(!empty($response) ){
                 return $response;
             }else{
                 return '';
@@ -6049,8 +6056,8 @@ class ApiusersController extends ActiveController
        if ($err) {
            return '';
        } else {
-           $response = json_decode($response);
-           if(!empty($response) &&  isset($response->status) &&  $response->status=='success'){
+           $response = json_decode($response);//&&  isset($response->status) &&  $response->status=='success'
+           if(!empty($response) ){
                return $response;
            }else{
                return '';
@@ -6080,8 +6087,8 @@ class ApiusersController extends ActiveController
         if ($err) {
             return '';
         } else {
-            $response = json_decode($response);
-            if(!empty($response) &&  isset($response->status)  && $response->status=='success'){
+            $response = json_decode($response);//isset($response->status)  && $response->status=='success'
+            if(!empty($response) ){
                 return $response;
             }else{
                 return '';
@@ -6143,7 +6150,7 @@ public function actionMsctrustgate()
                        $mscmodel->save(false);
                        $userdetails->msccertificate = $requestcertificatewithkycresponse['certRequestID'];
                        $userdetails->save(false);
-                       return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getactivationlink');
+                       return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.', 'errorresponse' => '', 'typeapi' => 'getactivationlink');
 
                    }else if($requestcertificatewithkycresponse['statusCode']=='CR100'){
                        $mscrequestmodel = Msc::find()->where(['request_id' => $_POST['request_id'], 'user_id' => $user_id,'status'=>'Approved'])->orderBy(['id' => SORT_DESC])->one();
@@ -6151,7 +6158,7 @@ public function actionMsctrustgate()
                            return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will informed when Signing done.', 'errorresponse' => '', 'typeapi' => 'getrequestid');
 
                        }
-                           $msccertificateid = $userdetails->msccertificate;
+                       $msccertificateid = $userdetails->msccertificate;
                        $usermodel = Users::findOne($this->user_id);
                        $usermodel->document_type = $type;
                        $usermodel->document_front = $document_front;
@@ -6210,12 +6217,12 @@ public function actionMsctrustgate()
 
 
                                            } else {
-                                               return array('status' => 0, 'message'=>$errors1,'message1' => $getrequeststatus['statusMsg'], 'error' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+                                               return array('status' => 0, 'message'=>$errors1." (Error : ".$getactivationlink['statusCode'].")",'message1' => $getrequeststatus['statusMsg'], 'error' => json_encode($getactivationlink), 'typeapi' => 'getactivationlink');
 
                                            }
 
                                        } else {
-                                           return array('status' => 0, 'message'=>$errors1,'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
+                                           return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
 
                                        }
 
@@ -6227,7 +6234,7 @@ public function actionMsctrustgate()
                                        return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                    } else {
-                                       return array('status' => 0, 'message'=>$errors1,'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+                                       return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                    }
                                } else {
@@ -6237,11 +6244,11 @@ public function actionMsctrustgate()
 
                            } else {
                               if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
-                                  return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
+                                  return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
 
                               }else {
 
-                                  return array('status' => 0,'message'=>$errors1, 'message1' => $requestcertificatewithkycresponse['statusMsg'], 'errorresponse' => json_encode($requestcertificatewithkycresponse));
+                                  return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => $requestcertificatewithkycresponse['statusMsg'], 'errorresponse' => json_encode($requestcertificatewithkycresponse));
                               }
 
                            }
@@ -6250,7 +6257,7 @@ public function actionMsctrustgate()
                    }
 
                }else{
-                   return array('status' => 0,'message'=>$errors1, 'message1' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse),'typeapi'=>'requestcertificatewithkycresponse');
+                   return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse),'typeapi'=>'requestcertificatewithkycresponse');
 
                }
                //echo "<pre>";print_r($requestcertificatewithkycresponse);exit;
