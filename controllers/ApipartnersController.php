@@ -1216,6 +1216,42 @@ class ApipartnersController extends ActiveController
 
 
     }
+    public function actionAddbankdetails()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+
+            if(!empty($_POST)){
+                $model = Users::findOne($this->user_id);
+                $model->scenario = 'adduseraccount';
+                $model->attributes = Yii::$app->request->post();
+
+                if ($model->validate()) {
+                    if($model->save()){
+                        return array('status' => 1, 'message' => 'You have updated bank account successfully.');
+
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
+
+
+                } else {
+                    return array('status' => 0, 'message' => $model->getErrors());
+                }
+
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+
+        }
+
+
+    }
+
     public function actionWithdrawal()
     {
         $method = $_SERVER['REQUEST_METHOD'];
