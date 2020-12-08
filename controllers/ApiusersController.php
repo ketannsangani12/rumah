@@ -5949,7 +5949,7 @@ class ApiusersController extends ActiveController
                     CURLOPT_FOLLOWLOCATION => true,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => "POST",
-                    CURLOPT_POSTFIELDS =>"{\n    \"journeyId\":\"$journeyid\",\n    \"type\":\"nonpassport\",\n    \"idImageBase64Image\": \"$doc\",\n    \"version\": \"7\",\n    \"docType\":\"mykad\",\n    \"landmarkCheck\":\"true\",\n    \"fontCheck\":\"true\",\n    \"microprintCheck\":\"true\",\n    \"photoSubstitutionCheck\":\"true\",\n \"screenDetection\":\"true\",\n    \"icTypeCheck\":\"true\",\n    \"colorMode\":\"true\",\n    \"hologram\":\"true\"\n    \n}",
+                    CURLOPT_POSTFIELDS =>"{\n    \"journeyId\":\"$journeyid\",\n    \"type\":\"nonpassport\",\n    \"idImageBase64Image\": \"$doc\",\n    \"version\": \"7\",\n    \"docType\":\"mykad\",\n    \"landmarkCheck\":\"true\",\n    \"fontCheck\":\"true\",\n    \"microprintCheck\":\"true\",\n    \"photoSubstitutionCheck\":\"true\",\n \"screenDetection\":\"true\",\n    \"ghostPhotoColorDetection\":\"true\",\n   \"icTypeCheck\":\"true\",\n    \"colorMode\":\"true\",\n    \"hologram\":\"true\"\n    \n}",
                     CURLOPT_HTTPHEADER => array(
                         "Content-Type: application/json"
                     ),
