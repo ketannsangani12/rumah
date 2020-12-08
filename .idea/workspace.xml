@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sampleimage.jpg" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/sampleimage.jpg" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/ApiusersController.php" afterPath="$PROJECT_DIR$/controllers/ApiusersController.php" />
     </list>
@@ -28,15 +28,15 @@
       <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="5775" column="26" selection-start-line="5775" selection-start-column="26" selection-end-line="5775" selection-end-column="26" />
+            <state relative-caret-position="600">
+              <caret line="5770" column="43" selection-start-line="5770" selection-start-column="43" selection-end-line="5770" selection-end-column="43" />
               <folding>
                 <element signature="e#35#63#0#PHP" expanded="true" />
                 <element signature="e#136653#138640#0#PHP" expanded="false" />
                 <element signature="e#247422#261938#0#PHP" expanded="false" />
                 <element signature="e#274865#276132#0#PHP" expanded="false" />
                 <element signature="e#276137#277490#0#PHP" expanded="false" />
-                <element signature="e#356792#359101#0#PHP" expanded="false" />
+                <element signature="e#356808#359117#0#PHP" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -75,7 +75,7 @@
       <file leaf-file-name="ApipartnersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
+            <state relative-caret-position="17820">
               <caret line="1232" column="0" selection-start-line="1232" selection-start-column="0" selection-end-line="1232" selection-end-column="0" />
               <folding />
             </state>
@@ -245,6 +245,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -263,10 +265,22 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rumah" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rumah" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="uploads" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -278,17 +292,18 @@
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/web" />
-      <recent name="$PROJECT_DIR$/vendor/dlds/yii2-metronic/assets" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/commands" />
       <recent name="$PROJECT_DIR$/views/servicerequests" />
       <recent name="$PROJECT_DIR$/views" />
       <recent name="$PROJECT_DIR$/models" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/uploads" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/web" />
+      <recent name="$PROJECT_DIR$/vendor/dlds/yii2-metronic/assets" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -552,18 +567,19 @@
       <workItem from="1607143894075" duration="170000" />
       <workItem from="1607144837710" duration="1352000" />
       <workItem from="1607150811474" duration="400000" />
-      <workItem from="1607398594016" duration="1698000" />
+      <workItem from="1607398594016" duration="1787000" />
+      <workItem from="1607430908028" duration="83000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="902968000" />
+    <option name="totallyTimeSpent" value="903140000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28612304" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29041487" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42876345" sideWeight="0.5028612" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -966,7 +982,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1038,7 +1053,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
+        <state relative-caret-position="17820">
           <caret line="1232" column="0" selection-start-line="1232" selection-start-column="0" selection-end-line="1232" selection-end-column="0" />
           <folding />
         </state>
@@ -1052,22 +1067,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sampleimage.jpg">
+    <entry file="file://$PROJECT_DIR$/uploads/sampleimage.jpg">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="5775" column="26" selection-start-line="5775" selection-start-column="26" selection-end-line="5775" selection-end-column="26" />
+        <state relative-caret-position="600">
+          <caret line="5770" column="43" selection-start-line="5770" selection-start-column="43" selection-end-line="5770" selection-end-column="43" />
           <folding>
             <element signature="e#35#63#0#PHP" expanded="true" />
             <element signature="e#136653#138640#0#PHP" expanded="false" />
             <element signature="e#247422#261938#0#PHP" expanded="false" />
             <element signature="e#274865#276132#0#PHP" expanded="false" />
             <element signature="e#276137#277490#0#PHP" expanded="false" />
-            <element signature="e#356792#359101#0#PHP" expanded="false" />
+            <element signature="e#356808#359117#0#PHP" expanded="false" />
           </folding>
         </state>
       </provider>

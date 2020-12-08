@@ -5750,7 +5750,7 @@ class ApiusersController extends ActiveController
 
                           $document = $_POST['document'];
                           $selfie = $_POST['selfie'];
-                          $filename = 'sampleimage.jpg'; // output file name
+                          $filename = 'uploads/sampleimage.jpg'; // output file name
 
                           $im = imagecreatefromstring(base64_decode($selfie));
                           $source_width = imagesx($im);
@@ -5768,7 +5768,7 @@ class ApiusersController extends ActiveController
                           imagecopyresampled($thumb, $im, 0, 0, 0, 0, $new_width, $new_height, $source_width, $source_height);
                           imagepng($thumb, $filename, 9);
                           imagedestroy($im);
-                          $path = 'sampleimage.jpg';
+                          $path = 'uploads/sampleimage.jpg';
                           $type = pathinfo($path, PATHINFO_EXTENSION);
                           $data = file_get_contents($path);
                           $base64 =  base64_encode($data);
