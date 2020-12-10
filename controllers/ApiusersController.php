@@ -5755,10 +5755,10 @@ class ApiusersController extends ActiveController
                           $im = imagecreatefromstring(base64_decode($selfie));
                           $source_width = imagesx($im);
                           $source_height = imagesy($im);
-                          $ratio =  $source_height / $source_width;
+                          $ratio =  $source_width / $source_height;
 
                           $new_height = 720; // assign new width to new resized image
-                          $new_width = $ratio * 300;
+                          $new_width = $ratio * $source_width;
 
                           $thumb = imagecreatetruecolor($new_width, $new_height);
 
