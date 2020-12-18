@@ -263,7 +263,7 @@ class ApiwebController extends ActiveController
                     ]);
                 $distance = 20;
                 $propertytype = $propertydata['property_type'];
-                $query1->where(['!=', 'id', $_POST['property_id']]);
+                $query1->where(['!=', 'id', $_POST['property_id']])->andWhere(['!=', 'id', $_POST['property_id']])->andWhere(['status'=>'Active']);
 
                 $query1->andWhere(['property_type'=>$propertytype]);
                 if($distance!='' && $lat!='' && $long!=''){

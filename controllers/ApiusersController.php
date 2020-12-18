@@ -1573,7 +1573,7 @@ class ApiusersController extends ActiveController
                     ]);
                 $distance = 20;
                 $propertytype = $propertydata['room_type'];
-                $query1->where(['!=', 'user_id', $user_id])->andWhere(['!=', 'id', $_POST['property_id']]);
+                $query1->where(['!=', 'user_id', $user_id])->andWhere(['!=', 'id', $_POST['property_id']])->andWhere(['status'=>'Active']);
 
                 $query1->andWhere(['room_type'=>$propertytype]);
                 if($distance!='' && $lat!='' && $long!=''){
