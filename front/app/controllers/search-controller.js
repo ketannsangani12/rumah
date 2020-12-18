@@ -30,6 +30,7 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
           $scope.formData.location = query;
           $scope.search('init');
       }else{
+        console.log('haii');
           if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(function (position) {
                   $scope.formData.lat = position.coords.latitude;
