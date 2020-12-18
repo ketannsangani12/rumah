@@ -36,22 +36,18 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
                   $scope.formData.lat = position.coords.latitude;
                   $scope.formData.long = position.coords.longitude;
                   $scope.search('init');
-              });
+              }, function(error) {
+                  $scope.formData.location = 'kuala lumpur';
+                  $scope.formData.lat = 3.1554724;
+                  $scope.formData.long = 101.655401;
+                  $scope.search('init');
+              },{timeout:5000});
           } else {
               $scope.formData.location = 'kuala lumpur';
               $scope.formData.lat = 3.1554724;
               $scope.formData.long = 101.655401;
               $scope.search('init');
           }
-
-          $timeout(function () {
-              if (!$scope.formData.lat) {
-                  $scope.formData.location = 'kuala lumpur';
-                  $scope.formData.lat = 3.1554724;
-                  $scope.formData.long = 101.655401;
-                  $scope.search('init');
-              }
-          }, 500);
       }
   };
 
