@@ -37,6 +37,7 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
                   $scope.search('init');
               });
           } else {
+              $scope.formData.location = 'kuala lumpur';
               $scope.formData.lat = 3.1554724;
               $scope.formData.long = 101.655401;
               $scope.search('init');
@@ -44,6 +45,7 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
 
           $timeout(function () {
               if (!$scope.formData.lat) {
+                  $scope.formData.location = 'kuala lumpur';
                   $scope.formData.lat = 3.1554724;
                   $scope.formData.long = 101.655401;
                   $scope.search('init');
@@ -84,9 +86,6 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
 
   $scope.search = function(type){
     //if($scope.formData.search && $scope.formData.search.length > 1) {
-      if(!$scope.formData.location) {
-          $scope.formData.location = 'kuala lumpur';
-      }
       if($scope.locationData){
         $scope.formData.lat = $scope.locationData.latitude;
         $scope.formData.long = $scope.locationData.longitude;

@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/front/manifest.json" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/app/controllers/controllers.js" afterPath="$PROJECT_DIR$/front/app/controllers/controllers.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/app/controllers/search-controller.js" afterPath="$PROJECT_DIR$/front/app/controllers/search-controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/app/routes.js" afterPath="$PROJECT_DIR$/front/app/routes.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/css/style.css" afterPath="$PROJECT_DIR$/front/css/style.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/index.html" afterPath="$PROJECT_DIR$/front/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/lib/ionic/css/ionic.css" afterPath="$PROJECT_DIR$/front/lib/ionic/css/ionic.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/pages/property-detail.html" afterPath="$PROJECT_DIR$/front/pages/property-detail.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/pages/search.html" afterPath="$PROJECT_DIR$/front/pages/search.html" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -78,7 +69,7 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/front/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
+            <state relative-caret-position="575">
               <caret line="106" column="56" lean-forward="false" selection-start-line="106" selection-start-column="50" selection-end-line="106" selection-end-column="56" />
               <folding>
                 <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -100,12 +91,12 @@
       <file leaf-file-name="search-controller.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/front/app/controllers/search-controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="31" column="12" lean-forward="true" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
+            <state relative-caret-position="-405">
+              <caret line="47" column="60" lean-forward="false" selection-start-line="47" selection-start-column="60" selection-end-line="47" selection-end-column="60" />
               <folding>
-                <marker date="1608273272993" expanded="true" signature="7613:7664" ph="..." />
-                <marker date="1608273272993" expanded="true" signature="7789:7803" ph="..." />
-                <marker date="1608273272993" expanded="true" signature="7943:7957" ph="..." />
+                <marker date="1608274622542" expanded="true" signature="7632:7683" ph="..." />
+                <marker date="1608274622542" expanded="true" signature="7808:7822" ph="..." />
+                <marker date="1608274622542" expanded="true" signature="7962:7976" ph="..." />
               </folding>
             </state>
           </provider>
@@ -174,6 +165,7 @@
       <find>search</find>
       <find>filter</find>
       <find>init</find>
+      <find>kaul</find>
     </findStrings>
     <replaceStrings>
       <replace>.client-html .footer</replace>
@@ -679,12 +671,12 @@
       <workItem from="1607580941734" duration="3000" />
       <workItem from="1607602422077" duration="1763000" />
       <workItem from="1607672828704" duration="28000" />
-      <workItem from="1608211183660" duration="13965000" />
+      <workItem from="1608211183660" duration="14820000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="921138000" />
+    <option name="totallyTimeSpent" value="921993000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1366" y="23" width="1366" height="745" extended-state="6" />
@@ -1186,7 +1178,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/front/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
+        <state relative-caret-position="575">
           <caret line="106" column="56" lean-forward="false" selection-start-line="106" selection-start-column="50" selection-end-line="106" selection-end-column="56" />
           <folding>
             <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -1196,12 +1188,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/front/app/controllers/search-controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="31" column="12" lean-forward="true" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
+        <state relative-caret-position="-405">
+          <caret line="47" column="60" lean-forward="false" selection-start-line="47" selection-start-column="60" selection-end-line="47" selection-end-column="60" />
           <folding>
-            <marker date="1608273272993" expanded="true" signature="7613:7664" ph="..." />
-            <marker date="1608273272993" expanded="true" signature="7789:7803" ph="..." />
-            <marker date="1608273272993" expanded="true" signature="7943:7957" ph="..." />
+            <marker date="1608274622542" expanded="true" signature="7632:7683" ph="..." />
+            <marker date="1608274622542" expanded="true" signature="7808:7822" ph="..." />
+            <marker date="1608274622542" expanded="true" signature="7962:7976" ph="..." />
           </folding>
         </state>
       </provider>
