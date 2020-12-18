@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/app/controllers/search-controller.js" afterPath="$PROJECT_DIR$/front/app/controllers/search-controller.js" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -92,12 +91,12 @@
       <file leaf-file-name="search-controller.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/front/app/controllers/search-controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="31" column="12" lean-forward="true" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
+            <state relative-caret-position="345">
+              <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
               <folding>
-                <marker date="1608275400984" expanded="true" signature="7719:7770" ph="..." />
-                <marker date="1608275400984" expanded="true" signature="7895:7909" ph="..." />
-                <marker date="1608275400984" expanded="true" signature="8049:8063" ph="..." />
+                <marker date="1608277948210" expanded="true" signature="7719:7770" ph="..." />
+                <marker date="1608277948210" expanded="true" signature="7895:7909" ph="..." />
+                <marker date="1608277948210" expanded="true" signature="8049:8063" ph="..." />
               </folding>
             </state>
           </provider>
@@ -163,10 +162,10 @@
       <find>initMapData</find>
       <find>changeVi</find>
       <find>ion-content</find>
-      <find>search</find>
       <find>init</find>
       <find>kaul</find>
       <find>filter</find>
+      <find>search</find>
     </findStrings>
     <replaceStrings>
       <replace>.client-html .footer</replace>
@@ -582,12 +581,12 @@
       <workItem from="1607580941734" duration="3000" />
       <workItem from="1607602422077" duration="1763000" />
       <workItem from="1607672828704" duration="28000" />
-      <workItem from="1608211183660" duration="16611000" />
+      <workItem from="1608211183660" duration="16900000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="923784000" />
+    <option name="totallyTimeSpent" value="924073000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1366" y="23" width="1366" height="745" extended-state="6" />
@@ -1099,12 +1098,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/front/app/controllers/search-controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="31" column="12" lean-forward="true" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
+        <state relative-caret-position="345">
+          <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
           <folding>
-            <marker date="1608275400984" expanded="true" signature="7719:7770" ph="..." />
-            <marker date="1608275400984" expanded="true" signature="7895:7909" ph="..." />
-            <marker date="1608275400984" expanded="true" signature="8049:8063" ph="..." />
+            <marker date="1608277948210" expanded="true" signature="7719:7770" ph="..." />
+            <marker date="1608277948210" expanded="true" signature="7895:7909" ph="..." />
+            <marker date="1608277948210" expanded="true" signature="8049:8063" ph="..." />
           </folding>
         </state>
       </provider>
