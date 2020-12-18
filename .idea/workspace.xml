@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/front/app/controllers/search-controller.js" afterPath="$PROJECT_DIR$/front/app/controllers/search-controller.js" />
     </list>
     <ignored path="yii2metronic.iws" />
@@ -52,8 +53,8 @@
       <file leaf-file-name="search.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/front/pages/search.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="32" column="157" lean-forward="true" selection-start-line="32" selection-start-column="157" selection-end-line="32" selection-end-column="157" />
+            <state relative-caret-position="45">
+              <caret line="3" column="222" lean-forward="false" selection-start-line="3" selection-start-column="216" selection-end-line="3" selection-end-column="222" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#input#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -91,12 +92,12 @@
       <file leaf-file-name="search-controller.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/front/app/controllers/search-controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-405">
-              <caret line="47" column="60" lean-forward="false" selection-start-line="47" selection-start-column="60" selection-end-line="47" selection-end-column="60" />
+            <state relative-caret-position="137">
+              <caret line="217" column="36" lean-forward="false" selection-start-line="217" selection-start-column="36" selection-end-line="217" selection-end-column="36" />
               <folding>
-                <marker date="1608274622542" expanded="true" signature="7632:7683" ph="..." />
-                <marker date="1608274622542" expanded="true" signature="7808:7822" ph="..." />
-                <marker date="1608274622542" expanded="true" signature="7962:7976" ph="..." />
+                <marker date="1608274970196" expanded="true" signature="7704:7755" ph="..." />
+                <marker date="1608274970196" expanded="true" signature="7880:7894" ph="..." />
+                <marker date="1608274970196" expanded="true" signature="8034:8048" ph="..." />
               </folding>
             </state>
           </provider>
@@ -163,9 +164,9 @@
       <find>changeVi</find>
       <find>ion-content</find>
       <find>search</find>
-      <find>filter</find>
       <find>init</find>
       <find>kaul</find>
+      <find>filter</find>
     </findStrings>
     <replaceStrings>
       <replace>.client-html .footer</replace>
@@ -671,12 +672,12 @@
       <workItem from="1607580941734" duration="3000" />
       <workItem from="1607602422077" duration="1763000" />
       <workItem from="1607672828704" duration="28000" />
-      <workItem from="1608211183660" duration="14820000" />
+      <workItem from="1608211183660" duration="15164000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="921993000" />
+    <option name="totallyTimeSpent" value="922337000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1366" y="23" width="1366" height="745" extended-state="6" />
@@ -1111,30 +1112,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/front/pages/property-detail.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1275">
-          <caret line="85" column="59" lean-forward="false" selection-start-line="85" selection-start-column="59" selection-end-line="85" selection-end-column="59" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#0;n#div#2;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#pre#0;n#div#3;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#1;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#ion-scroll#0;n#div#0;n#div#2;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#ion-scroll#0;n#div#0;n#div#2;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#ion-scroll#0;n#div#0;n#div#2;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#1;n#div#0;n#div#0;n#ion-scroll#0;n#div#0;n#div#2;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#0;n#div#5;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#5;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/front/app/controllers/property-detail-controller.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -1161,10 +1138,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/front/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="575">
+          <caret line="106" column="56" lean-forward="false" selection-start-line="106" selection-start-column="50" selection-end-line="106" selection-end-column="56" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/front/pages/search.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="157" lean-forward="true" selection-start-line="32" selection-start-column="157" selection-end-line="32" selection-end-column="157" />
+        <state relative-caret-position="45">
+          <caret line="3" column="222" lean-forward="false" selection-start-line="3" selection-start-column="216" selection-end-line="3" selection-end-column="222" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#input#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -1176,24 +1163,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/front/index.html">
+    <entry file="file://$PROJECT_DIR$/front/pages/property-detail.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="106" column="56" lean-forward="false" selection-start-line="106" selection-start-column="50" selection-end-line="106" selection-end-column="56" />
+        <state relative-caret-position="1275">
+          <caret line="85" column="59" lean-forward="false" selection-start-line="85" selection-start-column="59" selection-end-line="85" selection-end-column="59" />
           <folding>
-            <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#div#2;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#pre#0;n#div#3;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#ion-scroll#0;n#div#0;n#div#2;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#ion-scroll#0;n#div#0;n#div#2;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#ion-scroll#0;n#div#0;n#div#2;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#1;n#div#0;n#div#0;n#ion-scroll#0;n#div#0;n#div#2;n#div#4;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#div#5;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#5;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/front/app/controllers/search-controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-405">
-          <caret line="47" column="60" lean-forward="false" selection-start-line="47" selection-start-column="60" selection-end-line="47" selection-end-column="60" />
+        <state relative-caret-position="137">
+          <caret line="217" column="36" lean-forward="false" selection-start-line="217" selection-start-column="36" selection-end-line="217" selection-end-column="36" />
           <folding>
-            <marker date="1608274622542" expanded="true" signature="7632:7683" ph="..." />
-            <marker date="1608274622542" expanded="true" signature="7808:7822" ph="..." />
-            <marker date="1608274622542" expanded="true" signature="7962:7976" ph="..." />
+            <marker date="1608274970196" expanded="true" signature="7704:7755" ph="..." />
+            <marker date="1608274970196" expanded="true" signature="7880:7894" ph="..." />
+            <marker date="1608274970196" expanded="true" signature="8034:8048" ph="..." />
           </folding>
         </state>
       </provider>

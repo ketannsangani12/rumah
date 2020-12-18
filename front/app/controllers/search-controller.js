@@ -114,6 +114,9 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
         if(type === 'init'){
             $scope.changeView();
         }
+        if($scope.mapview){
+            $scope.initMapData();
+        }
       }, function (e) {
         console.log(e);
       });
