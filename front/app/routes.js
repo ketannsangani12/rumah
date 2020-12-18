@@ -2,7 +2,7 @@ angular.module('app.routes', ['ngAnimate'])
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('search', {
-          url: '/search',
+          url: '/search:query',
           templateUrl: 'pages/search.html',
           controller: 'searchCtrl'
       })

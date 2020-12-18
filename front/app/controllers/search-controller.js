@@ -1,7 +1,14 @@
-angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scope', '$state', '$timeout', '$compile', 'Auth', 'Data', 'Web', function ($rootScope, $scope, $state, $timeout, $compile, Auth, Data, Web) {
+angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scope', '$state', '$stateParams', '$timeout', '$compile', 'Auth', 'Data', 'Web', function ($rootScope, $scope, $state, $stateParams, $timeout, $compile, Auth, Data, Web) {
   $scope.locationData = false;
   $scope.mapview = false;
   $scope.formData = {};
+  $scope.popularSearch = {
+    'Ampang': {lat:3.1598207,long:101.7512435},
+    'Bandar Sunway': {lat:3.0696905,long:101.6000078},
+    'Bandar Utama': {lat:3.1378803,long:101.5930498},
+    'Bangsar': {lat:3.1300307,long:101.6686509},
+    'Bukit Jalil': {lat:3.0561539,long:101.6730973}
+  };
   $scope.properties = [];
   $scope.apiurl = APIURL;
   $scope.propertyTypes = ['House','Flat','Apartment','Condominium','Studio','Townhouse','Terrace','Semi-D','Bungalow'];
@@ -10,18 +17,39 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
   $scope.amenities = ['Air-conditioning','Wifi','Washing Machine','Cooking Allowed','Individual Meter Reader', 'Mini Market', 'Swimming Pool', 'Gymnasium', '24hrs Security', 'Playground', 'Sarau'];
   $scope.commutes = ['Nearby','MRT','LRT','KTM','Monorail','Bus Station'];
   $scope.markers = [];
-  $scope.searchHistory = [];
-  if(window.localStorage.searchHistory){
-    $scope.searchHistory = JSON.parse(window.localStorage.searchHistory);
-  }
-  if(window.localStorage.locationData){
-    $scope.locationData = JSON.parse(window.localStorage.locationData);
-  }
-
   $scope.setValue = function (field, value) {
     $scope.filter.price.isset = true;
     $scope.filter.distance.isset = true;
     $scope.formData[field] = value;
+  };
+
+  $scope.init = function () {
+      var query = $stateParams.query;
+      if(query){
+          $scope.formData = $scope.popularSearch[query];
+          $scope.formData.location = query;
+          $scope.search('init');
+      }else{
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(function (position) {
+                  $scope.formData.lat = position.coords.latitude;
+                  $scope.formData.long = position.coords.longitude;
+                  $scope.search('init');
+              });
+          } else {
+              $scope.formData.lat = 3.1554724;
+              $scope.formData.long = 101.655401;
+              $scope.search('init');
+          }
+
+          $timeout(function () {
+              if (!$scope.formData.lat) {
+                  $scope.formData.lat = 3.1554724;
+                  $scope.formData.long = 101.655401;
+                  $scope.search('init');
+              }
+          }, 500);
+      }
   };
 
   $scope.addCommute = function (value) {
@@ -54,9 +82,12 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
     delete $scope.formData[input];
   };
 
-  $scope.search = function(){
+  $scope.search = function(type){
     //if($scope.formData.search && $scope.formData.search.length > 1) {
-      if($scope.locationData && $scope.userCrtLocation){
+      if(!$scope.formData.location) {
+          $scope.formData.location = 'kuala lumpur';
+      }
+      if($scope.locationData){
         $scope.formData.lat = $scope.locationData.latitude;
         $scope.formData.long = $scope.locationData.longitude;
       }
@@ -79,14 +110,14 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
         data.location = $scope.formData.location.vicinity;
       }
       $scope.searching = true;
-      if(data.location) {
-        Web.search(data, function (response) {
-          $scope.properties = response.data;
-          $scope.setSearchHistory(data);
-        }, function (e) {
-          console.log(e);
-        });
-      }
+      Web.search(data, function (response) {
+        $scope.properties = response.data;
+        if(type === 'init'){
+            $scope.changeView();
+        }
+      }, function (e) {
+        console.log(e);
+      });
     //}
   };
 
@@ -161,22 +192,6 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
 
   $scope.getAvailability = function (date) {
     return moment(date).format('MMM, YYYY');
-  };
-
-  $scope.setSearchHistory = function (data) {
-    if($scope.searchHistory.length > 15){
-      $scope.searchHistory.pop();
-    }
-    var index = -1;
-    angular.forEach($scope.searchHistory,function (v,k) {
-      if(v.location === data.location){
-        index = k;
-      }
-    });
-    if (index > -1) {
-      $scope.searchHistory.splice(index, 1);
-    }
-    $scope.searchHistory.unshift({location:data.location, long: data.long, lat: data.lat});
   };
 
   $scope.getSimplifyLocation = function (location) {
@@ -290,30 +305,10 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
       $scope.markers[i].setMap(null);
     }
     $scope.markers.length = 0;
-  }
+  };
+
+    $scope.init();
 
   /* ----------------------------- */
 
-  $scope.$on('$destroy', function(){
-    window.localStorage.searchHistory = JSON.stringify($scope.searchHistory);
-  });
-
-  if(typeof FCMPlugin !== 'undefined') {
-    FCMPlugin.onNotification(function (data) {
-      if(data.notification_type != 'chat') {
-        if($state.current.name != 'notification') {
-          Data.setNotificationData({
-            title: data.title,
-            body: data.body,
-            dateTime: moment().format('YYYY-MM-DD hh:mm a')
-          });
-          if (data.wasTapped) {
-            $state.go('notification');
-          }
-        }
-      }else{
-        $state.go('chat-list');
-      }
-    });
-  }
 }]);

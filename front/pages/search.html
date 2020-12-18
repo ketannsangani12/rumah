@@ -1,27 +1,19 @@
-<ion-modal-view cache-view="false" class="white-bg">
-  <ion-content scroll="false" class="header search-header pdl-10 pdr-10" ng-show="!filter.display" style="background: transparent;">
-    <i class="fa fa-angle-left font-30 pdr-15 mrt-10" ng-click="goToBack()"></i>
-    <div class="search-box text-center pdr-10 width-100">
+<div cache-view="false" class="white-bg pdl-10 pdr-10">
+  <div scroll="false" ng-show="!filter.display" style="background: transparent;">
+    <div class="search-box text-center width-100">
       <input type="text" style="background: #fff !important;border: 1px solid #eee;" class="pdr-50" options="autoCompleteOption" placeholder="Type location" ng-model="formData.location" autocomplete="off" ng-change="search()" g-places-autocomplete force-selection="true" name="location">
-      <!--<input type="text" style="background: #fff !important;border: 1px solid #eee;" class="pdr-50" autofocus autocomplete="off" ng-model="formData.search" ng-model-options="{'debounce': 500}" ng-change="search()" placeholder="Search by Location or property name">-->
       <img src="img/search.svg" style="position: absolute; left: 15px; top: 15px;">
       <span class="red-text font-16" style="position: absolute; top: 17px; right: 20px;" ng-click="filter.show()">Filter</span>
     </div>
-  </ion-content>
-  <ion-content scroll="false" class="header pdl-20 pdr-20" ng-show="filter.display" style="background: transparent;">
+  </div>
+  <div scroll="false" class="flex pdl-20 pdr-20" ng-show="filter.display" style="background: transparent;">
     <i class="fa fa-close font-30 mrt-20" ng-click="filter.hide()"></i>
     <label class="font-26 fw-600 pdl-15 mrt-20">Filter</label>
-    <label class="opacity-50 font-18 text-right width-100 mrt-25" ng-click="filter.reset()">Reset</label>
-  </ion-content>
-  <ion-content class="content has-search-header" has-bouncing="false" ng-show="!mapview && !filter.display">
-    <div class="width-100 flex flex-dc" ng-show="properties.length == 0">
-      <label class="pdl-20 pdr-20 pdt-15 pdb-15 gray-bg opacity-60 fw-600 font-16 {{userCrtLocation ? 'mrt-15' : ''}}">Recent Search</label>
-      <div class="width-100 flex flex-dc pdt-10">
-        <label class="pdt-10 pdb-10 pdl-20 pdr-20 font-18 opacity-90 width-100" ng-repeat="v in searchHistory" ng-click="formData.location = v.location;formData.lat = v.lat;formData.long = v.long;search();">{{v.location}}</label>
-      </div>
-    </div>
+    <label class="opacity-50 font-18 text-right width-100 pdt-20 pull-right" ng-click="filter.reset()">Reset</label>
+  </div>
+  <div class="content pdt-15" has-bouncing="false" ng-show="!mapview && !filter.display">
     <div class="listview" ng-show="properties.length > 0">
-      <div class="light-blue-bg flex flex-dc pdb-20">
+      <div class="white-bg flex flex-dc pdb-20">
         <div class="flex mrl-15 mrr-15 width-100">
           <h2 class="pdt-15">{{properties.length}} results found</h2>
         </div>
@@ -40,36 +32,16 @@
               <div ng-click="openDetail(v.id)" class="pdt-10 pdb-10 opacity-50">
                 {{v.bedroom}}BR <i class="fa fa-circle font-8"></i> {{v.bathroom}}BA <i class="fa fa-circle font-8"></i> {{parseInt(v.size_of_area)}} Sq. ft.
               </div>
-              <!--<div ng-click="openDetail(v.id)" class="flex">
-                <div class="width-50">
-                  <label class="opacity-80 font-14">{{v.property_type}}</label><br>
-                  <label class="opacity-50 font-12">Property type</label>
-                </div>
-                <div class="width-50 pdl-10">
-                  <label class="opacity-80 font-14">{{v.room_type}}</label><br>
-                  <label class="opacity-50 font-12">Room type</label>
-                </div>
-              </div>
-              <div ng-click="openDetail(v.id)" class="flex">
-                <div class="width-50">
-                  <label class="opacity-80 font-14">{{getAvailability(v.availability)}}</label><br>
-                  <label class="opacity-50 font-12">Availability</label>
-                </div>
-                <div class="width-50 pdl-10">
-                  <label class="opacity-80 font-14">{{v.preference}}</label><br>
-                  <label class="opacity-50 font-12">Preference</label>
-                </div>
-              </div>-->
             </div>
           </div>
         </div>
       </div>
     </div>
-  </ion-content>
-  <ion-content class="content" has-bouncing="false" ng-show="mapview && !filter.display">
-    <div class="mapview" id="map-canvas"></div>
-  </ion-content>
-  <ion-content class="content has-header pdl-20 pdr-20" has-bouncing="false" ng-show="filter.display">
+  </div>
+  <div class="content" has-bouncing="false" ng-show="mapview && !filter.display">
+    <div class="mapview" style="width: 100%!important;" id="map-canvas"></div>
+  </div>
+  <div class="content pdl-20 pdr-20 pdt-15" has-bouncing="false" ng-show="filter.display">
     <!--<h3 class="font-18">Property Location</h3>
     <input type="text" class="round-corner-box mrt-15 mrb-15 width-100" options="autoCompleteOption" placeholder="Type location" ng-model="formData.location" g-places-autocomplete force-selection="true" name="location">-->
     <h3 class="font-18">Property Type <span class="pull-right thm-text font-16" ng-click="clearSelection('property_type')">Clear</span></h3>
@@ -127,9 +99,9 @@
       <span style="position: absolute; top: 3px; right: 25px; background: #fff; border-left: 1px solid #ddd; padding: 14px;">Sq.Ft.</span>
     </div>
     <button class="btn width-100 btn-shadow mrt-10 mrb-40 fw-600" ng-click="filter.apply()">Apply Filter</button>
-  </ion-content>
-  <div class="width-100 text-center" ng-show="properties.length > 0 && !filter.display" style="position: absolute;bottom: 50px;">
+  </div>
+  <div class="width-100 text-center" ng-show="properties.length > 0 && !filter.display" style="position: absolute;bottom: 50px;right: 0px;">
     <label ng-show="!mapview" ng-click="changeView()" style="z-index: 3;" class="br-25 white-bg black-text pdt-15 pdb-15 pdr-20 pdl-20">Map View <i class="fa fa-map-o"></i></label>
     <label ng-show="mapview" ng-click="changeView()" style="z-index: 3;" class="br-25 white-bg black-text pdt-15 pdb-15 pdr-20 pdl-20">List View <i class="fa fa-list"></i></label>
   </div>
-</ion-modal-view>
+</div>

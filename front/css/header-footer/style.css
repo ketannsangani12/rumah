@@ -1,0 +1,273 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*---------- Google Fonts ----------*/
+* {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+}
+
+
+body{
+	font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 12px;
+    color: #000000;
+    margin: 0;
+    overflow-y: auto;
+}
+
+a,
+input,
+button,
+textarea { outline: none !important; }
+
+a {
+	transition: all ease-in-out 300ms;
+	-webkit-transition: all ease-in-out 300ms;
+	-ms-transition: all ease-in-out 300ms;
+	-o-transition: all ease-in-out 300ms;
+	-moz-transition: all ease-in-out 300ms;
+}
+.client-html .pad-left {
+	padding-left:0;
+}
+
+.client-html .pad-right {
+	padding-right:0;
+}
+
+.client-html .pad-top {
+	padding-top:0;
+}
+
+.client-html .pad-bottom {
+	padding-bottom:0;
+}
+
+.client-html .padding {
+	padding:0;
+}
+
+.client-html .img-responsive {
+    max-width: 100%;
+}
+
+.container {
+    float: none;
+    margin: 0 auto;
+    width: 1085px;
+    max-width: 100%;
+    padding: 0 15px;
+}
+
+
+/* Header Start */
+.client-html .header {
+    background-color: #ffffff;
+}
+.client-html .header .h-content {
+    display: flex;
+    align-items: center;
+    /* padding: 13px 21px; */
+    padding: 13px 36px;
+    justify-content: space-between;
+}
+
+.client-html .header .h-left {
+    /* float: left; */
+    display: inline-flex;
+}
+
+.client-html .header .h-left img {
+    width: 82px;
+}
+
+.client-html .header .h-right {
+    display: inline-flex;
+}
+
+.client-html .header ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.client-html .header ul li {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.client-html .header ul li a {
+    display: inline-block;
+}
+
+.client-html .header .h-right img {
+    width: 150px;
+}
+/* Header End */
+
+/* Footer Start */
+.client-html .footer {
+    background-color: #ffffff;
+}
+.client-html .footer .f-content {
+    /* padding: 20px 32px; */
+    padding: 20px 75px;
+}
+
+.client-html .footer .f-top {
+    padding: 0 20px;
+}
+
+.client-html .footer .f-title {
+    padding: 0 0 10px;
+}
+
+.client-html .footer .f-title span {
+    font-weight: 600;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    color: #000000;
+}
+
+/* .footer .f-block {
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+    padding: 0 15px;
+} */
+
+.client-html .footer .f-block {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.client-html .footer .f-block p {
+    font-size: 12px;
+    line-height: 18px;
+    color: #000000;
+    margin: 0 0 10px;
+}
+
+.client-html .footer .f-block ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.client-html .footer .f-block ul li {
+    display: block;
+    margin: 0;
+    padding: 0 0 7px;
+    list-style-type: none;
+    font-size: 12px;
+    line-height: 12px;
+    color: #000000;
+}
+
+.client-html .footer .f-block ul li:last-child {
+    padding-bottom: 0;
+}
+
+.client-html .footer .f-block ul li a {
+    text-decoration: none;
+    color: #000000;
+}
+
+.client-html .footer .f-block ul li a:hover {
+    color: #b2b2b2;
+}
+
+.client-html .footer .f-block.f-rumah-block {
+    width: 490px;
+    padding-right: 50px;
+}
+
+.client-html .footer .f-block.f-popular-block {
+    width: 210px;
+    padding-right: 30px;
+}
+
+.client-html .footer .f-block.f-contact-block span {
+    display: block;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #000000;
+}
+
+.client-html .footer .f-block.f-contact-block p {
+    margin: 0 0 20px;
+}
+
+.client-html .footer .f-block.f-contact-block p span {
+    display: inline-block;
+}
+
+.client-html .footer .f-block.f-contact-block p a {
+    text-decoration: none;
+    color: #000000;
+}
+
+.client-html .footer .f-block.f-contact-block p a:hover {
+    color: #b2b2b2;
+}
+
+.client-html .footer .f-bottom {
+    padding: 10px 0 0;
+    border-top: 2px solid #f0f0f0;
+}
+
+.client-html .footer .f-bottom ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.client-html .footer .f-bottom ul li {
+    display: inline-block;
+    margin: 0;
+    padding: 0 6px;
+    list-style-type: none;
+    font-size: 12px;
+    line-height: 12px;
+    color: #000000;
+}
+
+.client-html .footer .f-bottom ul li:first-child {
+    padding-left: 0;
+}
+
+.client-html .footer .f-bottom ul li:last-child {
+    padding-right: 0;
+}
+
+.client-html .footer .f-bottom ul li a {
+    text-decoration: none;
+    color: #b2b2b2;
+}
+
+.client-html .footer .f-bottom ul li a:hover {
+    color: #000000;
+}
+
+.client-html .footer .f-bottom .f-left {
+    /* width: 375px; */
+}
+
+.client-html .footer .f-bottom .f-right {
+    padding-left: 50px;
+}
+/* Footer End */

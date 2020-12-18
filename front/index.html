@@ -19,6 +19,9 @@
   <link href="css/common-style.css" rel="stylesheet">
   <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="lib/angular-google-places-autocomplete/src/autocomplete.css">
+  <title>Rumah</title>
+  <link rel="stylesheet" href="css/header-footer/style.css">
+  <link rel="stylesheet" href="css/header-footer/responsive.css">
   <script src="lib/moment/moment.min.js" type="text/javascript"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.31/moment-timezone.min.js" integrity="sha512-GqWOXT1UPIvzojfXEPf2ByPu4S0iwX0SfFfZ985fePNpTJPuiWKn47mXd0iyfcpcjcmM/HIRtvrd5TsR87A0Zg==" crossorigin="anonymous"></script>
   <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
@@ -50,13 +53,99 @@
   <script type="text/javascript" src="app/controllers/property-detail-controller.js"></script>
 </head>
 <body ng-app="app">
-  <ion-nav-view nav-swipe="off"></ion-nav-view>
-  <link ng-if="platform == 'ios'" href="css/ios.css" rel="stylesheet">
+  <div class="client-html">
+    <header class="header">
+    <div class="container">
+      <div class="h-content">
+        <div class="h-left">
+          <a href="javascript:void(0);" ui-sref="search">
+            <img src="images/logo.svg" alt="logo" class="img-responsive">
+          </a>
+        </div>
+        <div class="h-right">
+          <ul>
+            <li>
+              <a href="javascript:void(0);">
+                <img src="images/app-store.svg" alt="app-store" class="img-responsive">
+              </a>
+            </li>
+            <li>
+              <a href="https://play.google.com/store/apps/details?id=com.app.rumahi" target="_blank">
+                <img src="images/google-play.svg" alt="google-play" class="img-responsive">
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+  </div>
+  <div class="content" style="min-height: calc(100vh - 354px);">
+    <div class="container pdl-40 pdr-40" ui-view></div>
+  </div>
+  <div class="client-html">
+    <footer class="footer">
+      <div class="container">
+        <div class="f-content">
+          <div class="f-top">
+            <div class="f-block f-rumah-block">
+              <div class="f-title">
+                <span>Rumah-i</span>
+              </div>
+
+              <div class="f-detail">
+                <p>Rumah-i is a home renting platform in Malaysia with a one-stop solution for you. Here at Rumah-i, landlords and tenants will be able to find comprehensive property management services across all area of residential properties.</p>
+              </div>
+            </div>
+            <div class="f-block f-popular-block">
+              <div class="f-title">
+                <span>Popular</span>
+              </div>
+
+              <div class="f-detail">
+                <ul>
+                  <li><a ui-sref="search({query: 'Ampang'})">Ampang</a></li>
+                  <li><a ui-sref="search({query: 'Bandar Sunway'})">Bandar Sunway</a></li>
+                  <li><a ui-sref="search({query: 'Bandar Utama'})">Bandar Utama</a></li>
+                  <li><a ui-sref="search({query: 'Bangsar'})">Bangsar</a></li>
+                  <li><a ui-sref="search({query: 'Bukit Jalil'})">Bukit Jalil</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="f-block f-contact-block">
+              <div class="f-title">
+                <span>Contact Us</span>
+              </div>
+
+              <div class="f-detail">
+                <span>HOMEPLUS 2 U SDN BHD</span>
+                <p>1347586-K (201901038256)</p>
+                <p><span>Email:</span> <a href="mailto:hello@ruhan-i.com">hello@ruhan-i.com</a></p>
+                <p><span>Phone:</span> <a href="tel:60173329139">6017-332-9139</a></p>
+              </div>
+            </div>
+          </div>
+          <div class="f-bottom">
+            <div class="f-block f-left">
+              <ul>
+                <li><a href="javascript:void(0);">Terms and Conditions</a></li>
+                <li><a href="https://rent.rumah-i.com/faqs" target="_blank">Privacy Policy</a></li>
+                <li><a href="https://rent.rumah-i.com/rental-services-company" target="_blank">About Us</a></li>
+                <li><a href="https://rent.rumah-i.com/contact-us" target="_blank">Contact Us</a></li>
+              </ul>
+            </div>
+            <div class="f-block f-right">
+              <ul>
+                <li>2020 Copyright © HOMEPLUS 2 U SDN BHD</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
   <div class="loader" ng-show="loader.display">
     <img src="img/loader.svg">
-  </div>
-  <div class="alert_label" id="alertLabel" style="display: none;">
-    <span id="msgLabelTxt">Press again to exit!</span>
   </div>
 </body>
 </html>
