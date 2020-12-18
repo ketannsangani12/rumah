@@ -25,7 +25,7 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
 
   $scope.init = function () {
       var query = $stateParams.query;
-      if(query){
+      if(query && query != ''){
           $scope.formData = $scope.popularSearch[query];
           $scope.formData.location = query;
           $scope.search('init');
