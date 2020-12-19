@@ -6,12 +6,14 @@ use app\models\AgentRatings;
 use app\models\BankAccounts;
 use app\models\BookingRequests;
 use app\models\Chats;
+use app\models\Devices;
 use app\models\EmailTemplates;
 use app\models\FavouriteProperties;
 use app\models\GoldTransactions;
 use app\models\Ilifestyle;
 use app\models\Images;
 use app\models\Istories;
+use app\models\Notifications;
 use app\models\Packages;
 use app\models\PromoCodes;
 use app\models\Properties;
@@ -587,6 +589,65 @@ class ApipartnersController extends ActiveController
             }else{
                 return array('status' => 0, 'message' => $model->getErrors());
             }
+
+        }
+
+
+    }
+    public function actionSavedevice()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && !empty($_POST['user_id'])) {
+                $model = new Devices();
+                $model->scenario = 'saveuserdevice';
+                $model->attributes = Yii::$app->request->post();
+                $model->user_id = $this->user_id;
+
+                if($model->validate()){
+
+                    $usermodel = Devices::findOne(['user_id'=>$_POST['user_id'],'device_token'=>$model->device_token]);
+                    if (!empty($usermodel)){
+                        return array('status' => 0, 'message' => 'You have already added this device.');
+                    }else{
+                        $model->created_at = date('Y-m-d H:i:s');
+                        if($model->save()){
+                            return array('status' => 1, 'message' => 'You have saved device successfullly.');
+
+                        }else{
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                        }
+                    }
+
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+                }
+            } else {
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+
+
+    }
+    public function actionNotifications()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $baseurl = $this->baseurl;
+            $user_id = $this->user_id;
+            $notifications = Notifications::find()->where(['receiver_id'=>$user_id])->orderBy(['id'=>SORT_DESC])->asArray()->all();
+            return array('status' => 1, 'data' => $notifications);
+
+
+
+
 
         }
 
