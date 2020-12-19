@@ -41,13 +41,15 @@ class Withdrawals extends \yii\db\ActiveRecord
     {
         return [
             [['user_id','amount','password'], 'required','on'=>'userwithdrawal'],
-            [['status'], 'required','on'=>'updatewithdrawal'],
+            [['status','proof'], 'required','on'=>'updatewithdrawal'],
             [['user_id', 'bank_id'], 'integer'],
             [['amount', 'fees', 'total_amount', 'old_balance', 'new_balance'], 'number'],
             [['status','remarks'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['reference_no'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['updated_by' => 'id']],
+
         ];
     }
 
@@ -71,7 +73,8 @@ class Withdrawals extends \yii\db\ActiveRecord
             'password'=>'Secondary Password',
             'status' => 'Status',
             'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'updated_at' => 'Last Updated',
+            'updated_by' => 'Updated By'
         ];
     }
 
@@ -83,5 +86,9 @@ class Withdrawals extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(Users::className(), ['id' => 'user_id']);
+    }
+    public function getUpdatedby()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'updated_by']);
     }
 }

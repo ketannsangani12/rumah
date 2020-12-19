@@ -101,11 +101,13 @@ class WithdrawalsController extends Controller
         $model = $this->findModel($id);
         $model->scenario = 'updatewithdrawal';
         if ($model->load(Yii::$app->request->post())) {
+            $model->updated_by = Yii::$app->user->id;
+            $model->proof = UploadedFile::getInstance($model, 'proof');
+
             if($model->validate()){
                 if($model->status=='Completed'){
                     $userdetails = Users::findOne($model->user_id);
 
-                    $model->proof = UploadedFile::getInstance($model, 'proof');
                     $model->proof->saveAs('uploads/withdrawals/' . $model->proof->baseName . '.' . $model->proof->extension);
                     $document = 'uploads/withdrawals/' . $model->proof->baseName . '.' . $model->proof->extension;
 

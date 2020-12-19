@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute'=>'role',
 
-                    'filter'=>array('Superadmin'=>'Superadmin','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover'),
+                    'filter'=>array('Superadmin'=>'Superadmin','User'=>'User','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry','Handyman'=>'Handyman'),
 
                 ],
                 'email',

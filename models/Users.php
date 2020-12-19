@@ -48,6 +48,9 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['role', 'full_name','email'], 'required','on' => 'adduser'],
             [['full_name','email','password','contact_no'], 'required','on' => 'register'],
             [['full_name','company_name','email','password','contact_no','document_no','agentcard'], 'required','on' => 'registeragent'],
+            [['email','google_response','googleuser_id'], 'required','on' => 'registergoogle'],
+            [['contact_no'], 'required','on' => 'updateuser'],
+
             //[['agentcard'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'registeragent'],
 
             [['gender','dob','race','nationality','education_level','occupation','annual_income','contact_no','emergency_contact'], 'required','on' => 'updateprofileuser'],
@@ -72,6 +75,9 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['contact_no'], 'unique','on'=>'register'],
             [['contact_no'], 'unique','on'=>'registeragent'],
             [['contact_no'], 'unique','on'=>'adduser'],
+            [['contact_no'], 'unique','on'=>'updateuser'],
+            [['document_no'], 'unique','on'=>'registeragent'],
+
             [['email', 'password'], 'required','on' => 'login'],
             ['password', 'validatePassword','on' => 'login'],
             [['bank_account_name','bank_account_no','bank_name'], 'required','on' => 'adduseraccount'],
@@ -82,6 +88,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['wallet_balance'], 'number'],
             [['picture'], 'required', 'on' => 'changepicture'],
             [['picture'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'changepicture'],
+            [['google_response','googleuser_id'], 'string'],
 
             //[['name', 'username', 'password', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
@@ -108,7 +115,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'address'=>'Address',
             'state'=>'State',
             'document_no'=>'IC No.',
-            'registration_no'=>'Registration No',
+            'registration_no'=>'Agent Code',
             'bank_account_name'=>'Bank Account Name',
             'bank_account_no'=>'Bank Account No.',
             'bank_name'=>'Bank Name',
@@ -134,7 +141,10 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'document_front'=>'Document Front',
             'document_back'=>'Document Back',
             'document_type'=>'Document type',
-            'msccertificate'=>'MSC Certificate'
+            'msccertificate'=>'MSC Certificate',
+            'google_response'=>'Google Response',
+            'facebook_response'=>'Facebook Response',
+            'googleuser_id'=>'Google User id'
         ];
     }
 

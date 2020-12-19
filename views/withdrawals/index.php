@@ -68,10 +68,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 
             ],
-            'created_at:datetime',
+            'updated_at:datetime',
+            [
+                'attribute' => 'updated_by',
+
+                'value' => 'updatedby.full_name',
+                'filter'=>false,
+
+
+                //'filter'=>false
+            ],
             // 'updated_at',
             ['class' => 'yii\grid\ActionColumn',
-                'template'=>'{update}',
+                'template'=>'{update} {view}',
                 'visibleButtons' => [
                     'update' => function ($model) {
                      return ($model->status=='Pending');
@@ -79,7 +88,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'buttons'=>[
 
+                    'view' => function ($url, $model) {
 
+                        return Html::a('<i class="fa fa-eye" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/view', 'id' => $model->id])], [
+
+                            'title' => 'View',
+                            'class'=>'btn btn-sm bg-purple datatable-operation-btn'
+
+                        ]);
+
+                    },
                     'update' => function ($url, $model) {
 
                         return Html::a('<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/update', 'id' => $model->id])], [

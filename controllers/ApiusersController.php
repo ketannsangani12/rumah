@@ -118,7 +118,7 @@ class ApiusersController extends ActiveController
         header("Access-Control-Allow-Headers: X-Requested-With,token,user");
         parent::beforeAction($action);
 
-        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp') {
+        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp' && $action->actionMethod!='actionGooglelogin' && $action->actionMethod!='actionFacebooklogin') {
             $headers = Yii::$app->request->headers;
             if(!empty($headers) && isset($headers['token']) && $headers['token']!=''){
                 try{
@@ -156,8 +156,6 @@ class ApiusersController extends ActiveController
 
 
     }
-
-
 
     //Login users
     public function actionLogin()
@@ -233,6 +231,201 @@ class ApiusersController extends ActiveController
             } else {
                 return array('status' => 0, 'message' => 'Please enter mandatory fields.');
             }
+        }
+
+
+    }
+    public function actionGooglelogin()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && isset($_POST['email']) && $_POST['email']!='') {
+                $userexist = Users::find()->where(['email'=>$_POST['email'],'role'=>'User'])->one();
+                if(!empty($userexist)){
+                    $model = $userexist;
+                }else{
+                    $model = new Users();
+                    $model->scenario = 'registergoogle';
+                }
+
+                $model->attributes = Yii::$app->request->post();
+
+                if($model->validate()){
+                    if(empty($userexist)){
+                        $model->role = 'User';
+                        $model->created_at = date('Y-m-d H:i:s');
+
+                    }
+                    if($model->save(false)){
+                        if(empty($userexist)){
+                            $package = Packages::findOne(1);
+                            $packagemodel = new UserPackages();
+                            $packagemodel->user_id = $model->id;
+                            $packagemodel->package_id = 1;
+                            $packagemodel->start_date = date('Y-m-d');
+                            $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                            $packagemodel->created_at = date('Y-m-d H:i:s');
+                            if($packagemodel->save(false)){
+                                $model->property_credited = $package->quantity;
+                                $model->save(false);
+
+                            }
+                            $userexist = Users::find()->where(['id'=>$model->id])->asArray()->one();
+                            $token = (string) Users::generateToken($userexist);
+
+                        }else{
+                            $userexist = Users::find()->where(['id'=>$userexist->id])->asArray()->one();
+                            unset($userexist['document_front']);
+                            unset($userexist['document_back']);
+                            $token = (string) Users::generateToken($userexist);
+
+
+                        }
+                        $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
+
+                        return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist,'token'=>$token);
+
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
+
+
+
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+                }
+            } else {
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+
+
+    }
+
+    public function actionFacebooklogin()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && isset($_POST['email']) && $_POST['email']!='') {
+                $userexist = Users::find()->where(['email'=>$_POST['email'],'role'=>'User'])->one();
+                if(!empty($userexist)){
+                    $model = $userexist;
+                }else{
+                    $model = new Users();
+                    $model->scenario = 'registergoogle';
+                }
+
+                $model->attributes = Yii::$app->request->post();
+
+                if($model->validate()){
+                    $model->role = 'User';
+                    $model->created_at = date('Y-m-d H:i:s');
+                    if($model->save(false)){
+                        if(empty($userexist)){
+                            $package = Packages::findOne(1);
+                            $packagemodel = new UserPackages();
+                            $packagemodel->user_id = $model->id;
+                            $packagemodel->package_id = 1;
+                            $packagemodel->start_date = date('Y-m-d');
+                            $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                            $packagemodel->created_at = date('Y-m-d H:i:s');
+                            if($packagemodel->save(false)){
+                                $model->property_credited = $package->quantity;
+                                $model->save(false);
+
+                            }
+                            $userexist = Users::find()->where(['id'=>$model->id])->asArray()->one();
+                            unset($userexist['document_front']);
+                            unset($userexist['document_back']);
+                            $token = (string) Users::generateToken($userexist);
+
+                        }else{
+                            $userexist = Users::find()->where(['id'=>$userexist->id])->asArray()->one();
+                            unset($userexist['document_front']);
+                            unset($userexist['document_back']);
+                            $token = (string) Users::generateToken($userexist);
+
+                        }
+                        $userexist['referral_code'] = Users::getReferralCode($userexist->id);
+
+                        return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist,'token'=>$token);
+
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
+
+
+
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+                }
+            } else {
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+
+
+    }
+    public function actionUpdateuser()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $model = Users::findOne($this->user_id);
+            $model->scenario = 'updateuser';
+            $model->attributes = Yii::$app->request->post();
+            if($model->validate()){
+                if($model->status==2){
+                    $contact_no = $model->contact_no;
+                    if($contact_no!=''){
+                        $curl = curl_init();
+//60126479285
+                        curl_setopt_array($curl, array(
+                            CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=homeplus2u&pass=$2zvDgjJ&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "GET",
+                        ));
+                        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
+
+
+
+                        $response = curl_exec($curl);
+                        $err = curl_error($curl);
+
+                        curl_close($curl);
+
+                        if ($err) {
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        } else {
+                            return array('status' => 1, 'message' => 'Your account is not verified.Please verify using OTP.', 'data' => $contact_no);
+
+                            //echo $response;exit;
+                        }
+
+                    }
+                }
+
+            }else{
+                return array('status' => 0, 'message' => $model->getErrors());
+
+            }
+
+
+
         }
 
 
@@ -346,6 +539,7 @@ class ApiusersController extends ActiveController
 
 
     }
+
     public function actionResendotp()
     {
 
@@ -404,7 +598,7 @@ class ApiusersController extends ActiveController
                $contact_no = $_POST['contact_no'];
                $otp = $_POST['otp'];
                 $curl = curl_init();
-                $model = Users::find()->where(['contact_no'=>$contact_no])->one();
+                $model = Users::find()->where(['contact_no'=>$contact_no,'role'=>'User'])->one();
                 if(empty($model)){
                     return array('status' => 0, 'message' => 'User details not found.');
 
@@ -1260,8 +1454,11 @@ class ApiusersController extends ActiveController
                         $model->old_balance = $userbalance;
                         $model->new_balance = $userbalance-$amount;
                         $model->total_amount = $amount;
+                        $model->updated_by = $this->user_id;
                         $model->status = 'Pending';
                         $model->created_at = date('Y-m-d H:i:s');
+                        $model->updated_at = date('Y-m-d H:i:s');
+
                         if($model->save(false)){
                             $transactionmodel = new Transactions();
                             $transactionmodel->user_id = $model->user_id;
