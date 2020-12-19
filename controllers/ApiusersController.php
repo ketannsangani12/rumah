@@ -7,6 +7,7 @@ use app\models\AppRatings;
 use app\models\BankAccounts;
 use app\models\BookingRequests;
 use app\models\Chats;
+use app\models\Devices;
 use app\models\EmailTemplates;
 use app\models\FavouriteProperties;
 use app\models\GoldTransactions;
@@ -313,20 +314,23 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if (!empty($_POST) && isset($_POST['email']) && $_POST['email']!='') {
-                $userexist = Users::find()->where(['email'=>$_POST['email'],'role'=>'User'])->one();
+            if (!empty($_POST) && isset($_POST['facebookuser_id']) && $_POST['facebookuser_id']!='') {
+                $userexist = Users::find()->where(['facebookuser_id'=>$_POST['facebookuser_id'],'role'=>'User'])->one();
                 if(!empty($userexist)){
                     $model = $userexist;
                 }else{
                     $model = new Users();
-                    $model->scenario = 'registergoogle';
                 }
+                $model->scenario = 'registerfacebook';
 
                 $model->attributes = Yii::$app->request->post();
 
                 if($model->validate()){
-                    $model->role = 'User';
-                    $model->created_at = date('Y-m-d H:i:s');
+                    if(empty($userexist)){
+                        $model->role = 'User';
+                        $model->created_at = date('Y-m-d H:i:s');
+
+                    }
                     if($model->save(false)){
                         if(empty($userexist)){
                             $package = Packages::findOne(1);
@@ -353,7 +357,7 @@ class ApiusersController extends ActiveController
                             $token = (string) Users::generateToken($userexist);
 
                         }
-                        $userexist['referral_code'] = Users::getReferralCode($userexist->id);
+                        $userexist['referral_code'] = Users::getReferralCode($userexist['id']);
 
                         return array('status' => 1, 'message' => 'User Logged in Successfully', 'data' => $userexist,'token'=>$token);
 
@@ -697,6 +701,43 @@ class ApiusersController extends ActiveController
                 }
 
 
+            } else {
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+
+
+    }
+    public function actionSavedevice()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if (!empty($_POST) && !empty($_POST['user_id'])) {
+                $model = new Devices();
+                $model->scenario = 'saveuserdevice';
+                $model->attributes = Yii::$app->request->post();
+                if($model->validate()){
+
+                    $usermodel = Devices::findOne(['user_id'=>$_POST['user_id'],'device_token'=>$model->device_token]);
+                    if (!empty($usermodel)){
+                        return array('status' => 0, 'message' => 'You have already added this device.');
+                    }else{
+                        $model->created_at = date('Y-m-d H:i:s');
+                        if($model->save()){
+                            return array('status' => 1, 'message' => 'You have saved device successfullly.');
+
+                        }else{
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                        }
+                    }
+
+                }else{
+                    return array('status' => 0, 'message' => $model->getErrors());
+                }
             } else {
                 return array('status' => 0, 'message' => 'Please enter mandatory fields.');
             }

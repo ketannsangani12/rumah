@@ -50,6 +50,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['full_name','company_name','email','password','contact_no','document_no','agentcard'], 'required','on' => 'registeragent'],
             [['email','google_response','googleuser_id'], 'required','on' => 'registergoogle'],
             [['contact_no'], 'required','on' => 'updateuser'],
+            [['facebookuser_id','facebook_response'], 'required','on' => 'registerfacebook'],
 
             //[['agentcard'], 'file', 'skipOnEmpty' => false,'extensions' => 'png,jpg,jpeg','on'=>'registeragent'],
 
@@ -144,7 +145,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'msccertificate'=>'MSC Certificate',
             'google_response'=>'Google Response',
             'facebook_response'=>'Facebook Response',
-            'googleuser_id'=>'Google User id'
+            'googleuser_id'=>'Google User id',
+            'facebookuser_id'=>'Facebook User id'
         ];
     }
 
