@@ -73,6 +73,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['email'], 'unique','on'=>'adduser'],
             [['email'], 'unique','on'=>'register'],
             [['email'], 'unique','on'=>'registeragent'],
+            [['email'], 'unique','on'=>'updateuser'],
             [['contact_no'], 'unique','on'=>'register'],
             [['contact_no'], 'unique','on'=>'registeragent'],
             [['contact_no'], 'unique','on'=>'adduser'],

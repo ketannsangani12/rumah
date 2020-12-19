@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 //'pe_userid',
                 'title:ntext',
                 'description:ntext',
+                'remarks',
                 'location:ntext',
                 'latitude',
                 'longitude',

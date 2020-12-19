@@ -63,20 +63,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'status',
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{gallery} {managedlisting} {update} {delete}',
+                    'template'=>'{view} {gallery} {managedlisting} {update} {delete}',
 
                     'buttons'=>[
-//
-//                        'view' => function ($url, $model) {
-//
-//                            return Html::a('<i class="fa fa-eye" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/view', 'id' => $model->id])], [
-//
-//                                'title' => 'View',
-//                                'class'=>'btn btn-sm btn-primary datatable-operation-btn'
-//
-//                            ]);
-//
-//                        },
+                        'view' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-eye" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/view', 'id' => $model->id])], [
+
+                                'title' => 'View',
+                                'class'=>'btn btn-sm bg-olive datatable-operation-btn'
+
+                            ]);
+
+                        },
                         'managedlisting' => function ($url, $model,$managedlisting) {
 
                             return Html::a('<i class="fa fa-minus" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/removefrommanagelisting', 'id' => $model->id])], [
