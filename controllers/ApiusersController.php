@@ -389,6 +389,7 @@ class ApiusersController extends ActiveController
             $model->scenario = 'updateuser';
             $model->attributes = Yii::$app->request->post();
             if($model->validate()){
+                $model->save(false);
                 if($model->status==2){
                     $contact_no = $model->contact_no;
                     if($contact_no!=''){
