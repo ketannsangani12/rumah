@@ -20,17 +20,26 @@ $this->params['breadcrumbs'][] = $this->title;
         $gridColumns = [
 
                 ['class' => 'yii\grid\SerialColumn'],
-                [
-                    'attribute' => 'property_id',
+            [
+                'attribute' => 'property_id',
 
-                    'value' => 'property.title',
-                    'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Properties::find()->asArray()->all(), 'id', function($model) {
-                        return $model['title'];
-                    }),
-                    'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
-
-                    //'filter'=>false
+                'value' => function($model){
+                    return $model->property->property_no." - ".$model->property->title;
+                },
+                'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Properties::find()->where(['digital_tenancy'=>1])->asArray()->all(), 'id', function($model) {
+                    return $model['property_no']." - ".$model['title'];
+                }),
+                'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
+                'filterWidgetOptions' => [
+                    'options' => ['prompt' => 'Select Property'],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        //'width'=>'90px'
+                    ],
                 ],
+
+                //'filter'=>false
+            ],
                 [
                     'attribute' => 'landlord_id',
 
@@ -38,8 +47,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>'User'])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
-                    'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
-
+                    'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
+                    'filterWidgetOptions' => [
+                        'options' => ['prompt' => 'Select Landlord'],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                            //'width'=>'90px'
+                        ],
+                    ],
                     //'filter'=>false
                 ],
                 [
@@ -150,7 +165,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => $gridColumns,
 
         ]);
-        ?><?= GridView::widget([
+        ?><?= \kartik\grid\GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'layout' => "{items}\n{summary}\n{pager}",

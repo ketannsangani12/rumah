@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="box-body table-responsive">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-        <?= GridView::widget([
+        <?= \kartik\grid\GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'layout' => "{items}\n{summary}\n{pager}",
@@ -36,8 +36,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Properties::find()->where(['digital_tenancy'=>1])->asArray()->all(), 'id', function($model) {
                         return $model['property_no']." - ".$model['title'];
                     }),
-                    'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
-
+                    'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
+                    'filterWidgetOptions' => [
+                        'options' => ['prompt' => 'Select Property'],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                            //'width'=>'90px'
+                        ],
+                    ],
                     //'filter'=>false
                 ],
                 [
@@ -47,8 +53,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in', 'role', ['User','Agent']])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
-                    'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
-
+                    'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
+                    'filterWidgetOptions' => [
+                        'options' => ['prompt' => 'Select User'],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                            //'width'=>'90px'
+                        ],
+                    ],
 
                     //'filter'=>false
                 ],
@@ -60,8 +72,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in', 'role', ['Cleaner','Mover','Laundry','Handyman']])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
-                    'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
-
+                    'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
+                    'filterWidgetOptions' => [
+                        'options' => ['prompt' => 'Select Vendor'],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                            //'width'=>'90px'
+                        ],
+                    ],
                     //'filter'=>false
                 ],
                 //'property_id',

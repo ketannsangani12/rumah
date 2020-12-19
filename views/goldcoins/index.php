@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <h3><?php echo $this->title;?></h3>    </div>
     <div class="box-body table-responsive">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-        <?= GridView::widget([
+        <?= \kartik\grid\GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'layout' => "{items}\n{summary}\n{pager}",
@@ -31,8 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in','role',['User']])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
-                    'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
-
+                    'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
+                    'filterWidgetOptions' => [
+                        'options' => ['prompt' => 'Select User'],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                            //'width'=>'90px'
+                        ],
+                    ],
 
                     //'filter'=>false
                 ],
@@ -45,8 +51,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in','role',['User']])->asArray()->all(), 'id', function($model) {
                         return $model['full_name'];
                     }),
-                    'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
-
+                    'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
+                    'filterWidgetOptions' => [
+                        'options' => ['prompt' => 'Select Refferer User'],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                            //'width'=>'90px'
+                        ],
+                    ],
 
                     //'filter'=>false
                 ],

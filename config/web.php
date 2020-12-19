@@ -29,6 +29,14 @@ $config = [
             'class' => \sizeg\jwt\Jwt::class,
             'key'   => 'secret',
         ],
+        'fcm1' => [
+            'class' => 'understeam\fcm\Client',
+            'apiKey' => 'AAAAcp7B4g0:APA91bHCsou8Nrj2vdFM6EScXYQJDAKNOIPexmzFzZ0xRp2S7Mg14DP4BVWyAEfEllHPJ-CW0DCfdDdikm1pAItWqMuN0nnT8r2vqKH1yq48sRLlRVVtVHE3E65gsu-lDCHGtsCh-nC0', // Server API Key (you can get it here: https://firebase.google.com/docs/server/setup#prerequisites)
+        ],
+        'fcm2' => [
+            'class' => 'understeam\fcm\Client',
+            'apiKey' => 'AAAAScntPsA:APA91bHBWTEIhpi6WqvOnUqgZdPxvRn2fDVnLemdOsiJzRJViDNkY6RxQZlpJcvYsWdHEVH92n_eQbiZGBalzD4_5wbU_RR4riWWjnxCLVo0j5DTGTd-gA0YLU4zLqJ4FyD7Crj24Txa', // Server API Key (you can get it here: https://firebase.google.com/docs/server/setup#prerequisites)
+        ],
 //        'metronic'=>[
 //            'class'=>'dlds\metronic\Metronic',
 //            'resources'=>'@webroot/metronic/theme/assets',

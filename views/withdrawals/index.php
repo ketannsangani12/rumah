@@ -28,8 +28,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>'User'])->asArray()->all(), 'id', function($model) {
                     return $model['full_name'];
                 }),
-                'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
-
+                'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
+                'filterWidgetOptions' => [
+                    'options' => ['prompt' => 'Select User'],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        //'width'=>'90px'
+                    ],
+                ],
 
                 //'filter'=>false
             ],
@@ -121,7 +127,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         ]);
         ?>
-        <?= GridView::widget([
+        <?= \kartik\grid\GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'layout' => "{items}\n{summary}\n{pager}",
