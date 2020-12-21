@@ -18,8 +18,8 @@ class PropertiesSearch extends Properties
     public function rules()
     {
         return [
-            [['id', 'user_id','agent_id', 'pe_userid', 'bedroom', 'bathroom', 'carparks', 'digital_tenancy', 'auto_rental', 'insurance','property_no'], 'integer'],
-            [['title', 'description', 'location', 'property_type', 'room_type', 'preference', 'availability', 'furnished_status', 'amenities', 'commute', 'status', 'created_at', 'updated_at'], 'safe'],
+            [['id', 'user_id','agent_id', 'pe_userid', 'bedroom', 'bathroom', 'carparks', 'digital_tenancy', 'auto_rental', 'insurance'], 'integer'],
+            [['title', 'description', 'location', 'property_type', 'room_type', 'preference', 'availability', 'furnished_status', 'amenities', 'commute', 'status', 'created_at', 'updated_at','property_no'], 'safe'],
             [['latitude', 'longitude', 'size_of_area', 'price'], 'number'],
         ];
     }

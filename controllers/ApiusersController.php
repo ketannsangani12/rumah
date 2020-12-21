@@ -5240,7 +5240,7 @@ class ApiusersController extends ActiveController
                 $user_id = $this->user_id;
 
                 $property_id = $_POST['property_id'];
-                $propertydetails = Properties::find()->where(['id'=>$property_id,'user_id'=>$user_id])->one();
+                $propertydetails = Properties::find()->where(['id'=>$property_id])->one();
                 if(!empty($propertydetails)){
                     $propertydetails->status = 'Deleted';
                     $propertydetails->updated_at = date('Y-m-d H:i:s');
