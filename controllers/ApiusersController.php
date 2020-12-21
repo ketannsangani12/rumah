@@ -1690,7 +1690,7 @@ class ApiusersController extends ActiveController
                 $harvesformula1 = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
 
                 $query1 = Properties::find()
-                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,'.$harvesformula)
+                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,status,price,'.$harvesformula)
                 ->with([
                     'pictures'=>function ($query) use($baseurl) {
                         $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
@@ -1770,13 +1770,18 @@ class ApiusersController extends ActiveController
 
                 $properties =  $query1->asArray()->all();
                 //echo "<pre>";print_r($properties);exit;
+                $properties1 = array();
                 if(!empty($properties)){
                     foreach ($properties as $key=>$property){
-                        $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
+                        if($property['status']=='Active') {
+                            $properties[$key]['favourite'] = Properties::checkfavourite($property['id'], $user_id);
+                            $properties1[] = $property;
+
+                        }
 
                     }
                 }
-                return array('status' => 1, 'data' => $properties,'total'=>count($properties));
+                return array('status' => 1, 'data' => $properties1,'total'=>count($properties1));
 
 
             }else{
