@@ -123,8 +123,8 @@ class PropertiesController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->amenities = implode(',',$_POST['Properties']['amenities']);
-            $model->commute = implode(',',$_POST['Properties']['commute']);
+            $model->amenities = (!empty($_POST['Properties']['amenities']))?implode(',',$_POST['Properties']['amenities']):'';
+            $model->commute = (!empty($_POST['Properties']['commute']))?implode(',',$_POST['Properties']['commute']):'';
             if($model->validate()) {
                 $model->availability = date('Y-m-d',strtotime($model->availability));
                 $model->created_at = date('Y-m-d');
