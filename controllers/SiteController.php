@@ -163,6 +163,7 @@ class SiteController extends Controller
         $days_ago = date('Y-m-d 00:00:00', strtotime('-45 days', strtotime(date('Y-m-d'))));
 
         $properties = Properties::find()->where(['digital_tenancy'=>0,'status'=>'Active'])->andWhere(['>=','DATE(created_at)', $days_ago])->andWhere(['<=','DATE(created_at)', $todaydate])->all();
+        echo "<pre>";print_r($properties);exit;
        if(!empty($properties)){
            foreach ($properties as $property){
                $property->status = 'Inactive';
