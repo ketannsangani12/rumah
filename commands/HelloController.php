@@ -46,7 +46,7 @@ class HelloController extends Controller
         $properties = Properties::find()->where(['digital_tenancy'=>0,'status'=>'Active'])->andWhere(['>=','DATE(created_at)', $days_ago])->andWhere(['<=','DATE(created_at)', $todaydate])->all();
         if(!empty($properties)){
             foreach ($properties as $property){
-                $property->status = 'Inactive';
+                //$property->status = 'Inactive';
                 $property->updated_at = date('Y-m-d H:i:s');
                 $property->save(false);
             }
