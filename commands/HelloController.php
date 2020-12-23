@@ -42,14 +42,24 @@ class HelloController extends Controller
     {
         $todaydate = date('Y-m-d 11:59:59');
         $days_ago = date('Y-m-d 00:00:00', strtotime('-45 days', strtotime(date('Y-m-d'))));
-
-        $properties = Properties::find()->where(['digital_tenancy'=>0,'status'=>'Active'])->andWhere(['>=','DATE(created_at)', $days_ago])->andWhere(['<=','DATE(created_at)', $todaydate])->all();
+        //echo $todaydate;
+        // echo $days_ago;exit;
+        $properties = Properties::find()->where(['digital_tenancy'=>0,'status'=>'Active'])->all();
         if(!empty($properties)){
             foreach ($properties as $property){
-                //$property->status = 'Inactive';
-                $property->updated_at = date('Y-m-d H:i:s');
-                $property->save(false);
+                $now = time(); // or your date as well
+
+                $createddate = strtotime(date('Y-m-d',strtotime($property->created_at)));
+                $datediff = $now - $createddate;
+
+                $days = round($datediff / (60 * 60 * 24))."<br>";
+                if($days>=45) {
+                    $property->status = 'Inactive';
+                    $property->updated_at = date('Y-m-d H:i:s');
+                    $property->save(false);
+                }
             }
+            exit;
 
         }
         $cronjob = new Cronjobs();
