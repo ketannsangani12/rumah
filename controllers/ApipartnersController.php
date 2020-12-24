@@ -803,7 +803,7 @@ class ApipartnersController extends ActiveController
                             $query->select(['id','reference_no','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','total','commencement_date','tenancy_period','security_deposit',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
                         },
                         'servicerequest'=>function ($query) {
-                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','hours']);
+                            $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','hours','remarks','pickup_time','checkin_time','checkout_time','remarks']);
                         },
                         'servicerequest.servicerequestImages'=>function ($query) {
                             $query->select(['id','service_request_id','description','image','reftype','created_at']);
