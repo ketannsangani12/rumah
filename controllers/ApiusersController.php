@@ -711,6 +711,69 @@ class ApiusersController extends ActiveController
 
 
     }
+    public function actionForgotsecondarypassword()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+                $model = Users::findOne($this->user_id);
+                if(!empty($model)){
+                    $permitted_chars = '0123456789';
+
+                    $password = substr(str_shuffle($permitted_chars), 0, 6);
+                    $model->secondary_password = md5($password);
+                    $model->save(false);
+                    $model->secondary_password = $password;
+                    $emailtemplate = EmailTemplates::findOne(['name'=>'User Forgot Secondary password']);
+                    $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
+
+                    $send = Yii::$app->mailer->compose()
+                        ->setFrom('rumahimy@gmail.com')
+                        ->setTo($model->email)
+                        ->setSubject('Your New PIN')
+                        ->setHtmlBody($content)
+                        ->send();
+                    $subject = "New PIN";
+                    $textmessage = "New PIN has been delivered to your email!";
+//                    if($subject!='' && $textmessage!='' ){
+//                        //echo "<pre>";print_r($voucher);exit;
+//                        $devices = Devices::find()->where(['user_id'=>$_POST['user_id']])->all();
+//                        //echo "<pre>";print_r($devices);exit;
+//                        if(!empty($devices)) {
+//                            $note = Yii::$app->fcm1->createNotification($subject, $textmessage);
+//                            $note->setIcon('fcm_push_icon')->setSound('default')->setClickAction('FCM_PLUGIN_ACTIVITY')
+//                                ->setColor('#ffffff');
+//
+//                            $message = Yii::$app->fcm1->createMessage();
+//
+//                            foreach ($devices as $device) {
+//                                $message->addRecipient(new Device($device->device_token));
+//                            }
+//
+//                            $message->setNotification($note)
+//                                ->setData([
+//                                    'title' => $subject,
+//                                    'body' => $textmessage
+//                                ]);
+//
+//                            $response = Yii::$app->fcm1->send($message);
+//                        }
+//                    }
+                    return array('status' => 1, 'message' => 'Your new PIN sent to your email.Please check your inbox.');
+                    //var_dump($send);exit;
+                }else{
+                    return array('status' => 0, 'message' => 'This email is not registered.');
+                }
+
+
+
+        }
+
+
+    }
+
     public function actionSavedevice()
     {
 

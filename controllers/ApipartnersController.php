@@ -509,6 +509,69 @@ class ApipartnersController extends ActiveController
 
 
     }
+    public function actionForgotsecondarypassword()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $model = Users::findOne($this->user_id);
+            if(!empty($model)){
+                $permitted_chars = '0123456789';
+
+                $password = substr(str_shuffle($permitted_chars), 0, 6);
+                $model->secondary_password = md5($password);
+                $model->save(false);
+                $model->secondary_password = $password;
+                $emailtemplate = EmailTemplates::findOne(['name'=>'User Forgot Secondary password']);
+                $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
+
+                $send = Yii::$app->mailer->compose()
+                    ->setFrom('rumahimy@gmail.com')
+                    ->setTo($model->email)
+                    ->setSubject('Your New PIN')
+                    ->setHtmlBody($content)
+                    ->send();
+//                $subject = "New PIN";
+//                $textmessage = "New PIN has been delivered to your email!";
+//                if($subject!='' && $textmessage!='' ){
+//                    //echo "<pre>";print_r($voucher);exit;
+//                    $devices = Devices::find()->where(['user_id'=>$_POST['user_id']])->all();
+//                    //echo "<pre>";print_r($devices);exit;
+//                    if(!empty($devices)) {
+//                        $note = Yii::$app->fcm1->createNotification($subject, $textmessage);
+//                        $note->setIcon('fcm_push_icon')->setSound('default')->setClickAction('FCM_PLUGIN_ACTIVITY')
+//                            ->setColor('#ffffff');
+//
+//                        $message = Yii::$app->fcm1->createMessage();
+//
+//                        foreach ($devices as $device) {
+//                            $message->addRecipient(new Device($device->device_token));
+//                        }
+//
+//                        $message->setNotification($note)
+//                            ->setData([
+//                                'title' => $subject,
+//                                'body' => $textmessage
+//                            ]);
+//
+//                        $response = Yii::$app->fcm1->send($message);
+//                    }
+//                }
+                return array('status' => 1, 'message' => 'Your new PIN sent to your email.Please check your inbox.');
+                //var_dump($send);exit;
+            }else{
+                return array('status' => 0, 'message' => 'This email is not registered.');
+            }
+
+
+
+        }
+
+
+    }
+
     public function actionMyprofile()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -1336,17 +1399,15 @@ class ApipartnersController extends ActiveController
                         if(!$validatepassword){
                             return array('status' => 0, 'message' => 'You have entered invalid wrong PIN.');
                         }
-                        if($userdetails->can_withdraw==0){
-                            return array('status' => 0, 'message' => 'You can not withdraw..');
-                        }
+
 
                         $withdrawalrequestexist = Withdrawals::findOne(['status'=>1,'user_id'=>$model->user_id]);
                         if(!empty($withdrawalrequestexist)){
                             return array('status' => 0, 'message' => 'You have already submitted a withdrawal request. Please wait for it to complete processing first before submitting again.');
                         }
 
-                        $bankaccountexist = BankAccounts::findOne(['user_id'=>$model->user_id]);
-                        if(empty($bankaccountexist)){
+                        $bankaccountexist = Users::findOne(['id'=>$this->user_id]);
+                        if($bankaccountexist->bank_name=='' || $bankaccountexist->bank_account_no==''){
                             return array('status' => 0, 'message' => 'Please submit your banking information.');
                         }
                         $userbalance = Users::getbalance($model->user_id);
@@ -1360,6 +1421,7 @@ class ApipartnersController extends ActiveController
                         $model->bank_id = $bankaccountexist->id;
                         $model->old_balance = $userbalance;
                         $model->new_balance = $userbalance-$amount;
+                        $model->updated_by = $this->user_id;
                         $model->total_amount = $amount;
                         $model->status = 1;
                         $model->created_at = date('Y-m-d H:i:s');
@@ -1370,8 +1432,8 @@ class ApipartnersController extends ActiveController
                             $transactionmodel->total_amount = $amount;
                             $transactionmodel->withdrawal_id = $model->id;
                             $transactionmodel->created_at = date('Y-m-d H:i:s');
-                            $transactionmodel->reftype = 3;
-                            $transactionmodel->status = 1;
+                            $transactionmodel->reftype = 'Withdrawal';
+                            $transactionmodel->status = 'Pending';
                             if($transactionmodel->save()){
                                 $lastid = $transactionmodel->id;
                                 $reference_no = Yii::$app->common->generatereferencenumber($lastid);
