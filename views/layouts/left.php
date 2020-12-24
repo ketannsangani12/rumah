@@ -42,6 +42,8 @@
                             ['label' => 'Agreement Templates', 'icon' => ' fa-adjust', 'url' => ['/agreementtemplates']],
                             ['label' => 'Packages', 'icon' => ' fa-adjust', 'url' => ['/packages']],
                             ['label' => 'Platform Fees', 'icon' => ' fa-adjust', 'url' => ['/platformfees']],
+                            ['label' => 'About Us', 'icon' => ' fa-adjust', 'url' => ['/cms/create']],
+
                             ['label' => 'i-Stories', 'icon' => ' fa-adjust', 'url' => ['/istories']],
 
                             ['label' => 'i-Lifestyles', 'icon' => ' fa-adjust', 'url' => ['/ilifestyle']],

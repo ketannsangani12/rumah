@@ -7,6 +7,7 @@ use app\models\AppRatings;
 use app\models\BankAccounts;
 use app\models\BookingRequests;
 use app\models\Chats;
+use app\models\Cms;
 use app\models\Devices;
 use app\models\EmailTemplates;
 use app\models\FavouriteProperties;
@@ -745,6 +746,17 @@ class ApiusersController extends ActiveController
 
 
     }
+    public function actionAbout()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $cmsdetails = Cms::find()->where(['id'=>1])->asArray()->one();
+            return array('status' => 1, 'data' => $cmsdetails);
+        }
+    }
+
     public function actionNotifications()
     {
 
