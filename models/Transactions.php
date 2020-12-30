@@ -77,6 +77,7 @@ class Transactions extends \yii\db\ActiveRecord
             'vendor_id'=>'Vendor',
             'promo_code' => 'Promo Code',
             'request_id' => 'Request',
+            'payment_id'=>'Payment Id',
             'amount' => 'Amount',
             'discount' => 'Discount',
             'coins' => 'Coins',
