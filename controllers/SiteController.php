@@ -591,11 +591,11 @@ class SiteController extends Controller
                 $refno = $_GET['order_id'];
                 //$merchantkey = 'QrB9d97iae';
                 ///$merchantcode = 'M04853';
-                $merchantkey = 'BkbINif36B';
-                $merchantcode = 'M29633';
+                $merchantkey = 'Rp4zceo1ai';
+                $merchantcode = 'M27940';
 
                 $fields = array(
-                    'MerchantCode'=>'M29633',
+                    'MerchantCode'=>'M27940',
                     'PaymentId'=>'',
                     'RefNo'=>$refno,
                     'Amount'=>1.00,//$transaction->amount,
@@ -615,7 +615,7 @@ class SiteController extends Controller
                 $hash = hash('sha256', $merchantkey.$merchantcode.$fields['RefNo'].preg_replace('/[\.\,]/', '', $fields['Amount']).$fields['Currency']);
                 //echo $hash;exit;
                 $fields = array(
-                    'MerchantCode'=>'M29633',
+                    'MerchantCode'=>'M27940',
                     'PaymentId'=>'',
                     'RefNo'=>$refno,
                     'Amount'=>1.00,//$transaction->amount,
