@@ -573,7 +573,7 @@ class SiteController extends Controller
     public function actionPayment()
     {
 //
-        if(isset($_GET['type']) && $_GET['type']=='ipay88')
+        if(isset($_GET['order_id']) && $_GET['order_id']!='')
         {
             $transaction = Payments::find()->where(['order_id'=>$_GET['order_id'],'status'=>1])->one();
             if(!empty($transaction)){
@@ -629,8 +629,8 @@ class SiteController extends Controller
                     'Lang'=>'UTF-8',
                     'SignatureType'=>'SHA256',
                     'Signature'=>$hash,
-                    'ResponseURL'=>'https://www.tlssocietyapp.com/site/success',
-                    'BackendURL'=>'https://www.tlssocietyapp.com/site/paysuccess',
+                    'ResponseURL'=>'https://www.rumah-iapp.com/site/success',
+                    'BackendURL'=>'https://www.rumah-iapp.com/site/success',
 
                 );
                 //print_r($fields);exit;

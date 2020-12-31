@@ -3560,11 +3560,11 @@ class ApiusersController extends ActiveController
                     }
                     $todo_id = $_POST['todo_id'];
                     $todomodel = TodoList::findOne($todo_id);
-                    $promocode = (isset($post['promo_code']) && $post['promo_code'] != '') ? $post['promo_code'] : '';
-                    $amount = (isset($post['amount']) && $post['amount'] != '') ? $post['amount'] : '';
-                    $discount = (isset($post['discount']) && $post['discount'] != '') ? $post['discount'] : 0;
-                    $goldcoins = (isset($post['gold_coins']) && $post['gold_coins'] != '') ? $post['gold_coins'] : 0;
-                    $coins_savings = (isset($post['coins_savings']) && $post['coins_savings'] != '') ? $post['coins_savings'] : 0;
+                    $promocode = (isset($_POST['promo_code']) && $_POST['promo_code'] != '') ? $_POST['promo_code'] : '';
+                    $amount = (isset($_POST['amount']) && $_POST['amount'] != '') ? $_POST['amount'] : '';
+                    $discount = (isset($_POST['discount']) && $_POST['discount'] != '') ? $_POST['discount'] : 0;
+                    $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins'] != '') ? $_POST['gold_coins'] : 0;
+                    $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings'] != '') ? $_POST['coins_savings'] : 0;
                     if ($promocode != '') {
                         $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
                     }
