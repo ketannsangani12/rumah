@@ -672,7 +672,7 @@ class SiteController extends Controller
         $merchant_id = '167157975459962';
         $secretkey = '17921-867';
 
-            echo "<pre>";print_r($_POST);exit;
+            //echo "<pre>";print_r($_POST);exit;
             $transaction = Payments::find()->where(['order_id'=>$_POST['RefNo'],'status'=>1])->one();
             # if hash is the same then we know the data is valid
             if(!empty($_POST) && $_POST['Status']==1) {
@@ -749,6 +749,11 @@ class SiteController extends Controller
                     }
                 }
                 //echo "<pre>";print_r($_POST);exit;
+
+            }else{
+                $transaction->status = 'Completed';
+                $transaction->response = json_encode($_POST);
+                $transaction->save(false);
 
             }
     }
