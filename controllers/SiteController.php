@@ -675,6 +675,7 @@ class SiteController extends Controller
             //echo "<pre>";print_r($_POST);exit;
             $transaction = Payments::find()->where(['order_id'=>$_POST['RefNo'],'status'=>1])->one();
             # if hash is the same then we know the data is valid
+           echo "<pre>";print_r($_POST);exit;
             if(!empty($_POST) && $_POST['Status']==1) {
                 # this is a simple result page showing either the payment was successful or failed. In real life you will need to process the order made by the customer
                 if (!empty($transaction)) {

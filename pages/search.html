@@ -1,0 +1,107 @@
+<div cache-view="false" class="white-bg pdl-10 pdr-10">
+  <div scroll="false" ng-show="!filter.display" style="background: transparent;">
+    <div class="search-box text-center width-100">
+      <input type="text" style="background: #fff !important;border: 1px solid #eee;" class="pdr-50" options="autoCompleteOption" placeholder="Type location" ng-model="formData.location" autocomplete="off" ng-change="search()" g-places-autocomplete force-selection="true" name="location">
+      <img src="img/search.svg" style="position: absolute; left: 15px; top: 15px;">
+      <span class="red-text font-16" style="position: absolute; top: 17px; right: 20px;" ng-click="filter.show()">Filter</span>
+    </div>
+  </div>
+  <div scroll="false" class="flex pdl-20 pdr-20" ng-show="filter.display" style="background: transparent;">
+    <i class="fa fa-close font-30 mrt-20" ng-click="filter.hide()"></i>
+    <label class="font-26 fw-600 pdl-15 mrt-20">Filter</label>
+    <label class="opacity-50 font-18 text-right width-100 pdt-20 pull-right" ng-click="filter.reset()">Reset</label>
+  </div>
+  <div class="content pdt-15" has-bouncing="false" ng-show="!mapview && !filter.display">
+    <div class="listview" ng-show="properties.length > 0">
+      <div class="white-bg flex flex-dc pdb-20">
+        <div class="flex mrl-15 mrr-15 width-100">
+          <h2 class="pdt-15">{{properties.length}} results found</h2>
+        </div>
+        <div class="flex flex-dc width-100">
+          <div ng-repeat="(k,v) in properties" class="flex white-bg width-100 mrt-10 mrb-10">
+            <img ng-click="openDetail(v.id)" src="img/sample/default.png" ng-if="!v.pictures" class="list-img" style="max-width: 46%;">
+            <img ng-click="openDetail(v.id)" src="{{v.pictures.image}}" ng-if="v.pictures" class="list-img" style="max-width: 46%;">
+            <div class="flex flex-dc br-5 pdl-15 pdr-15 pdt-15 pdb-15" style="width: 54%;">
+              <div class="flex width-100">
+                <div class="flex flex-dc width-90" ng-click="openDetail(v.id)">
+                  <label class="font-18">{{v.title}}</label>
+                  <span class="opacity-50">{{getSimplifyLocation(v.location)}}</span>
+                  <label class="fw-600 font-20 mrt-10">RM {{v.price}}</label>
+                </div>
+              </div>
+              <div ng-click="openDetail(v.id)" class="pdt-10 pdb-10 opacity-50">
+                {{v.bedroom}}BR <i class="fa fa-circle font-8"></i> {{v.bathroom}}BA <i class="fa fa-circle font-8"></i> {{parseInt(v.size_of_area)}} Sq. ft.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content" has-bouncing="false" ng-show="mapview && !filter.display">
+    <div class="mapview" style="width: 100%!important;" id="map-canvas"></div>
+  </div>
+  <div class="content pdl-20 pdr-20 pdt-15" has-bouncing="false" ng-show="filter.display">
+    <!--<h3 class="font-18">Property Location</h3>
+    <input type="text" class="round-corner-box mrt-15 mrb-15 width-100" options="autoCompleteOption" placeholder="Type location" ng-model="formData.location" g-places-autocomplete force-selection="true" name="location">-->
+    <h3 class="font-18">Property Type <span class="pull-right thm-text font-16" ng-click="clearSelection('property_type')">Clear</span></h3>
+    <div class="width-100">
+      <button type="button" class="filter-selection-btn {{formData.property_type == v ? 'active' : ''}}" ng-repeat="v in propertyTypes" ng-click="setValue('property_type',v)">{{v}}</button>
+    </div>
+    <h3 class="font-18">Room Type <span class="pull-right thm-text font-16" ng-click="clearSelection('room_type')">Clear</span></h3>
+    <div class="width-100">
+      <button type="button" class="filter-selection-btn {{formData.room_type == v ? 'active' : ''}}" ng-repeat="v in roomTypes" ng-click="setValue('room_type',v)">{{v}}</button>
+    </div>
+    <h3 class="font-18">Preference <span class="pull-right thm-text font-16" ng-click="clearSelection('preference')">Clear</span></h3>
+    <div class="width-100">
+      <button type="button" class="filter-selection-btn {{formData.preference == v ? 'active' : ''}}" ng-repeat="v in preferences" ng-click="setValue('preference',v)">{{v}}</button>
+    </div>
+    <h3 class="font-18">Price</h3>
+    <div class="width-100">
+      <rzslider rz-slider-model="filter.price.minValue"
+                rz-slider-high="filter.price.maxValue"
+                rz-slider-options="filter.price.options"></rzslider>
+    </div>
+    <h3 class="font-18 mrt-30">Distance from me</h3>
+    <div class="width-100">
+      <rzslider rz-slider-model="filter.distance.value"
+                rz-slider-options="filter.distance.options"></rzslider>
+    </div>
+    <h3 class="font-18 mrt-30">Commute</h3>
+    <div class="width-100">
+      <button type="button" class="filter-selection-btn {{formData.commute.includes(v) ? 'active' : ''}}" ng-repeat="v in commutes" ng-click="addCommute(v)">{{v}}</button>
+    </div>
+    <h3 class="font-18 mrt-30">Amenities</h3>
+    <div class="width-100 flex flex-dc">
+      <div class="flex mrt-10" ng-repeat="v in amenities" ng-click="addAmenities(v)"><label class="font-16 opacity-70 width-70">{{v}}</label><i class="fa {{formData.amenities.includes(v) ? 'fa-check-square thm-text' : 'fa-square-o'}} font-26 pdl-10"></i></div>
+    </div>
+    <h3 class="font-18 mrt-30">Furnished Status</h3>
+    <div class="width-100 pdt-10">
+      <div class="flex">
+        <label ng-click="formData.furnished_status = 'Unfurnished';" class="pdt-10 pdb-10 width-33 text-center {{formData.furnished_status == 'Unfurnished' ? 'thm-bg rm-border white-text fw-600' : ''}}" style="border: 1px solid #adadad;border-radius: 5px 0px 0px 5px;">Unfurnished</label>
+        <label ng-click="formData.furnished_status = 'Furnished';" class="pdt-10 pdb-10 width-33 text-center {{formData.furnished_status == 'Furnished' ? 'thm-bg rm-border white-text fw-600' : ''}}" style="border: 1px solid #adadad;">Furnished</label>
+        <label ng-click="formData.furnished_status = 'Semi Furnished';" class="pdt-10 pdb-10 width-33 text-center {{formData.furnished_status == 'Semi Furnished' ? 'thm-bg rm-border white-text fw-600' : ''}}" style="border: 1px solid #adadad;border-radius: 0px 5px 5px 0px;">Semi Furnished</label>
+      </div>
+    </div>
+    <h3 class="font-18 mrt-30">No of Rooms</h3>
+    <div class="width-100" style="position: relative;">
+      <select class="round-corner-box pdt-15 pdb-15 pdr-30 mrt-15 mrb-15 width-100 white-text" ng-model="formData.rooms">
+        <option value="">select</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <i class="fa fa-angle-down" style="position: absolute; top: 20px; right: 4px; background: #fff; font-size: 25px; padding: 10px; border-radius: 25px;"></i>
+    </div>
+    <h3 class="font-18 mrt-30">Minimum Size</h3>
+    <div class="width-100" style="position: relative;">
+      <input type="number" class="round-corner-box mrt-15 mrb-15 width-100" ng-model="formData.size" placeholder="Enter Area">
+      <span style="position: absolute; top: 3px; right: 25px; background: #fff; border-left: 1px solid #ddd; padding: 14px;">Sq.Ft.</span>
+    </div>
+    <button class="btn width-100 btn-shadow mrt-10 mrb-40 fw-600" ng-click="filter.apply()">Apply Filter</button>
+  </div>
+  <div class="width-100 text-center" ng-show="properties.length > 0 && !filter.display" style="position: absolute;bottom: 50px;right: 0px;">
+    <label ng-show="!mapview" ng-click="changeView()" style="z-index: 3;" class="br-25 white-bg black-text pdt-15 pdb-15 pdr-20 pdl-20">Map View <i class="fa fa-map-o"></i></label>
+    <label ng-show="mapview" ng-click="changeView()" style="z-index: 3;" class="br-25 white-bg black-text pdt-15 pdb-15 pdr-20 pdl-20">List View <i class="fa fa-list"></i></label>
+  </div>
+</div>

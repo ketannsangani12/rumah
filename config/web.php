@@ -122,7 +122,10 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+
             'rules' => [
+                //'admin/site/login' => 'site/login',
+
             ],
         ],
 

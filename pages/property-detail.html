@@ -1,0 +1,98 @@
+<div cache-view="false">
+  <div class="pdb-20">
+    <div class="width-100" ng-swipe-right="changeImgNo('right')" ng-swipe-left="changeImgNo('left')" style="position: relative;">
+      <img ng-show="k+1 == imgIndex" ng-repeat="(k,v) in propertyDetail.images" src="{{v.image}}" class="width-100">
+      <img ng-if="propertyDetail.images.length == 0" src="img/sample/default.png" class="width-100">
+      <label class="width-100 text-center white-text fw-600 font-18" style="position: absolute; left: 0; bottom: 20px;">{{imgIndex}}/{{propertyDetail.images.length}}</label>
+    </div>
+    <div class="width-100 pdl-15 pdr-15 pdt-10 pdb-15 flex flex-dc">
+      <label class="font-20 fw-600">{{propertyDetail.title}}</label>
+      <label class="font-16 opacity-40">{{propertyDetail.location}}</label>
+      <div class="width-100 mrt-10 mrb-10">
+        <label class="font-26 fw-600">RM {{propertyDetail.price}}/</label><label class="fw-600 font-20">month</label>
+      </div>
+      <div class="width-100 flex">
+        <div class="width-35">
+          <label class="fw-600 font-14">{{propertyDetail.property_type}}</label><br>
+          <label class="opacity-50 font-12">Property Type</label>
+        </div>
+        <div class="width-20">
+          <label class="fw-600 font-14">{{propertyDetail.room_type}}</label><br>
+          <label class="opacity-50 font-12">Room Type</label>
+        </div>
+        <div class="width-25">
+          <label class="fw-600 font-14">{{getAvailability(propertyDetail.availability)}}</label><br>
+          <label class="opacity-50 font-12">Availability</label>
+        </div>
+        <div class="width-20">
+          <label class="fw-600 font-14">{{propertyDetail.preference}}</label><br>
+          <label class="opacity-50 font-12">Preference</label>
+        </div>
+      </div>
+      <div class="width-100 flex pdt-20 pdb-20 pdr-10" style="justify-content: space-between;">
+        <div class="flex flex-dc text-left">
+          <img src="img/bed.svg" style="width: 40px;height: 40px;">
+          <label class="opacity-70 mrt-5 font-16">{{propertyDetail.bedroom}} Bedroom</label>
+        </div>
+        <div class="flex flex-dc text-left ">
+          <img src="img/bathroom.svg" style="width: 40px;height: 40px;">
+          <label class="opacity-70 mrt-5 font-16">{{propertyDetail.bathroom}} Bathroom</label>
+        </div>
+        <div class="flex flex-dc text-left ">
+          <img src="img/carpark.svg" style="width: 40px;height: 40px;">
+          <label class="opacity-70 mrt-5 font-16">{{propertyDetail.carparks}} Carpark</label>
+        </div>
+      </div>
+      <div class="width-100 opacity-60 font-16 pdb-15 pdl-5 pdr-5">
+        <pre ng-bind-html="propertyDetail.description" style="font-family: inherit;line-height: 24px;"></pre>
+      </pre>
+    </div>
+    <div class="width-100 light-blue-bg flex flex-dc">
+      <div class="mrt-30 white-bg width-100 pdl-15 pdr-15 pdt-15 pdb-15">
+        <label class="fw-600 font-20">Amenities</label>
+        <div class="width-100 flex font-16" style="flex-flow: wrap;">
+          <div class="opacity-70 width-50 mrt-10 mrb-10 flex" ng-repeat="v in propertyDetail.amenities"><i class="fa fa-circle font-12 mrt-3 mrr-15 opacity-40"></i>{{v}}</div>
+        </div>
+      </div>
+      <div class="mrt-30 white-bg width-100 pdl-15 pdr-15 pdt-15 pdb-15">
+        <label class="fw-600 font-20">Commute</label>
+        <div class="width-100 flex font-16" style="flex-flow: wrap;">
+          <div class="opacity-70 width-50 mrt-10 mrb-10 flex" ng-repeat="v in propertyDetail.commute"><i class="fa fa-circle font-12 mrt-3 mrr-15 opacity-40"></i>{{v}}</div>
+        </div>
+      </div>
+      <div class="pdt-30 width-100">
+        <label class="fw-600 font-18 mrb-15 pdl-15 pdr-15">Similar Properties</label>
+        <div class="pdl-5 pdr-5 pdt-15 pdb-30 offers">
+          <ion-scroll direction="x" class="width-100">
+            <div style="display: inline-flex;">
+              <div class="flex white-bg mrl-10 mrr-10" style="width: 350px;margin-left: -10px;position: relative;" ng-repeat="v in similarProperties">
+                <img ng-click="openDetail(v.id)" src="{{v.pictures.image}}" ng-if="v.pictures && v.pictures.image" class="width-50" style="height: 192px;">
+                <img ng-click="openDetail(v.id)" src="img/sample/default.png" ng-if="!(v.pictures && v.pictures.image)" class="width-50" style="height: 192px;">
+                <div class="flex flex-dc pdt-15 pdl-10 pdr-5" ng-click="openDetail(v.id)">
+                  <label class="font-16 fw-600">{{v.title}}</label>
+                  <span class="opacity-50">{{getSimplifyLocation(v.location)}}</span>
+                  <label class="opacity-60 mrt-5 font-12">{{v.bedroom}}BR | {{v.bathroom}}BA</label>
+                  <label class="opacity-60">{{v.size_of_area}} Sq. ft.</label>
+                  <label class="fw-600 font-16 mrt-5">RM {{v.price}}</label>
+                </div>
+              </div>
+            </div>
+          </ion-scroll>
+        </div>
+      </div>
+    </div>
+      <div class="width-100 flex pdl-20 pdr-20 pdt-15">
+          <div>
+              <img src="{{apiurl+propertyDetail.user.profile_picture}}" ng-if="propertyDetail.user.profile_picture" style="height: 70px;" class="br-50">
+              <label class="pic-label text-center font-24" ng-show="!propertyDetail.user.profile_picture" style="line-height: 50px !important;width: 50px !important;display: block;height: 50px !important;">{{propertyDetail.user.full_name.charAt(0).toUpperCase()}}</label>
+          </div>
+          <div class="pdl-15">
+              <span class="font-16">{{propertyDetail.user.full_name}} - {{propertyDetail.property_no}}</span>
+              <div class="flex pdt-10">
+                  <i class="fa fa-star thm-text font-22"></i><span class="fw-600 pdl-5 font-16">4.5</span>
+                  <span class="fw-600 pdl-5 font-16">Whatsapp</span>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
