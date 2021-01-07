@@ -27,8 +27,8 @@
       <file leaf-file-name="Common.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/components/Common.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="977" column="75" selection-start-line="977" selection-start-column="75" selection-end-line="977" selection-end-column="75" />
+            <state relative-caret-position="179">
+              <caret line="976" column="73" selection-start-line="976" selection-start-column="73" selection-end-line="976" selection-end-column="73" />
               <folding>
                 <element signature="e#16689#29511#0#PHP" expanded="false" />
                 <element signature="e#29836#40101#0#PHP" expanded="false" />
@@ -299,12 +299,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1610011276438</updated>
-      <workItem from="1610011279279" duration="4232000" />
+      <workItem from="1610011279279" duration="4403000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4290000" />
+    <option name="totallyTimeSpent" value="4461000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="825" extended-state="0" />
@@ -809,8 +809,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/components/Common.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="977" column="75" selection-start-line="977" selection-start-column="75" selection-end-line="977" selection-end-column="75" />
+        <state relative-caret-position="179">
+          <caret line="976" column="73" selection-start-line="976" selection-start-column="73" selection-end-line="976" selection-end-column="73" />
           <folding>
             <element signature="e#16689#29511#0#PHP" expanded="false" />
             <element signature="e#29836#40101#0#PHP" expanded="false" />

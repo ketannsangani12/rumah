@@ -973,9 +973,9 @@ class Common extends Component
                                                 $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                 if ($updatereceiverbalance) {
                                                     $todomodel->status = 'Paid';
-                                                    $todomodel->save(false);
+                                                    $save = $todomodel->save(false);
+                                                    var_dump($save);exit;
                                                     $commit =$transaction->commit();
-                                                    var_dump($commit);exit;
                                                     return array('status' => 1, 'message' => 'You have completed payment successfully.');
 
                                                 } else {
