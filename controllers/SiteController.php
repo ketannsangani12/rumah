@@ -737,7 +737,7 @@ class SiteController extends Controller
                             $todomodel = TodoList::findOne($transaction->todo_id);
 
                             $response = Yii::$app->common->payment($transaction->user_id,$transaction->todo_id,'Accepted',$todomodel->reftype,$post,$transaction->id);
-                             //$transaction1->commit();
+                             $transaction1->commit();
                             //$dataresponse = json_decode($response);
                             if(!empty($response) && $response['status']==1){
                                 echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
