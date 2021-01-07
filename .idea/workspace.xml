@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/controllers/admin/IstoriesController.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pages/property-detail.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pages/search.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/service-worker.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/web.php" afterPath="$PROJECT_DIR$/config/web.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/SiteController.php" afterPath="$PROJECT_DIR$/controllers/SiteController.php" />
     </list>
     <ignored path="yii2metronic.iws" />
@@ -44,15 +39,15 @@
       <file leaf-file-name="SiteController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/SiteController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="677" column="45" selection-start-line="677" selection-start-column="45" selection-end-line="677" selection-end-column="45" />
+            <state relative-caret-position="374">
+              <caret line="688" column="0" selection-start-line="688" selection-start-column="0" selection-end-line="688" selection-end-column="0" />
               <folding>
                 <element signature="e#35#66#0#PHP" expanded="true" />
                 <element signature="e#4137#5232#0#PHP" expanded="false" />
-                <marker date="1610015213822" expanded="true" signature="29290:29432" ph="..." />
-                <marker date="1610015213822" expanded="true" signature="29320:29387" ph="{...}" />
-                <marker date="1610015213822" expanded="true" signature="33251:33375" ph="..." />
-                <marker date="1610015213822" expanded="true" signature="33597:33721" ph="..." />
+                <marker date="1610016282503" expanded="true" signature="29290:29432" ph="..." />
+                <marker date="1610016282503" expanded="true" signature="29320:29387" ph="{...}" />
+                <marker date="1610016282503" expanded="true" signature="33205:33329" ph="..." />
+                <marker date="1610016282503" expanded="true" signature="33551:33675" ph="..." />
               </folding>
             </state>
           </provider>
@@ -287,12 +282,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1610011276438</updated>
-      <workItem from="1610011279279" duration="2278000" />
+      <workItem from="1610011279279" duration="3239000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2336000" />
+    <option name="totallyTimeSpent" value="3297000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="825" extended-state="0" />
@@ -792,15 +787,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/SiteController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="677" column="45" selection-start-line="677" selection-start-column="45" selection-end-line="677" selection-end-column="45" />
+        <state relative-caret-position="374">
+          <caret line="688" column="0" selection-start-line="688" selection-start-column="0" selection-end-line="688" selection-end-column="0" />
           <folding>
             <element signature="e#35#66#0#PHP" expanded="true" />
             <element signature="e#4137#5232#0#PHP" expanded="false" />
-            <marker date="1610015213822" expanded="true" signature="29290:29432" ph="..." />
-            <marker date="1610015213822" expanded="true" signature="29320:29387" ph="{...}" />
-            <marker date="1610015213822" expanded="true" signature="33251:33375" ph="..." />
-            <marker date="1610015213822" expanded="true" signature="33597:33721" ph="..." />
+            <marker date="1610016282503" expanded="true" signature="29290:29432" ph="..." />
+            <marker date="1610016282503" expanded="true" signature="29320:29387" ph="{...}" />
+            <marker date="1610016282503" expanded="true" signature="33205:33329" ph="..." />
+            <marker date="1610016282503" expanded="true" signature="33551:33675" ph="..." />
           </folding>
         </state>
       </provider>
