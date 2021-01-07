@@ -732,7 +732,7 @@ class SiteController extends Controller
                             $post['amount'] = $transaction->amount;
                             $post['discount'] = $transaction->discount;
                             $post['promo_code'] = $transaction->promo_code;
-                            $post['gold_coins'] = $transaction->gold_coins;
+                            $post['gold_coins'] = $transaction->coins;
                             $post['coins_savings'] = $transaction->coins_savings;
                             $todomodel = TodoList::findOne($transaction->todo_id);
 
