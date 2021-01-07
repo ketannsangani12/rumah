@@ -975,6 +975,7 @@ class Common extends Component
                                                     $todomodel->status = 'Paid';
                                                     $todomodel->save(false);
                                                     $transaction->commit();
+                                                    echo "here";exit;
                                                     return array('status' => 1, 'message' => 'You have completed payment successfully.');
 
                                                 } else {
