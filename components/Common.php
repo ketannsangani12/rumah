@@ -392,7 +392,10 @@ class Common extends Component
 
     }
     public function payment($user_id,$todo_id,$status,$reftype,$post,$payment_id=''){
-        $systemaccount = Yii::$app->common->getsystemaccount();
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+
+        $systemaccount = $this->getsystemaccount();
         $todomodel = TodoList::findOne($todo_id);
         $promocode = (isset($post['promo_code']) && $post['promo_code'] != '') ? $post['promo_code'] : '';
         $amount = (isset($post['amount']) && $post['amount'] != '') ? $post['amount'] : '';
