@@ -737,9 +737,9 @@ class SiteController extends Controller
                             $todomodel = TodoList::findOne($transaction->todo_id);
 
                             $response = Yii::$app->common->payment($transaction->user_id,$transaction->todo_id,'Accepted',$todomodel->reftype,$post,$transaction->id);
-                             $transaction1->commit();
-                            $dataresponse = json_decode($response);
-                            echo "<pre>";print_r($dataresponse);exit;
+                             //$transaction1->commit();
+                            //$dataresponse = json_decode($response);
+                            echo "<pre>";var_dump($response);exit;
 
 
                         }
