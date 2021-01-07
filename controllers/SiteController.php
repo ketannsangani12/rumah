@@ -748,6 +748,9 @@ class SiteController extends Controller
                         // # if error occurs then rollback all transactions
                         $transaction1->rollBack();
                     }
+                }else{
+                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Something went wrong, Please try again.</h1></body></html>';
+                    exit;
                 }
                 //echo "<pre>";print_r($_POST);exit;
 
