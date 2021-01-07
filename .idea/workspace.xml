@@ -28,7 +28,7 @@
         <entry file="file://$PROJECT_DIR$/components/Common.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="194">
-              <caret line="977" column="69" selection-start-line="977" selection-start-column="69" selection-end-line="977" selection-end-column="69" />
+              <caret line="977" column="75" selection-start-line="977" selection-start-column="75" selection-end-line="977" selection-end-column="75" />
               <folding>
                 <element signature="e#16689#29511#0#PHP" expanded="false" />
                 <element signature="e#29836#40101#0#PHP" expanded="false" />
@@ -299,12 +299,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1610011276438</updated>
-      <workItem from="1610011279279" duration="4108000" />
+      <workItem from="1610011279279" duration="4232000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4166000" />
+    <option name="totallyTimeSpent" value="4290000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="825" extended-state="0" />
@@ -810,7 +810,7 @@
     <entry file="file://$PROJECT_DIR$/components/Common.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="194">
-          <caret line="977" column="69" selection-start-line="977" selection-start-column="69" selection-end-line="977" selection-end-column="69" />
+          <caret line="977" column="75" selection-start-line="977" selection-start-column="75" selection-end-line="977" selection-end-column="75" />
           <folding>
             <element signature="e#16689#29511#0#PHP" expanded="false" />
             <element signature="e#29836#40101#0#PHP" expanded="false" />

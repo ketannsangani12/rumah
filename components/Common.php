@@ -974,8 +974,8 @@ class Common extends Component
                                                 if ($updatereceiverbalance) {
                                                     $todomodel->status = 'Paid';
                                                     $todomodel->save(false);
-                                                    $transaction->commit();
-                                                    echo "here";exit;
+                                                    $commit =$transaction->commit();
+                                                    var_dump($commit);exit;
                                                     return array('status' => 1, 'message' => 'You have completed payment successfully.');
 
                                                 } else {
