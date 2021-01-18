@@ -187,6 +187,22 @@ class ApichatController extends ActiveController
                             ->joinWith(['receiver'=>function($q) use ($baseurl){
                                 $q->select(['id','full_name','role','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
                             }])->where(['rumah_chats.id'=>$model->id])->asArray()->one();
+                        $receiver = Users::findOne($model->receiver_id);
+                        $sender = Users::findOne($model->sender_id);
+                        $subject = 'New Message';
+                        $textmessage = $sender->full_name.' just text you, check Rumah-i inbox';
+                        if($receiver->role=='User'){
+                            Yii::$app->common->Savenotification($model->receiver_id,$subject,$textmessage,'',$model->property_id);
+
+                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'User');
+
+                        }else{
+                            Yii::$app->common->Savenotification($model->receiver_id,$subject,$textmessage,'',$model->property_id);
+
+                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'Partner');
+
+                        }
+
                         return array('status' => 1, 'message' => 'You have added chat msg successfully.','data'=>$lastmessage);
                     }else{
                         return array('status' => 0, 'message' => $model->getErrors());

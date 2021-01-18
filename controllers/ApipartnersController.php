@@ -2079,6 +2079,22 @@ class ApipartnersController extends ActiveController
                     $todomodel->status = 'Cancelled';
                     $todomodel->updated_at = date("Y-m-d H:i:s");
                     if ($todomodel->save(false)) {
+                        $subject = 'Viewing appointment is cancelled';
+                        $textmessage = 'You have a viewing appointment has been cancelled. Kindly take note.';
+                        Yii::$app->common->Savenotification($todomodel->user_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                        Yii::$app->common->Sendpushnotification($todomodel->user_id,$subject,$textmessage,'User');
+                        if($todomodel->agent_id!=''){
+                            Yii::$app->common->Savenotification($todomodel->agent_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                            Yii::$app->common->Sendpushnotification($todomodel->agent_id,$subject,$textmessage,'Partner');
+
+                        }else{
+                            Yii::$app->common->Savenotification($todomodel->landlord_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                            Yii::$app->common->Sendpushnotification($todomodel->landlord_id,$subject,$textmessage,'User');
+
+                        }
                         return array('status' => 1, 'message' => 'You have cancelled appointment successfully.');
 
                     }

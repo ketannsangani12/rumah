@@ -2077,8 +2077,13 @@ class ApiusersController extends ActiveController
                             $todomodel->updated_at = date('Y-m-d H:i:s');
                             $todomodel->reftype = 'Booking';
                             $todomodel->status = 'New';
-                            if ($todomodel->save()) {
+                            if ($todomodel->save(false)) {
                                 $transaction->commit();
+                                $subject = 'Booking Request';
+                                $textmessage = 'You have a booking request pending for action, confirm now to secure the unit.';
+                                Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                                Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
 
                                 return array('status' => 1, 'message' => 'You have sent request successfully.');
 
@@ -2263,6 +2268,21 @@ class ApiusersController extends ActiveController
                                     $todomodel->updated_at = date('Y-m-d H:i:s');
                                     if ($todomodel->save(false)) {
                                         $transaction1->commit();
+                                        if($model->status=='Rejected'){
+                                            $subject = 'Booking Request Rejected';
+                                            $textmessage = 'You have a booking has been rejected.';
+                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id);
+
+                                            Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+
+                                        }else{
+                                            $subject = 'Agreement preparation';
+                                            $textmessage = 'You have one agreement pending for your action, kindly insert tenancy details to proceed for tenancy signing.';
+                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id);
+
+                                            Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+
+                                        }
                                         return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
 
                                     } else {
@@ -5485,6 +5505,12 @@ public function actionPaysuccess(){
                         $tododocument->document = $filename . '.' . $data['type'];
                         $tododocument->created_at = date('Y-m-d H:i:s');
                         if ($tododocument->save(false)) {
+                            $subject = 'Defect repair approval';
+                            $textmessage = 'You have one repair approval pending for action, kindly confirm.';
+                            Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id,$model->id);
+
+                            Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
+
                             return array('status' => 1, 'message' => 'You have submitted defect report successfully.');
 
                         } else {

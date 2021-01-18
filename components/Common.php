@@ -3,7 +3,9 @@ namespace app\components;
 
 
 use app\models\BookingRequests;
+use app\models\Devices;
 use app\models\GoldTransactions;
+use app\models\Notifications;
 use app\models\PlatformFees;
 use app\models\PromoCodes;
 use app\models\ServiceRequests;
@@ -2203,6 +2205,65 @@ class Common extends Component
                 break;
 
         }
+    }
+
+    public function Sendpushnotification($user_id,$subject,$textmessage,$type,$sender_id='',$property_id='',$todo_id=''){
+
+                        if($subject!='' && $textmessage!='' ){
+                        $devices = Devices::find()->where(['user_id'=>$user_id])->all();
+                        if(!empty($devices)) {
+                            if($type=='User'){
+                                $note = Yii::$app->fcm1->createNotification($subject, $textmessage);
+                                $note->setIcon('fcm_push_icon')->setSound('default')->setClickAction('FCM_PLUGIN_ACTIVITY')
+                                    ->setColor('#ffffff');
+
+                                $message = Yii::$app->fcm1->createMessage();
+
+                                foreach ($devices as $device) {
+                                    $message->addRecipient(new Device($device->device_token));
+                                }
+
+                                $message->setNotification($note)
+                                    ->setData([
+                                        'title' => $subject,
+                                        'body' => $textmessage
+                                    ]);
+
+                                $response = Yii::$app->fcm1->send($message);
+                                }else if($type=='Partner'){
+                                $note = Yii::$app->fcm2->createNotification($subject, $textmessage);
+                                $note->setIcon('fcm_push_icon')->setSound('default')->setClickAction('FCM_PLUGIN_ACTIVITY')
+                                    ->setColor('#ffffff');
+
+                                $message = Yii::$app->fcm2->createMessage();
+
+                                foreach ($devices as $device) {
+                                    $message->addRecipient(new Device($device->device_token));
+                                }
+
+                                $message->setNotification($note)
+                                    ->setData([
+                                        'title' => $subject,
+                                        'body' => $textmessage
+                                    ]);
+
+                                $response = Yii::$app->fcm2->send($message);
+                            }
+
+                        }
+          }
+    }
+
+    public function Savenotification($receiver_id,$subject,$textmessage,$sender_id='',$property_id='',$todo_id=''){
+        $notificationmodel = new Notifications();
+        $notificationmodel->sender_id = ($sender_id!='')?$sender_id:NULL;
+        $notificationmodel->receiver_id = $receiver_id;
+        $notificationmodel->property_id = ($property_id!='')?$property_id:NULL;
+        $notificationmodel->todo_id = ($todo_id!='')?$todo_id:NULL;
+        $notificationmodel->subject = $subject;
+        $notificationmodel->text = $textmessage;
+        $notificationmodel->created_at = date('Y-m-d H:i:s');
+        $notificationmodel->save(false);
     }
 
 }

@@ -256,6 +256,13 @@ class InsurancesController extends Controller
                     $model->updated_at = date('Y-m-d H:i:s');
                     $model->save(false);
                     $modeldocument->document_pdf->saveAs('uploads/tododocuments/' . $newFileName1);
+
+                    $subject = 'Insurance cover note';
+                    $textmessage = 'Insurance cover note is ready. Goes to “My Doc” to view.';
+                    Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id,$id);
+
+                    Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
+
                     return $this->redirect(['index']);
 
                 }else{

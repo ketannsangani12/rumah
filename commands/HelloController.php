@@ -106,6 +106,11 @@ class HelloController extends Controller
                             $rentalmodel->status = 'Unpaid';
                             $rentalmodel->created_at = date('Y-m-d H:i:s');
                             $rentalmodel->save(false);
+                            //$subject = 'Monthly Rental Reminder';
+                            //$textmessage = 'Kindly ensure your bank account has sufficient fund to be debited for this month rental on this 5th of the month to avoid any late charges.';
+                            //\Yii::$app->common->Savenotification($rentalmodel->user_id,$subject,$textmessage,'',$rentalmodel->property_id,$rentalmodel->id);
+
+                            //\Yii::$app->common->Sendpushnotification($rentalmodel->user_id,$subject,$textmessage,'User');
                         }
                     }
 

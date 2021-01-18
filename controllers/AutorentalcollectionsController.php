@@ -166,6 +166,12 @@ class AutorentalcollectionsController extends Controller
                 $model->updated_at = date('Y-m-d h:i:s');
                 if($model->save()) {
                     if ($model->status=='Paid'){
+                        $subject = 'Monthly rental received';
+                        $textmessage = 'You got one rental just received from one of the tenanted unit. Kindly check and ensure the rental duly received.';
+                        Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id,$model->id);
+
+                        Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
+
                         $goldcoins = 188;
                         $usercoinsbalance1 = Users::getcoinsbalance($model->user_id);
                         $goldtransaction = new GoldTransactions();

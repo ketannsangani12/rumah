@@ -152,6 +152,12 @@ class BookingrequestsController extends Controller
                    $todomodel->status = 'Pending';
                    $todomodel->save();
                    $model->report->saveAs('uploads/creditscorereports/' . $newFileName);
+                   $subject = 'Credit report ready';
+                   $textmessage = 'Credit report is ready for your action, kindly confirm to proceed for tenancy signing.';
+                   Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id);
+
+                   Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
+
                    return $this->redirect(['index']);
 
                }else{
@@ -627,6 +633,11 @@ curl_setopt_array($curl, array(
                     }
                     if ($flag) {
                         $transaction->commit();
+                        $subject = 'Move out approval';
+                        $textmessage = 'You have one move out approval pending for your action, kindly confirm to proceed for deposit refund.';
+                        Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id,$modelCustomer->id);
+
+                        Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
                         return $this->redirect(['index']);
                     }
                 } catch (Exception $e) {
@@ -769,7 +780,14 @@ curl_setopt_array($curl, array(
                         }
                     }
                     if ($flag) {
+
                         $transaction->commit();
+                        $subject = 'Booking Request Cancelled';
+                        $textmessage = 'You have a booking has been cancelled. Booking will be credited back to your wallet within 3 working days.';
+                        Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id,$modelCustomer->id);
+
+                        Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+
                         return $this->redirect(['index']);
                     }
                 } catch (Exception $e) {

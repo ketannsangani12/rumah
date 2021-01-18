@@ -10,6 +10,8 @@ use Yii;
  * @property int $id
  * @property int|null $sender_id
  * @property int|null $receiver_id
+ * @property int|null $property_id
+ * @property int|null $todo_id
  * @property int|null $transaction_id
  * @property string|null $subject
  * @property string|null $text
@@ -32,7 +34,7 @@ class Notifications extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sender_id', 'receiver_id', 'transaction_id'], 'integer'],
+            [['sender_id', 'receiver_id', 'property_id', 'todo_id', 'transaction_id'], 'integer'],
             [['text'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['subject'], 'string', 'max' => 255],
@@ -48,6 +50,8 @@ class Notifications extends \yii\db\ActiveRecord
             'id' => 'ID',
             'sender_id' => 'Sender ID',
             'receiver_id' => 'Receiver ID',
+            'property_id' => 'Property ID',
+            'todo_id' => 'Todo ID',
             'transaction_id' => 'Transaction ID',
             'subject' => 'Subject',
             'text' => 'Text',
