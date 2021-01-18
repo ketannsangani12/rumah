@@ -2122,6 +2122,12 @@ class ApipartnersController extends ActiveController
                                 $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
                                 if ($todomodel->servicerequest->save(false)) {
                                     $transaction1->commit();
+                                    $subject = 'Service order accepted';
+                                    $textmessage = 'Your service order has been accepted, kindly mark the service time.';
+                                    Yii::$app->common->Savenotification($todomodel->user_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                                    Yii::$app->common->Sendpushnotification($todomodel->user_id,$subject,$textmessage,'User');
+
                                     return array('status' => 1, 'message' => 'You have accepted request successfully.');
 
                                 } else {
@@ -2146,6 +2152,12 @@ class ApipartnersController extends ActiveController
                                     $vendor->current_status = 'Free';
                                     $vendor->save(false);
                                     $transaction1->commit();
+                                    $subject = 'Service order cancelled';
+                                    $textmessage = 'Your service order has been cancelled, kindly take note.';
+                                    Yii::$app->common->Savenotification($todomodel->user_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                                    Yii::$app->common->Sendpushnotification($todomodel->user_id,$subject,$textmessage,'User');
+
                                     return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
                                 } else {
@@ -2169,6 +2181,12 @@ class ApipartnersController extends ActiveController
                                 $todomodel->servicerequest->updated_at = date("Y-m-d H:i:s");
                                 if ($todomodel->servicerequest->save(false)) {
                                     $transaction1->commit();
+                                    $subject = 'Service order accepted';
+                                    $textmessage = 'Your service order has been accepted, kindly mark the service time.';
+                                    Yii::$app->common->Savenotification($todomodel->user_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                                    Yii::$app->common->Sendpushnotification($todomodel->user_id,$subject,$textmessage,'User');
+
                                     return array('status' => 1, 'message' => 'You have accepted request successfully.');
 
                                 } else {
@@ -2193,6 +2211,12 @@ class ApipartnersController extends ActiveController
                                     $vendor->current_status = 'Free';
                                     $vendor->save(false);
                                     $transaction1->commit();
+                                    $subject = 'Service order cancelled';
+                                    $textmessage = 'Your service order has been cancelled, kindly take note.';
+                                    Yii::$app->common->Savenotification($todomodel->user_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                                    Yii::$app->common->Sendpushnotification($todomodel->user_id,$subject,$textmessage,'User');
+
                                     return array('status' => 1, 'message' => 'You have rejected request successfully.');
 
                                 } else {
@@ -2484,6 +2508,12 @@ class ApipartnersController extends ActiveController
                                     $vendor->current_status = 'Free';
                                     $vendor->save(false);
                                     $transaction1->commit();
+                                    $subject = 'Service order cancelled';
+                                    $textmessage = 'Your service order has been cancelled, kindly take note.';
+                                    Yii::$app->common->Savenotification($todomodel->user_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                                    Yii::$app->common->Sendpushnotification($todomodel->user_id,$subject,$textmessage,'User');
+
                                     return array('status' => 1, 'message' => 'You have cancelled request successfully.');
 
                                 } else {
@@ -2616,6 +2646,12 @@ class ApipartnersController extends ActiveController
                     $todomodel->status = 'Pending';
                     $todomodel->created_at = date('Y-m-d H:i:s');
                     if ($todomodel->save()){
+                        $subject = 'Property booking transfer';
+                        $textmessage = 'Your agent managed to get you a prospect tenant, confirm now to secure this tenant.';
+                        Yii::$app->common->Savenotification($todomodel->landlord_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
+
+                        Yii::$app->common->Sendpushnotification($todomodel->landlord_id,$subject,$textmessage,'User');
+
                         return array('status' => 1, 'message' => 'You have sent request successfully.');
 
 

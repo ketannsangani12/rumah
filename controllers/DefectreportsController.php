@@ -84,6 +84,11 @@ class DefectreportsController extends Controller
                 $model->updated_at = date('Y-m-d H:i:s');
                 if($model->save()){
                     $model->quote->saveAs('uploads/tododocuments/' . $newFileName);
+                    $subject = 'Defect repair approval';
+                    $textmessage = 'You have one repair approval pending for action, kindly confirm.';
+                    Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id,$model->id);
+                    Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
+
                     return $this->redirect(['index']);
 
                 }else{
@@ -169,6 +174,11 @@ class DefectreportsController extends Controller
                     }
                     if ($flag) {
                         $transaction->commit();
+                        $subject = 'Outstanding repair payment';
+                        $textmessage = 'You have one repair outstanding payment, kindly settle to avoid any delay.';
+                        Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id,$model->id);
+                        Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
+
                         return $this->redirect(['index']);
                     }
                 } catch (Exception $e) {

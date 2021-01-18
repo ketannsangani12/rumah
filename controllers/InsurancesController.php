@@ -134,6 +134,11 @@ class InsurancesController extends Controller
 
                     if ($flag) {
                         $transaction->commit();
+                        $subject = 'Purchase Insurance';
+                        $textmessage = 'You got one insurance quotation pending for action, kindly settle to avoid any delay.';
+                        Yii::$app->common->Savenotification($modelCustomer->landlord_id,$subject,$textmessage,'',$modelCustomer->property_id,$modelCustomer->id);
+
+                        Yii::$app->common->Sendpushnotification($modelCustomer->landlord_id,$subject,$textmessage,'User');
                         return $this->redirect(['index']);
                     }
                 } catch (Exception $e) {

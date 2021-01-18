@@ -235,6 +235,12 @@ class RenovationquotesController extends Controller
                     }
                     if ($flag) {
                         $transaction->commit();
+                        $subject = 'Renovation payment';
+                        $textmessage = 'You have one renovation outstanding payment, kindly settle to avoid any delay.';
+                        Yii::$app->common->Savenotification($modelCustomer->landlord_id,$subject,$textmessage,'',$modelCustomer->property_id,$modelCustomer->id);
+
+                        Yii::$app->common->Sendpushnotification($modelCustomer->landlord_id,$subject,$textmessage,'User');
+
                         return $this->redirect(['milestones','id'=>$id]);
                     }
                 } catch (Exception $e) {

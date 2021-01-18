@@ -309,11 +309,23 @@ class Common extends Component
             $goldtransaction->created_at = date('Y-m-d H:i:s');
             if ($goldtransaction->save(false)) {
                 $update = Users::updatecoinsbalance($usercoinsbalance + $goldcoins, $user_id);
+
                 if($reffer_id!='') {
                     $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
                 }
 
                 if ($update) {
+                    $subject = 'Gold coins earned';
+                    $textmessage = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
+                    $this->Savenotification($user_id,$subject,$textmessage);
+                    $this->Sendpushnotification($user_id,$subject,$textmessage,'User');
+                    if($reffer_id!='') {
+                        $subject1 = 'Gold coins earned';
+                        $textmessage1 = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
+                        $this->Savenotification($reffer_id, $subject1, $textmessage1);
+                        $this->Sendpushnotification($reffer_id, $subject1, $textmessage1, 'User');
+                    }
+
                     return true;
                 } else {
                     return false;
@@ -337,6 +349,11 @@ class Common extends Component
                 $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
 
                 if ($update) {
+                    $subject = 'Gold coins earned';
+                    $textmessage = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
+                    $this->Savenotification($reffer_id,$subject,$textmessage);
+                    $this->Sendpushnotification($reffer_id,$subject,$textmessage,'User');
+
                     return true;
                 } else {
                     return false;
@@ -360,6 +377,11 @@ class Common extends Component
             if ($goldtransaction->save(false)) {
                 $update = Users::updatecoinsbalance($usercoinsbalance + $goldcoins, $user_id);
                 if ($update) {
+                    $subject = 'Gold coins earned';
+                    $textmessage = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
+                    $this->Savenotification($user_id,$subject,$textmessage);
+                    $this->Sendpushnotification($user_id,$subject,$textmessage,'User');
+
                     return true;
                 } else {
                     return false;

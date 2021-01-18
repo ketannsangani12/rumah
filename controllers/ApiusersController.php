@@ -3330,6 +3330,12 @@ class ApiusersController extends ActiveController
                     $chat->msg_type = 'text';
                     $chat->created_at = date('Y-m-d H:i:s');
                     $chat->save(false);
+                    $subject = 'Property booking transfer approval';
+                    $textmessage = 'One of your property '.$todorequestexist->property->property_no.' booking transfer has been approved, kindly check with respective landlord for further action.';
+                    Yii::$app->common->Savenotification($todorequestexist->agent_id,$subject,$textmessage,'',$todorequestexist->property_id,$todorequestexist->id);
+
+                    Yii::$app->common->Sendpushnotification($todorequestexist->agent_id,$subject,$textmessage,'Partner');
+
                     return array('status' => 1, 'message' => 'You have accepted transfer request.');
                 }else{
                     return array('status' => 0, 'data' => $todorequestexist->getErrors());
@@ -5505,11 +5511,6 @@ public function actionPaysuccess(){
                         $tododocument->document = $filename . '.' . $data['type'];
                         $tododocument->created_at = date('Y-m-d H:i:s');
                         if ($tododocument->save(false)) {
-                            $subject = 'Defect repair approval';
-                            $textmessage = 'You have one repair approval pending for action, kindly confirm.';
-                            Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id,$model->id);
-
-                            Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
 
                             return array('status' => 1, 'message' => 'You have submitted defect report successfully.');
 
@@ -5756,6 +5757,12 @@ public function actionPaysuccess(){
                                                 $cleaner->current_status = 'Busy';
                                                 $cleaner->save(false);
                                                 $transaction->commit();
+                                                $subject = 'Service order placed';
+                                                $textmessage = 'You got one service order pending for action, kindly accept now.';
+                                                Yii::$app->common->Savenotification($todolist->vendor_id,$subject,$textmessage,'',$model->property_id,$todolist->id);
+
+                                                Yii::$app->common->Sendpushnotification($todolist->vendor_id,$subject,$textmessage,'Partner');
+
                                                 return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
                                             }else{
                                                 $transaction->rollBack();

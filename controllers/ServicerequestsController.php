@@ -361,6 +361,13 @@ class ServicerequestsController extends Controller
                                     $cleaner->current_status = 'Busy';
                                     if($cleaner->save(false)){
                                         $transaction->commit();
+                                        $transaction->commit();
+                                        $subject = 'Service order placed';
+                                        $textmessage = 'You got one service order pending for action, kindly accept now.';
+                                        Yii::$app->common->Savenotification($todolist->vendor_id,$subject,$textmessage,'',$model->property_id,$todolist->id);
+
+                                        Yii::$app->common->Sendpushnotification($todolist->vendor_id,$subject,$textmessage,'Partner');
+
                                         return $this->redirect(['index']);
                                     }else{
                                         $transaction->rollBack();
@@ -453,6 +460,12 @@ class ServicerequestsController extends Controller
                         if($todolist->save(false)){
                             $model->todo_id = $todolist->id;
                             $model->save(false);
+                            $subject = 'Service order placed';
+                            $textmessage = 'You got one service order pending for action, kindly accept now.';
+                            Yii::$app->common->Savenotification($todolist->vendor_id,$subject,$textmessage,'',$model->property_id,$todolist->id);
+
+                            Yii::$app->common->Sendpushnotification($todolist->vendor_id,$subject,$textmessage,'Partner');
+
                             return $this->redirect(['index']);
 
                         }else{
@@ -558,6 +571,12 @@ class ServicerequestsController extends Controller
                         $vendormodel->current_status = 'Busy';
                         $vendormodel->updated_at = date('Y-m-d H:i:s');
                         $vendormodel->save(false);
+                        $subject = 'Service order placed';
+                        $textmessage = 'You got one service order pending for action, kindly accept now.';
+                        Yii::$app->common->Savenotification($todolist->vendor_id,$subject,$textmessage,'',$todolist->property_id,$todolist->id);
+
+                        Yii::$app->common->Sendpushnotification($todolist->vendor_id,$subject,$textmessage,'Partner');
+
                         return $this->redirect(['index']);
                     }
                 }
@@ -617,6 +636,12 @@ class ServicerequestsController extends Controller
                         $oldvendormodel->current_status = 'Busy';
                         $oldvendormodel->updated_at = date('Y-m-d H:i:s');
                         $oldvendormodel->save(false);
+                        $subject = 'Service order placed';
+                        $textmessage = 'You got one service order pending for action, kindly accept now.';
+                        Yii::$app->common->Savenotification($todolist->vendor_id,$subject,$textmessage,'',$todolist->property_id,$todolist->id);
+
+                        Yii::$app->common->Sendpushnotification($todolist->vendor_id,$subject,$textmessage,'Partner');
+
 
                         return $this->redirect(['index']);
                     }

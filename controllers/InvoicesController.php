@@ -142,6 +142,19 @@ class InvoicesController extends Controller
                     }
                     if ($flag) {
                         $transaction->commit();
+                        $subject = 'Unpaid Bill';
+                        $textmessage = 'You got one unpaid bill pending for action, kindly settle now to avoid any late charges.';
+                        if($modelCustomer->pay_from=='Tenant'){
+                            Yii::$app->common->Savenotification($modelCustomer->user_id,$subject,$textmessage,'',$modelCustomer->property_id,$modelCustomer->id);
+
+                            Yii::$app->common->Sendpushnotification($modelCustomer->user_id,$subject,$textmessage,'User');
+                        }else if($modelCustomer->pay_from=='Landlord'){
+                            Yii::$app->common->Savenotification($modelCustomer->landlord_id,$subject,$textmessage,'',$modelCustomer->property_id,$modelCustomer->id);
+
+                            Yii::$app->common->Sendpushnotification($modelCustomer->landlord_id,$subject,$textmessage,'User');
+                        }
+
+
                         return $this->redirect(['index']);
                     }
                 } catch (Exception $e) {
