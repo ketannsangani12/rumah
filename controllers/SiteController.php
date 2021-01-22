@@ -813,7 +813,7 @@ class SiteController extends Controller
                                     if ($user->membership_expire_date == NULL) {
                                         $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
                                     } else {
-                                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime         ($user->membership_expire_date)));
+                                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime($user->membership_expire_date)));
                                     }
                                     $user->property_credited += $packagedetails->quantity;
                                     if($user->save(false)){
@@ -821,7 +821,7 @@ class SiteController extends Controller
                                         echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
                                         exit;
                                     }else{
-                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again.</h1></body></html>';
+                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
                                         exit;
                                     }
 
@@ -845,7 +845,7 @@ class SiteController extends Controller
                                 exit;
 
                             }else{
-                                echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again.</h1></body></html>';
+                                echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again12.</h1></body></html>';
                                 exit;
                             }
 
@@ -856,7 +856,7 @@ class SiteController extends Controller
                         $transaction1->rollBack();
                     }
                 }else{
-                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Something went wrong, Please try again.</h1></body></html>';
+                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Something went wrong, Please try again34.</h1></body></html>';
                     exit;
                 }
                 //echo "<pre>";print_r($_POST);exit;
