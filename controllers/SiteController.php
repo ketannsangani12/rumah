@@ -710,8 +710,8 @@ class SiteController extends Controller
                     'Lang'=>'UTF-8',
                     'SignatureType'=>'SHA256',
                     'Signature'=>'',
-                    'ResponseURL'=>'https://www.rumah-i.com/site/success',
-                    'BackendURL'=>'https://www.rumah-i.com/site/success',
+                    'ResponseURL'=>'https://admin.rumah-i.com/site/success',
+                    'BackendURL'=>'https://admin.rumah-i.com/site/paysuccess',
                 );
                 //echo $merchantkey.$merchantcode.$fields['RefNo'].$fields['Amount'].$fields['Currency'];exit;
                 $hash = hash('sha256', $merchantkey.$merchantcode.$fields['RefNo'].preg_replace('/[\.\,]/', '', $fields['Amount']).$fields['Currency']);
