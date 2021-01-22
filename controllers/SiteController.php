@@ -570,13 +570,114 @@ class SiteController extends Controller
     }
 
 
+    public function actionPaysuccess()
+    {
+        if(!empty($_REQUEST)) {
+            $transaction = Payments::find()->where(['order_id' => $_REQUEST['RefNo'], 'status' => 'Pending'])->one();
+            if ($_REQUEST['Status'] == 1) {
+                if (!empty($transaction)) {
+                    $transaction1 = Yii::$app->db->beginTransaction();
+                    try {
+                        $transaction->status = 'Completed';
+                        $transaction->response = json_encode($_POST);
+                        $transaction->save(false);
+                        if ($transaction->package_id != null) {
+
+                            $packagedetails = Packages::findOne($transaction->package_id);
+
+                            $model = new UserPackages();
+                            $model->package_id = $transaction->package_id;
+                            $model->user_id = $transaction->user_id;
+                            $model->start_date = date('Y-m-d');
+                            $model->end_date = date('Y-m-d', strtotime('+1 years'));
+                            $model->created_at = date('Y-m-d H:i:s');
+                            $model->updated_at = date('Y-m-d H:i:s');
+                            if ($model->save()) {
+                                $transactionmodel = new Transactions();
+                                $transactionmodel->user_id = $model->user_id;
+                                $transactionmodel->amount = $transaction->total_amount;
+                                $transactionmodel->total_amount = $transaction->total_amount;
+                                $transactionmodel->package_id = $model->id;
+                                $transactionmodel->created_at = date('Y-m-d H:i:s');
+                                $transactionmodel->reftype = 'Package Purchase';
+                                $transactionmodel->status = 'Completed';
+                                if($transactionmodel->save(false)){
+                                    $lastid = $transactionmodel->id;
+                                    $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                                    $transactionmodel->reference_no = "TR".$reference_no;
+                                    $transactionmodel->save(false);
+                                    $user = Users::findOne($model->user_id);
+                                    if ($user->membership_expire_date == NULL) {
+                                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
+                                    } else {
+                                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime         ($user->membership_expire_date)));
+                                    }
+                                    $user->property_credited += $packagedetails->quantity;
+                                    if($user->save(false)){
+                                        $transaction1->commit();
+                                        echo "RECEIVEOK";exit;
+
+                                    }else{
+                                        $transaction1->rollBack();
+                                        echo "RECEIVEOK";exit;
+
+                                    }
+
+                                }
+
+                            }
+
+                        } else {
+                            $post['amount'] = $transaction->amount;
+                            $post['discount'] = $transaction->discount;
+                            $post['promo_code'] = $transaction->promo_code;
+                            $post['gold_coins'] = $transaction->coins;
+                            $post['coins_savings'] = $transaction->coins_savings;
+                            $todomodel = TodoList::findOne($transaction->todo_id);
+
+                            $response = Yii::$app->common->payment($transaction->user_id,$transaction->todo_id,'Accepted',$todomodel->reftype,$post,$transaction->id);
+                            $transaction1->commit();
+                            //$dataresponse = json_decode($response);
+                            if(!empty($response) && $response['status']==1){
+                                echo "RECEIVEOK";exit;
+
+
+                            }else{
+                                $transaction1->rollBack();
+                                echo "FAILED";exit;
+
+                            }
+
+                        }
+
+                    } catch (Exception $e) {
+                        // # if error occurs then rollback all transactions
+                        $transaction1->rollBack();
+                        echo "FAILED";exit;
+
+                    }
+                }else{
+                    echo "FAILED";exit;
+
+                }
+            }else if($_REQUEST['Status']==0) {
+                $transaction->response = json_encode($_REQUEST);
+                $transaction->status = 3;
+                $transaction->save(false);
+
+
+            }
+
+        }
+
+    }
 
     public function actionPayment()
     {
 //
         if(isset($_GET['order_id']) && $_GET['order_id']!='')
         {
-            $transaction = Payments::find()->where(['order_id'=>$_GET['order_id'],'status'=>1])->one();
+            $transaction = Payments::find()->where(['order_id'=>$_GET['order_id'],'status'=>'Pending'])->one();
             if(!empty($transaction)){
                 if($transaction->package_id!=''){
                     $packagedetail = Packages::findOne($transaction->package_id);
@@ -629,8 +730,8 @@ class SiteController extends Controller
                     'Lang'=>'UTF-8',
                     'SignatureType'=>'SHA256',
                     'Signature'=>$hash,
-                    'ResponseURL'=>'https://www.rumah-i.com/site/success',
-                    'BackendURL'=>'https://www.rumah-i.com/site/success',
+                    'ResponseURL'=>'https://admin.rumah-i.com/site/success',
+                    'BackendURL'=>'https://admin.rumah-i.com/site/paysuccess',
 
                 );
                 //print_r($fields);exit;
@@ -673,7 +774,7 @@ class SiteController extends Controller
         $secretkey = '17921-867';
 
             //echo "<pre>";print_r($_POST);exit;
-            $transaction = Payments::find()->where(['order_id'=>$_POST['RefNo'],'status'=>1])->one();
+            $transaction = Payments::find()->where(['order_id'=>$_POST['RefNo'],'status'=>'Pending'])->one();
             # if hash is the same then we know the data is valid
             if(!empty($_POST) && $_POST['Status']==0) {
                 # this is a simple result page showing either the payment was successful or failed. In real life you will need to process the order made by the customer
