@@ -13,7 +13,6 @@ use ArrayObject;
 use IteratorAggregate;
 use ReflectionClass;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\validators\RequiredValidator;
 use yii\validators\Validator;
@@ -38,19 +37,20 @@ use yii\validators\Validator;
  *
  * For more details and usage information on Model, see the [guide article on models](guide:structure-models).
  *
- * @property \yii\validators\Validator[] $activeValidators The validators applicable to the current
+ * @property-read \yii\validators\Validator[] $activeValidators The validators applicable to the current
  * [[scenario]]. This property is read-only.
  * @property array $attributes Attribute values (name => value).
- * @property array $errors An array of errors for all attributes. Empty array is returned if no error. The
- * result is a two-dimensional array. See [[getErrors()]] for detailed description. This property is read-only.
- * @property array $firstErrors The first errors. The array keys are the attribute names, and the array values
- * are the corresponding error messages. An empty array will be returned if there is no error. This property is
+ * @property-read array $errors An array of errors for all attributes. Empty array is returned if no error.
+ * The result is a two-dimensional array. See [[getErrors()]] for detailed description. This property is
  * read-only.
- * @property ArrayIterator $iterator An iterator for traversing the items in the list. This property is
+ * @property-read array $firstErrors The first errors. The array keys are the attribute names, and the array
+ * values are the corresponding error messages. An empty array will be returned if there is no error. This
+ * property is read-only.
+ * @property-read ArrayIterator $iterator An iterator for traversing the items in the list. This property is
  * read-only.
  * @property string $scenario The scenario that this model is in. Defaults to [[SCENARIO_DEFAULT]].
- * @property ArrayObject|\yii\validators\Validator[] $validators All the validators declared in the model.
- * This property is read-only.
+ * @property-read ArrayObject|\yii\validators\Validator[] $validators All the validators declared in the
+ * model. This property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
@@ -371,32 +371,7 @@ class Model extends Component implements StaticInstanceInterface, IteratorAggreg
 
         return !$this->hasErrors();
     }
-    public static function createMultiple($modelClass, $multipleModels = [])
-    {
-        $model    = new $modelClass;
-        $formName = $model->formName();
-        $post     = Yii::$app->request->post($formName);
-        $models   = [];
 
-        if (! empty($multipleModels)) {
-            $keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
-            $multipleModels = array_combine($keys, $multipleModels);
-        }
-
-        if ($post && is_array($post)) {
-            foreach ($post as $i => $item) {
-                if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
-                    $models[] = $multipleModels[$item['id']];
-                } else {
-                    $models[] = new $modelClass;
-                }
-            }
-        }
-
-        unset($model, $formName, $post);
-
-        return $models;
-    }
     /**
      * This method is invoked before validation starts.
      * The default implementation raises a `beforeValidate` event.
@@ -665,7 +640,7 @@ class Model extends Component implements StaticInstanceInterface, IteratorAggreg
         $lines = [];
         $errors = $showAllErrors ? $this->getErrors() : $this->getFirstErrors();
         foreach ($errors as $es) {
-            $lines = array_merge((array)$es, $lines);
+            $lines = array_merge($lines, (array)$es);
         }
         return $lines;
     }
@@ -824,7 +799,7 @@ class Model extends Component implements StaticInstanceInterface, IteratorAggreg
         }
         $attributes = [];
         foreach ($scenarios[$scenario] as $attribute) {
-            if ($attribute[0] !== '!' && !in_array('!' . $attribute, $scenarios[$scenario])) {
+            if (strncmp($attribute, '!', 1) !== 0 && !in_array('!' . $attribute, $scenarios[$scenario])) {
                 $attributes[] = $attribute;
             }
         }
