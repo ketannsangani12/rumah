@@ -1758,6 +1758,8 @@ class ApiusersController extends ActiveController
                 $size = (isset($_POST['size']) && $_POST['size']!='')?$_POST['size']:'';
                 $search = (isset($_POST['search']) && $_POST['search']!='')?$_POST['search']:'';
                 $location = (isset($_POST['location']) && $_POST['location']!='')?$_POST['location']:'';
+                $sort = (isset($_POST['sort']) && $_POST['sort']!='')?$_POST['sort']:'';
+
                 //print_r($price);exit;
                 // $searchword = $_POST['search'];
 
@@ -1836,10 +1838,20 @@ class ApiusersController extends ActiveController
 
                 }
 
+                if($sort!=''){
+                    if($sort=='price'){
+                        $query1->orderBy(['price' => SORT_ASC]);
 
+                    }else if($sort=='posting_date'){
+                        $query1->orderBy(['created_at' => SORT_ASC]);
 
-                if($lat!='' && $long!=''){
-                    $query1->orderBy(['distance'=>SORT_ASC]);
+                    }
+
+                }else {
+
+                    if ($lat != '' && $long != '') {
+                        $query1->orderBy(['distance' => SORT_ASC]);
+                    }
                 }
 
                 //$query1->all();
