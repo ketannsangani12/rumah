@@ -29,6 +29,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public $agentcard;
     public $agent_card;
     public $picture = '';
+    public $secondarypassword;
 
     /**
      * {@inheritdoc}
@@ -82,7 +83,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
             [['email', 'password'], 'required','on' => 'login'],
             ['password', 'validatePassword','on' => 'login'],
-            [['bank_account_name','bank_account_no','bank_name'], 'required','on' => 'adduseraccount'],
+            [['bank_account_name','bank_account_no','bank_name','secondarypassword'], 'required','on' => 'adduseraccount'],
             //[['username','name'], 'required','on' => 'create'],
             [['oldpassword', 'newpassword'], 'required','on' => 'changepassword'],
             //[['oldpassword'], 'checkoldpassword','on' => 'changepassword'],
@@ -147,7 +148,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'google_response'=>'Google Response',
             'facebook_response'=>'Facebook Response',
             'googleuser_id'=>'Google User id',
-            'facebookuser_id'=>'Facebook User id'
+            'facebookuser_id'=>'Facebook User id',
+            'secondarypassword'=>'Secondary Password'
         ];
     }
 

@@ -1443,7 +1443,12 @@ class ApiusersController extends ActiveController
                 $model->attributes = Yii::$app->request->post();
 
                 if ($model->validate()) {
-                    if($model->save()){
+                    $validatepassword = Yii::$app->common->validatesecondarypassword($this->user_id,$model->secondarypassword);
+                    if(!$validatepassword){
+                        return array('status' => 0, 'message' => 'You have entered invalid wrong PIN.');
+                    }
+                    unset($model->secondarypassword);
+                    if($model->save(false)){
                         return array('status' => 1, 'message' => 'You have updated bank account successfully.');
 
                     }else{
