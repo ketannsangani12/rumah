@@ -41,7 +41,16 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             // 'user_id',
             [
-                'attribute'=>'bank_id',
+                'label'=>'Bank Name',
+                'format'=>'raw',
+                'value'=> function($model){
+                    return $model->user->bank_name;
+                },
+                'filter'=>false,
+
+            ],
+            [
+                'label'=>'Account Name',
                 'format'=>'raw',
                 'value'=> function($model){
                     return $model->user->bank_account_name;

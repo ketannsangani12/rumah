@@ -865,7 +865,6 @@ class SiteController extends Controller
                 $transaction->status = 'Completed';
                 $transaction->response = json_encode($_POST);
                 $transaction->save(false);
-
             }
     }
 
@@ -1005,7 +1004,6 @@ class SiteController extends Controller
                             $transaction->response = $Result;
                             $transaction->updated_at = date('Y-m-d H:i:s');
                             $transaction->save(false);
-
                         }
                     }
                 }
