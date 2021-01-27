@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute'=>'role',
 
-                    'filter'=>array('Superadmin'=>'Superadmin','User'=>'User','PE'=>'PE','FE'=>'FE','OE'=>'OE','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry','Handyman'=>'Handyman'),
+                    'filter'=>array('Superadmin'=>'Superadmin','User'=>'User','PE'=>'PE','FE'=>'FE','OE'=>'OE','Agent'=>'Agent','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry','Handyman'=>'Handyman'),
 
                 ],
                 'email',
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'document_no',
                 'contact_no',
                 'company_name',
-                'registration_no',
+                //'registration_no',
                  'wallet_balance',
                 // 'contact_no',
                 // 'email:email',
