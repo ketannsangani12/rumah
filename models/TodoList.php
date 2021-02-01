@@ -3,8 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\base\Model;
-use Zxing\Qrcode\Decoder\Mode;
 
 /**
  * This is the model class for table "rumah_todo_list".
@@ -28,7 +26,7 @@ use Zxing\Qrcode\Decoder\Mode;
  * @property Users $user
  * @property Users $vendor
  */
-class TodoList extends Model
+class TodoList extends \yii\db\ActiveRecord
 {
     public $datetime_range;
     public $quote;

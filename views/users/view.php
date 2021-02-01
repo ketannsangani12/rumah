@@ -11,11 +11,16 @@ $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
+<div class="properties-view box box-primary">
+    <div class="box-header">
+        <h1>User Details : <?= Html::encode($this->title) ?></h1>
+    </div>
+    <div class="box-body table-responsive">
+
 <div class="row">
 <div class="col-md-6">
     <div class="users-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
 
     <?= DetailView::widget([
@@ -30,12 +35,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'contact_no',
             'email:email',
             'company_name',
-            'registration_no',
+            'document_no',
             'company_address:ntext',
             'company_state',
             'bank_account_name',
             'bank_account_no',
             'bank_name',
+            [
+                'label' => 'Agent Card',
+                'value' => function ($model) {
+                    return ($model->image!='')?Html::img(Yii::$app->homeUrl. "uploads/users/".$model->image,['width'=>'50','height'=>'50']):'';
+                },
+                'format' => 'raw',
+            ],
             //'image',
             //'created_at',
             //'updated_at',
@@ -50,3 +62,5 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 </div>
+        </div>
+    </div>
