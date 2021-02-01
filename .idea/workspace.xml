@@ -3,9 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="7bcbdf11-e157-41ab-b1b1-7442e9b8b2cd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/TodoList.php" afterPath="$PROJECT_DIR$/models/TodoList.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/users/_form.php" afterPath="$PROJECT_DIR$/views/users/_form.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/users/view.php" afterPath="$PROJECT_DIR$/views/users/view.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/UsersController.php" afterPath="$PROJECT_DIR$/controllers/UsersController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/UsersSearch.php" afterPath="$PROJECT_DIR$/models/UsersSearch.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/users/index.php" afterPath="$PROJECT_DIR$/views/users/index.php" />
     </list>
     <ignored path="yii2metronic.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,7 +29,7 @@
       <file leaf-file-name="ApiusersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="11">
+            <state relative-caret-position="-2224">
               <caret line="2062" column="20" selection-start-line="2062" selection-start-column="20" selection-end-line="2062" selection-end-column="20" />
               <folding>
                 <element signature="e#27085#28805#0#PHP" expanded="false" />
@@ -69,7 +69,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TodoList.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TodoList.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/TodoList.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="240">
@@ -89,28 +89,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SiteController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/controllers/SiteController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="356">
-              <caret line="637" column="66" selection-start-line="637" selection-start-column="59" selection-end-line="637" selection-end-column="66" />
-              <folding>
-                <marker date="1611295378552" expanded="true" signature="34354:34496" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="34384:34451" ph="{...}" />
-                <marker date="1611295378552" expanded="true" signature="38268:38392" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="38614:38738" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="39885:40009" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="40208:40332" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="40774:40898" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="47223:47347" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="47593:47717" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="48988:49112" ph="..." />
-                <marker date="1611295378552" expanded="true" signature="49335:49459" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ApipartnersController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
           <provider selected="true" editor-type-id="text-editor">
@@ -123,11 +101,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Common.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/components/Common.php">
+      <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/users/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1774">
-              <caret line="419" column="28" selection-start-line="419" selection-start-column="20" selection-end-line="419" selection-end-column="28" />
+            <state relative-caret-position="272">
+              <caret line="72" column="78" selection-start-line="72" selection-start-column="78" selection-end-line="72" selection-end-column="78" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UsersController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/controllers/UsersController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="435">
+              <caret line="50" column="40" selection-start-line="50" selection-start-column="40" selection-end-line="50" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UsersSearch.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/models/UsersSearch.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="268">
+              <caret line="44" column="58" selection-start-line="44" selection-start-column="58" selection-end-line="44" selection-end-column="58" />
               <folding />
             </state>
           </provider>
@@ -158,11 +156,13 @@
         <option value="$PROJECT_DIR$/components/Common.php" />
         <option value="$PROJECT_DIR$/models/Users.php" />
         <option value="$PROJECT_DIR$/controllers/ApipartnersController.php" />
-        <option value="$PROJECT_DIR$/views/users/index.php" />
         <option value="$PROJECT_DIR$/controllers/ApiusersController.php" />
         <option value="$PROJECT_DIR$/views/users/_form.php" />
         <option value="$PROJECT_DIR$/views/users/view.php" />
         <option value="$PROJECT_DIR$/models/TodoList.php" />
+        <option value="$PROJECT_DIR$/controllers/UsersController.php" />
+        <option value="$PROJECT_DIR$/views/users/index.php" />
+        <option value="$PROJECT_DIR$/models/UsersSearch.php" />
       </list>
     </option>
   </component>
@@ -400,12 +400,12 @@
       <workItem from="1611726959378" duration="750000" />
       <workItem from="1611737031172" duration="851000" />
       <workItem from="1612088210772" duration="44000" />
-      <workItem from="1612150037503" duration="4248000" />
+      <workItem from="1612150037503" duration="4873000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41968000" />
+    <option name="totallyTimeSpent" value="42593000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="836" extended-state="6" />
@@ -535,21 +535,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/models/ServiceRequests.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1620">
-          <caret line="108" column="25" selection-start-line="108" selection-start-column="25" selection-end-line="108" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/servicerequests/index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="74" column="20" selection-start-line="74" selection-start-column="20" selection-end-line="81" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/layouts/left.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -817,14 +802,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/users/index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="50" column="45" selection-start-line="50" selection-start-column="45" selection-end-line="50" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/SiteController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="356">
@@ -885,31 +862,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/users/view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="46" column="92" selection-start-line="46" selection-start-column="92" selection-end-line="46" selection-end-column="92" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/ApipartnersController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="326">
           <caret line="270" column="0" selection-start-line="270" selection-start-column="0" selection-end-line="270" selection-end-column="0" />
           <folding>
             <element signature="e#18446#20206#0#PHP" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11">
-          <caret line="2062" column="20" selection-start-line="2062" selection-start-column="20" selection-end-line="2062" selection-end-column="20" />
-          <folding>
-            <element signature="e#27085#28805#0#PHP" expanded="false" />
-            <element signature="e#33337#33847#0#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -926,6 +884,49 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="26" column="26" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/users/view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="46" column="92" selection-start-line="46" selection-start-column="92" selection-end-line="46" selection-end-column="92" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/ApiusersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2224">
+          <caret line="2062" column="20" selection-start-line="2062" selection-start-column="20" selection-end-line="2062" selection-end-column="20" />
+          <folding>
+            <element signature="e#27085#28805#0#PHP" expanded="false" />
+            <element signature="e#33337#33847#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/users/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="72" column="78" selection-start-line="72" selection-start-column="78" selection-end-line="72" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/UsersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="50" column="40" selection-start-line="50" selection-start-column="40" selection-end-line="50" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/UsersSearch.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="44" column="58" selection-start-line="44" selection-start-column="58" selection-end-line="44" selection-end-column="58" />
           <folding />
         </state>
       </provider>

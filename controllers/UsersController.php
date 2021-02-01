@@ -160,6 +160,17 @@ class UsersController extends Controller
         return $this->redirect(['index']);
     }
 
+
+    public function actionUnsuspend($id)
+    {
+        $model = $this->findModel($id);
+        $model->status = 1;
+        $model->save(false);
+        // $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
     /**
      * Finds the Users model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

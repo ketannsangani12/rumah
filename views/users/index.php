@@ -64,10 +64,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 // 'created_at',
                 // 'updated_at',
                 ['class' => 'yii\grid\ActionColumn',
-                    'template'=>'{view} {update} {ratings} {delete}',
+                    'template'=>'{view} {update} {ratings} {delete} {unsuspend}',
                     'visibleButtons' => [
                         'ratings' => function ($model) {
                             return ($model->role=='Agent' || $model->role=='Cleaner' || $model->role=='Mover' || $model->role=='Laundry' || $model->role=='Handyman');
+                        },
+                        'unsuspend' => function ($model) {
+                            return ($model->role=='Agent' && $model->status==3);
+                        },
+                        'delete' => function ($model) {
+                            return ($model->status==1);
                         },
                     ],
                     'buttons'=>[
@@ -115,6 +121,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'title' => 'Suspend',
                                 'class' =>'btn btn-sm btn-danger datatable-operation-btn',
                                 'data-confirm' => \Yii::t('yii', 'Are you sure you want to suspend this item?'),
+                                'data-method'  => 'post',
+
+                            ]);
+
+                        },
+                        'unsuspend' => function ($url, $model) {
+
+                            return Html::a('<i class="fa fa-check-circle" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/unsuspend', 'id' => $model->id])], [
+
+                                'title' => 'Unsuspend',
+                                'class' =>'btn btn-sm btn-success datatable-operation-btn',
+                                'data-confirm' => \Yii::t('yii', 'Are you sure you want to Un-suspend this item?'),
                                 'data-method'  => 'post',
 
                             ]);
