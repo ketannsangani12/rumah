@@ -153,6 +153,7 @@ class BookingRequests extends \yii\db\ActiveRecord
             'landlordx2' => 'X2',
             'landlordy1' => 'Y1',
             'landlordy2' => 'Y2',
+            'selfie'=>'Selfie',
             'tenantpageno' => 'Page No.(For Tenant)',
             'landlordpageno' => 'Page No.(For Landlord)',
 

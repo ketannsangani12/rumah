@@ -2036,6 +2036,15 @@ class ApipartnersController extends ActiveController
                 $model->status = 'Pending';
                 $model->created_at = date('Y-m-d H:i:s');
                 if($model->save(false)) {
+                    $subject = 'Viewing appointment is confirmed';
+                    $textmessage = 'Viewing time is set. Goes to “To Do” to view';
+                    Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,$user_id,$model->property_id,$model->id);
+
+                    Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+                    Yii::$app->common->Savenotification($user_id,$subject,$textmessage,$model->user_id,$model->property_id,$model->id);
+
+                    Yii::$app->common->Sendpushnotification($user_id,$subject,$textmessage,'Partner');
+
                     return array('status' => 1, 'message' => 'You have submitted appointment successfully.');
 
                 }else{
