@@ -6220,27 +6220,28 @@ public function actionPaysuccess(){
                           $selfie = $_POST['selfie'];
                           $filename = 'uploads/sampleimage.jpg'; // output file name
 
-                          $im = imagecreatefromstring(base64_decode($selfie));
-                          $source_width = imagesx($im);
-                          $source_height = imagesy($im);
-                          $ratio =  $source_width / $source_height;
-
-                          $new_height = 720; // assign new width to new resized image
-                          $new_width = $ratio * $source_width;
-
-                          $thumb = imagecreatetruecolor($new_width, $new_height);
-
-                          $transparency = imagecolorallocatealpha($thumb, 255, 255, 255, 127);
-                          imagefilledrectangle($thumb, 0, 0, $new_width, $new_height, $transparency);
-
-                          imagecopyresampled($thumb, $im, 0, 0, 0, 0, $new_width, $new_height, $source_width, $source_height);
-                          imagepng($thumb, $filename, 9);
-                          imagedestroy($im);
-                          $path = 'uploads/sampleimage.jpg';
-                          $type = pathinfo($path, PATHINFO_EXTENSION);
-                          $data = file_get_contents($path);
-                          $base64 =  base64_encode($data);
-                          $selfie = $base64;
+//                          $im = imagecreatefromstring(base64_decode($selfie));
+//                          $source_width = imagesx($im);
+//                          $source_height = imagesy($im);
+//                          $ratio =  $source_width / $source_height;
+//
+//                          $new_height = 720; // assign new width to new resized image
+//                          $new_width = $ratio * $source_width;
+//
+//                          $thumb = imagecreatetruecolor($new_width, $new_height);
+//
+//                          $transparency = imagecolorallocatealpha($thumb, 255, 255, 255, 127);
+//                          imagefilledrectangle($thumb, 0, 0, $new_width, $new_height, $transparency);
+//
+//                          imagecopyresampled($thumb, $im, 0, 0, 0, 0, $new_width, $new_height, $source_width, $source_height);
+//                          imagepng($thumb, $filename, 9);
+//                          imagedestroy($im);
+//                          $path = 'uploads/sampleimage.jpg';
+//                          $type = pathinfo($path, PATHINFO_EXTENSION);
+//                          $data = file_get_contents($path);
+                          //$base64 =  base64_encode($data);
+                          //$selfie = $base64;
+                          echo $selfie;exit;
                           $checkmycad = $this->mykadokaydoc($journeyid, $document);
                           if (!empty($checkmycad)) {
                               if ($checkmycad->status == 'success' && $checkmycad->messageCode == 'api.success') {
