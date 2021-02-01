@@ -6241,7 +6241,7 @@ public function actionPaysuccess(){
 //                          $data = file_get_contents($path);
                           //$base64 =  base64_encode($data);
                           //$selfie = $base64;
-                          echo $selfie;exit;
+                          //echo $selfie;exit;
                           $checkmycad = $this->mykadokaydoc($journeyid, $document);
                           if (!empty($checkmycad)) {
                               if ($checkmycad->status == 'success' && $checkmycad->messageCode == 'api.success') {
