@@ -166,7 +166,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($model){
                     return $model->reftype;
                 },
-                'filter'=>array("Monthly Rental"=>"Monthly Rental","Booking Payment"=>"Booking Payment","Moveout Refund"=>"Moveout Refund","Renovation Payment"=>"Renovation Payment","Insurance"=>"Insurance","Defect Report"=>"Defect Report","Cancellation Refund"=>"Cancellation Refund","Service"=>'Service',"Agent Commision"=>"Agent Commision","Withdrawal"=>"Withdrawal","General"=>"General","Package Purchase"=>"Package Purchase"),
+                'filter'=>array("Monthly Rental"=>"Monthly Rental","Booking Payment"=>"Booking Payment","Moveout Refund"=>"Moveout Refund","Renovation Payment"=>"Renovation Payment","Insurance"=>"Insurance","Defect Report"=>"Defect Report","Cancellation Refund"=>"Cancellation Refund","Service"=>'Service',"Agent Commision"=>"Agent Commision","Withdrawal"=>"Withdrawal","General"=>"General","Package Purchase"=>"Package Purchase","Topup"=>"Topup"),
                 'filterInputOptions' => [
                     'class' => 'form-control',
                     'prompt' => 'All'

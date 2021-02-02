@@ -95,7 +95,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
             //[['name', 'username', 'password', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
-            [['password','education_level','nationality','race','occupation','annual_income','full_name','company_name'], 'string', 'max' => 255],
+            [['password','education_level','nationality','race','occupation','annual_income','full_name','company_name','userid'], 'string', 'max' => 255],
             [['username','current_status','emergency_contact','gender'], 'string', 'max' => 40],
         ];
     }
@@ -149,7 +149,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'facebook_response'=>'Facebook Response',
             'googleuser_id'=>'Google User id',
             'facebookuser_id'=>'Facebook User id',
-            'secondarypassword'=>'Secondary Password'
+            'secondarypassword'=>'Secondary Password',
+            'userid'=>'User ID'
         ];
     }
 

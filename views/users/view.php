@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Agent Card',
                 'value' => function ($model) {
-                    return ($model->image!='')?Html::img(Yii::$app->homeUrl. "uploads/users/".$model->image,['width'=>'50','height'=>'50']):'';
+                    return ($model->image!='')?Html::img(Yii::$app->homeUrl. "uploads/users/".$model->image,['width'=>'200','height'=>'200']):'';
                 },
                 'format' => 'raw',
             ],

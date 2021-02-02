@@ -34,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter'=>array('Superadmin'=>'Superadmin','User'=>'User','PE'=>'PE','FE'=>'FE','OE'=>'OE','Agent'=>'Agent','Cleaner'=>'Cleaner','Mover'=>'Mover','Laundry'=>'Laundry','Handyman'=>'Handyman'),
 
                 ],
+                'userid',
                 'email',
                 'full_name',
                 'document_no',
@@ -70,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             return ($model->role=='Agent' || $model->role=='Cleaner' || $model->role=='Mover' || $model->role=='Laundry' || $model->role=='Handyman');
                         },
                         'unsuspend' => function ($model) {
-                            return ($model->role=='Agent' && $model->status==3);
+                            return ($model->status==3);
                         },
                         'delete' => function ($model) {
                             return ($model->status==1);
