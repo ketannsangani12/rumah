@@ -455,6 +455,7 @@ class Common extends Component
                     $transaction->request_id = $model->id;
                     $transaction->landlord_id = $model->landlord_id;
                     $transaction->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
+                    $transaction->payment_id=$payment_id;
                     $transaction->amount = $totalamount;
                     $transaction->sst = $sst;
                     $transaction->discount = $discount;

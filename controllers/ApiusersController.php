@@ -3575,7 +3575,7 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if(!empty($_POST) && (isset($_POST['todo_id']) && $_POST['todo_id']!='') || (isset($_POST['package_id']) && $_POST['package_id']!='')) {
+            if(!empty($_POST) && (isset($_POST['todo_id']) && $_POST['todo_id']!='') || (isset($_POST['package_id']) && $_POST['package_id']!='') || isset($_POST['type'])) {
                 if(isset($_POST['package_id']) && $_POST['package_id']!=''){
                     $packagedetails = Packages::findOne($_POST['package_id']);
                     $payment = new Payments();
@@ -3594,6 +3594,23 @@ class ApiusersController extends ActiveController
 
                     }
 
+                }else if($_POST['type']!='' && $_POST['type']='topup' && $_POST['amount']!=''){
+                    $payment = new Payments();
+                    $payment->user_id = $this->user_id;
+                    $payment->package_id = NULL;
+                    $payment->todo_id = NULL;
+                    $payment->order_id = time().uniqid();
+                    $payment->amount = $_POST['amount'];
+                    $payment->total_amount = $_POST['amount'];
+                    $payment->status = 'Pending';
+                    $payment->created_at = date('Y-m-d H:i:s');
+                    if($payment->save(false)){
+                        return array('status' => 1, 'order_id' => $payment->order_id);
+
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
                 }else {
                     $systemaccount = Yii::$app->common->getsystemaccount();
                     $user_id = $this->user_id;

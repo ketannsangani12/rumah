@@ -9,6 +9,7 @@ use app\models\Packages;
 use app\models\Payments;
 use app\models\Properties;
 use app\models\TodoList;
+use app\models\Topups;
 use app\models\Transactions;
 use app\models\UserPackages;
 use app\models\Users;
@@ -683,6 +684,9 @@ class SiteController extends Controller
                     $packagedetail = Packages::findOne($transaction->package_id);
                     $detail = "Purchase Package - ".$packagedetail->name;
                     //$hashed_string = md5($secretkey . $detail . $transaction->amount . $_GET['order_id']);
+                }else if($transaction->package_id==NULL && $transaction->todo_id==NULL){
+                    $detail = "Topup Wallet";
+
                 }else {
                     $tododetails = TodoList::findOne($transaction->todo_id);
                     $detail = $tododetails->reftype;
@@ -801,6 +805,7 @@ class SiteController extends Controller
                                 $transactionmodel->amount = $transaction->total_amount;
                                 $transactionmodel->total_amount = $transaction->total_amount;
                                 $transactionmodel->package_id = $model->id;
+                                $transactionmodel->payment_id = $transaction->id;
                                 $transactionmodel->created_at = date('Y-m-d H:i:s');
                                 $transactionmodel->reftype = 'Package Purchase';
                                 $transactionmodel->status = 'Completed';
@@ -829,6 +834,50 @@ class SiteController extends Controller
 
                             }
 
+                        }else if($transaction->package_id==NULL && $transaction->todo_id==NULL){
+                                $userbalance = Users::getbalance($transaction->user_id);
+
+                                $model = new Topups();
+                                $model->amount =  $transaction->amount;
+                                $model->total_amount = $transaction->total_amount;
+                                $model->oldbalance = $userbalance;
+                                $model->newbalance = $userbalance + $model->amount;
+                                $model->status = 'Completed';
+                                $model->created_at = date('Y-m-d H:i:s');
+                                if($model->save(false)){
+                                    $transactionmodel = new Transactions();
+                                    $transactionmodel->user_id = $model->user_id;
+                                    $transactionmodel->amount = $transaction->amount;
+                                    $transactionmodel->total_amount = $transaction->amount;
+                                    $transactionmodel->topup_id = $model->id;
+                                    $transactionmodel->payment_id = $transaction->id;
+                                    $transactionmodel->created_at = date('Y-m-d H:i:s');
+                                    $transactionmodel->reftype = 'Topup';
+                                    $transactionmodel->status = 'Completed';
+                                    if($transactionmodel->save(false)){
+                                        $lastid = $transactionmodel->id;
+                                        $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                                        $transactionmodel->reference_no = $reference_no;
+                                        if($transactionmodel->save()){
+                                            Users::updatebalance($userbalance + $model->amount,$transaction->user_id);
+                                            $transaction1->commit();
+                                            echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
+                                            exit;
+                                        }else{
+                                            $transaction1->rollBack(); // if save fails then rollback
+                                            echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
+                                            exit;                                        }
+                                    }else{
+                                        $transaction1->rollBack();
+                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
+                                        exit;                                    }
+
+                                }else{
+                                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
+                                    exit;
+                                }
+
+
                         } else {
                             $post['amount'] = $transaction->amount;
                             $post['discount'] = $transaction->discount;
@@ -854,6 +903,8 @@ class SiteController extends Controller
                     } catch (Exception $e) {
                         // # if error occurs then rollback all transactions
                         $transaction1->rollBack();
+                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
+                        exit;
                     }
                 }else{
                     echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Something went wrong, Please try again34.</h1></body></html>';
