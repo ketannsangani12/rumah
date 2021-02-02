@@ -2041,9 +2041,6 @@ class ApipartnersController extends ActiveController
                     Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,$user_id,$model->property_id,$model->id);
 
                     Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
-                    Yii::$app->common->Savenotification($user_id,$subject,$textmessage,$model->user_id,$model->property_id,$model->id);
-
-                    Yii::$app->common->Sendpushnotification($user_id,$subject,$textmessage,'Partner');
 
                     return array('status' => 1, 'message' => 'You have submitted appointment successfully.');
 

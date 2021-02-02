@@ -7016,4 +7016,35 @@ public function actionMsctrustgate()
 
 
 
+    public function actionCheckpaymentstatus()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $user_id = $this->user_id;
+            if(!empty($_POST) &&  isset($_POST['order_id']) && $_POST['order_id']!=''){
+                $payments = Payments::find()->where(['order_id'=>$_POST['order_id'],'user_id'=>$user_id])->one();
+                if(!empty($payments)){
+                    if($payments->status==2){
+                        $transaction = Transactions::find()->where(['payment_id'=>$payments->id])->one();
+                        return array('status' => 1,'message'=>'Your payment is successful.','payment_id'=>$payments->id,'reference_no'=>$transaction->reference_no);
+                    }elseif ($payments->status==3){
+                        return array('status' => 1,'message'=>'Your payment is failed.');
+                    }else{
+                        return array('status' => 1,'message'=>'Your payment is pending.');
+                    }
+                }else{
+                    return array('status' => 0, 'message' => 'Something went wrong please try after sometimes.');
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+
+    }
+
+
+
 }

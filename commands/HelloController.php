@@ -446,5 +446,67 @@ class HelloController extends Controller
 
 
     }
+    public function actionSendappointmentreminder(){
+        $tomorrow = date("Y-m-d", strtotime('tomorrow'));
+        $appointments = TodoList::find()->where(['reftype'=>'Appointment','status'=>'Pending'])->andWhere(['appointment_date'=>$tomorrow])->orWhere(['appointment_date'=>date('Y-m-d')])->all();
+        //print_r($appointments);exit;
+        if(!empty($appointments)){
+            foreach ($appointments as $appointment){
+                $timerange = $appointment['appointment_time'];
+                $timearray = explode('-',$timerange);
+                $starttime = date("H:i", strtotime($timearray[0]));
+                $nowtime = date('H:i');
+                $twohours = date('H:i',strtotime('-2 hours',strtotime($timearray[0])));
+                if($starttime==$nowtime && $tomorrow==$appointment['appointment_date']){
+                    $subject = 'Viewing appointment reminder 24 hours before';
+                    $textmessage = 'You have a viewing appointment to attend tomorrow. Goes to “To Do” to check the time.';
+                    if($appointment->agent_id!=''){
+                        Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->agent_id,$appointment->property_id,$appointment->id);
+
+                        Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
+
+                        Yii::$app->common->Savenotification($appointment->agent_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
+
+                        Yii::$app->common->Sendpushnotification($appointment->agent_id,$subject,$textmessage,'Partner');
+
+                    }else if($appointment->landlord_id!=''){
+                        Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->landlord_id,$appointment->property_id,$appointment->id);
+
+                        Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
+                        Yii::$app->common->Savenotification($appointment->landlord_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
+
+                        Yii::$app->common->Sendpushnotification($appointment->landlord_id,$subject,$textmessage,'User');
+
+                    }
+
+                }elseif (date('Y-m-d')==$appointment['appointment_date'] && $twohours==$nowtime){
+
+                    $subject = 'Viewing appointment reminder 2 hours before';
+                    $textmessage = 'You have a viewing appointment to attend 2 hours later. Get prepared.';
+                    if($appointment->agent_id!=''){
+                        Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->agent_id,$appointment->property_id,$appointment->id);
+
+                        Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
+
+                        Yii::$app->common->Savenotification($appointment->agent_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
+
+                        Yii::$app->common->Sendpushnotification($appointment->agent_id,$subject,$textmessage,'Partner');
+
+                    }else if($appointment->landlord_id!=''){
+                        Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->landlord_id,$appointment->property_id,$appointment->id);
+
+                        Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
+                        Yii::$app->common->Savenotification($appointment->landlord_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
+
+                        Yii::$app->common->Sendpushnotification($appointment->landlord_id,$subject,$textmessage,'User');
+
+                    }
+                }
+
+            }
+        }
+
+    }
+
 
 }
