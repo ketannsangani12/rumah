@@ -15,6 +15,7 @@ use app\models\Images;
 use app\models\Istories;
 use app\models\Notifications;
 use app\models\Packages;
+use app\models\Payments;
 use app\models\PromoCodes;
 use app\models\Properties;
 use app\models\PropertyRatings;
@@ -844,6 +845,70 @@ class ApipartnersController extends ActiveController
 
 
     }
+    public function actionPayonline()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST)  && (isset($_POST['package_id']) && $_POST['package_id']!='')) {
+                if(isset($_POST['package_id']) && $_POST['package_id']!=''){
+                    $packagedetails = Packages::findOne($_POST['package_id']);
+                    $payment = new Payments();
+                    $payment->user_id = $this->user_id;
+                    $payment->package_id = $_POST['package_id'];
+                    $payment->order_id = time().uniqid();
+                    $payment->amount = $packagedetails->price;
+                    $payment->total_amount = $packagedetails->price;
+                    $payment->status = 'Pending';
+                    $payment->created_at = date('Y-m-d H:i:s');
+                    if($payment->save(false)){
+                        return array('status' => 1, 'order_id' => $payment->order_id);
+
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
+
+                }
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+        }
+
+    }
+
+    public function actionCheckpaymentstatus()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $user_id = $this->user_id;
+            if(!empty($_POST) &&  isset($_POST['order_id']) && $_POST['order_id']!=''){
+                $payments = Payments::find()->where(['order_id'=>$_POST['order_id'],'user_id'=>$user_id])->one();
+                if(!empty($payments)){
+                    if($payments->status==2){
+                        $transaction = Transactions::find()->where(['payment_id'=>$payments->id])->one();
+                        return array('status' => 1,'message'=>'Your payment is successful.','payment_id'=>$payments->id,'reference_no'=>$transaction->reference_no);
+                    }elseif ($payments->status==3){
+                        return array('status' => 1,'message'=>'Your payment is failed.');
+                    }else{
+                        return array('status' => 1,'message'=>'Your payment is pending.');
+                    }
+                }else{
+                    return array('status' => 0, 'message' => 'Something went wrong please try after sometimes.');
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+
+    }
+
+
 
 
 
@@ -2782,6 +2847,7 @@ class ApipartnersController extends ActiveController
 
 
     }
+
 
 
 }
