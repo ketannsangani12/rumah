@@ -838,6 +838,7 @@ class SiteController extends Controller
                                 $userbalance = Users::getbalance($transaction->user_id);
 
                                 $model = new Topups();
+                                $model->user_id = $transaction->user_id;
                                 $model->amount =  $transaction->amount;
                                 $model->total_amount = $transaction->total_amount;
                                 $model->oldbalance = $userbalance;
@@ -857,7 +858,7 @@ class SiteController extends Controller
                                     if($transactionmodel->save(false)){
                                         $lastid = $transactionmodel->id;
                                         $reference_no = Yii::$app->common->generatereferencenumber($lastid);
-                                        $transactionmodel->reference_no = $reference_no;
+                                        $transactionmodel->reference_no = "TR".$reference_no;
                                         if($transactionmodel->save()){
                                             Users::updatebalance($userbalance + $model->amount,$transaction->user_id);
                                             $transaction1->commit();
