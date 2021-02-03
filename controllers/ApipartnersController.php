@@ -889,7 +889,7 @@ class ApipartnersController extends ActiveController
             if(!empty($_POST) &&  isset($_POST['order_id']) && $_POST['order_id']!=''){
                 $payments = Payments::find()->where(['order_id'=>$_POST['order_id'],'user_id'=>$user_id])->one();
                 if(!empty($payments)){
-                    if($payments->status==2){
+                    if($payments->status=='Completed'){
                         $transaction = Transactions::find()->where(['payment_id'=>$payments->id])->one();
                         return array('status' => 1,'message'=>'Your payment is successful.','payment_id'=>$payments->id,'reference_no'=>$transaction->reference_no);
                     }elseif ($payments->status==3){
