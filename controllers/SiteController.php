@@ -780,7 +780,7 @@ class SiteController extends Controller
             //echo "<pre>";print_r($_POST);exit;
             $transaction = Payments::find()->where(['order_id'=>$_POST['RefNo'],'status'=>'Pending'])->one();
             # if hash is the same then we know the data is valid
-            if(!empty($_POST) && $_POST['Status']==1) {
+            if(!empty($_POST) && $_POST['Status']==0) {
                 # this is a simple result page showing either the payment was successful or failed. In real life you will need to process the order made by the customer
                 if (!empty($transaction)) {
                     $transaction1 = Yii::$app->db->beginTransaction();
@@ -859,7 +859,7 @@ class SiteController extends Controller
                                         $lastid = $transactionmodel->id;
                                         $reference_no = Yii::$app->common->generatereferencenumber($lastid);
                                         $transactionmodel->reference_no = "TR".$reference_no;
-                                        if($transactionmodel->save()){
+                                        if($transactionmodel->save(false)){
                                             Users::updatebalance($userbalance + $model->amount,$transaction->user_id);
                                             $transaction1->commit();
                                             echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
@@ -867,14 +867,16 @@ class SiteController extends Controller
                                         }else{
                                             $transaction1->rollBack(); // if save fails then rollback
                                             echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
-                                            exit;                                        }
+                                            exit;
+                                        }
                                     }else{
                                         $transaction1->rollBack();
-                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
-                                        exit;                                    }
+                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again1234.</h1></body></html>';
+                                        exit;
+                                    }
 
                                 }else{
-                                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
+                                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again12345.</h1></body></html>';
                                     exit;
                                 }
 
@@ -908,7 +910,7 @@ class SiteController extends Controller
                         exit;
                     }
                 }else{
-                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Something went wrong, Please try again34.</h1></body></html>';
+                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Something went wrong, Please try again12345.</h1></body></html>';
                     exit;
                 }
                 //echo "<pre>";print_r($_POST);exit;
