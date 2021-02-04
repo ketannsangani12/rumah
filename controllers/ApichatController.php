@@ -194,12 +194,12 @@ class ApichatController extends ActiveController
                         if($receiver->role=='User'){
                             Yii::$app->common->Savenotification($model->receiver_id,$subject,$textmessage,'',$model->property_id);
 
-                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'User');
+                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'User','chat');
 
                         }else{
                             Yii::$app->common->Savenotification($model->receiver_id,$subject,$textmessage,'',$model->property_id);
 
-                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'Partner');
+                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'Partner','chat');
 
                         }
 

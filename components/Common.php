@@ -2231,7 +2231,7 @@ class Common extends Component
         }
     }
 
-    public function Sendpushnotification($user_id,$subject,$textmessage,$type,$sender_id='',$property_id='',$todo_id=''){
+    public function Sendpushnotification($user_id,$subject,$textmessage,$type,$sender_id='',$property_id='',$todo_id='',$nttype=''){
 
                         if($subject!='' && $textmessage!='' ){
                         $devices = Devices::find()->where(['user_id'=>$user_id])->all();
@@ -2246,12 +2246,21 @@ class Common extends Component
                                 foreach ($devices as $device) {
                                     $message->addRecipient(new Device($device->device_token));
                                 }
+                                if($nttype!=''){
+                                    $message->setNotification($note)
+                                        ->setData([
+                                            'notification_type' => 'chat',
+                                            'title' => $subject,
+                                            'body' => $textmessage
+                                        ]);
+                                }else{
+                                    $message->setNotification($note)
+                                        ->setData([
+                                            'title' => $subject,
+                                            'body' => $textmessage
+                                        ]);
+                                }
 
-                                $message->setNotification($note)
-                                    ->setData([
-                                        'title' => $subject,
-                                        'body' => $textmessage
-                                    ]);
 
                                 $response = Yii::$app->fcm1->send($message);
                                 }else if($type=='Partner'){
@@ -2265,11 +2274,20 @@ class Common extends Component
                                     $message->addRecipient(new Device($device->device_token));
                                 }
 
-                                $message->setNotification($note)
-                                    ->setData([
-                                        'title' => $subject,
-                                        'body' => $textmessage
-                                    ]);
+                                if($nttype!=''){
+                                    $message->setNotification($note)
+                                        ->setData([
+                                            'notification_type' => 'chat',
+                                            'title' => $subject,
+                                            'body' => $textmessage
+                                        ]);
+                                }else{
+                                    $message->setNotification($note)
+                                        ->setData([
+                                            'title' => $subject,
+                                            'body' => $textmessage
+                                        ]);
+                                }
 
                                 $response = Yii::$app->fcm2->send($message);
                             }
