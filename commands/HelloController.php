@@ -447,6 +447,8 @@ class HelloController extends Controller
 
     }
     public function actionSendappointmentreminder(){
+        date_default_timezone_set("Asia/Kuala_Lumpur");
+
         $tomorrow = date("Y-m-d", strtotime('tomorrow'));
         $appointments = TodoList::find()->where(['reftype'=>'Appointment','status'=>'Pending'])->andWhere(['appointment_date'=>$tomorrow])->orWhere(['appointment_date'=>date('Y-m-d')])->all();
         //print_r($appointments);exit;
@@ -461,21 +463,21 @@ class HelloController extends Controller
                     $subject = 'Viewing appointment reminder 24 hours before';
                     $textmessage = 'You have a viewing appointment to attend tomorrow. Goes to “To Do” to check the time.';
                     if($appointment->agent_id!=''){
-                        Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->agent_id,$appointment->property_id,$appointment->id);
+                        \Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->agent_id,$appointment->property_id,$appointment->id);
 
-                        Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
+                        \Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
 
-                        Yii::$app->common->Savenotification($appointment->agent_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
+                        \Yii::$app->common->Savenotification($appointment->agent_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
 
-                        Yii::$app->common->Sendpushnotification($appointment->agent_id,$subject,$textmessage,'Partner');
+                        \Yii::$app->common->Sendpushnotification($appointment->agent_id,$subject,$textmessage,'Partner');
 
                     }else if($appointment->landlord_id!=''){
-                        Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->landlord_id,$appointment->property_id,$appointment->id);
+                        \Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->landlord_id,$appointment->property_id,$appointment->id);
 
-                        Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
-                        Yii::$app->common->Savenotification($appointment->landlord_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
+                        \Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
+                        \Yii::$app->common->Savenotification($appointment->landlord_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
 
-                        Yii::$app->common->Sendpushnotification($appointment->landlord_id,$subject,$textmessage,'User');
+                        \Yii::$app->common->Sendpushnotification($appointment->landlord_id,$subject,$textmessage,'User');
 
                     }
 
@@ -484,21 +486,21 @@ class HelloController extends Controller
                     $subject = 'Viewing appointment reminder 2 hours before';
                     $textmessage = 'You have a viewing appointment to attend 2 hours later. Get prepared.';
                     if($appointment->agent_id!=''){
-                        Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->agent_id,$appointment->property_id,$appointment->id);
+                        \Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->agent_id,$appointment->property_id,$appointment->id);
 
-                        Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
+                        \Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
 
-                        Yii::$app->common->Savenotification($appointment->agent_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
+                        \Yii::$app->common->Savenotification($appointment->agent_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
 
-                        Yii::$app->common->Sendpushnotification($appointment->agent_id,$subject,$textmessage,'Partner');
+                        \Yii::$app->common->Sendpushnotification($appointment->agent_id,$subject,$textmessage,'Partner');
 
                     }else if($appointment->landlord_id!=''){
-                        Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->landlord_id,$appointment->property_id,$appointment->id);
+                        \Yii::$app->common->Savenotification($appointment->user_id,$subject,$textmessage,$appointment->landlord_id,$appointment->property_id,$appointment->id);
 
-                        Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
-                        Yii::$app->common->Savenotification($appointment->landlord_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
+                        \Yii::$app->common->Sendpushnotification($appointment->user_id,$subject,$textmessage,'User');
+                        \Yii::$app->common->Savenotification($appointment->landlord_id,$subject,$textmessage,$appointment->user_id,$appointment->property_id,$appointment->id);
 
-                        Yii::$app->common->Sendpushnotification($appointment->landlord_id,$subject,$textmessage,'User');
+                        \Yii::$app->common->Sendpushnotification($appointment->landlord_id,$subject,$textmessage,'User');
 
                     }
                 }
@@ -508,5 +510,56 @@ class HelloController extends Controller
 
     }
 
+
+    public function actionSendunpaidbillreminder(){
+        date_default_timezone_set("Asia/Kuala_Lumpur");
+
+        $yesterday = date("Y-m-d", strtotime('yesterday'));
+        $bills = TodoList::find()->where(['reftype'=>'General','status'=>'Unpaid'])->andWhere(['due_date'=>$yesterday])->all();
+        if(!empty($bills)){
+            foreach ($bills as $bill){
+                $subject = 'Unpaid bill pending';
+                $textmessage = 'You got one unpaid bill has been due, kindly settle now to avoid any late charges.';
+
+                if($bill->pay_from=='Landlord'){
+                    \Yii::$app->common->Savenotification($bill->landlord_id,$subject,$textmessage,'',$bill->property_id,$bill->id);
+
+                    \Yii::$app->common->Sendpushnotification($bill->landlord_id,$subject,$textmessage,'User');
+
+                }else if($bill->pay_from=='Tenant'){
+                    \Yii::$app->common->Savenotification($bill->user_id,$subject,$textmessage,'',$bill->property_id,$bill->id);
+
+                    \Yii::$app->common->Sendpushnotification($bill->user_id,$subject,$textmessage,'User');
+
+                }
+
+            }
+        }
+
+    }
+
+    public function actionSendunpaidrentalreminder(){
+        date_default_timezone_set("Asia/Kuala_Lumpur");
+
+        $yesterday = date("Y-m-d", strtotime('-7 days'));
+        //echo $yesterday;exit;
+        $bills = TodoList::find()->where(['reftype'=>'Monthly Rental','status'=>'Unpaid'])->andWhere(['DATE(created_at)'=>$yesterday])->all();
+        //echo "<pre>";print_r($bills);exit;
+        if(!empty($bills)){
+            foreach ($bills as $bill){
+                $subject = 'Outstanding monthly rental still pending';
+                $textmessage = 'You got one outstanding rental has been due more than 7 days, kindly settle now to avoid breach of contract & deposits forfeited.';
+
+
+                \Yii::$app->common->Savenotification($bill->user_id,$subject,$textmessage,'',$bill->property_id,$bill->id);
+
+                \Yii::$app->common->Sendpushnotification($bill->user_id,$subject,$textmessage,'User');
+
+
+
+            }
+        }
+
+    }
 
 }

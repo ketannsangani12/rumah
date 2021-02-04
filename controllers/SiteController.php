@@ -1072,7 +1072,6 @@ class SiteController extends Controller
     public function actionSendappointmentreminder(){
         $tomorrow = date("Y-m-d", strtotime('tomorrow'));
         $appointments = TodoList::find()->where(['reftype'=>'Appointment','status'=>'Pending'])->andWhere(['appointment_date'=>$tomorrow])->orWhere(['appointment_date'=>date('Y-m-d')])->all();
-        //print_r($appointments);exit;
         if(!empty($appointments)){
            foreach ($appointments as $appointment){
                $timerange = $appointment['appointment_time'];
@@ -1132,6 +1131,52 @@ class SiteController extends Controller
     }
 
 
+    public function actionSendunpaidbillreminder(){
+        $yesterday = date("Y-m-d", strtotime('yesterday'));
+        $bills = TodoList::find()->where(['reftype'=>'General','status'=>'Unpaid'])->andWhere(['due_date'=>$yesterday])->all();
+        if(!empty($bills)){
+            foreach ($bills as $bill){
+                $subject = 'Unpaid bill pending';
+                $textmessage = 'You got one unpaid bill has been due, kindly settle now to avoid any late charges.';
+
+                if($bill->pay_from=='Landlord'){
+                       Yii::$app->common->Savenotification($bill->landlord_id,$subject,$textmessage,'',$bill->property_id,$bill->id);
+
+                       Yii::$app->common->Sendpushnotification($bill->landlord_id,$subject,$textmessage,'User');
+
+                   }else if($bill->pay_from=='Tenant'){
+                       Yii::$app->common->Savenotification($bill->user_id,$subject,$textmessage,'',$bill->property_id,$bill->id);
+
+                       Yii::$app->common->Sendpushnotification($bill->user_id,$subject,$textmessage,'User');
+
+                   }
+
+            }
+          }
+
+    }
+
+    public function actionSendunpaidrentalreminder(){
+        $yesterday = date("Y-m-d", strtotime('-7 days'));
+        //echo $yesterday;exit;
+        $bills = TodoList::find()->where(['reftype'=>'Monthly Rental','status'=>'Unpaid'])->andWhere(['DATE(created_at)'=>$yesterday])->all();
+        //echo "<pre>";print_r($bills);exit;
+        if(!empty($bills)){
+            foreach ($bills as $bill){
+                $subject = 'Outstanding monthly rental still pending';
+                $textmessage = 'You got one outstanding rental has been due more than 7 days, kindly settle now to avoid breach of contract & deposits forfeited.';
+
+
+                    Yii::$app->common->Savenotification($bill->user_id,$subject,$textmessage,'',$bill->property_id,$bill->id);
+
+                    Yii::$app->common->Sendpushnotification($bill->user_id,$subject,$textmessage,'User');
+
+
+
+            }
+        }
+
+    }
 
 
 

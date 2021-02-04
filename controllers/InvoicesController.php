@@ -141,7 +141,6 @@ class InvoicesController extends Controller
 
                     }
                     if ($flag) {
-                        $transaction->commit();
                         $subject = 'Unpaid Bill';
                         $textmessage = 'You got one unpaid bill pending for action, kindly settle now to avoid any late charges.';
                         if($modelCustomer->pay_from=='Tenant'){
@@ -153,6 +152,7 @@ class InvoicesController extends Controller
 
                             Yii::$app->common->Sendpushnotification($modelCustomer->landlord_id,$subject,$textmessage,'User');
                         }
+                        $transaction->commit();
 
 
                         return $this->redirect(['index']);
