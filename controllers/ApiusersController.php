@@ -1845,10 +1845,10 @@ class ApiusersController extends ActiveController
 
                 if($sort!=''){
                     if($sort=='price'){
-                        $query1->orderBy(['price' => SORT_ASC]);
+                        $query1->orderBy(['price' => SORT_DESC]);
 
                     }else if($sort=='posting_date'){
-                        $query1->orderBy(['created_at' => SORT_ASC]);
+                        $query1->orderBy(['created_at' => SORT_DESC]);
 
                     }
 

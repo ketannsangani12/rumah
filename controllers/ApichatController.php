@@ -300,7 +300,7 @@ class ApichatController extends ActiveController
 
 
             $sender_id = $this->userId;
-            $receiver_id = $_POST['sender_id'];
+            $receiver_id = $_POST['receiver_id'];
             $property_id = $_POST['property_id'];
             $delete = Yii::$app->db->createCommand("
     DELETE FROM rumah_chats 
