@@ -50,7 +50,7 @@ class Transactions extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['reference_no', 'property_id', 'user_id', 'landlord_id', 'promo_code', 'request_id', 'coins'], 'integer'],
+            [['reference_no', 'property_id', 'user_id', 'landlord_id', 'promo_code', 'request_id', 'coins','payment_id'], 'integer'],
             [['user_id','amount'],'required','on'=>'createtopup'],
             [['amount', 'discount', 'total_amount', 'olduserbalance', 'oldlandlordbalance', 'oldvendorbalance', 'newuserbalance', 'newlandlordbalance', 'newvendorcbalance'], 'number'],
             [['reftype', 'status'], 'string'],
