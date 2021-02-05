@@ -960,7 +960,7 @@ class SiteController extends Controller
                 //echo "<pre>";print_r($_POST);exit;
 
             }else{
-                $transaction->status = 'Completed';
+                $transaction->status = 'Failed';
                 $transaction->response = json_encode($_POST);
                 $transaction->save(false);
             }
