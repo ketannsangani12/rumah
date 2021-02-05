@@ -707,7 +707,7 @@ class SiteController extends Controller
                 }
             }else if($_REQUEST['Status']==0) {
                 $transaction->response = json_encode($_REQUEST);
-                $transaction->status = 3;
+                $transaction->status = 'Failed';
                 $transaction->save(false);
 
 
