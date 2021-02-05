@@ -599,6 +599,7 @@ class SiteController extends Controller
                                 $transactionmodel->amount = $transaction->total_amount;
                                 $transactionmodel->total_amount = $transaction->total_amount;
                                 $transactionmodel->package_id = $model->id;
+                                $transactionmodel->payment_id = $transaction->id;
                                 $transactionmodel->created_at = date('Y-m-d H:i:s');
                                 $transactionmodel->reftype = 'Package Purchase';
                                 $transactionmodel->status = 'Completed';
@@ -627,6 +628,49 @@ class SiteController extends Controller
                                 }
 
                             }
+
+                        }else if($transaction->package_id==NULL && $transaction->todo_id==NULL){
+                            $userbalance = Users::getbalance($transaction->user_id);
+
+                            $model = new Topups();
+                            $model->user_id = $transaction->user_id;
+                            $model->amount =  $transaction->amount;
+                            $model->total_amount = $transaction->total_amount;
+                            $model->oldbalance = $userbalance;
+                            $model->newbalance = $userbalance + $model->amount;
+                            $model->status = 'Completed';
+                            $model->created_at = date('Y-m-d H:i:s');
+                            if($model->save(false)){
+                                $transactionmodel = new Transactions();
+                                $transactionmodel->user_id = $model->user_id;
+                                $transactionmodel->amount = $transaction->amount;
+                                $transactionmodel->total_amount = $transaction->amount;
+                                $transactionmodel->topup_id = $model->id;
+                                $transactionmodel->payment_id = $transaction->id;
+                                $transactionmodel->created_at = date('Y-m-d H:i:s');
+                                $transactionmodel->reftype = 'Topup';
+                                $transactionmodel->status = 'Completed';
+                                if($transactionmodel->save(false)){
+                                    $lastid = $transactionmodel->id;
+                                    $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                                    $transactionmodel->reference_no = "TR".$reference_no;
+                                    if($transactionmodel->save(false)){
+                                        Users::updatebalance($userbalance + $model->amount,$transaction->user_id);
+                                        $transaction1->commit();
+                                        echo "RECEIVEOK";exit;
+                                    }else{
+                                        $transaction1->rollBack(); // if save fails then rollback
+                                        echo "FAILED";exit;
+                                    }
+                                }else{
+                                    $transaction1->rollBack();
+                                    echo "FAILED";exit;
+                                }
+
+                            }else{
+                                echo "FAILED";exit;
+                            }
+
 
                         } else {
                             $post['amount'] = $transaction->amount;
