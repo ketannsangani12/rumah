@@ -7046,7 +7046,7 @@ public function actionMsctrustgate()
                     if($payments->status=='Completed'){
                         $transaction = Transactions::find()->where(['payment_id'=>$payments->id])->one();
                         return array('status' => 1,'message'=>'Your payment is successful.','payment_id'=>$payments->id,'reference_no'=>$transaction->reference_no);
-                    }elseif ($payments->status==3){
+                    }elseif ($payments->status=='Failed'){
                         return array('status' => 1,'message'=>'Your payment is failed.');
                     }else{
                         return array('status' => 1,'message'=>'Your payment is pending.');
