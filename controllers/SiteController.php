@@ -799,7 +799,7 @@ class SiteController extends Controller
                             $model->end_date = date('Y-m-d', strtotime('+1 years'));
                             $model->created_at = date('Y-m-d H:i:s');
                             $model->updated_at = date('Y-m-d H:i:s');
-                            if ($model->save()) {
+                            if ($model->save(false)) {
                                 $transactionmodel = new Transactions();
                                 $transactionmodel->user_id = $model->user_id;
                                 $transactionmodel->amount = $transaction->total_amount;
