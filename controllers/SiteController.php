@@ -822,9 +822,9 @@ class SiteController extends Controller
         $secretkey = '17921-867';
 
             //echo "<pre>";print_r($_POST);exit;
-            $transaction = Payments::find()->where(['order_id'=>'1612535055601d550f4a9a9','status'=>'Pending'])->one();
+            $transaction = Payments::find()->where(['order_id'=>$_POST['RefNo'],'status'=>'Pending'])->one();
             # if hash is the same then we know the data is valid
-            //if(!empty($_POST) && $_POST['Status']==1) {
+            if(!empty($_POST) && $_POST['Status']==1) {
                 # this is a simple result page showing either the payment was successful or failed. In real life you will need to process the order made by the customer
                 if (!empty($transaction)) {
                     $transaction1 = Yii::$app->db->beginTransaction();
@@ -959,11 +959,11 @@ class SiteController extends Controller
                 }
                 //echo "<pre>";print_r($_POST);exit;
 
-//            }else{
-//                $transaction->status = 'Completed';
-//                $transaction->response = json_encode($_POST);
-//                $transaction->save(false);
-//            }
+            }else{
+                $transaction->status = 'Completed';
+                $transaction->response = json_encode($_POST);
+                $transaction->save(false);
+            }
     }
 
     public function actionRequery(){
