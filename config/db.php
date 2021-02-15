@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=127.0.0.1;port=8889;dbname=rumahlive;unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock',
-    'username' => 'root',
-    'password' => 'root',
+    'dsn' => 'mysql:host=database-1.cfiqwi1ureim.ap-southeast-1.rds.amazonaws.com;dbname=rumah;unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock',
+    'username' => 'admin',
+    'password' => 'rumah%zxc',
     'charset' => 'utf8',
     'tablePrefix' => 'rumah_',
     // Schema cache options (for production environment)
