@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     'value' => 'user.full_name',
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->asArray()->all(), 'id', function($model) {
-                        return $model['full_name'];
+                        return $model['userid'] ." - ". $model['full_name'];
                     }),
                     'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
                     'filterWidgetOptions' => [

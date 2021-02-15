@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     'value' => 'user.full_name',
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in', 'role', ['User','Agent']])->asArray()->all(), 'id', function($model) {
-                        return $model['full_name'];
+                        return $model['userid'] ." - ". $model['full_name'];
                     }),
                     'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
                     'filterWidgetOptions' => [
@@ -70,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     'value' => 'vendor.full_name',
                     'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in', 'role', ['Cleaner','Mover','Laundry','Handyman']])->asArray()->all(), 'id', function($model) {
-                        return $model['full_name'];
+                        return $model['userid']."-". $model['full_name'];
                     }),
                     'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
                     'filterWidgetOptions' => [

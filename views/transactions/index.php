@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return (isset($model->user->full_name))?$model->user->full_name:'';
                 },
                 'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>'User'])->asArray()->all(), 'id', function($model) {
-                    return $model['full_name'];
+                    return $model['userid'] ." - ". $model['full_name'];
                 }),
                 'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
                 'filterWidgetOptions' => [
@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return (isset($model->landlord->full_name))?$model->landlord->full_name:'';
                 },
                 'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['role'=>'User'])->asArray()->all(), 'id', function($model) {
-                    return $model['full_name'];
+                    return $model['userid']."-". $model['full_name'];
                 }),
                 'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
                 'filterWidgetOptions' => [
@@ -92,7 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return (isset($model->vendor->full_name))?$model->vendor->full_name:'';
                 },
                 'filter'=>\yii\helpers\ArrayHelper::map(\app\models\Users::find()->where(['in','role',['Cleaner','Mover','Laundry','Handyman']])->asArray()->all(), 'id', function($model) {
-                    return $model['full_name'];
+                    return $model['userid'] ." - ". $model['full_name'];
                 }),
                 'filterType' => \kartik\grid\GridView::FILTER_SELECT2,
                 'filterWidgetOptions' => [
