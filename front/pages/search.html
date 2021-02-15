@@ -3,7 +3,7 @@
     <div class="search-box text-center width-100">
       <input type="text" style="background: #fff !important;border: 1px solid #eee;" class="pdr-50" options="autoCompleteOption" placeholder="Type location" ng-model="formData.location" autocomplete="off" ng-change="search()" g-places-autocomplete force-selection="true" name="location">
       <img src="img/search.svg" style="position: absolute; left: 15px; top: 15px;">
-      <span class="red-text font-16" style="position: absolute; top: 17px; right: 20px;" ng-click="filter.show()">Filter</span>
+      <span class="red-text font-16" style="position: absolute; top: 20px; right: 10px;" ng-click="filter.show()">Filter</span>
     </div>
   </div>
   <div scroll="false" class="flex pdl-20 pdr-20" ng-show="filter.display" style="background: transparent;">
@@ -24,9 +24,9 @@
             <div class="flex flex-dc br-5 pdl-15 pdr-15 pdt-15 pdb-15" style="width: 54%;">
               <div class="flex width-100">
                 <div class="flex flex-dc width-90" ng-click="openDetail(v.id)">
-                  <label class="font-18">{{v.title}}</label>
+                  <label class="font-16">{{v.title}}</label>
                   <span class="opacity-50">{{getSimplifyLocation(v.location)}}</span>
-                  <label class="fw-600 font-20 mrt-10">RM {{v.price}}</label>
+                  <label class="fw-600 font-18 mrt-10">RM {{v.price}}</label>
                 </div>
               </div>
               <div ng-click="openDetail(v.id)" class="pdt-10 pdb-10 opacity-50">
