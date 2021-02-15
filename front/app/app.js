@@ -89,11 +89,11 @@ angular.module('app', ['ionic', 'ui.router', 'app.controllers', 'app.routes', 'a
               'message: ' + error.message + '\n');
   };
 
-  $rootScope.apiurl = 'https://www.rumah-i.com';
+  $rootScope.apiurl = 'https://admin.rumah-i.com/';
 
   $rootScope.autoCompleteOption = {
     componentRestrictions: {country: "my"}
   };
 
 });
-APIURL = 'https://www.rumah-i.com';
+APIURL = 'https://admin.rumah-i.com/';

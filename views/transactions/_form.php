@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
         //print_r($properties);exit;
         if(!empty($properties)){
             foreach ($properties as $property){
-                $data1[$property['id']] = $property['full_name'];
+                $data1[$property['id']] = $property['userid']."-". $property['full_name'];
             }
         }else{
             $data1 = array();
