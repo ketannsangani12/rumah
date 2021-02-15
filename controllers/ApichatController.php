@@ -120,7 +120,7 @@ class ApichatController extends ActiveController
 
             $query = Chats::find()->select(['case when (sender_id = '.$this->userId.') then receiver_id else sender_id end as opponent_id','rumah_chats.id','msg','msg_type','rumah_chats.created_at','rumah_chats.property_id','rumah_chats.sender_id','rumah_chats.receiver_id'])
                 ->orderBy([
-                    'rumah_chats.created_at' => SORT_DESC
+                    'rumah_chats.id' => SORT_DESC
                 ])
                 ->joinWith(['sender'=>function($q) use ($baseurl){
                     $q->select(['id','full_name','role','case when rumah_users.image != "" then CONCAT("'.$baseurl.'/uploads/users/",rumah_users.image) else "" end as image']);
