@@ -193,15 +193,16 @@ class ApichatController extends ActiveController
                         $subject = 'New Message';
                         $textmessage = $sender->full_name.' just text you, check Rumah-i inbox';
                         if($receiver->role=='User'){
-                            Yii::$app->common->Savenotification($model->receiver_id,$subject,$textmessage,'',$model->property_id);
 
-                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'User','chat');
+                            //Yii::$app->common->Savenotification($model->receiver_id,$subject,$textmessage,'',$model->property_id);
+
+                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'User','','','','chat');
 
                         }else{
-                            Yii::$app->common->Savenotification($model->receiver_id,$subject,$textmessage,'',$model->property_id);
 
-                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'Partner','chat');
+                            //Yii::$app->common->Savenotification($model->receiver_id,$subject,$textmessage,'',$model->property_id);
 
+                            Yii::$app->common->Sendpushnotification($model->receiver_id,$subject,$textmessage,'Partner','','','','chat');
                         }
 
                         return array('status' => 1, 'message' => 'You have added chat msg successfully.','data'=>$lastmessage);
