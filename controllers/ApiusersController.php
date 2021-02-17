@@ -6379,8 +6379,7 @@ public function actionPaysuccess(){
 
                                       }
                                   }else{
-                                      print_r($checkpassport);exit;
-                                      return array('status' => 0, 'message' => 'please upload passport again. (Error : '.$checkpassport->message.')');
+                                      return array('status' => 0, 'message' => 'please upload passport again. (Error : '.$checkscoreandface->message.')');
 
                                   }
 
