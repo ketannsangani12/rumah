@@ -235,7 +235,7 @@ class ApichatController extends ActiveController
             if(!isset($_POST['property_id']) || $_POST['property_id']==''){
                 echo json_encode(array('status' => 0, 'message' => 'Property id is required'));exit;
             }
-            $query = Chats::find()
+            $query = Chats::find()->select(['rumah_chats.id','msg','msg_type','rumah_chats.created_at','rumah_chats.property_id','rumah_chats.sender_id','rumah_chats.receiver_id'])
                 ->orderBy([
                     'rumah_chats.id' => SORT_DESC
                 ])
