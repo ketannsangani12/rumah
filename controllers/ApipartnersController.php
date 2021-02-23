@@ -2801,18 +2801,19 @@ class ApipartnersController extends ActiveController
                             $mytransactions[$key]['items'] = $items;
                             break;
                         case "Withdrawal";
-                            switch ($transaction->withdrawal->status){
-                                case "Pending";
-                                    $status = "Pending";
-                                    break;
-                                case "Completed";
-                                    $status = "Completed";
-                                    break;
-                                case "Declined";
-                                    $status = "Declined";
-                                    break;
-
-                            }
+//                            switch ($transaction->withdrawal->status){
+//                                case "Pending";
+//                                    $status = "Pending";
+//                                    break;
+//                                case "Completed";
+//                                    $status = "Completed";
+//                                    break;
+//                                case "Declined";
+//                                    $status = "Declined";
+//                                    break;
+//
+//                            }
+                            $status = $transaction->withdrawal->status;
                             $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                             $mytransactions[$key]['name'] = "";
                             $mytransactions[$key]['title'] = "Withdrawal";
