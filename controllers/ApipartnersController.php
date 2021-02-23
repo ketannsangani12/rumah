@@ -2802,14 +2802,14 @@ class ApipartnersController extends ActiveController
                             break;
                         case "Withdrawal";
                             switch ($transaction->withdrawal->status){
-                                case 1;
+                                case "Pending";
                                     $status = "Pending";
                                     break;
-                                case 2;
+                                case "Completed";
                                     $status = "Completed";
                                     break;
-                                case 3;
-                                    $status = "Rejected";
+                                case "Declined";
+                                    $status = "Declined";
                                     break;
 
                             }

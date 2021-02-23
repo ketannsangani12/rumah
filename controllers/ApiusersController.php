@@ -1668,7 +1668,7 @@ class ApiusersController extends ActiveController
                     $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
                     $userdetails = Users::findOne($this->user_id);
                     if($mypropertiescount >= $userdetails->property_credited){
-                        return array('status' => 0, 'message' => 'You have already exceeded limit of Post Property. So Please purchase package');
+                        //return array('status' => 0, 'message' => 'You have already exceeded limit of Post Property. So Please purchase package');
 
                     }
                     $pictures = $propertymodel->pictures;
@@ -2105,7 +2105,7 @@ class ApiusersController extends ActiveController
 
                                 Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
 
-                                return array('status' => 1, 'message' => 'You have sent request successfully.');
+                                return array('status' => 1, 'message' => 'You have sent booking request successfully.');
 
                             } else {
                                 $transaction->rollBack();
@@ -2435,13 +2435,13 @@ class ApiusersController extends ActiveController
                                 }
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
-                                    $subtotal = $model->tenancy_fees+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit-$model->booking_fees;
-                                    $sst = number_format($model->tenancy_fees * 6 / 100, 2, '.', '');
-
-                                // $sst = Yii::$app->common->calculatesst($subtotal);
-                                    $model->subtotal = $subtotal;
+                                    $subtotal = $model->tenancy_fees+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit;
+                                    $sst = number_format($subtotal * 6 / 100, 2, '.', '');
+                                    $bookingfees = $model->booking_fees;
+                                    $stamp_duty = $model->stamp_duty;
+                                    $model->subtotal = $subtotal+$stamp_duty-$bookingfees;
                                     $model->sst = $sst;
-                                    $model->total = $subtotal+$sst;
+                                    $model->total = $subtotal+$stamp_duty-$bookingfees+$sst;
                                     $model->commencement_date = date('Y-m-d',strtotime($model->commencement_date));
                                     $full_name = $model->full_name;
                                     $identification_no = $model->identification_no;
@@ -2452,7 +2452,6 @@ class ApiusersController extends ActiveController
                                     $usermodel->document_no = $identification_no;
                                     $usermodel->save();
                                     $kyc_document = $model->kyc_document;
-                                    //$spa_document = $model->spa_document;
                                     $model->kyc_document = null;
                                     //$model->spa_document = null;
                                     $filename = uniqid();
@@ -3967,7 +3966,11 @@ public function actionPaysuccess(){
 
                        if ($status == 'Accepted') {
                            $totalamount = $amount;
-                           $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+                           $amountwithoutsst = $todomodel->subtotal;
+                           $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                           $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                           $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                          // echo $totalamount."<br>".$amountwithoutsst."<br>".$tr."<br>".$sstafterdiscount."<br>".$totalamountafterdiscount;exit;
                            $senderbalance = Users::getbalance($todomodel->landlord_id);
                            if ($senderbalance < $totalamountafterdiscount) {
                                return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
@@ -3985,16 +3988,17 @@ public function actionPaysuccess(){
                                    $transactionmodel->renovation_quote_id = $todomodel->renovation_quote_id;
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                   $transactionmodel->amount = $totalamount;
+                                   $transactionmodel->amount = $amountwithoutsst;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;
+                                   $transactionmodel->sst = $sstafterdiscount;
                                    $transactionmodel->coins_savings = $coins_savings;
                                    $transactionmodel->total_amount = $totalamountafterdiscount;
                                    $transactionmodel->type = 'Payment';
                                    $transactionmodel->reftype = 'Renovation Payment';
                                    $transactionmodel->status = 'Completed';
                                    $transactionmodel->created_at = date('Y-m-d H:i:s');
-                                   if ($transactionmodel->save()) {
+                                   if ($transactionmodel->save(false)) {
                                        $flag = false;
                                        $lastid = $transactionmodel->id;
                                        $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
@@ -4035,7 +4039,7 @@ public function actionPaysuccess(){
                                                if($goldcoins>0) {
                                                    Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                }
-                                               $gold_coins = $totalamountafterdiscount*1.5;
+                                               $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                                Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
 
 //                                               if ($goldcoins > 0) {
@@ -4116,8 +4120,14 @@ public function actionPaysuccess(){
                    if($todomodel->status == 'Unpaid') {
                        if ($status == 'Accepted') {
                            $totalpayableamount = $todomodel->total;
+                           $totalamount = $amount;
+                           $amountwithoutsst = $todomodel->subtotal;
+                           $totaldiscount = $discount+$coins_savings;
+                           $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                           $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                           $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
                            $senderbalance = Users::getbalance($todomodel->landlord_id);
-                           if ($totalpayableamount > $senderbalance) {
+                           if ($totalamountafterdiscount > $senderbalance) {
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                            }
@@ -4127,16 +4137,14 @@ public function actionPaysuccess(){
                                $sst = $todomodel->sst;
 
                                if (!empty($todoitems)) {
-                                   $totalamount = $amount;
-                                   $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
 
                                    $transactionmodel = new Transactions();
                                    $transactionmodel->landlord_id = $todomodel->landlord_id;
                                    $transactionmodel->property_id = $todomodel->property_id;
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                   $transactionmodel->amount = $totalamount;
-                                   $transactionmodel->sst = $todomodel->sst;
+                                   $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                                   $transactionmodel->sst = $sstafterdiscount;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;
                                    $transactionmodel->coins_savings = $coins_savings;
@@ -4181,7 +4189,7 @@ public function actionPaysuccess(){
                                                if($goldcoins>0) {
                                                    Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                }
-                                               $gold_coins = $totalamountafterdiscount*1.5;
+                                               $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                                Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->landlord_id);
                                                $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
@@ -4249,6 +4257,20 @@ public function actionPaysuccess(){
                            if ($todomodel->save()) {
                                $todoitems = $todomodel->todoItems;
                                $totalpayableamount = $todomodel->total;
+                               $totalamount = $amount;
+                               $amountwithoutsst = $todomodel->subtotal;
+                               $totaldiscount = $discount+$coins_savings;
+                               $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                               if($todomodel->is_sst==1){
+                                   $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                                   $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+
+                               }else{
+                                   $sstafterdiscount = $todomodel->sst;
+                                   $totalamountafterdiscount = $totalamountafterdiscount;
+                               }
+
+
                                if ($todomodel->pay_from == 'Tenant') {
                                    $senderbalance = Users::getbalance($todomodel->user_id);
 
@@ -4257,15 +4279,12 @@ public function actionPaysuccess(){
 
                                }
 
-                               if ($totalpayableamount > $senderbalance) {
+                               if ($totalamountafterdiscount > $senderbalance) {
                                    $transaction->rollBack();
                                    return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                                }
                                if (!empty($todoitems)) {
-                                   $totalamount = $amount;
-                                   $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
-
 
                                    $transactionmodel = new Transactions();
                                    if ($todomodel->pay_from == 'Tenant') {
@@ -4278,8 +4297,8 @@ public function actionPaysuccess(){
                                    $transactionmodel->property_id = $todomodel->property_id;
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                   $transactionmodel->amount = $totalamount;
-                                   $transactionmodel->sst = $todomodel->sst;
+                                   $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                                   $transactionmodel->sst = $sstafterdiscount;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;
                                    $transactionmodel->coins_savings = $coins_savings;
@@ -4329,8 +4348,8 @@ public function actionPaysuccess(){
                                                if($goldcoins>0) {
                                                    Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                }
-                                               $gold_coins = $totalamountafterdiscount*1.5;
-                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
+//                                               $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
+//                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, ($todomodel->pay_from == 'Tenant') ? $todomodel->user_id : $todomodel->landlord_id);
                                                $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                if ($updatereceiverbalance && $updatesenderbalance) {
@@ -4648,6 +4667,10 @@ public function actionPaysuccess(){
                            $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
                            $totalpayableamount = $todomodel->total;
                            $sst = $todomodel->sst;
+                           $amountwithoutsst = $todomodel->subtotal;
+                           $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                           $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                           $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
 
                            $senderbalance = Users::getbalance($todomodel->user_id);
                            if ($totalpayableamount > $senderbalance) {
@@ -4656,7 +4679,6 @@ public function actionPaysuccess(){
                            }
                            if (!empty($todoitems)) {
                                $totalamount = $amount;
-                               $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
                                $receiverbalance = Users::getbalance($systemaccount->id);
                                $transactionmodel = new Transactions();
                                $transactionmodel->user_id = $todomodel->user_id;
@@ -4664,7 +4686,7 @@ public function actionPaysuccess(){
                                $transactionmodel->todo_id = $todo_id;
                                $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
                                $transactionmodel->amount = $totalamount;
-                               $transactionmodel->sst = $sst;
+                               $transactionmodel->sst = $sstafterdiscount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
                                $transactionmodel->coins_savings = $coins_savings;
@@ -4708,7 +4730,7 @@ public function actionPaysuccess(){
                                            if($goldcoins>0) {
                                                Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                            }
-                                           $gold_coins = $totalamountafterdiscount*1.5;
+                                           $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                            Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                            $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
                                            $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
@@ -4803,22 +4825,24 @@ public function actionPaysuccess(){
 
                            $todoitems = $todomodel->todoItems;
                            $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
-                           $totalpayableamount = $todomodel->total;
-                           $sst = $todomodel->sst;
+                           $totalamount = $amount;
+                           $amountwithoutsst = $todomodel->subtotal;
+                           $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                           $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                           $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
                            $systemaccount = Yii::$app->common->getsystemaccount();
                            $systemaccountbalance = $systemaccount->wallet_balance;
 
                            $senderbalance = Users::getbalance($todomodel->user_id);
                            $receiverbalance = Users::getbalance($todomodel->vendor_id);
 
-                           if ($totalpayableamount > $senderbalance) {
+                           if ($totalamountafterdiscount > $senderbalance) {
                                $transaction->rollBack();
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please topup your wallet.');
 
                            }
                            if (!empty($todoitems)) {
-                               $totalamount = $amount;
-                               $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+
                                $transactionmodel = new Transactions();
                                $transactionmodel->user_id = $todomodel->user_id;
                                $transactionmodel->property_id = $todomodel->property_id;
@@ -4826,7 +4850,7 @@ public function actionPaysuccess(){
                                $transactionmodel->todo_id = $todo_id;
                                $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
                                $transactionmodel->amount = $totalamount;
-                               $transactionmodel->sst = $sst;
+                               $transactionmodel->sst = $sstafterdiscount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
                                $transactionmodel->coins_savings = $coins_savings;
@@ -4915,11 +4939,11 @@ public function actionPaysuccess(){
                                            if($goldcoins>0) {
                                                Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                            }
-                                           $gold_coins = $totalamountafterdiscount*1.5;
+                                           $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                            Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                            $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
                                            $updatereceiverbalance = Users::updatebalance($receiverbalance + $totaladdedtovendor, $todomodel->vendor_id);
-                                           $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$totalplatform_added+$sst,$systemaccount->id);
+                                           $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$totalplatform_added+$sstafterdiscount,$systemaccount->id);
 
                                            if ($updatereceiverbalance && $updatesenderbalance && $updatesystemaccountbalance) {
                                                $todomodel->payment_date = date('Y-m-d H:i:s');
@@ -6127,14 +6151,14 @@ public function actionPaysuccess(){
                                 break;
                             case "Withdrawal";
                                 switch ($transaction->withdrawal->status){
-                                    case 1;
+                                    case "Pending";
                                         $status = "Pending";
                                         break;
-                                    case 2;
+                                    case "Completed";
                                         $status = "Completed";
                                         break;
-                                    case 3;
-                                        $status = "Rejected";
+                                    case "Declined";
+                                        $status = "Declined";
                                         break;
 
                                 }
