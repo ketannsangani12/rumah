@@ -6187,7 +6187,6 @@ public function actionPaysuccess(){
 
                     }
                 }
-                echo "<pre>";print_r($mytransactions);exit;
                 return array('status' => 1, 'data' => $mytransactions);
 
 
