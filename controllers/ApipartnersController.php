@@ -2801,26 +2801,23 @@ class ApipartnersController extends ActiveController
                             $mytransactions[$key]['items'] = $items;
                             break;
                         case "Withdrawal";
-//                            switch ($transaction->withdrawal->status){
-//                                case "Pending";
-//                                    $status = "Pending";
-//                                    break;
-//                                case "Completed";
-//                                    $status = "Completed";
-//                                    break;
-//                                case "Declined";
-//                                    $status = "Declined";
-//                                    break;
-//
-//                            }
-                            $status = $transaction->withdrawal->status;
                             $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                             $mytransactions[$key]['name'] = "";
                             $mytransactions[$key]['title'] = "Withdrawal";
-                            $mytransactions[$key]['description'] = $status;
+                            $mytransactions[$key]['description'] = $transaction->status;;
                             $mytransactions[$key]['incoming'] = 0;
                             $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
                             $mytransactions[$key]['date'] = date('Y-m-d H:i:s',strtotime($transaction->created_at));
+                            break;
+                        case "Topup";
+                            $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                            $mytransactions[$key]['name'] = "";
+                            $mytransactions[$key]['title'] = "Topup";
+                            $mytransactions[$key]['description'] = $transaction->status;
+                            $mytransactions[$key]['incoming'] = 0;
+                            $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
+                            $mytransactions[$key]['date'] = date('Y-m-d H:i:s', strtotime($transaction->created_at));
+
                             break;
                         case "Agent Commision";
                             $mytransactions[$key]['reference_no'] = $transaction->reference_no;
