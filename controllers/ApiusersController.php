@@ -6015,9 +6015,8 @@ public function actionPaysuccess(){
                 }
                 $transactions = $query->orderBy([
                     'created_at' => SORT_DESC
-                ]);
-                    //->all();
-                echo $transactions->createCommand()->getRawSql();exit;
+                ])->all();
+                //echo $transactions->createCommand()->getRawSql();exit;
 
                 //->all();
                 $mytransactions = array();
