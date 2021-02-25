@@ -6177,7 +6177,7 @@ public function actionPaysuccess(){
 //
 //                                }
 
-                                    $status = $transaction->withdrawal->status;
+
                                     $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                                     $mytransactions[$key]['name'] = "";
                                     $mytransactions[$key]['title'] = "Withdrawal";
@@ -6185,7 +6185,7 @@ public function actionPaysuccess(){
                                     $mytransactions[$key]['incoming'] = 0;
                                     $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
                                     $mytransactions[$key]['date'] = date('Y-m-d H:i:s', strtotime($transaction->created_at));
-                                }
+
                                 break;
 
                         }
