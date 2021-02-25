@@ -6176,12 +6176,12 @@ public function actionPaysuccess(){
 //                                        break;
 //
 //                                }
-                                if(isset($transaction->withdrawal->status)) {
+
                                     $status = $transaction->withdrawal->status;
                                     $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                                     $mytransactions[$key]['name'] = "";
                                     $mytransactions[$key]['title'] = "Withdrawal";
-                                    $mytransactions[$key]['description'] = $status;
+                                    $mytransactions[$key]['description'] = $transaction->status;
                                     $mytransactions[$key]['incoming'] = 0;
                                     $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
                                     $mytransactions[$key]['date'] = date('Y-m-d H:i:s', strtotime($transaction->created_at));
@@ -6192,6 +6192,7 @@ public function actionPaysuccess(){
 
                     }
                 }
+                echo "<pre>";print_r($mytransactions);exit;
                 return array('status' => 1, 'data' => $mytransactions);
 
 
