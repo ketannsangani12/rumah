@@ -6177,7 +6177,7 @@ public function actionPaysuccess(){
                                 $mytransactions[$key]['name'] = "";
                                 $mytransactions[$key]['title'] = "Topup";
                                 $mytransactions[$key]['description'] = $transaction->status;
-                                $mytransactions[$key]['incoming'] = 0;
+                                $mytransactions[$key]['incoming'] = 1;
                                 $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
                                 $mytransactions[$key]['date'] = date('Y-m-d H:i:s', strtotime($transaction->created_at));
 
