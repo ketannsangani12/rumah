@@ -6286,8 +6286,7 @@ public function actionPaysuccess(){
 
                   if($type=='N') {
                       $journeyid = $this->createjourneyid();
-                      if(isset($journeyid->message) && $journeyid->message=='api.success' && $journeyid->journeyId!='') {
-                          $journeyid = $journeyid->journeyId;
+                      if($journeyid!='') {
                           $document = $_POST['document'];
                           $selfie = $_POST['selfie'];
                           $filename = 'uploads/sampleimage.jpg'; // output file name
@@ -6379,8 +6378,8 @@ public function actionPaysuccess(){
                       }
                   }else if($type=='P'){
                       $journeyid = $this->createjourneyid();
-                      if(isset($journeyid->message) && $journeyid->message=='api.success' && $journeyid->journeyId!='') {
-                          $journeyid = $journeyid->journeyId;
+                      if($journeyid!='') {
+
                           $document = $_POST['document'];
                           $selfie = $_POST['selfie'];
                           $checkpassport = $this->passportokaydoc($journeyid, $document);
