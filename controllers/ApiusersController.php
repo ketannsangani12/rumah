@@ -269,6 +269,7 @@ class ApiusersController extends ActiveController
                             $packagemodel = new UserPackages();
                             $packagemodel->user_id = $model->id;
                             $packagemodel->package_id = 1;
+                            $packagemodel->quantity = $package->quantity;
                             $packagemodel->start_date = date('Y-m-d');
                             $packagemodel->end_date = NULL;
                             $packagemodel->created_at = date('Y-m-d H:i:s');
@@ -339,6 +340,7 @@ class ApiusersController extends ActiveController
                             $package = Packages::findOne(1);
                             $packagemodel = new UserPackages();
                             $packagemodel->user_id = $model->id;
+                            $packagemodel->quantity = $package->quantity;
                             $packagemodel->package_id = 1;
                             $packagemodel->start_date = date('Y-m-d');
                             $packagemodel->end_date = NULL;
@@ -468,10 +470,12 @@ class ApiusersController extends ActiveController
                         $packagemodel = new UserPackages();
                         $packagemodel->user_id = $model->id;
                         $packagemodel->package_id = 1;
+                        $packagemodel->quantity = $package->quantity;
                         $packagemodel->start_date = date('Y-m-d');
                         $packagemodel->end_date = NULL;
                         $packagemodel->created_at = date('Y-m-d H:i:s');
                         if($packagemodel->save(false)){
+                            $model->userid = "CUS".Yii::$app->common->generatereferencenumber($model->id);
                             $model->property_credited = $package->quantity;
                             $model->save(false);
 
@@ -913,7 +917,8 @@ class ApiusersController extends ActiveController
 
                     $model->user_id = $this->user_id;
                     $model->start_date = date('Y-m-d');
-                    $model->end_date = date('Y-m-d', strtotime('+1 years'));
+                    $model->end_date = date('Y-m-d', strtotime('+1 month'));
+                    $model->quantity = $packagedetails->quantity;
                     $model->created_at = date('Y-m-d H:i:s');
                     $model->updated_at = date('Y-m-d H:i:s');
                     if ($model->save()) {
@@ -931,11 +936,7 @@ class ApiusersController extends ActiveController
                             $transactionmodel->reference_no = "TR".$reference_no;
                             $transactionmodel->save(false);
                             $user = Users::findOne($model->user_id);
-                            if ($user->membership_expire_date == NULL) {
-                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
-                            } else {
-                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime($user->membership_expire_date)));
-                            }
+                            $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                             $user->property_credited += $packagedetails->quantity;
                             if($user->save(false)){
                                 Users::updatebalance($userbalance-$packagedetails->price,$this->user_id);
@@ -1667,8 +1668,10 @@ class ApiusersController extends ActiveController
                 if($propertymodel->validate()){
                     $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
                     $userdetails = Users::findOne($this->user_id);
-                    if($mypropertiescount >= $userdetails->property_credited){
-                        //return array('status' => 0, 'message' => 'You have already exceeded limit of Post Property. So Please purchase package');
+                    $totalpropertyadded = $userdetails->properties_posted;
+                    $currentcredit = $userdetails->property_credited;
+                    if($totalpropertyadded >= $currentcredit){
+                        return array('status' => 0, 'message' => 'You have already exceeded limit of Post Property. So Please purchase package or delete your listings');
 
                     }
                     $pictures = $propertymodel->pictures;
@@ -1703,6 +1706,8 @@ class ApiusersController extends ActiveController
                                 $modelCustomer->created_at = date('Y-m-d H:i:s');
                                 $modelCustomer->save(false);
                             }
+                            $userdetails->properties_posted = $userdetails->properties_posted+1;
+                            $userdetails->save(false);
                             $countproperties = Properties::find()->where(['user_id'=>$this->user_id])->count();
                             if($countproperties==1) {
                                 $userdetails = Users::findOne($this->user_id);
@@ -5513,6 +5518,9 @@ public function actionPaysuccess(){
                     $propertydetails->status = 'Deleted';
                     $propertydetails->updated_at = date('Y-m-d H:i:s');
                     if($propertydetails->save(false)){
+                        $usermodel = Users::findOne($user_id);
+                        $usermodel->properties_posted = $usermodel->properties_posted - 1;
+                        $usermodel->save(false);
                         return array('status' => 1, 'message' => 'You have deleted property successfully.');
 
                     }else{
@@ -6344,7 +6352,7 @@ public function actionPaysuccess(){
                                               }
 
                                           } else {
-                                              return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                                              return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : '.$getscorecardresult->message.')');
 
 
                                           }
@@ -6354,7 +6362,7 @@ public function actionPaysuccess(){
                                       }
 
                                   } else {
-                                      return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                                      return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : '.$checkscoreandface->message.')');
 
                                   }
                               } else {
@@ -6362,11 +6370,11 @@ public function actionPaysuccess(){
 
                               }
                           }else{
-                              return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                              return array('status' => 0, 'message' => 'please upload MyKAD again.No response from check mycad ');
 
                           }
                       }else{
-                          return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                          return array('status' => 0, 'message' => 'please upload MyKAD again.journey id not found.');
 
                       }
                   }else if($type=='P'){
