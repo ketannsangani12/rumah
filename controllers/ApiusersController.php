@@ -6286,8 +6286,8 @@ public function actionPaysuccess(){
 
                   if($type=='N') {
                       $journeyid = $this->createjourneyid();
-                      if($journeyid!='') {
-
+                      if(isset($journeyid->message) && $journeyid->message=='api.success' && $journeyid->journeyId!='') {
+                          $journeyid = $journeyid->journeyId;
                           $document = $_POST['document'];
                           $selfie = $_POST['selfie'];
                           $filename = 'uploads/sampleimage.jpg'; // output file name
@@ -6374,12 +6374,13 @@ public function actionPaysuccess(){
 
                           }
                       }else{
-                          return array('status' => 0, 'message' => 'please upload MyKAD again.journey id not found.');
+                          return array('status' => 0, 'message' => 'please upload MyKAD again.'.json_encode($journeyid));
 
                       }
                   }else if($type=='P'){
                       $journeyid = $this->createjourneyid();
-                      if($journeyid!=''){
+                      if(isset($journeyid->message) && $journeyid->message=='api.success' && $journeyid->journeyId!='') {
+                          $journeyid = $journeyid->journeyId;
                           $document = $_POST['document'];
                           $selfie = $_POST['selfie'];
                           $checkpassport = $this->passportokaydoc($journeyid, $document);
@@ -6448,7 +6449,7 @@ public function actionPaysuccess(){
 
                           }
                       }else{
-                          return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes.');
+                          return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes '.json_encode($journeyid));
 
                       }
 
