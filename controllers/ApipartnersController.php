@@ -2001,7 +2001,7 @@ class ApipartnersController extends ActiveController
             if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='' && isset($_POST['status']) && $_POST['status']!='') {
 
                 $user_id = $this->user_id;
-                $status = $_POST['status'];
+                $status = ($_POST['status']!='')?$_POST['status']:'';
                 $systemaccount = Yii::$app->common->getsystemaccount();
                 $todomodel = TodoList::find()->where(['id'=>$_POST['todo_id']])->one();
                 if (empty($todomodel)){
@@ -2120,7 +2120,7 @@ class ApipartnersController extends ActiveController
     }
 
 
-    public function actionUpdatetodostatus($todo_id,$status,$reftype,$post=array()){
+    public function actionUpdatetodostatus($todo_id,$status='',$reftype,$post=array()){
         $systemaccount = Yii::$app->common->getsystemaccount();
         $user_id = $this->user_id;
         $todomodel = TodoList::findOne($todo_id);
