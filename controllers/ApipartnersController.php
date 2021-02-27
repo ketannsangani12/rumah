@@ -275,8 +275,9 @@ class ApipartnersController extends ActiveController
                         $packagemodel = new UserPackages();
                         $packagemodel->user_id = $model->id;
                         $packagemodel->package_id = 1;
+                        $packagemodel->quantity = $package->quantity;
                         $packagemodel->start_date = date('Y-m-d');
-                        $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                        $packagemodel->end_date = NULL;
                         $packagemodel->created_at = date('Y-m-d H:i:s');
                         if($packagemodel->save(false)){
                             $model->property_credited = $package->quantity;
@@ -790,9 +791,9 @@ class ApipartnersController extends ActiveController
 
                     $model->user_id = $this->user_id;
                     $model->start_date = date('Y-m-d');
-                    $model->end_date = date('Y-m-d', strtotime('+1 years'));
+                    $model->end_date = date('Y-m-d', strtotime('+1 month'));
+                    $model->quantity = $packagedetails->quantity;
                     $model->created_at = date('Y-m-d H:i:s');
-                    $model->updated_at = date('Y-m-d H:i:s');
                     if ($model->save()) {
                         $transactionmodel = new Transactions();
                         $transactionmodel->user_id = $model->user_id;
@@ -808,11 +809,7 @@ class ApipartnersController extends ActiveController
                             $transactionmodel->reference_no = "TR".$reference_no;
                             $transactionmodel->save(false);
                             $user = Users::findOne($model->user_id);
-                            if ($user->membership_expire_date == NULL) {
-                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
-                            } else {
-                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime($user->membership_expire_date)));
-                            }
+                            $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                             $user->property_credited += $packagedetails->quantity;
                             if($user->save(false)){
                                 Users::updatebalance($userbalance-$packagedetails->price,$this->user_id);
@@ -996,8 +993,10 @@ class ApipartnersController extends ActiveController
 
                             case "Appointment";
                                 $date = date('Y-m-d');
-                                if($todolist['status']=='Pending' && $date<=$todolist['appointment_date']){
+                                if($todolist['status']=='Pending' && $date<$todolist['appointment_date']){
                                     $services[] = $todolist;
+                                }else if($todolist['status']=='Pending' && $date=$todolist['appointment_date']){
+                                    $upcoming[] = $todolist;
                                 }
                                 break;
                             case "Service";
