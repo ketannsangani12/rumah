@@ -993,9 +993,9 @@ class ApipartnersController extends ActiveController
 
                             case "Appointment";
                                 $date = date('Y-m-d');
-                                if($todolist['status']=='Pending' && $date<$todolist['appointment_date']){
+                                if($todolist['status']=='Pending' && $date < $todolist['appointment_date']){
                                     $services[] = $todolist;
-                                }else if($todolist['status']=='Pending' && $date=$todolist['appointment_date']){
+                                }else if($todolist['status']=='Pending' && $date == $todolist['appointment_date']){
                                     $upcoming[] = $todolist;
                                 }
                                 break;
