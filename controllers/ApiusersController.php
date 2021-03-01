@@ -2442,13 +2442,15 @@ class ApiusersController extends ActiveController
                                 }
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
-                                    $subtotal = $model->tenancy_fees+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit;
-                                    $sst = number_format($subtotal * 6 / 100, 2, '.', '');
+                                    $sstappliedamount = $model->tenancy_fees;
+                                    $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit;
+                                    $sst =Yii::$app->common->calculatesst($sstappliedamount);
+                                    $tenancyfeeswithsst = $sstappliedamount+$sst;
                                     $bookingfees = $model->booking_fees;
                                     $stamp_duty = $model->stamp_duty;
-                                    $model->subtotal = $subtotal+$stamp_duty-$bookingfees;
+                                    $model->subtotal = $subtotal+$model->tenancy_fees+$stamp_duty-$bookingfees;
                                     $model->sst = $sst;
-                                    $model->total = $subtotal+$stamp_duty-$bookingfees+$sst;
+                                    $model->total = $subtotal+$tenancyfeeswithsst+$stamp_duty-$bookingfees;
                                     $model->commencement_date = date('Y-m-d',strtotime($model->commencement_date));
                                     $full_name = $model->full_name;
                                     $identification_no = $model->identification_no;
@@ -2529,8 +2531,17 @@ class ApiusersController extends ActiveController
                         }
                         $sst = $model->sst;
                         $totalamount = $amount;
-                        $totalamountafterdiscount = (int)$totalamount-(int)$discount-(int)$coins_savings;
+                        $tenancyfees = $model->tenancy_fees;
+                        $totaldiscount = (int)$discount-(int)$coins_savings;
+                        $totaltenancyfees = $model->tenancy_fees-$totaldiscount;
+                        $sst =Yii::$app->common->calculatesst($totaltenancyfees);
+                        $tenancyfeeswithsst = $totaltenancyfees+$sst;
+                        $bookingfees = $model->booking_fees;
+                        $stamp_duty = $model->stamp_duty;
+                        $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
 
+                        $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
+                        $totalamountafterdiscount = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
                         $receiverbalance = Users::getbalance($model->landlord_id);
                         $senderbalance = Users::getbalance($model->user_id);
                         if($senderbalance < $totalamount){
@@ -2548,7 +2559,7 @@ class ApiusersController extends ActiveController
                             $transaction->request_id = $model->id;
                             $transaction->landlord_id = $model->landlord_id;
                             $transaction->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
-                            $transaction->amount = $totalamount;
+                            $transaction->amount = $subtotal;
                             $transaction->sst = $sst;
                             $transaction->discount = $discount;
                             $transaction->coins = $goldcoins;
@@ -2695,11 +2706,11 @@ class ApiusersController extends ActiveController
                                             if($goldcoins>0) {
                                                 Yii::$app->common->deductgoldcoinspurchase($model->user_id, $goldcoins, $lastid);
                                             }
-                                            $gold_coins = $totalamountafterdiscount*1.5;
+                                            $gold_coins = $totalcoinsamountapplied*1.5;
                                             Yii::$app->common->addgoldcoinspurchase($model->user_id,$gold_coins,$lastid);
 
                                             $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
-                                            $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->booking_fees+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
+                                            $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                             $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
 
                                             $transaction1->commit();

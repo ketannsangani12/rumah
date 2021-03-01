@@ -441,10 +441,19 @@ class Common extends Component
                 $totalamount = $amount;
                 //$totalamountafterdiscount = (int)$totalamount-(int)$discount-(int)$coins_savings;
                 $amountwithoutsst = $todomodel->subtotal;
+                $tenancyfees = $model->tenancy_fees;
+                $totaldiscount = (int)$discount-(int)$coins_savings;
+                $totaltenancyfees = $model->tenancy_fees-$totaldiscount;
+                $sst =Yii::$app->common->calculatesst($totaltenancyfees);
+                $tenancyfeeswithsst = $totaltenancyfees+$sst;
+                $bookingfees = $model->booking_fees;
+                $stamp_duty = $model->stamp_duty;
                 $totaldiscount = $discount+$coins_savings;
-                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
-                $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
-                $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
+                $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
+                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
+                //$sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                //$totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
 
                 $receiverbalance = Users::getbalance($model->landlord_id);
                 $senderbalance = Users::getbalance($model->user_id);
@@ -462,7 +471,7 @@ class Common extends Component
                     $transaction->landlord_id = $model->landlord_id;
                     $transaction->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
                     $transaction->payment_id=$payment_id;
-                    $transaction->amount = $totalamount;
+                    $transaction->amount = $subtotal;
                     $transaction->sst = $sst;
                     $transaction->discount = $discount;
                     $transaction->coins = $goldcoins;
@@ -609,11 +618,11 @@ class Common extends Component
                                     if($goldcoins>0) {
                                         $this->deductgoldcoinspurchase($model->user_id, $goldcoins, $lastid);
                                     }
-                                    $gold_coins = $totalamountafterdiscount*1.5;
+                                    $gold_coins = $totalcoinsamountapplied*1.5;
                                     $this->addgoldcoinspurchase($model->user_id,$gold_coins,$lastid);
 
                                     //$updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
-                                    $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->booking_fees+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
+                                    $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                     $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
 
                                     $transaction1->commit();

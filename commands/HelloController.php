@@ -110,6 +110,8 @@ class HelloController extends Controller
                 if(!empty($dates)){
                     foreach ($dates as $date){
                         if($date==date('Y-m-d')){
+                            $servicefees = number_format($request->monthly_rental * 10 / 100, 2, '.', '');
+                            $sst = \Yii::$app->common->calculatesst($servicefees);
                             $rentalmodel = new TodoList();
                             $rentalmodel->request_id = $request->id;
                             $rentalmodel->property_id = $request->property_id;
@@ -119,7 +121,9 @@ class HelloController extends Controller
                             $rentalmodel->rent_enddate = $date;
                             $rentalmodel->pay_from = 'Tenant';
                             $rentalmodel->subtotal = $request->monthly_rental;
-                            $rentalmodel->total = $request->monthly_rental;
+                            $rentalmodel->sst = $sst;
+                            $rentalmodel->service_fees = $servicefees;
+                            $rentalmodel->total = $request->monthly_rental+$servicefees+$sst;
                             $rentalmodel->reftype = 'Monthly Rental';
                             $rentalmodel->status = 'Unpaid';
                             $rentalmodel->created_at = date('Y-m-d H:i:s');
