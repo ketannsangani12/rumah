@@ -83,7 +83,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 
             ],
-            'updated_at:datetime',
+            [
+                // the attribute
+                'attribute' => 'updated_at',
+                'vAlign'=>'middle',
+                //    'filterType'=> \kartik\grid\GridView::FILTER_DATE_RANGE,
+
+                //'width'=>'20%',
+                'noWrap'=>true,
+
+                // format the value
+                'value' => function ($model) {
+
+                    return date('M d,Y h:i:s a', strtotime($model->updated_at));
+
+                },
+                // some styling?
+
+
+                'filter' => false
+                // here we render the widget
+
+                //'format' => ['datetime', Yii::$app->formatter->datetimeFormat]
+            ],
+            //'updated_at:datetime',
             [
                 'attribute' => 'updated_by',
 
