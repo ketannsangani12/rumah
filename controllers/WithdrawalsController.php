@@ -110,10 +110,11 @@ class WithdrawalsController extends Controller
 
                     $model->proof->saveAs('uploads/withdrawals/' . $model->proof->baseName . '.' . $model->proof->extension);
                     $document = 'uploads/withdrawals/' . $model->proof->baseName . '.' . $model->proof->extension;
-
+                    $model->updated_at = date('Y-m-d H:i:s');
                     $model->save(false);
                     $transactionmodel = Transactions::findOne(['withdrawal_id' => $id]);
                     $transactionmodel->status = 'Completed';
+                    $transactionmodel->updated_at = date('Y-m-d H:i:s');
                     $transactionmodel->save(false);
                     $emailtemplate = EmailTemplates::findOne(['name'=>'User Withdrawal']);
                     $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
@@ -128,9 +129,11 @@ class WithdrawalsController extends Controller
                     return $this->redirect(['index']);
 
                 }else if($model->status=='Declined'){
+                    $model->updated_at = date('Y-m-d H:i:s');
                     $model->save(false);
                     $transactionmodel = Transactions::findOne(['withdrawal_id' => $id]);
                     $transactionmodel->status = 'Declined';
+                    $transactionmodel->updated_at = date('Y-m-d H:i:s');
                     if ($transactionmodel->save(false)) {
                             $userbalance = Users::getbalance($model->user_id);
                             $userdetails = Users::findOne($model->user_id);
