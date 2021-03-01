@@ -150,7 +150,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'googleuser_id'=>'Google User id',
             'facebookuser_id'=>'Facebook User id',
             'secondarypassword'=>'Secondary Password',
-            'userid'=>'User ID'
+            'userid'=>'User ID',
+            'properties_posted'=>'Properties Posted'
         ];
     }
 

@@ -861,6 +861,9 @@ class ApiusersController extends ActiveController
            if(!empty($currentpackage)){
                $currentpackageid = $currentpackage->package_id;
            }
+            $userdetails = Users::findOne($this->user_id);
+            $totalpropertyadded = $userdetails->properties_posted;
+            $currentcredit = $userdetails->property_credited;
             $data = array();
             $remaining = 0;
 
@@ -877,14 +880,14 @@ class ApiusersController extends ActiveController
                        $remaining = $package->quantity - $mypropertiescount;
                        $currentkey = $key;
                    }
-                   if(($remaining==0 && $package->id>1) || $currentpackageid==''){
-                       $data[$key]['id'] = $package->id;
-                       $data[$key]['package'] = $package->name;
-                       $data[$key]['price'] = $package->price;
-                       $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
-                       $data[$key]['total'] = $package->quantity;
-
-                   }
+//                   if(($remaining==0 && $package->id>1) || $currentpackageid==''){
+//                       $data[$key]['id'] = $package->id;
+//                       $data[$key]['package'] = $package->name;
+//                       $data[$key]['price'] = $package->price;
+//                       $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
+//                       $data[$key]['total'] = $package->quantity;
+//
+//                   }
 
 
 

@@ -178,9 +178,6 @@ class RenovationquotesController extends Controller
     {
 
         $model = $this->findModel($id);
-//        if($model->status!='Approved'){
-//            return $this->redirect(['index']);
-//        }
         $modelCustomer = new TodoList();
         $modelCustomer->scenario = 'addmilestone';
         $modelsAddress = [new TodoItems()];

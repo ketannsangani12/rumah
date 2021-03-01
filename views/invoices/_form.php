@@ -70,6 +70,7 @@ use yii\widgets\ActiveForm;
 
                         </div>
                     </div>
+                    <?= $form->field($modelCustomer, 'is_sst')->checkbox() ?>
                     <?php \wbraganca\dynamicform\DynamicFormWidget::begin([
                         'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
                         'widgetBody' => '.container-items', // required: css class selector

@@ -34,7 +34,7 @@ class UserPackages extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'package_id'], 'integer'],
+            [['user_id', 'package_id','quantity'], 'integer'],
             [['start_date', 'end_date', 'created_at', 'updated_at'], 'safe'],
             [['package_id'], 'exist', 'skipOnError' => true, 'targetClass' => Packages::className(), 'targetAttribute' => ['package_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -54,6 +54,7 @@ class UserPackages extends \yii\db\ActiveRecord
             'end_date' => 'End Date',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'quantity'=>'Quantity'
         ];
     }
 

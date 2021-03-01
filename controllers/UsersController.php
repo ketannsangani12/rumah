@@ -48,10 +48,10 @@ class UsersController extends Controller
     public function actionIndex()
     {
         $users = Users::find()->all();
-        foreach ($users as $user){
-            $user->userid = "CUS".Yii::$app->common->generatereferencenumber($user->id);
-            $user->save(false);
-        }
+//        foreach ($users as $user){
+//            $user->userid = "CUS".Yii::$app->common->generatereferencenumber($user->id);
+//            $user->save(false);
+//        }
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

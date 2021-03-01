@@ -58,8 +58,8 @@ class TodoList extends \yii\db\ActiveRecord
 
             [['quote'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             ['property_id', 'checkhavealreadyrequest','on' => 'addinsurance'],
-            [['title','property_id','pay_from','due_date'], 'required','on'=>'addinvoice'],
-            [['request_id', 'property_id', 'user_id', 'landlord_id', 'vendor_id'], 'integer'],
+            [['title','property_id','pay_from','due_date','is_sst'], 'required','on'=>'addinvoice'],
+            [['request_id', 'property_id', 'user_id', 'landlord_id', 'vendor_id','is_sst'], 'integer'],
             [['reftype', 'status','remarks'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['document'], 'string', 'max' => 255],
@@ -106,7 +106,8 @@ class TodoList extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'updated_by' =>'Updated by',
-            'remarks' =>'Remarks'
+            'remarks' =>'Remarks',
+            'is_sst'=>'Is SST Applied?'
         ];
     }
 

@@ -183,13 +183,11 @@ class BookingrequestsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if($model->validate()) {
                 $model->status = 'Agreement Processing';
-                $model->subtotal += $model->stamp_duty;
-                //$sst = Yii::$app->common->calculatesst($model->subtotal);
-                $total_amount = $model->subtotal;
-                $model->total = $total_amount;
+                $model->subtotal = $model->subtotal + $model->stamp_duty;
+                $model->total = $model->total + $model->stamp_duty;
                 $model->updated_at = date('Y-m-d H:i:s');
                 $model->updated_by = Yii::$app->user->id;
-                if($model->save()){
+                if($model->save(false)){
                     return $this->redirect(['index']);
 
                 }else{

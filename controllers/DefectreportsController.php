@@ -176,8 +176,8 @@ class DefectreportsController extends Controller
                         $transaction->commit();
                         $subject = 'Outstanding repair payment';
                         $textmessage = 'You have one repair outstanding payment, kindly settle to avoid any delay.';
-                        Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id,$model->id);
-                        Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
+                        Yii::$app->common->Savenotification($modelCustomer->landlord_id,$subject,$textmessage,'',$modelCustomer->property_id,$modelCustomer->id);
+                        Yii::$app->common->Sendpushnotification($modelCustomer->landlord_id,$subject,$textmessage,'User');
 
                         return $this->redirect(['index']);
                     }

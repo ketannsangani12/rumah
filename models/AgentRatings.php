@@ -40,8 +40,8 @@ class AgentRatings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['request_id','user_id','appearance','attitude','knowledge'], 'required','on'=>'addrating'],
-            [['request_id', 'property_id', 'user_id', 'agent_id'], 'integer'],
+            [['todo_id','user_id','appearance','attitude','knowledge'], 'required','on'=>'addrating'],
+            [['request_id', 'property_id', 'user_id', 'agent_id','todo_id'], 'integer'],
             [['message'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['appearance', 'attitude', 'knowledge'], 'string', 'max' => 10],
@@ -63,6 +63,7 @@ class AgentRatings extends \yii\db\ActiveRecord
             'property_id' => 'Property',
             'user_id' => 'User',
             'agent_id' => 'Agent',
+            'todo_id'=>'Todo',
             'appearance' => 'Appearance',
             'attitude' => 'Attitude',
             'knowledge' => 'Knowledge',

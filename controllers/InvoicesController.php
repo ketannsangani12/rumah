@@ -76,15 +76,11 @@ class InvoicesController extends Controller
      */
     public function actionCreate()
     {
-        //$model = $this->findModel($id);
-//        if($model->status!='Approved'){
-//            return $this->redirect(['index']);
-//        }
+
         $modelCustomer = new TodoList();
         $modelCustomer->scenario = 'addinvoice';
         $modelsAddress = [new TodoItems()];
 
-        //   [$modelAddress->scenario = 'defectquote'];
         if ($modelCustomer->load(Yii::$app->request->post())) {
 
             $modelsAddress = Model::createMultiple(TodoItems::classname());
@@ -112,7 +108,6 @@ class InvoicesController extends Controller
                         return $this->redirect(['create']);
 
                     }
-                    //$modelCustomer->pay_from = $_POST['TodoList']['pay_from'];
                     $modelCustomer->request_id = $propertyxist->request_id;
                     $modelCustomer->user_id = ($modelCustomer->pay_from=='Tenant')?$propertyxist->request->user_id:NULL;
                     $modelCustomer->landlord_id = ($modelCustomer->pay_from=='Landlord')?$propertyxist->user_id:NULL;
@@ -132,11 +127,18 @@ class InvoicesController extends Controller
                                 break;
                             }
                         }
-                        $sst = Yii::$app->common->calculatesst($total);
-                        $grandtotal = $total+$sst;
-                        $modelCustomer->subtotal = $total;
-                        $modelCustomer->sst = $sst;
-                        $modelCustomer->total = $grandtotal;
+                        if($modelCustomer->is_sst==1) {
+                            $sst = Yii::$app->common->calculatesst($total);
+                            $grandtotal = $total + $sst;
+                            $modelCustomer->subtotal = $total;
+                            $modelCustomer->sst = $sst;
+                            $modelCustomer->total = $grandtotal;
+                        }else{
+                            $grandtotal = $total;
+                            $modelCustomer->subtotal = $total;
+                            $modelCustomer->sst = 0.00;
+                            $modelCustomer->total = $grandtotal;
+                        }
                         $modelCustomer->save(false);
 
                     }
@@ -218,6 +220,7 @@ class InvoicesController extends Controller
                         }
                         $total = 0;
                         foreach ($modelsAddress as $modelAddress) {
+                            $total+=$modelAddress->price;
                             $modelAddress->todo_id = $modelCustomer->id;
                             $modelAddress->created_at = date('Y-m-d H:i:s');
                             if (! ($flag = $modelAddress->save(false))) {
@@ -225,11 +228,18 @@ class InvoicesController extends Controller
                                 break;
                             }
                         }
-                        $sst = Yii::$app->common->calculatesst($total);
-                        $grandtotal = $total+$sst;
-                        $modelCustomer->subtotal = $total;
-                        $modelCustomer->sst = $sst;
-                        $modelCustomer->total = $grandtotal;
+                        if($modelCustomer->is_sst==1) {
+                            $sst = Yii::$app->common->calculatesst($total);
+                            $grandtotal = $total + $sst;
+                            $modelCustomer->subtotal = $total;
+                            $modelCustomer->sst = $sst;
+                            $modelCustomer->total = $grandtotal;
+                        }else{
+                            $grandtotal = $total;
+                            $modelCustomer->subtotal = $total;
+                            $modelCustomer->sst = 0.00;
+                            $modelCustomer->total = $grandtotal;
+                        }
                         $modelCustomer->save(false);
 
                     }

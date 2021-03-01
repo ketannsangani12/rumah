@@ -589,8 +589,9 @@ class SiteController extends Controller
                             $model = new UserPackages();
                             $model->package_id = $transaction->package_id;
                             $model->user_id = $transaction->user_id;
+                            $model->quantity = $packagedetails->quantity;
                             $model->start_date = date('Y-m-d');
-                            $model->end_date = date('Y-m-d', strtotime('+1 years'));
+                            $model->end_date = date('Y-m-d', strtotime('+1 month'));
                             $model->created_at = date('Y-m-d H:i:s');
                             $model->updated_at = date('Y-m-d H:i:s');
                             if ($model->save()) {
@@ -609,11 +610,7 @@ class SiteController extends Controller
                                     $transactionmodel->reference_no = "TR".$reference_no;
                                     $transactionmodel->save(false);
                                     $user = Users::findOne($model->user_id);
-                                    if ($user->membership_expire_date == NULL) {
-                                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
-                                    } else {
-                                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime         ($user->membership_expire_date)));
-                                    }
+                                    $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                                     $user->property_credited += $packagedetails->quantity;
                                     if($user->save(false)){
                                         $transaction1->commit();
@@ -840,7 +837,8 @@ class SiteController extends Controller
                             $model->package_id = $transaction->package_id;
                             $model->user_id = $transaction->user_id;
                             $model->start_date = date('Y-m-d');
-                            $model->end_date = date('Y-m-d', strtotime('+1 years'));
+                            $model->quantity = $packagedetails->quantity;
+                            $model->end_date = date('Y-m-d', strtotime('+1 month'));
                             $model->created_at = date('Y-m-d H:i:s');
                             $model->updated_at = date('Y-m-d H:i:s');
                             if ($model->save(false)) {
@@ -859,11 +857,7 @@ class SiteController extends Controller
                                     $transactionmodel->reference_no = "TR".$reference_no;
                                     $transactionmodel->save(false);
                                     $user = Users::findOne($model->user_id);
-                                    if ($user->membership_expire_date == NULL) {
-                                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
-                                    } else {
-                                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime($user->membership_expire_date)));
-                                    }
+                                    $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                                     $user->property_credited += $packagedetails->quantity;
                                     if($user->save(false)){
                                         $transaction1->commit();
@@ -1033,7 +1027,8 @@ class SiteController extends Controller
                                     $model->package_id = $transaction->package_id;
                                     $model->user_id = $transaction->user_id;
                                     $model->start_date = date('Y-m-d');
-                                    $model->end_date = date('Y-m-d', strtotime('+1 years'));
+                                    $model->quantity = $packagedetails->quantity;
+                                    $model->end_date = date('Y-m-d', strtotime('+1 month'));
                                     $model->created_at = date('Y-m-d H:i:s');
                                     $model->updated_at = date('Y-m-d H:i:s');
                                     if ($model->save()) {
@@ -1051,11 +1046,7 @@ class SiteController extends Controller
                                             $transactionmodel->reference_no = "TR".$reference_no;
                                             $transactionmodel->save(false);
                                             $user = Users::findOne($model->user_id);
-                                            if ($user->membership_expire_date == NULL) {
-                                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
-                                            } else {
-                                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime         ($user->membership_expire_date)));
-                                            }
+                                            $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                                             $user->property_credited += $packagedetails->quantity;
                                             if($user->save(false)){
                                                 $transaction1->commit();
@@ -1070,6 +1061,53 @@ class SiteController extends Controller
 
                                     }
 
+                                }else if($transaction->package_id==NULL && $transaction->todo_id==NULL){
+                                    $userbalance = Users::getbalance($transaction->user_id);
+
+                                    $model = new Topups();
+                                    $model->user_id = $transaction->user_id;
+                                    $model->amount =  $transaction->amount;
+                                    $model->total_amount = $transaction->total_amount;
+                                    $model->oldbalance = $userbalance;
+                                    $model->newbalance = $userbalance + $model->amount;
+                                    $model->status = 'Completed';
+                                    $model->created_at = date('Y-m-d H:i:s');
+                                    if($model->save(false)){
+                                        $transactionmodel = new Transactions();
+                                        $transactionmodel->user_id = $model->user_id;
+                                        $transactionmodel->amount = $transaction->amount;
+                                        $transactionmodel->total_amount = $transaction->amount;
+                                        $transactionmodel->topup_id = $model->id;
+                                        $transactionmodel->payment_id = $transaction->id;
+                                        $transactionmodel->created_at = date('Y-m-d H:i:s');
+                                        $transactionmodel->reftype = 'Topup';
+                                        $transactionmodel->status = 'Completed';
+                                        if($transactionmodel->save(false)){
+                                            $lastid = $transactionmodel->id;
+                                            $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                                            $transactionmodel->reference_no = "TR".$reference_no;
+                                            if($transactionmodel->save(false)){
+                                                Users::updatebalance($userbalance + $model->amount,$transaction->user_id);
+                                                $transaction1->commit();
+                                                echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
+                                                exit;
+                                            }else{
+                                                $transaction1->rollBack(); // if save fails then rollback
+                                                echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again123.</h1></body></html>';
+                                                exit;
+                                            }
+                                        }else{
+                                            $transaction1->rollBack();
+                                            echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again1234.</h1></body></html>';
+                                            exit;
+                                        }
+
+                                    }else{
+                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again12345.</h1></body></html>';
+                                        exit;
+                                    }
+
+
                                 } else {
                                     $post['amount'] = $transaction->amount;
                                     $post['discount'] = $transaction->discount;
@@ -1080,13 +1118,12 @@ class SiteController extends Controller
 
                                     $response = Yii::$app->common->payment($transaction->user_id,$transaction->todo_id,'Accepted',$todomodel->reftype,$post,$transaction->id);
                                     $transaction1->commit();
-                                    //$dataresponse = json_decode($response);
                                     if(!empty($response) && $response['status']==1){
                                         echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
                                         exit;
 
                                     }else{
-                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again.</h1></body></html>';
+                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again12.</h1></body></html>';
                                         exit;
                                     }
 
@@ -1098,7 +1135,7 @@ class SiteController extends Controller
                             }
 
                         } else if ($Result == 'Payment Fail' || $Result == 'Record not found' || $Result == 'M88Admin' || $Result == 'Incorrect amount' || $Result == 'Invalid parameters') {
-                            $transaction->status = 3;
+                            $transaction->status = "Failed";
                             $transaction->response = $Result;
                             $transaction->updated_at = date('Y-m-d H:i:s');
                             $transaction->save(false);
@@ -1221,7 +1258,23 @@ class SiteController extends Controller
         }
 
     }
+    public function actionUnsubscribepackage(){
+        $date = date('Y-m-d');
+        $userpackages = UserPackages::find()->where(['end_date'=>$date])->all();
+        if(!empty($userpackages)){
+            foreach ($userpackages as $userpackage){
+                $usermodel = Users::findOne($userpackage->user_id);
+                if(!empty($usermodel)){
+                    $usermodel->property_credited = 10;
+                    $usermodel->membership_expire_date = NULL;
+                    $usermodel->updated_at = date("Y-m-d H:i:s");
+                    $usermodel->save(false);
+                }
+            }
+        }
 
+
+    }
 
 
 }
