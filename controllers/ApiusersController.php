@@ -920,7 +920,6 @@ class ApiusersController extends ActiveController
                     $model->end_date = date('Y-m-d', strtotime('+1 month'));
                     $model->quantity = $packagedetails->quantity;
                     $model->created_at = date('Y-m-d H:i:s');
-                    $model->updated_at = date('Y-m-d H:i:s');
                     if ($model->save()) {
                         $transactionmodel = new Transactions();
                         $transactionmodel->user_id = $model->user_id;
@@ -2922,6 +2921,11 @@ class ApiusersController extends ActiveController
                         $date = date('Y-m-d');
                             if($todolist['status']=='Pending' && $date<=$todolist['appointment_date']){
                                 $data[] = $todolist;
+                            }elseif ($todolist['status']=='Completed'){
+                                $reviewexist = AgentRatings::find()->where(['todo_id'=>$todolist['id'],'user_id'=>$user_id])->one();
+                                if(empty($reviewexist)) {
+                                    $data[] = $todolist;
+                                }
                             }
                             break;
                         case "Service";
@@ -3388,7 +3392,7 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if (!empty($_POST) && isset($_POST['request_id']) && $_POST['request_id']!='') {
+            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='') {
 
                 $user_id = $this->user_id;
                 $model = new AgentRatings();
@@ -3396,14 +3400,14 @@ class ApiusersController extends ActiveController
                 $model->attributes = Yii::$app->request->post();
                 $model->user_id =  $user_id;
                 if($model->validate()){
-                  $bookingrequest = BookingRequests::findOne($model->request_id);
+                  $bookingrequest = TodoList::findOne($model->todo_id);
                   if(empty($bookingrequest)){
                       return array('status' => 0, 'message' => 'Data not found.');
                   }
                   $model->property_id = $bookingrequest->property_id;
                   $model->agent_id = $bookingrequest->agent_id;
                   $model->created_at = date('Y-m-d H:i:s');
-                    if($model->save()){
+                    if($model->save(false)){
                         return array('status' => 1, 'message' => 'You have reviewed agent successfully.');
                     }else{
                         return array('status' => 0, 'data' => $model->getErrors());
@@ -4438,7 +4442,7 @@ public function actionPaysuccess(){
                                }
                                if (!empty($todoitems)) {
                                    $totalamount = $amount;
-                                   $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+                                   $totalamountafterdiscount = $totalamount;
 
 
                                    $transactionmodel = new Transactions();
@@ -4453,6 +4457,7 @@ public function actionPaysuccess(){
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
                                    $transactionmodel->amount = $totalamount;
+                                   $transactionmodel->sst = $todomodel->sst;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;
                                    $transactionmodel->coins_savings = $coins_savings;
