@@ -4025,7 +4025,7 @@ public function actionPaysuccess(){
                                    $transactionmodel->renovation_quote_id = $todomodel->renovation_quote_id;
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                   $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                                   $transactionmodel->amount = $amountwithoutsst;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;
                                    $transactionmodel->sst = $sstafterdiscount;
@@ -4180,7 +4180,8 @@ public function actionPaysuccess(){
                                    $transactionmodel->property_id = $todomodel->property_id;
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                   $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                                   $transactionmodel->amount = $amountwithoutsst;
+                                   //$transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
                                    $transactionmodel->sst = $sstafterdiscount;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;
@@ -4476,7 +4477,7 @@ public function actionPaysuccess(){
                                    $transactionmodel->property_id = $todomodel->property_id;
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                   $transactionmodel->amount = $totalamount;
+                                   $transactionmodel->amount = $todomodel->subtotal;
                                    $transactionmodel->sst = $todomodel->sst;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;
@@ -4724,7 +4725,8 @@ public function actionPaysuccess(){
                                $transactionmodel->property_id = $todomodel->property_id;
                                $transactionmodel->todo_id = $todo_id;
                                $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                               $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                               $transactionmodel->amount = $amountwithoutsst;
+                               //$transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
                                $transactionmodel->sst = $sstafterdiscount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
@@ -4889,7 +4891,8 @@ public function actionPaysuccess(){
                                $transactionmodel->vendor_id = $todomodel->vendor_id;
                                $transactionmodel->todo_id = $todo_id;
                                $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                               $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;;
+                               $transactionmodel->amount = $amountwithoutsst;
+                               //$transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;;
                                $transactionmodel->sst = $sstafterdiscount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
@@ -5101,7 +5104,8 @@ public function actionPaysuccess(){
                                $transactionmodel->vendor_id = $todomodel->vendor_id;
                                $transactionmodel->todo_id = $todo_id;
                                $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                               $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;;;
+                               $transactionmodel->amount = $amountwithoutsst;
+                               //$transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;;;
                                $transactionmodel->sst = $sstafterdiscount;
                                $transactionmodel->discount = $discount;
                                $transactionmodel->coins = $goldcoins;
