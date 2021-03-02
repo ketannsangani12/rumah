@@ -65,7 +65,7 @@ class TodoList extends \yii\db\ActiveRecord
             [['document'], 'string', 'max' => 255],
             [['landlord_id'], 'exist', 'skipOnError' => false, 'targetClass' => Users::className(), 'targetAttribute' => ['landlord_id' => 'id']],
             [['property_id'], 'exist', 'skipOnError' => false, 'targetClass' => Properties::className(), 'targetAttribute' => ['property_id' => 'id']],
-            [['request_id'], 'exist', 'skipOnError' => false, 'targetClass' => BookingRequests::className(), 'targetAttribute' => ['request_id' => 'id']],
+            [['request_id'], 'exist', 'skipOnError' => true, 'targetClass' => BookingRequests::className(), 'targetAttribute' => ['request_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['vendor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['vendor_id' => 'id']],
             [['worker_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workers::className(), 'targetAttribute' => ['worker_id' => 'id']],
