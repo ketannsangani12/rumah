@@ -2676,6 +2676,9 @@ class ApiusersController extends ActiveController
                                                     $todorequest->save(false);
                                                     if($todorequest->receive_via=='Rumah-i') {
                                                         $commision = $todorequest->commission;
+                                                        $servicefees = number_format($commision * 1.5 / 100, 2, '.', '');
+                                                        $sst = \Yii::$app->common->calculatesst($servicefees);
+                                                        $commissionamount = $commision - $servicefees - $sst;
                                                         $agentbalance = Users::getbalance($model->property->agent_id);
                                                         $commisiontransaction = new Transactions();
                                                         $commisiontransaction->reftype = 'Agent Commision';
@@ -2683,7 +2686,10 @@ class ApiusersController extends ActiveController
                                                         $commisiontransaction->property_id = $model->property_id;
                                                         $commisiontransaction->todo_id = $todorequest->id;
                                                         $commisiontransaction->amount = $commision;
-                                                        $commisiontransaction->total_amount = $commision;
+                                                        $commisiontransaction->subtotal = $commision;
+                                                        $commisiontransaction->sst = $sst;
+                                                        $commisiontransaction->service_fees = $servicefees;
+                                                        $commisiontransaction->total_amount = $commissionamount;
                                                         $commisiontransaction->type = 'Payment';
                                                         $commisiontransaction->status = 'Completed';
                                                         $commisiontransaction->created_at = date('Y-m-d H:i:s');
@@ -2692,7 +2698,7 @@ class ApiusersController extends ActiveController
                                                             $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid1);
                                                             $commisiontransaction->reference_no = $reference_no;
                                                             $commisiontransaction->save(false);
-                                                            Users::updatebalance($agentbalance+$commision,$model->property->agent_id);
+                                                            Users::updatebalance($agentbalance+$commissionamount,$model->property->agent_id);
                                                         }else{
                                                             $transaction1->rollBack();
                                                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');

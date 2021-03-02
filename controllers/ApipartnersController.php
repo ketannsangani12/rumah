@@ -2825,7 +2825,7 @@ class ApipartnersController extends ActiveController
                             $mytransactions[$key]['description'] = "";
                             $mytransactions[$key]['incoming'] = 1;
                             $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
-                            $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
+                            $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                             $mytransactions[$key]['date'] = date('Y-m-d H:i:s',strtotime($transaction->created_at));
 
 

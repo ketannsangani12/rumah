@@ -198,8 +198,11 @@ class AutorentalcollectionsController extends Controller
                                 'model' => $model
                             ]);                        }
                     }
+                }else{
+                    //print_r($model->getErrors());exit;
                 }
             }else{
+                //print_r($model->getErrors());exit;
                 return $this->render('update', [
                     'model' => $model
                 ]);
