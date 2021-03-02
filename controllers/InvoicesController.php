@@ -212,7 +212,7 @@ class InvoicesController extends Controller
                 try {
                     //echo "<pre>"; print_r($modelCustomer->getAttributes());exit;
                     $modelCustomer->user_id = ($modelCustomer->pay_from=='Tenant')?$propertyxist->request->user_id:NULL;
-                    $modelCustomer->landlord_id = ($modelCustomer->pay_from=='Landlord')?$propertyxist->request->landlord_id:NULL;
+                    $modelCustomer->landlord_id = ($modelCustomer->pay_from=='Landlord')?$propertyxist->landlord_id:NULL;
                     $modelCustomer->due_date = date('Y-m-d',strtotime($modelCustomer->due_date));
                     if ($flag = $modelCustomer->save(false)) {
                         if (! empty($deletedIDs)) {
