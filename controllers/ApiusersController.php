@@ -4334,7 +4334,7 @@ public function actionPaysuccess(){
                                    $transactionmodel->property_id = $todomodel->property_id;
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                   $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                                   $transactionmodel->amount = $amountwithoutsst;
                                    $transactionmodel->sst = $sstafterdiscount;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;

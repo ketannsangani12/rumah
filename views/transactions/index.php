@@ -135,13 +135,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'package_id',
             // 'todo_id',
             'amount',
-            [
-                'attribute' => 'sst',
 
-                'value' => function($model){
-                    return (isset($model->sst) && $model->sst!='')?$model->sst:'';
-                },
-            ],
             [
                 'attribute' => 'discount',
 
@@ -150,12 +144,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'attribute' => 'coins',
+                'attribute' => 'coins_savings',
 
                 'value' => function($model){
-                    return (isset($model->coins) && $model->coins!='')?$model->coins:'';
+                    return (isset($model->coins_savings) && $model->coins_savings!='')?$model->coins_savings:'';
                 },
             ],
+            [
+                'attribute' => 'sst',
+
+                'value' => function($model){
+                    return (isset($model->sst) && $model->sst!='')?$model->sst:'';
+                },
+            ],
+
             //'coins',
             //'coins_savings',
             'total_amount',
