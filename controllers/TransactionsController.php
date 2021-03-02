@@ -8,6 +8,7 @@ use Complex\Exception;
 use Yii;
 use app\models\Transactions;
 use app\models\TransactionsSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -23,6 +24,17 @@ class TransactionsController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','create','delete','update','view'],
+                'rules' => [
+                    [
+                        'actions' => ['index','delete','create','update','view'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

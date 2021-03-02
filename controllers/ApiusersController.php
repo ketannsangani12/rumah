@@ -4025,7 +4025,7 @@ public function actionPaysuccess(){
                                    $transactionmodel->renovation_quote_id = $todomodel->renovation_quote_id;
                                    $transactionmodel->todo_id = $todo_id;
                                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                   $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;;
+                                   $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
                                    $transactionmodel->discount = $discount;
                                    $transactionmodel->coins = $goldcoins;
                                    $transactionmodel->sst = $sstafterdiscount;
@@ -6540,7 +6540,7 @@ public function actionPaysuccess(){
                     CURLOPT_FOLLOWLOCATION => true,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => "POST",
-                    CURLOPT_POSTFIELDS =>"{\n    \"journeyId\":\"$journeyid\",\n    \"type\":\"nonpassport\",\n    \"idImageBase64Image\": \"$doc\",\n    \"version\": \"7\",\n    \"docType\":\"mykad\",\n    \"landmarkCheck\":\"true\",\n    \"fontCheck\":\"true\",\n    \"microprintCheck\":\"true\",\n    \"photoSubstitutionCheck\":\"true\",\n \"screenDetection\":\"true\",\n    \"ghostPhotoColorDetection\":\"true\",\n   \"icTypeCheck\":\"true\",\n    \"colorMode\":\"true\",\n    \"hologram\":\"true\"\n    \n}",
+                    CURLOPT_POSTFIELDS =>"{\n    \"journeyId\":\"$journeyid\",\n    \"type\":\"nonpassport\",\n    \"idImageBase64Image\": \"$doc\",\n    \"version\": \"7\",\n    \"docType\":\"mykad\",\n    \"landmarkCheck\":\"true\",\n    \"fontCheck\":\"true\",\n    \"microprintCheck\":\"true\",\n    \"photoSubstitutionCheck\":\"true\",\n \"screenDetection\":\"true\",\n    \"ghostPhotoColorDetection\":\"true\",\n   \"icTypeCheck\":\"true\",\n    \"colorMode\":\"true\",\n    \"hologram\":\"false\"\n    \n}",
                     CURLOPT_HTTPHEADER => array(
                         "Content-Type: application/json"
                     ),
