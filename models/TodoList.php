@@ -47,6 +47,7 @@ class TodoList extends \yii\db\ActiveRecord
     {
         return [
             [['title'], 'required','on'=>'addmilestone'],
+            [['stamp_duty'], 'number'],
            // [['property_id'], 'required','on'=>'addinsurance'],
             [['pay_from'], 'required','on'=>'adddefectquote'],
             [['pay_from','quote'], 'required','on'=>'uploadquote'],

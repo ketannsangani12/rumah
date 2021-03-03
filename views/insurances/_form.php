@@ -42,7 +42,13 @@ use yii\widgets\ActiveForm;
 
                         </div>
                         </div>
-                    <?= $form->field($modelCustomer, 'stamp_duty')->textInput(); ?>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <?= $form->field($modelCustomer, 'stamp_duty')->textInput(); ?>
+
+                        </div>
+                    </div>
+
                     <?php \wbraganca\dynamicform\DynamicFormWidget::begin([
                         'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
                         'widgetBody' => '.container-items', // required: css class selector
