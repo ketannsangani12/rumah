@@ -127,10 +127,11 @@ class InsurancesController extends Controller
                         $grandtotal = $total+$sst;
                         $modelCustomer->subtotal = $total;
                         $modelCustomer->sst = $sst;
-                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->total = $grandtotal+$modelCustomer->stamp_duty;
                         $modelCustomer->save(false);
 
                     }
+
 
                     if ($flag) {
                         $transaction->commit();
@@ -217,7 +218,7 @@ class InsurancesController extends Controller
                         $modelCustomer->status = "Unpaid";
                         $modelCustomer->subtotal = $total;
                         $modelCustomer->sst = $sst;
-                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->total = $grandtotal+$modelCustomer->stamp_duty;
                         $modelCustomer->save(false);
 
                     }

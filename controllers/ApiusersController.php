@@ -2988,7 +2988,7 @@ class ApiusersController extends ActiveController
 
                 $user_id = $this->user_id;
                 // echo $user_id;exit;
-                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'worker_id' ,'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),'commission'])
+                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'worker_id' ,'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','service_fees','stamp_duty','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),'commission'])
                     ->with([
                         'request' => function ($query) {
                             $query->select(['id', 'booking_fees', 'credit_score', 'monthly_rental', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'rental_deposit', 'utilities_deposit', 'subtotal', 'total','sst', 'commencement_date', 'tenancy_period', 'security_deposit','status', new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
@@ -4157,12 +4157,13 @@ public function actionPaysuccess(){
                    if($todomodel->status == 'Unpaid') {
                        if ($status == 'Accepted') {
                            $totalpayableamount = $todomodel->total;
+                           $stamp_duty = $todomodel->stamp_duty;
                            $totalamount = $amount;
                            $amountwithoutsst = $todomodel->subtotal;
                            $totaldiscount = $discount+$coins_savings;
-                           $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                           $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $stamp_duty - $discount - $coins_savings ;
                            $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
-                           $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                           $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount+$stamp_duty;
                            $senderbalance = Users::getbalance($todomodel->landlord_id);
                            if ($totalamountafterdiscount > $senderbalance) {
                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');

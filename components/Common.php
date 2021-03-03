@@ -1008,12 +1008,13 @@ class Common extends Component
                     if($todomodel->status == 'Unpaid') {
                         if ($status == 'Accepted') {
                             $totalpayableamount = $todomodel->total;
+                            $stamp_duty = $todomodel->stamp_duty;
                             $totalamount = $amount;
                             $amountwithoutsst = $todomodel->subtotal;
                             $totaldiscount = $discount+$coins_savings;
-                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $stamp_duty  - $discount - $coins_savings;
                             $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
-                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount+$stamp_duty;
                             $senderbalance = Users::getbalance($todomodel->landlord_id);
 //                            if ($totalpayableamount > $senderbalance) {
 //                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');

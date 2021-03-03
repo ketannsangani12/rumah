@@ -107,7 +107,8 @@ class TodoList extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
             'updated_by' =>'Updated by',
             'remarks' =>'Remarks',
-            'is_sst'=>'Is SST Applied?'
+            'is_sst'=>'Is SST Applied?',
+            'stamp_duty'=>'Stamp Duty'
         ];
     }
 

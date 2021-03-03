@@ -127,6 +127,7 @@ class InvoicesController extends Controller
                                 break;
                             }
                         }
+
                         if($modelCustomer->is_sst==1) {
                             $sst = Yii::$app->common->calculatesst($total);
                             $grandtotal = $total + $sst;
@@ -139,6 +140,7 @@ class InvoicesController extends Controller
                             $modelCustomer->sst = 0.00;
                             $modelCustomer->total = $grandtotal;
                         }
+                        $modelCustomer->total += $modelCustomer->stamp_duty;
                         $modelCustomer->save(false);
 
                     }
@@ -240,6 +242,7 @@ class InvoicesController extends Controller
                             $modelCustomer->sst = 0.00;
                             $modelCustomer->total = $grandtotal;
                         }
+
                         $modelCustomer->save(false);
 
                     }
