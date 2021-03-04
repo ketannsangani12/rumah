@@ -916,14 +916,30 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if(!empty($_POST) && $_POST['package_id']!='') {
+                $promocode = (isset($_POST['promo_code']) && $_POST['promo_code'] != '') ? $_POST['promo_code'] : '';
+                $amount = (isset($_POST['amount']) && $_POST['amount'] != '') ? $_POST['amount'] : '';
+                $discount = (isset($_POST['discount']) && $_POST['discount'] != '') ? $_POST['discount'] : 0;
+                $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins'] != '') ? $_POST['gold_coins'] : 0;
+                $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings'] != '') ? $_POST['coins_savings'] : 0;
+                if ($promocode != '') {
+                    $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
+                }
                 $model = new UserPackages();
-                $model->attributes = Yii::$app->request->post();
-                if($model->validate()){
-                    $packagedetails = Packages::findOne($_POST['package_id']);
-                    $userbalance = Users::getbalance($this->user_id);
-                    if($packagedetails->price>$userbalance){
-                        return array('status' => 0, 'message' => 'You do not have enough balance to upgrade package.');
-                    }
+                $model->package_id = $_POST['package_id'];
+
+                $packagedetails = Packages::findOne($_POST['package_id']);
+                $userbalance = Users::getbalance($this->user_id);
+                $amountwithoutsst = $packagedetails->price;
+                $totaldiscount = $discount+$coins_savings;
+                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                // echo $totalamount."<br>".$amountwithoutsst."<br>".$tr."<br>".$sstafterdiscount."<br>".$totalamountafterdiscount;exit;
+
+                if ($userbalance < $totalamountafterdiscount) {
+                    return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
+
+                }
 
                     $model->user_id = $this->user_id;
                     $model->start_date = date('Y-m-d');
@@ -934,9 +950,16 @@ class ApiusersController extends ActiveController
                         $transactionmodel = new Transactions();
                         $transactionmodel->user_id = $model->user_id;
                         $transactionmodel->amount = $packagedetails->price;
-                        $transactionmodel->total_amount = $packagedetails->price;
+                        $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
+                        $transactionmodel->amount = $amountwithoutsst;
+                        $transactionmodel->discount = $discount;
+                        $transactionmodel->coins = $goldcoins;
+                        $transactionmodel->sst = $sstafterdiscount;
+                        $transactionmodel->coins_savings = $coins_savings;
+                        $transactionmodel->total_amount = $totalamountafterdiscount;
                         $transactionmodel->package_id = $model->id;
                         $transactionmodel->created_at = date('Y-m-d H:i:s');
+                        $transactionmodel->type = 'Payment';
                         $transactionmodel->reftype = 'Package Purchase';
                         $transactionmodel->status = 'Completed';
                         if($transactionmodel->save()){
@@ -965,10 +988,7 @@ class ApiusersController extends ActiveController
                         return array('status' => 0, 'message' => $model->getErrors());
 
                         }
-                    }else{
-                    return array('status' => 0, 'message' => $model->getErrors());
 
-                }
             }else{
                 return array('status' => 0, 'message' => 'Please enter mandatory fields.');
 
