@@ -3644,12 +3644,30 @@ class ApiusersController extends ActiveController
             if(!empty($_POST) && (isset($_POST['todo_id']) && $_POST['todo_id']!='') || (isset($_POST['package_id']) && $_POST['package_id']!='') || isset($_POST['type'])) {
                 if(isset($_POST['package_id']) && $_POST['package_id']!=''){
                     $packagedetails = Packages::findOne($_POST['package_id']);
+                    $promocode = (isset($_POST['promo_code']) && $_POST['promo_code'] != '') ? $_POST['promo_code'] : '';
+                    $amount = (isset($_POST['amount']) && $_POST['amount'] != '') ? $_POST['amount'] : '';
+                    $discount = (isset($_POST['discount']) && $_POST['discount'] != '') ? $_POST['discount'] : 0;
+                    $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins'] != '') ? $_POST['gold_coins'] : 0;
+                    $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings'] != '') ? $_POST['coins_savings'] : 0;
+                    if ($promocode != '') {
+                        $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
+                    }
+                    $amountwithoutsst = $packagedetails->price;
+                    $totaldiscount = $discount+$coins_savings;
+                    $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                    $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                    $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
                     $payment = new Payments();
                     $payment->user_id = $this->user_id;
                     $payment->package_id = $_POST['package_id'];
                     $payment->order_id = time().uniqid();
-                    $payment->amount = $packagedetails->price;
-                    $payment->total_amount = $packagedetails->price;
+                    $payment->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
+                    $payment->amount = $amountwithoutsst;
+                    $payment->sst = $sstafterdiscount;
+                    $payment->discount = $discount;
+                    $payment->coins = $goldcoins;
+                    $payment->coins_savings = $coins_savings;
+                    $payment->total_amount = $totalamountafterdiscount;
                     $payment->status = 'Pending';
                     $payment->created_at = date('Y-m-d H:i:s');
                     if($payment->save(false)){
@@ -3708,7 +3726,7 @@ class ApiusersController extends ActiveController
                     $transactionmodel->todo_id = $todo_id;
                     $transactionmodel->order_id = time().uniqid();
                     $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                    $transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                    $transactionmodel->amount = $amountwithoutsst;
                     $transactionmodel->sst = $sstafterdiscount;
                     $transactionmodel->discount = $discount;
                     $transactionmodel->coins = $goldcoins;
