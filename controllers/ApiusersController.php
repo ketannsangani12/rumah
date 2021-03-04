@@ -6138,7 +6138,7 @@ public function actionPaysuccess(){
                             case "Insurance";
                                 $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                                 $mytransactions[$key]['title'] = $transaction->reftype;
-                                $mytransactions[$key]['property'] = $transaction->property->title;
+                                $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
                                 $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                                 $mytransactions[$key]['incoming'] = 0;
                                 $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
