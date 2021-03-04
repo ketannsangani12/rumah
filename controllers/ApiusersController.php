@@ -3715,12 +3715,49 @@ class ApiusersController extends ActiveController
 //                    $totalamount = $amount;
 //                    $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
 //
-                    $totalamount = $amount;
-                    $amountwithoutsst = $todomodel->subtotal;
-                    $totaldiscount = $discount+$coins_savings;
-                    $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
-                    $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
-                    $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                    if($todomodel->reftype=='Booking'){
+                        $model = BookingRequests::findOne($todomodel->request_id);
+                        $amountwithoutsst = $todomodel->subtotal;
+                        $tenancyfees = $model->tenancy_fees;
+                        $totaldiscount = (int)$discount-(int)$coins_savings;
+                        $totaltenancyfees = $model->tenancy_fees-$totaldiscount;
+                        $sstafterdiscount =Yii::$app->common->calculatesst($totaltenancyfees);
+                        $tenancyfeeswithsst = $totaltenancyfees+$sstafterdiscount;
+                        $bookingfees = $model->booking_fees;
+                        $stamp_duty = $model->stamp_duty;
+                        $totaldiscount = $discount+$coins_savings;
+                        $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
+                        $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sstafterdiscount+$stamp_duty-$bookingfees;
+                    }elseif($todomodel->reftype=='Insurance'){
+                        $stamp_duty = $todomodel->stamp_duty;
+                        $totalamount = $amount;
+                        $amountwithoutsst = $todomodel->subtotal;
+                        $totaldiscount = $discount+$coins_savings;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $stamp_duty  - $discount - $coins_savings;
+                        $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                        $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount+$stamp_duty;
+                    }elseif($todomodel->reftype=='General'){
+                        $totalamount = $amount;
+                        $amountwithoutsst = $todomodel->subtotal;
+                        $totaldiscount = $discount+$coins_savings;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                        if($todomodel->is_sst==1){
+                            $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+
+                        }else{
+                            $sstafterdiscount = $todomodel->sst;
+                            $totalamountafterdiscount = $totalamountafterdiscount;
+                        }
+                    }else {
+                        $totalamount = $amount;
+                        $amountwithoutsst = $todomodel->subtotal;
+                        $totaldiscount = $discount + $coins_savings;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                        $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                        $totalamountafterdiscount = $totalamountafterdiscount + $sstafterdiscount;
+                    }
                     $transactionmodel = new Payments();
                     $transactionmodel->user_id = $user_id;
                     $transactionmodel->todo_id = $todo_id;

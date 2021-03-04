@@ -601,10 +601,15 @@ class SiteController extends Controller
                             if ($model->save()) {
                                 $transactionmodel = new Transactions();
                                 $transactionmodel->user_id = $model->user_id;
-                                $transactionmodel->amount = $transaction->total_amount;
+                                $transactionmodel->amount = $transaction->amount;
+                                $transactionmodel->sst = $transaction->sst;
+                                $transactionmodel->discount = $transaction->discount;
+                                $transactionmodel->coins = $transaction->coins;
+                                $transactionmodel->coins_savings = $transaction->coins_savings;
                                 $transactionmodel->total_amount = $transaction->total_amount;
                                 $transactionmodel->package_id = $model->id;
                                 $transactionmodel->payment_id = $transaction->id;
+                                $transactionmodel->type = 'Payment';
                                 $transactionmodel->created_at = date('Y-m-d H:i:s');
                                 $transactionmodel->reftype = 'Package Purchase';
                                 $transactionmodel->status = 'Completed';
@@ -848,10 +853,15 @@ class SiteController extends Controller
                             if ($model->save(false)) {
                                 $transactionmodel = new Transactions();
                                 $transactionmodel->user_id = $model->user_id;
-                                $transactionmodel->amount = $transaction->total_amount;
+                                $transactionmodel->amount = $transaction->amount;
+                                $transactionmodel->sst = $transaction->sst;
+                                $transactionmodel->discount = $transaction->discount;
+                                $transactionmodel->coins = $transaction->coins;
+                                $transactionmodel->coins_savings = $transaction->coins_savings;
                                 $transactionmodel->total_amount = $transaction->total_amount;
                                 $transactionmodel->package_id = $model->id;
                                 $transactionmodel->payment_id = $transaction->id;
+                                $transactionmodel->type = 'Payment';
                                 $transactionmodel->created_at = date('Y-m-d H:i:s');
                                 $transactionmodel->reftype = 'Package Purchase';
                                 $transactionmodel->status = 'Completed';
