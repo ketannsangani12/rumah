@@ -2808,6 +2808,13 @@ class ApipartnersController extends ActiveController
                             $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
                             $mytransactions[$key]['date'] = date('Y-m-d H:i:s',strtotime($transaction->created_at));
                             break;
+                        case "Package Purchase";
+                            $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                            $mytransactions[$key]['title'] = $transaction->reftype;
+                            $mytransactions[$key]['property'] = '';
+                            $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                            $mytransactions[$key]['incoming'] = 0;
+                            $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
                         case "Topup";
                             $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                             $mytransactions[$key]['name'] = "";
