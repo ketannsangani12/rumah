@@ -171,7 +171,7 @@ class ApiusersController extends ActiveController
         } else {
             if (!empty($_POST)){
 
-
+                \Yii::error("here");
                 $model = new Users();
                 $model->scenario = 'login';
                 $model->attributes = Yii::$app->request->post();
