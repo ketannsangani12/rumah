@@ -6914,13 +6914,13 @@ public function actionMsctrustgate()
 
 
                                            } else {
-                                               \Yii::error($errors1." (Error : ".$getactivationlink['statusCode'].")");
+                                               \Yii::error("1-".$errors1." (Error : ".$getactivationlink['statusCode'].")");
                                                return array('status' => 0, 'message'=>$errors1." (Error : ".$getactivationlink['statusCode'].")",'message1' => $getrequeststatus['statusMsg'], 'error' => json_encode($getactivationlink), 'typeapi' => 'getactivationlink');
 
                                            }
 
                                        } else {
-                                           \Yii::error($errors1." (Error : ".$getrequeststatus['statusCode'].")");
+                                           \Yii::error("2-".$errors1." (Error : ".$getrequeststatus['statusCode'].")");
                                            return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
 
                                        }
@@ -6933,23 +6933,23 @@ public function actionMsctrustgate()
                                        return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                    } else {
-                                       \Yii::error($errors1." (Error : ".$getrequeststatus['statusCode'].")");
+                                       \Yii::error("3-".$errors1." (Error : ".$getrequeststatus['statusCode'].")");
                                        return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                    }
                                } else {
-                                   \Yii::error($errors1."ketan here");
+                                   \Yii::error("4-".$errors1."ketan here");
                                    return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getrequeststatus');
 
                                }
 
                            } else {
                               if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
-                                  \Yii::error($errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
+                                  \Yii::error("5-".$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
                                   return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
 
                               }else {
-                                  \Yii::error($errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
+                                  \Yii::error("6-".$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
                                   return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => $requestcertificatewithkycresponse['statusMsg'], 'errorresponse' => json_encode($requestcertificatewithkycresponse));
                               }
 
@@ -6959,14 +6959,14 @@ public function actionMsctrustgate()
                    }
 
                }else{
-                   \Yii::error($errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
+                   \Yii::error("7-".$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
                    return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse),'typeapi'=>'requestcertificatewithkycresponse');
 
                }
                //echo "<pre>";print_r($requestcertificatewithkycresponse);exit;
 
            }else{
-               \Yii::error($errors1."ketan 123");
+               \Yii::error("8-".$errors1."ketan 123");
                return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
 
            }
@@ -6976,7 +6976,7 @@ public function actionMsctrustgate()
 
 
     }else{
-        \Yii::error("mandatory");
+        \Yii::error("9 - mandatory");
         return array('status' => 0, 'message' => 'Please enter mandatory fields.');
 
     }
