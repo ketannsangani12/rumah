@@ -5532,7 +5532,12 @@ public function actionPaysuccess(){
                    $discountamount = $countpercentage;
 
                }
-               return array('status' => 1, 'data' => array('discountamout'=>$discountamount));
+               if($discountamount>$amount){
+                   return array('status' => 0, 'message' => 'Promo code is not applicable for this amount.');
+               }else{
+                   return array('status' => 1, 'data' => array('discountamout'=>$discountamount));
+               }
+
 
 
 
