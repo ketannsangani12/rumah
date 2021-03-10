@@ -2995,10 +2995,10 @@ class Common extends Component
                                             if ($flag) {
 
                                                 if($goldcoins>0) {
-                                                    Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
+                                                    Yii::$app->common->deductgoldcoinspurchase($todomodel->landlord_id, $goldcoins, $lastid);
                                                 }
                                                 $gold_coins = $totalamountafterdiscount*1.5;
-                                                Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
+                                                Yii::$app->common->addgoldcoinspurchase($todomodel->landlord_id,$gold_coins,$lastid);
                                                 //$updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->landlord_id);
                                                 $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                 if ($updatereceiverbalance) {
