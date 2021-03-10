@@ -1553,7 +1553,7 @@ class ApipartnersController extends ActiveController
                             if($transactionmodel->save()){
                                 $lastid = $transactionmodel->id;
                                 $reference_no = Yii::$app->common->generatereferencenumber($lastid);
-                                $transactionmodel->reference_no = $reference_no;
+                                $transactionmodel->reference_no = "TR".$reference_no;
                                 if($transactionmodel->save()){
                                     $model->reference_no = $reference_no;
                                     $model->save(false);

@@ -622,6 +622,9 @@ class SiteController extends Controller
                                     $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                                     $user->property_credited += $packagedetails->quantity;
                                     if($user->save(false)){
+                                        if($transaction->coins>0) {
+                                            Yii::$app->common->deductgoldcoinspurchase($model->user_id, $transaction->coins, $lastid);
+                                        }
                                         $transaction1->commit();
                                         echo "RECEIVEOK";exit;
 
@@ -874,6 +877,9 @@ class SiteController extends Controller
                                     $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                                     $user->property_credited += $packagedetails->quantity;
                                     if($user->save(false)){
+                                        if($transaction->coins>0) {
+                                            Yii::$app->common->deductgoldcoinspurchase($model->user_id, $transaction->coins, $lastid);
+                                        }
                                         $transaction1->commit();
                                         echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
                                         exit;

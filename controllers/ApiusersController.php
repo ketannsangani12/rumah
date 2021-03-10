@@ -972,7 +972,10 @@ class ApiusersController extends ActiveController
                             $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                             $user->property_credited += $packagedetails->quantity;
                             if($user->save(false)){
-                                Users::updatebalance($userbalance-$packagedetails->price,$this->user_id);
+                                Users::updatebalance($userbalance-$totalamountafterdiscount,$this->user_id);
+                                if($goldcoins>0) {
+                                    Yii::$app->common->deductgoldcoinspurchase($this->user_id, $goldcoins, $lastid);
+                                }
                                 return array('status' => 1, 'message' => 'You have purchased package successfully.');
 
                             }else{
@@ -1646,7 +1649,7 @@ class ApiusersController extends ActiveController
                                 $reference_no = Yii::$app->common->generatereferencenumber($lastid);
                                 $transactionmodel->reference_no = $reference_no;
                                 if($transactionmodel->save()){
-                                    $model->reference_no = $reference_no;
+                                    $model->reference_no = "TR".$reference_no;
                                     $model->save(false);
                                     Users::updatebalance($model->new_balance,$this->user_id);
                                     $transaction->commit();
