@@ -6462,7 +6462,7 @@ public function actionPaysuccess(){
                                                       $usermodel->ekyc_response = json_encode($getscorecardresult);
                                                       $usermodel->identity_status = 'Verified';
                                                       $usermodel->save(false);
-                                                      return array('status' => 1, 'message' => 'Done', 'response' => $getscorecardresult);
+                                                      return array('status' => 1, 'message' => 'done', 'response' => $getscorecardresult);
 
                                                   } else {
                                                       return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : scorecardStatus is suspicious )' , 'response' => $getscorecardresult, 'here' => 'there');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
@@ -6533,7 +6533,7 @@ public function actionPaysuccess(){
                                                       $usermodel->ekyc_response = json_encode($getscorecardresult);
                                                       $usermodel->identity_status = 'Verified';
                                                       $usermodel->save(false);
-                                                      return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
+                                                      return array('status' => 1, 'message' => 'done','response'=>$getscorecardresult);
 
                                                   } else{
                                                       return array('status' => 0, 'message' => 'please upload passport again. (Error : scorecardStatus is suspicious )','response'=>$getscorecardresult,'here'=>'here');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
