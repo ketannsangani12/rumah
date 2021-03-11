@@ -1012,7 +1012,7 @@ class Common extends Component
                             $totalamount = $amount;
                             $amountwithoutsst = $todomodel->subtotal;
                             $totaldiscount = $discount+$coins_savings;
-                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $stamp_duty  - $discount - $coins_savings;
+                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst  - $discount - $coins_savings;
                             $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
                             $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount+$stamp_duty;
                             $senderbalance = Users::getbalance($todomodel->landlord_id);
