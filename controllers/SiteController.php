@@ -267,7 +267,9 @@ class SiteController extends Controller
                 $getrequeststatus = array();
                 $getactivationlink = array();
                 if ($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') {
+                    echo "sdsd";
                     $getrequeststatus = $this->Getrequeststatus($mscrequest);
+                    print_r($getrequeststatus);exit;
                     if (!empty($getrequeststatus)) {
                         $mscrequest->getrequeststatus_response = json_encode($getrequeststatus);
                         $mscrequest->updated_at = date('Y-m-d H:i:s');
@@ -303,8 +305,9 @@ class SiteController extends Controller
 
                     }
                 } else if ($mscrequest->status == 'Need Activation') {
-
+                    echo "sdssdsdd";
                     $getrequeststatus = $this->Getrequeststatus($mscrequest);
+                    print_r($getrequeststatus);exit;
                     if (!empty($getrequeststatus)) {
                         $mscrequest->getrequeststatus_response = json_encode($getrequeststatus);
                         $mscrequest->updated_at = date('Y-m-d H:i:s');
