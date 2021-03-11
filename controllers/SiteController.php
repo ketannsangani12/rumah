@@ -261,7 +261,7 @@ class SiteController extends Controller
 
     public function actionUpdaterequeststatus()
     {
-        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation']])->all();
+        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation','Pending']])->all();
         if (!empty($mscrequests)) {
             foreach ($mscrequests as $mscrequest) {
                 $getrequeststatus = array();
