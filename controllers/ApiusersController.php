@@ -2369,7 +2369,7 @@ class ApiusersController extends ActiveController
                             try {
                                 $model->scenario = 'bookingprocesssecondstep';
                                 $model->attributes = Yii::$app->request->post();
-                                $model->spa_document = UploadedFile::getInstanceByName('spa_document');
+                                //$model->spa_document = UploadedFile::getInstanceByName('spa_document');
                                 if ($model->validate()) {
                                     $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
                                     if(!empty($checkidexist)){
@@ -2379,7 +2379,7 @@ class ApiusersController extends ActiveController
 
                                     }
                                     $kyc_document = $model->kyc_document;
-                                    //$spa_document = $model->spa_document;
+                                    $spa_document = $model->spa_document;
                                     $model->kyc_document = null;
 
                                     $filename = uniqid();
@@ -2387,18 +2387,19 @@ class ApiusersController extends ActiveController
                                     $data = Yii::$app->common->processBase64($kyc_document);
 
                                     file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                    $filename1 = uniqid().'.'.$model->spa_document->extension;;
-                                    $model->spa_document->saveAs('uploads/user_documents/' . $filename1);
-                                    $model->spa_document = null;
+                                    $data = Yii::$app->common->processBase64pdf($spa_document);
+                                    $filename1 = rand().uniqid();
+                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data['type'], $data['data']);
 //                                    $data1 = Yii::$app->common->processBase64($spa_document);
 //
 //                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
 //
+                                    $model->spa_document=null;
                                     $documents = new UsersDocuments();
                                     $documents->request_id = $_POST['request_id'];
                                     $documents->user_id = $this->user_id;
                                     $documents->ekyc_document = $filename . '.' . $data['type'];
-                                    $documents->supporting_document = $filename1;
+                                    $documents->supporting_document = $filename1. '.' . $data['type'];
                                     $documents->created_at = date('Y-m-d H:i:s');
                                     $full_name = $model->full_name;
                                     $identification_no = $model->identification_no;
@@ -2464,7 +2465,7 @@ class ApiusersController extends ActiveController
                             $model->scenario = 'bookingprocessfirststepapprove';
                             $useridtenant = $model->user_id;
                             $model->attributes = Yii::$app->request->post();
-                            $model->spa_document = UploadedFile::getInstanceByName('spa_document');
+                            //$model->spa_document = UploadedFile::getInstanceByName('spa_document');
                             if ($model->validate()) {
                                 $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->landlord_id])->one();
                                 if(!empty($checkidexist)){
@@ -2492,14 +2493,18 @@ class ApiusersController extends ActiveController
                                     $usermodel->document_no = $identification_no;
                                     $usermodel->save();
                                     $kyc_document = $model->kyc_document;
+                                    $spa_document = $model->spa_document;
                                     $model->kyc_document = null;
+                                     $model->spa_document=null;
                                     //$model->spa_document = null;
                                     $filename = uniqid();
 
                                     $data = Yii::$app->common->processBase64($kyc_document);
 
                                     file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                    $filename1 = uniqid();
+                                $data = Yii::$app->common->processBase64pdf($spa_document);
+                                  $filename1 = rand().uniqid();
+                                   file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data['type'], $data['data']);
 
 //                                    $data1 = Yii::$app->common->processBase64($spa_document);
 //
@@ -2512,7 +2517,7 @@ class ApiusersController extends ActiveController
                                     $documents->request_id = $_POST['request_id'];
                                     $documents->user_id = $this->user_id;
                                     $documents->ekyc_document = $filename . '.' . $data['type'];
-                                    $documents->supporting_document = $filename1;
+                                    $documents->supporting_document = $filename1. '.' . $data['type'];
                                     $documents->created_at = date('Y-m-d H:i:s');
                                     $documents->save(false);
 

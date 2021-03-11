@@ -250,7 +250,26 @@ class Common extends Component
             throw new \Exception('did not match data URI with image data');
         }
     }
+    public function processBase64pdf($data){
+        if (preg_match('/^data:application\/(\w+);base64,/', $data, $type)) {
+            $data = substr($data, strpos($data, ',') + 1);
+            $type = strtolower($type[1]); // jpg, png, gif
 
+            if (!in_array($type, [ 'pdf' ])) {
+                throw new \Exception('invalid pdf type');
+            }
+
+            $data = base64_decode($data);
+
+            if ($data === false) {
+                throw new \Exception('base64_decode failed');
+            }
+
+            return ['data'=>$data, 'type'=>$type];
+        } else {
+            throw new \Exception('did not match data URI with pdf data');
+        }
+    }
     public function generatereferencenumber($id)
     {
         if ($id && $id != null && $id != '' && is_numeric($id)) {
