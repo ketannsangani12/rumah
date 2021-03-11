@@ -266,7 +266,7 @@ class SiteController extends Controller
             foreach ($mscrequests as $mscrequest) {
                 $getrequeststatus = array();
                 $getactivationlink = array();
-                if ($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') {
+                if (($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') || $mscrequest->status=='Pending') {
                     echo "sdsd";
                     $getrequeststatus = $this->Getrequeststatus($mscrequest);
                     print_r($getrequeststatus);exit;
