@@ -4516,7 +4516,7 @@ public function actionPaysuccess(){
                            }
                        } else if ($status == 'Rejected') {
                            $todomodel->status = $status;
-                           if ($todomodel->save()) {
+                           if ($todomodel->save(false)) {
                                $transaction->commit();
                                return array('status' => 1, 'message' => 'You have rejected payment successfully.');
 
