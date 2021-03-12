@@ -84,6 +84,7 @@ class InsurancesController extends Controller
         $modelCustomer->scenario = 'addinsurance';
         $modelsAddress = [new TodoItems()];
         if (!empty($_POST)) {
+            $stamp_duty = $_POST['TodoList']['stamp_duty'];
             $modelCustomer->load(Yii::$app->request->post());
             //$modelCustomer->
             $modelsAddress = Model::createMultiple(TodoItems::classname());
@@ -125,12 +126,14 @@ class InsurancesController extends Controller
                         }
                         $sst = Yii::$app->common->calculatesst($total);
                         $grandtotal = $total+$sst;
+                        $modelCustomer->stamp_duty = $stamp_duty;
                         $modelCustomer->subtotal = $total;
                         $modelCustomer->sst = $sst;
-                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->total = $grandtotal+$stamp_duty;
                         $modelCustomer->save(false);
 
                     }
+
 
                     if ($flag) {
                         $transaction->commit();
@@ -175,6 +178,7 @@ class InsurancesController extends Controller
         }
         $modelsAddress = $modelCustomer->todoItems;
         if (!empty($_POST)) {
+            $stamp_duty = $_POST['TodoList']['stamp_duty'];
 
             $oldIDs = ArrayHelper::map($modelsAddress, 'id', 'id');
             $modelsAddress = Model::createMultiple(TodoItems::classname(), $modelsAddress);
@@ -213,11 +217,12 @@ class InsurancesController extends Controller
                         }
                         $sst = Yii::$app->common->calculatesst($total);
                         $grandtotal = $total+$sst;
+                        $modelCustomer->stamp_duty = $stamp_duty;
                         $modelCustomer->remarks = $_POST['TodoList']['remarks'];
                         $modelCustomer->status = "Unpaid";
                         $modelCustomer->subtotal = $total;
                         $modelCustomer->sst = $sst;
-                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->total = $grandtotal+$stamp_duty;
                         $modelCustomer->save(false);
 
                     }

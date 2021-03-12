@@ -261,13 +261,15 @@ class SiteController extends Controller
 
     public function actionUpdaterequeststatus()
     {
-        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation']])->all();
+        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation','Pending']])->all();
         if (!empty($mscrequests)) {
             foreach ($mscrequests as $mscrequest) {
                 $getrequeststatus = array();
                 $getactivationlink = array();
-                if ($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') {
+                if (($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') || $mscrequest->status=='Pending') {
+                    echo "sdsd";
                     $getrequeststatus = $this->Getrequeststatus($mscrequest);
+                    print_r($getrequeststatus);exit;
                     if (!empty($getrequeststatus)) {
                         $mscrequest->getrequeststatus_response = json_encode($getrequeststatus);
                         $mscrequest->updated_at = date('Y-m-d H:i:s');
@@ -303,8 +305,9 @@ class SiteController extends Controller
 
                     }
                 } else if ($mscrequest->status == 'Need Activation') {
-
+                    echo "sdssdsdd";
                     $getrequeststatus = $this->Getrequeststatus($mscrequest);
+                    print_r($getrequeststatus);exit;
                     if (!empty($getrequeststatus)) {
                         $mscrequest->getrequeststatus_response = json_encode($getrequeststatus);
                         $mscrequest->updated_at = date('Y-m-d H:i:s');
@@ -601,10 +604,15 @@ class SiteController extends Controller
                             if ($model->save()) {
                                 $transactionmodel = new Transactions();
                                 $transactionmodel->user_id = $model->user_id;
-                                $transactionmodel->amount = $transaction->total_amount;
+                                $transactionmodel->amount = $transaction->amount;
+                                $transactionmodel->sst = $transaction->sst;
+                                $transactionmodel->discount = $transaction->discount;
+                                $transactionmodel->coins = $transaction->coins;
+                                $transactionmodel->coins_savings = $transaction->coins_savings;
                                 $transactionmodel->total_amount = $transaction->total_amount;
                                 $transactionmodel->package_id = $model->id;
                                 $transactionmodel->payment_id = $transaction->id;
+                                $transactionmodel->type = 'Payment';
                                 $transactionmodel->created_at = date('Y-m-d H:i:s');
                                 $transactionmodel->reftype = 'Package Purchase';
                                 $transactionmodel->status = 'Completed';
@@ -617,6 +625,9 @@ class SiteController extends Controller
                                     $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                                     $user->property_credited += $packagedetails->quantity;
                                     if($user->save(false)){
+                                        if($transaction->coins>0) {
+                                            Yii::$app->common->deductgoldcoinspurchase($model->user_id, $transaction->coins, $lastid);
+                                        }
                                         $transaction1->commit();
                                         echo "RECEIVEOK";exit;
 
@@ -848,10 +859,15 @@ class SiteController extends Controller
                             if ($model->save(false)) {
                                 $transactionmodel = new Transactions();
                                 $transactionmodel->user_id = $model->user_id;
-                                $transactionmodel->amount = $transaction->total_amount;
+                                $transactionmodel->amount = $transaction->amount;
+                                $transactionmodel->sst = $transaction->sst;
+                                $transactionmodel->discount = $transaction->discount;
+                                $transactionmodel->coins = $transaction->coins;
+                                $transactionmodel->coins_savings = $transaction->coins_savings;
                                 $transactionmodel->total_amount = $transaction->total_amount;
                                 $transactionmodel->package_id = $model->id;
                                 $transactionmodel->payment_id = $transaction->id;
+                                $transactionmodel->type = 'Payment';
                                 $transactionmodel->created_at = date('Y-m-d H:i:s');
                                 $transactionmodel->reftype = 'Package Purchase';
                                 $transactionmodel->status = 'Completed';
@@ -864,6 +880,9 @@ class SiteController extends Controller
                                     $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                                     $user->property_credited += $packagedetails->quantity;
                                     if($user->save(false)){
+                                        if($transaction->coins>0) {
+                                            Yii::$app->common->deductgoldcoinspurchase($model->user_id, $transaction->coins, $lastid);
+                                        }
                                         $transaction1->commit();
                                         echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
                                         exit;

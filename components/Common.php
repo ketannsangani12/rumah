@@ -250,7 +250,26 @@ class Common extends Component
             throw new \Exception('did not match data URI with image data');
         }
     }
+    public function processBase64pdf($data){
+        if (preg_match('/^data:application\/(\w+);base64,/', $data, $type)) {
+            $data = substr($data, strpos($data, ',') + 1);
+            $type = strtolower($type[1]); // jpg, png, gif
 
+            if (!in_array($type, [ 'pdf' ])) {
+                throw new \Exception('invalid pdf type');
+            }
+
+            $data = base64_decode($data);
+
+            if ($data === false) {
+                throw new \Exception('base64_decode failed');
+            }
+
+            return ['data'=>$data, 'type'=>$type];
+        } else {
+            throw new \Exception('did not match data URI with pdf data');
+        }
+    }
     public function generatereferencenumber($id)
     {
         if ($id && $id != null && $id != '' && is_numeric($id)) {
@@ -1008,12 +1027,13 @@ class Common extends Component
                     if($todomodel->status == 'Unpaid') {
                         if ($status == 'Accepted') {
                             $totalpayableamount = $todomodel->total;
+                            $stamp_duty = $todomodel->stamp_duty;
                             $totalamount = $amount;
                             $amountwithoutsst = $todomodel->subtotal;
                             $totaldiscount = $discount+$coins_savings;
-                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst  - $discount - $coins_savings;
                             $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
-                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount+$stamp_duty;
                             $senderbalance = Users::getbalance($todomodel->landlord_id);
 //                            if ($totalpayableamount > $senderbalance) {
 //                                return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
@@ -2994,10 +3014,10 @@ class Common extends Component
                                             if ($flag) {
 
                                                 if($goldcoins>0) {
-                                                    Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
+                                                    Yii::$app->common->deductgoldcoinspurchase($todomodel->landlord_id, $goldcoins, $lastid);
                                                 }
                                                 $gold_coins = $totalamountafterdiscount*1.5;
-                                                Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
+                                                Yii::$app->common->addgoldcoinspurchase($todomodel->landlord_id,$gold_coins,$lastid);
                                                 //$updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->landlord_id);
                                                 $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                 if ($updatereceiverbalance) {

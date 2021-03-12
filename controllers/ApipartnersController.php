@@ -726,38 +726,48 @@ class ApipartnersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             $packages = Packages::find()->all();
-            $currentpackage = UserPackages::find()->where(['user_id'=>$this->user_id])->orderBy(['id'=>SORT_DESC])->one();
+            $currentpackage = UserPackages::find()->where(['user_id'=>$this->user_id])->andWhere(['>=','end_date',date("Y-m-d")])->orderBy(['id'=>SORT_DESC])->one();
             $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
             // $mypropertiescount = 100;
             $userdetails = Users::findOne($this->user_id);
             $currentpackageid = '';
             if(!empty($currentpackage)){
                 $currentpackageid = $currentpackage->package_id;
+            }else{
+                $currentpackageid = 1;
             }
+            $userdetails = Users::findOne($this->user_id);
+            $totalpropertyadded = $userdetails->properties_posted;
+            $currentcredit = $userdetails->property_credited;
+            $remaining = $currentcredit- $totalpropertyadded;
             $data = array();
-            $remaining = 0;
+            //$remaining = 0;
 
             if(!empty($packages)){
                 foreach ($packages as $key=>$package){
                     if($currentpackageid==$package->id) {
-                        $data[$key]['remaining'] = $package->quantity - $mypropertiescount;
+                        $data[$key]['remaining'] = ($remaining>0)?$remaining:0;
                         $data[$key]['id'] = $package->id;
                         $data[$key]['package'] = $package->name;
                         $data[$key]['price'] = $package->price;
                         $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                         $data[$key]['total'] = $package->quantity;
-
-                        $remaining = $package->quantity - $mypropertiescount;
                         $currentkey = $key;
-                    }
-                    if(($remaining==0 && $package->id>1) || $currentpackageid==''){
+                    }else if($currentpackageid==1 && $package->id >1 && $currentpackageid < $package->id){
                         $data[$key]['id'] = $package->id;
                         $data[$key]['package'] = $package->name;
                         $data[$key]['price'] = $package->price;
                         $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                         $data[$key]['total'] = $package->quantity;
-
                     }
+//                   if(($remaining==0 && $package->id>1) || $currentpackageid==''){
+//                       $data[$key]['id'] = $package->id;
+//                       $data[$key]['package'] = $package->name;
+//                       $data[$key]['price'] = $package->price;
+//                       $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
+//                       $data[$key]['total'] = $package->quantity;
+//
+//                   }
 
 
 
@@ -780,45 +790,63 @@ class ApipartnersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if(!empty($_POST) && $_POST['package_id']!='') {
+                $promocode = (isset($_POST['promo_code']) && $_POST['promo_code'] != '') ? $_POST['promo_code'] : '';
+                $amount = (isset($_POST['amount']) && $_POST['amount'] != '') ? $_POST['amount'] : '';
+                $discount = (isset($_POST['discount']) && $_POST['discount'] != '') ? $_POST['discount'] : 0;
+                $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins'] != '') ? $_POST['gold_coins'] : 0;
+                $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings'] != '') ? $_POST['coins_savings'] : 0;
+                if ($promocode != '') {
+                    $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
+                }
                 $model = new UserPackages();
-                $model->attributes = Yii::$app->request->post();
-                if($model->validate()){
-                    $packagedetails = Packages::findOne($_POST['package_id']);
-                    $userbalance = Users::getbalance($this->user_id);
-                    if($packagedetails->price>$userbalance){
-                        return array('status' => 0, 'message' => 'You do not have enough balance to upgrade package.');
-                    }
+                $model->package_id = $_POST['package_id'];
 
-                    $model->user_id = $this->user_id;
-                    $model->start_date = date('Y-m-d');
-                    $model->end_date = date('Y-m-d', strtotime('+1 month'));
-                    $model->quantity = $packagedetails->quantity;
-                    $model->created_at = date('Y-m-d H:i:s');
-                    if ($model->save()) {
-                        $transactionmodel = new Transactions();
-                        $transactionmodel->user_id = $model->user_id;
-                        $transactionmodel->amount = $packagedetails->price;
-                        $transactionmodel->total_amount = $packagedetails->price;
-                        $transactionmodel->package_id = $model->id;
-                        $transactionmodel->created_at = date('Y-m-d H:i:s');
-                        $transactionmodel->reftype = 'Package Purchase';
-                        $transactionmodel->status = 'Completed';
-                        if($transactionmodel->save()){
-                            $lastid = $transactionmodel->id;
-                            $reference_no = Yii::$app->common->generatereferencenumber($lastid);
-                            $transactionmodel->reference_no = "TR".$reference_no;
-                            $transactionmodel->save(false);
-                            $user = Users::findOne($model->user_id);
-                            $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
-                            $user->property_credited += $packagedetails->quantity;
-                            if($user->save(false)){
-                                Users::updatebalance($userbalance-$packagedetails->price,$this->user_id);
-                                return array('status' => 1, 'message' => 'You have purchased package successfully.');
+                $packagedetails = Packages::findOne($_POST['package_id']);
+                $userbalance = Users::getbalance($this->user_id);
+                $amountwithoutsst = $packagedetails->price;
+                $totaldiscount = $discount+$coins_savings;
+                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                // echo $totalamount."<br>".$amountwithoutsst."<br>".$tr."<br>".$sstafterdiscount."<br>".$totalamountafterdiscount;exit;
 
-                            }else{
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                if ($userbalance < $totalamountafterdiscount) {
+                    return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
 
-                            }
+                }
+
+                $model->user_id = $this->user_id;
+                $model->start_date = date('Y-m-d');
+                $model->end_date = date('Y-m-d', strtotime('+1 month'));
+                $model->quantity = $packagedetails->quantity;
+                $model->created_at = date('Y-m-d H:i:s');
+                if ($model->save()) {
+                    $transactionmodel = new Transactions();
+                    $transactionmodel->user_id = $model->user_id;
+                    $transactionmodel->amount = $packagedetails->price;
+                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
+                    $transactionmodel->amount = $amountwithoutsst;
+                    $transactionmodel->discount = $discount;
+                    $transactionmodel->coins = $goldcoins;
+                    $transactionmodel->sst = $sstafterdiscount;
+                    $transactionmodel->coins_savings = $coins_savings;
+                    $transactionmodel->total_amount = $totalamountafterdiscount;
+                    $transactionmodel->package_id = $model->id;
+                    $transactionmodel->created_at = date('Y-m-d H:i:s');
+                    $transactionmodel->type = 'Payment';
+                    $transactionmodel->reftype = 'Package Purchase';
+                    $transactionmodel->status = 'Completed';
+                    if($transactionmodel->save()){
+                        $lastid = $transactionmodel->id;
+                        $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                        $transactionmodel->reference_no = "TR".$reference_no;
+                        $transactionmodel->save(false);
+                        $user = Users::findOne($model->user_id);
+                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
+                        $user->property_credited += $packagedetails->quantity;
+                        if($user->save(false)){
+                            Users::updatebalance($userbalance-$packagedetails->price,$this->user_id);
+                            return array('status' => 1, 'message' => 'You have purchased package successfully.');
 
                         }else{
                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -826,13 +854,15 @@ class ApipartnersController extends ActiveController
                         }
 
                     }else{
-                        return array('status' => 0, 'message' => $model->getErrors());
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                     }
+
                 }else{
                     return array('status' => 0, 'message' => $model->getErrors());
 
                 }
+
             }else{
                 return array('status' => 0, 'message' => 'Please enter mandatory fields.');
 
@@ -851,12 +881,30 @@ class ApipartnersController extends ActiveController
             if(!empty($_POST)  && (isset($_POST['package_id']) && $_POST['package_id']!='')) {
                 if(isset($_POST['package_id']) && $_POST['package_id']!=''){
                     $packagedetails = Packages::findOne($_POST['package_id']);
+                    $promocode = (isset($_POST['promo_code']) && $_POST['promo_code'] != '') ? $_POST['promo_code'] : '';
+                    $amount = (isset($_POST['amount']) && $_POST['amount'] != '') ? $_POST['amount'] : '';
+                    $discount = (isset($_POST['discount']) && $_POST['discount'] != '') ? $_POST['discount'] : 0;
+                    $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins'] != '') ? $_POST['gold_coins'] : 0;
+                    $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings'] != '') ? $_POST['coins_savings'] : 0;
+                    if ($promocode != '') {
+                        $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
+                    }
+                    $amountwithoutsst = $packagedetails->price;
+                    $totaldiscount = $discount+$coins_savings;
+                    $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                    $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                    $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
                     $payment = new Payments();
                     $payment->user_id = $this->user_id;
                     $payment->package_id = $_POST['package_id'];
                     $payment->order_id = time().uniqid();
-                    $payment->amount = $packagedetails->price;
-                    $payment->total_amount = $packagedetails->price;
+                    $payment->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
+                    $payment->amount = $amountwithoutsst;
+                    $payment->sst = $sstafterdiscount;
+                    $payment->discount = $discount;
+                    $payment->coins = $goldcoins;
+                    $payment->coins_savings = $coins_savings;
+                    $payment->total_amount = $totalamountafterdiscount;
                     $payment->status = 'Pending';
                     $payment->created_at = date('Y-m-d H:i:s');
                     if($payment->save(false)){
@@ -1505,7 +1553,7 @@ class ApipartnersController extends ActiveController
                             if($transactionmodel->save()){
                                 $lastid = $transactionmodel->id;
                                 $reference_no = Yii::$app->common->generatereferencenumber($lastid);
-                                $transactionmodel->reference_no = $reference_no;
+                                $transactionmodel->reference_no = "TR".$reference_no;
                                 if($transactionmodel->save()){
                                     $model->reference_no = $reference_no;
                                     $model->save(false);
@@ -2808,6 +2856,13 @@ class ApipartnersController extends ActiveController
                             $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
                             $mytransactions[$key]['date'] = date('Y-m-d H:i:s',strtotime($transaction->created_at));
                             break;
+                        case "Package Purchase";
+                            $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                            $mytransactions[$key]['title'] = $transaction->reftype;
+                            $mytransactions[$key]['property'] = '';
+                            $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                            $mytransactions[$key]['incoming'] = 0;
+                            $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
                         case "Topup";
                             $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                             $mytransactions[$key]['name'] = "";
