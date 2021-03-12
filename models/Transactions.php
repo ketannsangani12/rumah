@@ -159,4 +159,8 @@ class Transactions extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'updated_by']);
     }
+    public function getTransactionitem()
+    {
+        return $this->hasOne(TransactionsItems::className(), ['transaction_id' => 'id']);
+    }
 }
