@@ -8,11 +8,15 @@ use app\models\Msc;
 use app\models\Packages;
 use app\models\Payments;
 use app\models\Properties;
+use app\models\PropertyViews;
+use app\models\RenovationQuotes;
 use app\models\TodoList;
 use app\models\Topups;
 use app\models\Transactions;
+use app\models\TransactionsItems;
 use app\models\UserPackages;
 use app\models\Users;
+use phpDocumentor\Reflection\Types\Null_;
 use Yii;
 use yii\db\Exception;
 use yii\filters\AccessControl;
@@ -74,8 +78,121 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $start_date = date('Y-m-d H:i:s', strtotime('first day of january this year'));
+        $last_date = date('Y-m-d 23:59:00', strtotime('last day of december this year'));
+        $current_date = date("Y-m-d");
+        /*upper part*/
+        $active_user = Users::find()->where(['status' => '1'])->count();
+        $active_property_agents = Users::find()->where(['status' => '1','role'=>'Agent'])->count();
+        $active_listing = Properties::find()->where(['status' => 'Active'])->count();
+        $managed_listing = Properties::find()->where(['is_managed' => '1'])->count();
+        $active_listing_viewed = PropertyViews::find()
+            ->joinWith(['property p'])
+            ->where(['in','p.status', ['Active','Rented']])
+            ->andWhere('rumah_property_views.created_at >= :created_at', [':created_at' => $start_date])
+            ->andWhere('rumah_property_views.created_at <= :endcreated_at', [':endcreated_at' => $last_date])
+            ->groupBy('property_id')
+            ->count();
+
+        $purchased_listing_package_active = UserPackages::find()
+            ->where('end_date >= :enddate', [':enddate' => $current_date])
+            ->groupBy('user_id')
+            ->count();
+
+        $purchased_tenancy_service_active = Properties::find()
+            ->where(['digital_tenancy' => '1','status'=>'Active'])
+            ->andWhere('created_at >= :created_at', [':created_at' => $start_date])
+            ->andWhere('created_at <= :endcreated_at', [':endcreated_at' => $last_date])
+            ->count();
+        $subscribed_auto_rental_collection_service_active = Properties::find()
+            ->where(['auto_rental' => '1','status'=>'Active'])
+            ->andWhere('created_at >= :created_at', [':created_at' => $start_date])
+            ->andWhere('created_at <= :endcreated_at', [':endcreated_at' => $last_date])
+            ->count();
+        $purchased_insurance_policy_active = Properties::find()
+            ->where(['insurance' => '1','status'=>'Active'])
+            ->andWhere('created_at >= :created_at', [':created_at' => $start_date])
+            ->andWhere('created_at <= :endcreated_at', [':endcreated_at' => $last_date])
+            ->count();
+        /*bottom part*/
+        $purchased_tenancy_service = Properties::find()
+            ->where(['digital_tenancy' => '1'])
+            ->count();
+        $promo_code_used = Transactions::find()
+            ->where(['!=','promo_code',' '])
+            ->andWhere(['status'=>'Completed'])
+            ->count();
+        $gross_amount_of_collected_payment = Transactions::find()->where(['status' => 'Completed'])->sum('total_amount');;
+        $aggregate_amount_of_purchased_package =  Transactions::find()->where(['status' => 'Completed','reftype'=>'Package Purchase'])->sum('total_amount');
+        $aggregate_amount_of_collected_rental = Transactions::find()->where(['status' => 'Completed','reftype'=>'Monthly Rental'])->sum('total_amount');
+        $transactions = Transactions::find()
+            ->Where(['status'=>'Completed'])
+            ->all();
+        $totle_deposite_count = 0;
+        if(!empty($transactions)) {
+            foreach ($transactions as $deposite) {
+                $totle_deposite = TransactionsItems::find()
+                    ->where(['transaction_id' => $deposite['id']])
+                    ->andWhere(['in','description', ['Deposit','Keycard Deposit','Utilities Deposit']])
+                    ->sum('total_amount');
+                $totle_deposite_count += $totle_deposite;
+            }
+        }
+        $aggregate_amount_of_collected_agent_commission = Transactions::find()->where(['status' => 'Completed','reftype'=>'Agent Commision'])->sum('total_amount');
+        $aggregate_amount_of_renovation_payment = Transactions::find()->where(['status' => 'Completed','reftype'=>'Renovation Payment'])->sum('total_amount');
+        $aggregate_amount_of_service_payment = Transactions::find()->where(['status' => 'Completed','reftype'=>'Service'])->sum('total_amount');
+        /*Booking*/
+        $new_booking_request = BookingRequests::find()->where(['status' => 'New'])->count();
+        $completed_booking_request = BookingRequests::find()->where(['status' => 'Completed'])->count();
+        $declared_booking_request = BookingRequests::find()->where(['status' => 'New'])->count();
+        $cancelled_booking_request = BookingRequests::find()->where(['status' => 'Cancelled'])->count();
+        /*Renovation*/
+        $approved_renovation_quote = RenovationQuotes::find()->where(['status' => 'Approved'])->count();
+        $completed_renovation_quote = RenovationQuotes::find()->where(['status' => 'Completed'])->count();
+        /*insurance*/
+        $completed_insurance = TodoList::find()->where(['reftype'=>'insurance','status' => 'Completed'])->count();
+        /*defectcase*/
+        $completed_defect_case = TodoList::find()->where(['reftype'=>'Defect Report','status' => 'Completed'])->count();
+        /*Auto rental collection*/
+        $completed_rental_collection = TodoList::find()->where(['reftype'=>'Monthly Rental','status' => 'Paid'])->count();
+        /*Service*/
+        $new_service_request = TodoList::find()->where(['reftype'=>'Service','status' => 'New'])->count();
+        $pending_service_request = TodoList::find()->where(['reftype'=>'Service','status' => 'Pending'])->count();
+        $completed_service_request = TodoList::find()->where(['reftype'=>'Service','status' => 'Completed'])->count();
+        return $this->render('index', [
+            'active_user' => $active_user,
+            'active_property_agents' => $active_property_agents,
+            'active_listing' => $active_listing,
+            'managed_listing' => $managed_listing,
+            'active_listing_viewed' => $active_listing_viewed,
+            'purchased_listing_package_active' => $purchased_listing_package_active,
+            'purchased_tenancy_service_active' => $purchased_tenancy_service_active,
+            'subscribed_auto_rental_collection_service_active' => $subscribed_auto_rental_collection_service_active,
+            'purchased_insurance_policy_active' => $purchased_insurance_policy_active,
+            'purchased_tenancy_service' => $purchased_tenancy_service,
+            'promo_code_used' => $promo_code_used,
+            'gross_amount_of_collected_payment' => $gross_amount_of_collected_payment,
+            'aggregate_amount_of_purchased_package' => $aggregate_amount_of_purchased_package,
+            'aggregate_amount_of_collected_rental' => $aggregate_amount_of_collected_rental,
+            'aggregate_amount_of_collected_deposits' => $totle_deposite_count,
+            'aggregate_amount_of_collected_agent_commission' => $aggregate_amount_of_collected_agent_commission,
+            'aggregate_amount_of_renovation_payment' => $aggregate_amount_of_renovation_payment,
+            'aggregate_amount_of_service_payment' => $aggregate_amount_of_service_payment,
+            'new_booking_request' => $new_booking_request,
+            'completed_booking_request' => $completed_booking_request,
+            'declared_booking_request' => $declared_booking_request,
+            'cancelled_booking_request' => $cancelled_booking_request,
+            'approved_renovation_quote' => $approved_renovation_quote,
+            'completed_renovation_quote' => $completed_renovation_quote,
+            'completed_insurance' => $completed_insurance,
+            'completed_defect_case' => $completed_defect_case,
+            'completed_rental_collection' => $completed_rental_collection,
+            'new_service_request' => $new_service_request,
+            'pending_service_request' => $pending_service_request,
+            'completed_service_request' => $completed_service_request,
+        ]);
     }
+
 
     /**
      * Login action.
