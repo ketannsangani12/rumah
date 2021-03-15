@@ -846,6 +846,8 @@ class ApipartnersController extends ActiveController
                         $user->property_credited += $packagedetails->quantity;
                         if($user->save(false)){
                             Users::updatebalance($userbalance-$packagedetails->price,$this->user_id);
+                            $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
+                            Yii::$app->common->addgoldcoinspurchase($this->user_id,$gold_coins,$lastid);
                             return array('status' => 1, 'message' => 'You have purchased package successfully.');
 
                         }else{

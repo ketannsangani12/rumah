@@ -21,7 +21,7 @@ $properties = \app\models\Properties::find()->asArray()->all();
 //print_r($properties);exit;
 if(!empty($properties)){
     foreach ($properties as $property){
-        $data[$property['id']] = $property['title'];
+        $data[$property['id']] = $property['property_no']." - ".$property['title'];
     }
 }
 ?>

@@ -976,6 +976,8 @@ class ApiusersController extends ActiveController
                                 if($goldcoins>0) {
                                     Yii::$app->common->deductgoldcoinspurchase($this->user_id, $goldcoins, $lastid);
                                 }
+                                $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
+                                Yii::$app->common->addgoldcoinspurchase($this->user_id,$gold_coins,$lastid);
                                 return array('status' => 1, 'message' => 'You have purchased package successfully.');
 
                             }else{
@@ -1265,7 +1267,7 @@ class ApiusersController extends ActiveController
         } else {
 
             $userdetails = Users::find()->select(['id','full_name', 'coins',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where(['id'=>$this->user_id])->asArray()->one();
-            $transactions = GoldTransactions::find()->where(['user_id'=>$this->user_id])->orWhere(['refferer_id'=>$this->user_id])->andWhere(['status'=>'Completed'])->asArray()->all();
+            $transactions = GoldTransactions::find()->where(['user_id'=>$this->user_id])->orWhere(['refferer_id'=>$this->user_id])->andWhere(['status'=>'Completed'])->orderBy(['id'=>SORT_DESC])->asArray()->all();
             $goldtransactions = array();
             if(!empty($transactions)){
                 foreach ($transactions as $transaction){
@@ -3182,7 +3184,7 @@ class ApiusersController extends ActiveController
                         $query->select(['id', 'todo_id', 'description', 'price', 'reftype']);
 
                     },
-                ])->where(['reftype' => 'General'])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->asArray()->all();
+                ])->where(['reftype' => 'General'])->andWhere(['!=','status','Rejected'])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->asArray()->all();
 
             $data = array();
             //echo "<pre>";print_r($todolists);exit;

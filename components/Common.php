@@ -322,24 +322,25 @@ class Common extends Component
             }
             $goldtransaction->gold_coins = $goldcoins;
             $goldtransaction->transaction_id = $transaction_id;
-            $goldtransaction->olduserbalance = $usercoinsbalance;
-            $goldtransaction->newuserbalance = $usercoinsbalance + $goldcoins;
+            $goldtransaction->olduserbalance = $usercoinsbalance1;
+            $goldtransaction->newuserbalance = $usercoinsbalance1 + $goldcoins;
             $goldtransaction->incoming = 1;
-            $goldtransaction->reftype = ($type != '') ? $type : 'In App Purchase';
+            $goldtransaction->reftype = 'Onboarding';
             $goldtransaction->status = 'Completed';
             $goldtransaction->created_at = date('Y-m-d H:i:s');
             if ($goldtransaction->save(false)) {
-                $update = Users::updatecoinsbalance($usercoinsbalance + $goldcoins, $user_id);
+                //$update = Users::updatecoinsbalance($usercoinsbalance + $goldcoins, $user_id);
 
                 if($reffer_id!='') {
                     $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
                 }
 
                 if ($update) {
-                    $subject = 'Gold coins earned';
-                    $textmessage = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
-                    $this->Savenotification($user_id,$subject,$textmessage);
-                    $this->Sendpushnotification($user_id,$subject,$textmessage,'User');
+//                    $subject = 'Gold coins earned';
+//                    $textmessage = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
+//                    $this->Savenotification($user_id,$subject,$textmessage);
+//                    $this->Sendpushnotification($user_id,$subject,$textmessage,'User');
+
                     if($reffer_id!='') {
                         $subject1 = 'Gold coins earned';
                         $textmessage1 = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
@@ -355,10 +356,10 @@ class Common extends Component
                 return false;
             }
         }elseif($type=='1st Property Listed'){
-            $usercoinsbalance1 = Users::getcoinsbalance($reffer_id);
+            $usercoinsbalance1 = Users::getcoinsbalance($user_id);
             $goldtransaction = new GoldTransactions();
             $goldtransaction->user_id = $user_id;
-            $goldtransaction->refferer_id = $reffer_id;
+            $goldtransaction->refferer_id = NULL;
             $goldtransaction->gold_coins = $goldcoins;
             $goldtransaction->olduserbalance = $usercoinsbalance1;
             $goldtransaction->newuserbalance = $usercoinsbalance1 + $goldcoins;
@@ -367,13 +368,13 @@ class Common extends Component
             $goldtransaction->status = 'Completed';
             $goldtransaction->created_at = date('Y-m-d H:i:s');
             if ($goldtransaction->save(false)){
-                $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
+                $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $user_id);
 
                 if ($update) {
                     $subject = 'Gold coins earned';
                     $textmessage = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
-                    $this->Savenotification($reffer_id,$subject,$textmessage);
-                    $this->Sendpushnotification($reffer_id,$subject,$textmessage,'User');
+                    $this->Savenotification($user_id,$subject,$textmessage);
+                    $this->Sendpushnotification($user_id,$subject,$textmessage,'User');
 
                     return true;
                 } else {
@@ -421,7 +422,7 @@ class Common extends Component
         $goldtransaction->transaction_id = $transaction_id;
         $goldtransaction->olduserbalance =$usercoinsbalance;
         $goldtransaction->newuserbalance = $usercoinsbalance-$goldcoins;
-        $goldtransaction->incoming = 1;
+        $goldtransaction->incoming = 0;
         $goldtransaction->reftype = 'In App Purchase';
         $goldtransaction->status = 'Completed';
         $goldtransaction->created_at = date('Y-m-d H:i:s');
