@@ -1271,7 +1271,7 @@ class ApiusersController extends ActiveController
             $goldtransactions = array();
             if(!empty($transactions)){
                 foreach ($transactions as $transaction){
-                    if($transaction['reftype']=='1st Property Listed' ){
+                    if($transaction['reftype']=='1st Property Listed' || $transaction['reftype']='Tenancy signed'){
                         if($transaction['refferer_id']==$this->user_id) {
                             $goldtransactions[] = $transaction;
                         }
@@ -2752,7 +2752,15 @@ class ApiusersController extends ActiveController
                                             }
                                             $gold_coins = $totalcoinsamountapplied*1.5;
                                             Yii::$app->common->addgoldcoinspurchase($model->user_id,$gold_coins,$lastid);
+                                            $usermodel = Users::findOne($model->user_id);
+                                            if($usermodel->referred_by!='') {
+                                                $checkgoldcoinsalreadyreceived = GoldTransactions::find()->where(['user_id'=>$model->user_id,'refferer_id'=>$usermodel->referred_by,'reftype'=>'Tenancy Signed'])->one();
+                                                if(empty($checkgoldcoinsalreadyreceived)) {
 
+                                                    $gold_coinsreffer = 4688;
+                                                    Yii::$app->common->addgoldcoinspurchase($model->user_id, $gold_coinsreffer, $lastid, 'Tenancy Signed', $usermodel->referred_by);
+                                                }
+                                            }
                                             $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
                                             $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                             $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);

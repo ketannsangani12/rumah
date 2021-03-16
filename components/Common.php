@@ -385,7 +385,36 @@ class Common extends Component
                 return false;
             }
 
-        }else {
+        }elseif($type=='Tenancy Signed'){
+            $usercoinsbalance1 = Users::getcoinsbalance($reffer_id);
+            $goldtransaction = new GoldTransactions();
+            $goldtransaction->user_id = $user_id;
+            $goldtransaction->refferer_id = $reffer_id;
+            $goldtransaction->gold_coins = $goldcoins;
+            $goldtransaction->olduserbalance = $usercoinsbalance1;
+            $goldtransaction->newuserbalance = $usercoinsbalance1 + $goldcoins;
+            $goldtransaction->incoming = 1;
+            $goldtransaction->reftype = 'Tenancy Signed';
+            $goldtransaction->status = 'Completed';
+            $goldtransaction->created_at = date('Y-m-d H:i:s');
+            if ($goldtransaction->save(false)){
+                $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $user_id);
+
+                if ($update) {
+                    $subject = 'Gold coins earned';
+                    $textmessage = 'Congratulation!! You just earned enormous gold coin. Goes to “My Profile” to check your balance.';
+                    $this->Savenotification($reffer_id,$subject,$textmessage);
+                    $this->Sendpushnotification($reffer_id,$subject,$textmessage,'User');
+
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+        }   else {
             $usercoinsbalance = Users::getcoinsbalance($user_id);
             $goldtransaction = new GoldTransactions();
             $goldtransaction->user_id = $user_id;
@@ -643,7 +672,15 @@ class Common extends Component
                                     }
                                     $gold_coins = $totalcoinsamountapplied*1.5;
                                     $this->addgoldcoinspurchase($model->user_id,$gold_coins,$lastid);
+                                    $usermodel = Users::findOne($model->user_id);
+                                    if($usermodel->referred_by!='') {
+                                        $checkgoldcoinsalreadyreceived = GoldTransactions::find()->where(['user_id'=>$model->user_id,'refferer_id'=>$usermodel->referred_by,'reftype'=>'Tenancy Signed'])->one();
+                                        if(empty($checkgoldcoinsalreadyreceived)) {
 
+                                            $gold_coinsreffer = 4688;
+                                            $this->addgoldcoinspurchase($model->user_id, $gold_coinsreffer, $lastid, 'Tenancy Signed', $usermodel->referred_by);
+                                        }
+                                    }
                                     //$updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
                                     $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                     $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
