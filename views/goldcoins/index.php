@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                  //'reftype',
                 // 'status',
-                 'created_at:datetime',
+                 'created_at',
                 // 'updated_at',
 
                 //['class' => 'yii\grid\ActionColumn'],
