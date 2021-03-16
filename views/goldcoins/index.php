@@ -80,7 +80,26 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                  //'reftype',
                 // 'status',
-                 'created_at',
+                [
+                    // the attribute
+                    'attribute' => 'created_at',
+                    'noWrap'=>true,
+
+                    // format the value
+                    'value' => function ($model) {
+
+                        return date('d-m-Y h:i:s a', strtotime($model->created_at));
+
+                    },
+                    // some styling?
+
+
+                    'filter' => false
+                    // here we render the widget
+
+                    //'format' => ['datetime', Yii::$app->formatter->datetimeFormat]
+                ],
+                 //'created_at',
                 // 'updated_at',
 
                 //['class' => 'yii\grid\ActionColumn'],
