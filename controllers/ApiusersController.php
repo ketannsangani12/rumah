@@ -3782,10 +3782,10 @@ class ApiusersController extends ActiveController
                     $transactionmodel->total_amount = $totalamountafterdiscount;
                     $transactionmodel->status = 'Pending';
                     $transactionmodel->created_at = date('Y-m-d H:i:s');
-                    if($transactionmodel->save()){
+                    if($transactionmodel->save(false)){
                         return array('status' => 1, 'order_id' => $transactionmodel->order_id);
                     }else{
-                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.'.$transactionmodel->getErrors());
 
                     }
                 }
