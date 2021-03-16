@@ -46,6 +46,7 @@ class HelloController extends Controller
 
     public function actionRemoveproperties()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $todaydate = date('Y-m-d 11:59:59');
         $days_ago = date('Y-m-d 00:00:00', strtotime('-45 days', strtotime(date('Y-m-d'))));
         //echo $todaydate;
@@ -148,6 +149,7 @@ class HelloController extends Controller
     }
     public function actionUpdaterequeststatus()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation','Pending']])->all();
         if (!empty($mscrequests)) {
             foreach ($mscrequests as $mscrequest) {
@@ -226,6 +228,7 @@ class HelloController extends Controller
     }
     public function actionGetsignedpdf()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $mscrequests = Msc::find()->where(['status' => 'Approved'])->orderBy(['id' => SORT_DESC])->all();
         if (!empty($mscrequests)) {
             foreach ($mscrequests as $mscrequest) {
@@ -332,7 +335,7 @@ class HelloController extends Controller
     }
 
     private function signpdf($mscmodel,$model){
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $curl = curl_init();
 
         curl_setopt_array($curl, array(

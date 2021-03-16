@@ -310,6 +310,7 @@ class Common extends Component
 
     }
     public function addgoldcoinspurchase($user_id,$goldcoins,$transaction_id,$type='',$reffer_id=''){
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         if($type=='Onboarding'){
             $usercoinsbalance = Users::getcoinsbalance($user_id);
             if($reffer_id!='') {
@@ -415,6 +416,7 @@ class Common extends Component
 
     }
     public function deductgoldcoinspurchase($user_id,$goldcoins,$transaction_id,$type=''){
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $usercoinsbalance = Users::getcoinsbalance($user_id);
         $goldtransaction = new GoldTransactions();
         $goldtransaction->user_id = $user_id;
@@ -439,6 +441,7 @@ class Common extends Component
 
     }
     public function payment($user_id,$todo_id,$status,$reftype,$post,$payment_id=''){
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
 
