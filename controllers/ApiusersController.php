@@ -1268,19 +1268,21 @@ class ApiusersController extends ActiveController
 
             $userdetails = Users::find()->select(['id','full_name', 'coins',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where(['id'=>$this->user_id])->asArray()->one();
             $transactions = GoldTransactions::find()->where(['user_id'=>$this->user_id])->orWhere(['refferer_id'=>$this->user_id])->andWhere(['status'=>'Completed'])->orderBy(['id'=>SORT_DESC])->asArray()->all();
-            echo "<pre>";print_r($transactions);exit;
+
             $goldtransactions = array();
+            $goldtransactions1 = array();
             if(!empty($transactions)){
                 foreach ($transactions as $transaction){
                     if($transaction['reftype']='Tenancy signed' || $transaction['reftype']=='Onboarding'){
                         if($transaction['refferer_id']==$this->user_id) {
-                            $goldtransactions[] = $transaction;
+                            $goldtransactions1[] = $transaction;
                         }
                     }else{
                         $goldtransactions[] = $transaction;
                     }
                 }
             }
+            echo "<pre>";print_r(array_merge($goldtransactions,$goldtransactions1));exit;
             $userdetails['coins'] = round($userdetails['coins']);
             return array('status' => 1, 'userdetails' => $userdetails,'data'=>$goldtransactions);
 
