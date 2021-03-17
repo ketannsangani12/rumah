@@ -1273,16 +1273,16 @@ class ApiusersController extends ActiveController
             $goldtransactions1 = array();
             if(!empty($transactions)){
                 foreach ($transactions as $transaction){
-                    if($transaction['reftype']='Tenancy signed' || $transaction['reftype']=='Onboarding'){
+                    if($transaction['reftype']=='Tenancy signed' || $transaction['reftype']=='Onboarding'){
                         if($transaction['refferer_id']==$this->user_id) {
-                            $goldtransactions1[] = $transaction;
+                            $goldtransactions[] = $transaction;
                         }
                     }else{
                         $goldtransactions[] = $transaction;
                     }
                 }
             }
-            echo "<pre>";print_r($goldtransactions);exit;
+            //echo "<pre>";print_r($goldtransactions);exit;
             $userdetails['coins'] = round($userdetails['coins']);
             return array('status' => 1, 'userdetails' => $userdetails,'data'=>$goldtransactions);
 
