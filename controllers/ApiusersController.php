@@ -1282,7 +1282,7 @@ class ApiusersController extends ActiveController
                     }
                 }
             }
-            echo "<pre>";print_r(array_merge($goldtransactions,$goldtransactions1));exit;
+            echo "<pre>";print_r($goldtransactions);exit;
             $userdetails['coins'] = round($userdetails['coins']);
             return array('status' => 1, 'userdetails' => $userdetails,'data'=>$goldtransactions);
 
