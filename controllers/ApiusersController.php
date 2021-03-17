@@ -1281,7 +1281,7 @@ class ApiusersController extends ActiveController
                 }
             }
             $userdetails['coins'] = round($userdetails['coins']);
-            return array('status' => 1, 'userdetails' => $userdetails,'data'=>$transactions);
+            return array('status' => 1, 'userdetails' => $userdetails,'data'=>$goldtransactions);
 
 
         }
