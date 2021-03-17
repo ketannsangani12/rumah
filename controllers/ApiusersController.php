@@ -1268,6 +1268,7 @@ class ApiusersController extends ActiveController
 
             $userdetails = Users::find()->select(['id','full_name', 'coins',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where(['id'=>$this->user_id])->asArray()->one();
             $transactions = GoldTransactions::find()->where(['user_id'=>$this->user_id])->orWhere(['refferer_id'=>$this->user_id])->andWhere(['status'=>'Completed'])->orderBy(['id'=>SORT_DESC])->asArray()->all();
+            echo "<pre>";print_r($transactions);exit;
             $goldtransactions = array();
             if(!empty($transactions)){
                 foreach ($transactions as $transaction){
