@@ -1271,7 +1271,7 @@ class ApiusersController extends ActiveController
             $goldtransactions = array();
             if(!empty($transactions)){
                 foreach ($transactions as $transaction){
-                    if($transaction['reftype']=='1st Property Listed' || $transaction['reftype']='Tenancy signed'){
+                    if($transaction['reftype']=='1st Property Listed' || $transaction['reftype']='Tenancy signed' || $transaction['reftype']=='Onboarding'){
                         if($transaction['refferer_id']==$this->user_id) {
                             $goldtransactions[] = $transaction;
                         }
