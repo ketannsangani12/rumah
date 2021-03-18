@@ -2009,7 +2009,7 @@ class ApiusersController extends ActiveController
                         $agentratings = $ratings/$totalratings;
                     }
                 }
-                $data['agentratings'] = $agentratings;
+                $data['agentratings'] = number_format((float)$agentratings, 2, '.', '');
                 return array('status' => 1, 'data' => $data);
 
 
