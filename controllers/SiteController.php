@@ -82,7 +82,8 @@ class SiteController extends Controller
         $last_date = date('Y-m-d 23:59:00', strtotime('last day of december this year'));
         $current_date = date("Y-m-d");
         /*upper part*/
-        $active_user = Users::find()->where(['status' => '1'])->count();
+        /*$active_user = Users::find()->where(['status' => '1'])->count();*/
+        $active_user = Users::find()->count();
         $active_property_agents = Users::find()->where(['status' => '1','role'=>'Agent'])->count();
         $active_listing = Properties::find()->where(['status' => 'Active'])->count();
         $managed_listing = Properties::find()->where(['is_managed' => '1'])->count();

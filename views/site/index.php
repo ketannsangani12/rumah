@@ -28,7 +28,7 @@
     }
     @media (min-width: 992px) {
     .test {
-        width: 19.666667% !important;
+        width: 33% !important;
     }
     }
     .icon-font-size{
@@ -36,6 +36,9 @@
     }
     .result-font{
         font-size: 16px;
+    }
+    .info-box-text{
+        font-size: 13px !important;
     }
 </style>
 <?php
