@@ -6872,8 +6872,68 @@ public function actionMsctrustgate()
                        $mscmodel->status = 'Pending';
                        $mscmodel->save(false);
                        $userdetails->msccertificate = $requestcertificatewithkycresponse['certRequestID'];
-                       $userdetails->save(false);
-                       return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.', 'errorresponse' => '', 'typeapi' => 'getactivationlink');
+                       if($userdetails->save(false)){
+                           $getrequeststatus = $this->Getrequeststatus($mscmodel);
+                           if (!empty($getrequeststatus)) {
+                               $mscmodel->getrequeststatus_response = json_encode($getrequeststatus);
+                               $mscmodel->updated_at = date('Y-m-d H:i:s');
+                               $mscmodel->save(false);
+                               if ($getrequeststatus['statusCode'] == 000 && $getrequeststatus['dataList']['requestStatus'] == 'Pending Activation') {
+                                   $mscmodel->status = 'Pending Activation';
+                                   $mscmodel->save(false);
+                                   $getactivationlink = $this->Getactivationlink($mscmodel);
+                                   if (!empty($getactivationlink)) {
+                                       $mscmodel->getactivationlink_response = json_encode($getactivationlink);
+                                       $mscmodel->updated_at = date('Y-m-d H:i:s');
+                                       $mscmodel->save(false);
+                                       if ($getactivationlink['statusCode'] == 000 && $getactivationlink['statusMsg'] == 'Success') {
+                                           $mscmodel->activation_link = $getactivationlink['activationLink'];
+                                           $mscmodel->status = 'Need Activation';
+                                           $mscmodel->updated_at = date('Y-m-d H:i:s');
+                                           $mscmodel->save(false);
+                                           $todomodel = new TodoList();
+                                           $todomodel->user_id = $user_id;
+                                           $todomodel->msc_id = $mscmodel->id;
+                                           $todomodel->property_id = $requestmodel->property_id;
+                                           $todomodel->request_id = $mscmodel->request_id;
+                                           $todomodel->reftype = 'Activation Link';
+                                           $todomodel->created_at = date('Y-m-d H:i:s');
+                                           $todomodel->updated_at = date('Y-m-d H:i:s');
+                                           $todomodel->status = 'Pending';
+                                           $todomodel->save(false);
+                                           return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.', 'errorresponse' => '', 'typeapi' => 'getactivationlink');
+
+
+                                       } else {
+                                           \Yii::error("1-".$errors1." (Error : ".$getactivationlink['statusCode'].")");
+                                           return array('status' => 0, 'message'=>$errors1." (Error : ".$getactivationlink['statusCode'].")",'message1' => $getrequeststatus['statusMsg'], 'error' => json_encode($getactivationlink), 'typeapi' => 'getactivationlink');
+
+                                       }
+
+                                   } else {
+                                       \Yii::error("2-".$errors1." (Error : ".$getrequeststatus['statusCode'].")");
+                                       return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
+
+                                   }
+
+                               } else if ($getrequeststatus['statusCode'] == 000 && ($getrequeststatus['dataList']['requestStatus'] == 'Submitted' || $getrequeststatus['dataList']['requestStatus'] == 'Verified')) {
+                                   $mscmodel->status = 'Pending MSC Approval';
+                                   $mscmodel->save(false);
+                                   $mscmodel->status = 'Pending MSC Approval';
+                                   $requestmodel->save(false);
+                                   return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+
+                               } else {
+                                   \Yii::error("3-".$errors1." (Error : ".$getrequeststatus['statusCode'].")");
+                                   return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+
+                               }
+                           } else {
+                               \Yii::error("4-".$errors1."ketan here");
+                               return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getrequeststatus');
+
+                           }
+                       }
 
                    }else if($requestcertificatewithkycresponse['statusCode']=='CR100'){
                        $mscrequestmodel = Msc::find()->where(['request_id' => $_POST['request_id'], 'user_id' => $user_id,'status'=>'Approved'])->orderBy(['id' => SORT_DESC])->one();
