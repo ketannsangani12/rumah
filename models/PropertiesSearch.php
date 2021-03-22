@@ -84,6 +84,7 @@ class PropertiesSearch extends Properties
             'insurance' => $this->insurance,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'status' => $this->status,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
@@ -94,8 +95,7 @@ class PropertiesSearch extends Properties
             ->andFilterWhere(['like', 'preference', $this->preference])
             ->andFilterWhere(['like', 'furnished_status', $this->furnished_status])
             ->andFilterWhere(['like', 'amenities', $this->amenities])
-            ->andFilterWhere(['like', 'commute', $this->commute])
-            ->andFilterWhere(['like', 'status', $this->status]);
+            ->andFilterWhere(['like', 'commute', $this->commute]);
 
         return $dataProvider;
     }
