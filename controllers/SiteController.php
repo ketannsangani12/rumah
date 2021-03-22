@@ -379,13 +379,13 @@ class SiteController extends Controller
 
     public function actionUpdaterequeststatus()
     {
-        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation','Pending']])->all();
+        $mscrequests = Msc::find()->where(['in', 'status', ['Pending MSC Approval', 'Need Activation','Pending']])->andWhere(['id'=>4])->all();
         if (!empty($mscrequests)) {
             foreach ($mscrequests as $mscrequest) {
                 $getrequeststatus = array();
                 $getactivationlink = array();
                 if (($mscrequest->request->status == 'Pending MSC Approval' && $mscrequest->status == 'Pending MSC Approval') || $mscrequest->status=='Pending') {
-                    echo "sdsd";
+                    //echo "sdsd";
                     $getrequeststatus = $this->Getrequeststatus($mscrequest);
                     print_r($getrequeststatus);exit;
                     if (!empty($getrequeststatus)) {
