@@ -2392,9 +2392,9 @@ class ApiusersController extends ActiveController
                                     $data = Yii::$app->common->processBase64($kyc_document);
 
                                     file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                    $data = Yii::$app->common->processBase64pdf($spa_document);
+                                    $data1 = Yii::$app->common->processBase64pdf($spa_document);
                                     $filename1 = rand().uniqid();
-                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data['type'], $data['data']);
+                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
 //                                    $data1 = Yii::$app->common->processBase64($spa_document);
 //
 //                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
@@ -2404,7 +2404,7 @@ class ApiusersController extends ActiveController
                                     $documents->request_id = $_POST['request_id'];
                                     $documents->user_id = $this->user_id;
                                     $documents->ekyc_document = $filename . '.' . $data['type'];
-                                    $documents->supporting_document = $filename1. '.' . $data['type'];
+                                    $documents->supporting_document = $filename1. '.' . $data1['type'];
                                     $documents->created_at = date('Y-m-d H:i:s');
                                     $full_name = $model->full_name;
                                     $identification_no = $model->identification_no;
@@ -2507,22 +2507,22 @@ class ApiusersController extends ActiveController
                                     $data = Yii::$app->common->processBase64($kyc_document);
 
                                     file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                $data = Yii::$app->common->processBase64pdf($spa_document);
+                                $data1 = Yii::$app->common->processBase64pdf($spa_document);
                                   $filename1 = rand().uniqid();
-                                   file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data['type'], $data['data']);
+                                   file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
 
 //                                    $data1 = Yii::$app->common->processBase64($spa_document);
 //
 //                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
 //
-                                $filename1 = uniqid().'.'.$model->spa_document->extension;;
-                                $model->spa_document->saveAs('uploads/user_documents/' . $filename1);
-                                $model->spa_document = null;
+                                //$filename1 = uniqid().'.'.$model->spa_document->extension;;
+                                //$model->spa_document->saveAs('uploads/user_documents/' . $filename1);
+                                   $model->spa_document = null;
                                     $documents = new UsersDocuments();
                                     $documents->request_id = $_POST['request_id'];
                                     $documents->user_id = $this->user_id;
                                     $documents->ekyc_document = $filename . '.' . $data['type'];
-                                    $documents->supporting_document = $filename1. '.' . $data['type'];
+                                    $documents->supporting_document = $filename1. '.' . $data1['type'];
                                     $documents->created_at = date('Y-m-d H:i:s');
                                     $documents->save(false);
 
@@ -3195,7 +3195,7 @@ class ApiusersController extends ActiveController
                         $query->select(['id', 'todo_id', 'description', 'price', 'reftype']);
 
                     },
-                ])->where(['reftype' => 'General'])->andWhere(['!=','status','Rejected'])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->asArray()->all();
+                ])->where(['reftype' => 'General'])->andWhere(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->andWhere(['!=','status','Rejected'])->asArray()->all();
 
             $data = array();
             //echo "<pre>";print_r($todolists);exit;
