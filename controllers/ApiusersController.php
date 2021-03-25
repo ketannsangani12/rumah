@@ -6823,14 +6823,39 @@ public function actionPaysuccess(){
 public function actionMsctrustgate()
 {
     if (!empty($_POST) && isset($_POST['full_name']) && $_POST['full_name'] != '' && isset($_POST['identification_no']) && $_POST['identification_no'] != '' && isset($_POST['document']) && $_POST['document'] != '' && isset($_POST['type']) && $_POST['type'] != '' && isset($_POST['request_id']) && $_POST['request_id'] != '') {
-           $requestmodel = BookingRequests::findOne($_POST['request_id']);
+            $requestmodel = BookingRequests::findOne($_POST['request_id']);
+
             $type = $_POST['type'];
             $document_front =  $_POST['document'];
             $full_name = $_POST['full_name'];
             $identification_no = $_POST['identification_no'];
-            $user_id = $this->user_id;
-            $userdetails = Users::findOne($user_id);
-            $mobile_no  = $userdetails->contact_no;
+        $user_id = $this->user_id;
+        $userdetails = Users::findOne($user_id);
+        $mobile_no  = $userdetails->contact_no;
+            $certificateexist = Msc::find()->where(['document_no'=>$identification_no,'user_id'=>$this->user_id,'status'=>'Approved'])->orderBy(['id'=>SORT_ASC])->one();
+            if(!empty($certificateexist)){
+                $mscmodel = New Msc();
+                $mscmodel->user_id = $user_id;
+                $mscmodel->request_id = $_POST['request_id'];
+                $mscmodel->document_front = $document_front;
+                $mscmodel->document_back = ($_POST['document_back']!='')?$_POST['document_back']:null;
+                $mscmodel->full_name = $full_name;
+                $mscmodel->document_no = $identification_no;
+                $mscmodel->type = $type;
+                $mscmodel->mobile_no = $mobile_no;
+                $mscmodel->created_at = date('Y-m-d H:i:s');
+                $mscmodel->mscrequest_id = $certificateexist->mscrequest_id;
+                $mscmodel->requestekyc_response = $certificateexist->requestekyc_response;
+                $mscmodel->getrequeststatus_response = $certificateexist->getrequeststatus_response;
+                $mscmodel->getrequeststatus_response = $certificateexist->getrequeststatus_response;
+                $mscmodel->getactivationlink_response = $certificateexist->getactivationlink_response;
+                $mscmodel->status = 'Approved';
+                $mscmodel->created_at = date('Y-m-d H:i:s');
+                $mscmodel->save(false);
+                return array('status' => 1, 'message' => 'Your MSC certificate already exist in our system.So we are moving ahead to proceed signing');exit;
+
+            }
+
             $dataarray['type'] = $type;
             $dataarray['document_front'] = $document_front;
             $dataarray['document_back'] = '';
@@ -6852,6 +6877,7 @@ public function actionMsctrustgate()
                 $errors1 = 'Document verification has failed, please upload myKAD again';
 
             }
+
            $requestcertificatewithkycresponse = $this->Requestcertificatewithekyc($dataarray,$_POST['request_id'],$user_id);
            if(!empty($requestcertificatewithkycresponse)){
 
