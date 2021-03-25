@@ -1749,12 +1749,12 @@ class ApiusersController extends ActiveController
                             $countproperties = Properties::find()->where(['user_id'=>$this->user_id])->count();
                             if($countproperties==1) {
                                 $userdetails = Users::findOne($this->user_id);
-                                if($userdetails->referred_by!=''){
+                                //if($userdetails->referred_by!=''){
                                     $gold_coins = 188;
                                     Yii::$app->common->addgoldcoinspurchase($this->user_id,$gold_coins,null,'1st Property Listed',$userdetails->referred_by);
 
 
-                                }
+                                //}
                             }
                             return array('status' => 1, 'message' => 'You have added property successfully.');
 
