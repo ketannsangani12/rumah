@@ -6847,7 +6847,6 @@ public function actionMsctrustgate()
                 $mscmodel->mscrequest_id = $certificateexist->mscrequest_id;
                 $mscmodel->requestekyc_response = $certificateexist->requestekyc_response;
                 $mscmodel->getrequeststatus_response = $certificateexist->getrequeststatus_response;
-                $mscmodel->getrequeststatus_response = $certificateexist->getrequeststatus_response;
                 $mscmodel->getactivationlink_response = $certificateexist->getactivationlink_response;
                 $mscmodel->status = 'Approved';
                 $mscmodel->created_at = date('Y-m-d H:i:s');
