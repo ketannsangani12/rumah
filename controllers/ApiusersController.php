@@ -2376,13 +2376,13 @@ class ApiusersController extends ActiveController
                                 $model->attributes = Yii::$app->request->post();
                                 //$model->spa_document = UploadedFile::getInstanceByName('spa_document');
                                 if ($model->validate()) {
-                                    $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
-                                    if(!empty($checkidexist)){
-                                        $transaction1->rollBack();
-
-                                        return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
-
-                                    }
+//                                    $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
+//                                    if(!empty($checkidexist)){
+//                                        $transaction1->rollBack();
+//
+//                                        return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
+//
+//                                    }
                                     $kyc_document = $model->kyc_document;
                                     $spa_document = $model->spa_document;
                                     $model->kyc_document = null;
@@ -2472,11 +2472,11 @@ class ApiusersController extends ActiveController
                             $model->attributes = Yii::$app->request->post();
                             //$model->spa_document = UploadedFile::getInstanceByName('spa_document');
                             if ($model->validate()) {
-                                $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->landlord_id])->one();
-                                if(!empty($checkidexist)){
-                                    return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
-
-                                }
+//                                $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->landlord_id])->one();
+//                                if(!empty($checkidexist)){
+//                                    return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
+//
+//                                }
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
                                     $sstappliedamount = $model->tenancy_fees;
