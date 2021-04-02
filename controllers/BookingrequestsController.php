@@ -405,7 +405,7 @@ curl_setopt_array($curl, array(
         //echo "<pre>";print_r($model->signed_agreement);exit;
         $decoded = base64_decode($model->signed_agreement);
         $pdf_base64 = 'blank.pdf';
-        file_put_contents('blank.pdf',$decoded);
+        file_put_contents(time().'blank.pdf',$decoded);
 
         //$pdf_base64 = "base64pdf.txt";
 //Get File content from txt file
@@ -418,7 +418,7 @@ curl_setopt_array($curl, array(
         fclose ($pdf);
 
         header('Content-Description: File Transfer');
-        header('Content-Disposition: attachment; filename='.basename($pdf_base64));
+        header('Content-Disposition: attachment; filename='.basename("signedagreement".$model->reference_no.$pdf_base64));
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
