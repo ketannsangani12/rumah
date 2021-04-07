@@ -311,7 +311,7 @@ class Common extends Component
     }
     public function addgoldcoinspurchase($user_id,$goldcoins,$transaction_id,$type='',$reffer_id=''){
         date_default_timezone_set("Asia/Kuala_Lumpur");
-        if($type=='Onboarding'){
+        if($type=='Onboarding' && $reffer_id!=''){
             $usercoinsbalance = Users::getcoinsbalance($user_id);
             if($reffer_id!='') {
                 $usercoinsbalance1 = Users::getcoinsbalance($reffer_id);
@@ -323,7 +323,7 @@ class Common extends Component
             }
             $goldtransaction->gold_coins = $goldcoins;
             $goldtransaction->transaction_id = $transaction_id;
-            $goldtransaction->olduserbalance = $usercoinsbalance1;
+            $goldtransaction->olduserbalance = isset($usercoinsbalance1)?$usercoinsbalance1:NULL;
             $goldtransaction->newuserbalance = $usercoinsbalance1 + $goldcoins;
             $goldtransaction->incoming = 1;
             $goldtransaction->reftype = 'Onboarding';
