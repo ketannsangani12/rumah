@@ -647,9 +647,11 @@ class ApiusersController extends ActiveController
                         $model->status = 1;
                         if($model->save(false)){
                             $userid = $model->referred_by;
-                            $user_id = $model->id;
-                            $gold_coins = 188;
-                            Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding',$userid);
+                            if($model->referred_by!='') {
+                                $user_id = $model->id;
+                                $gold_coins = 188;
+                                Yii::$app->common->addgoldcoinspurchase($user_id, $gold_coins, null, 'Onboarding', $userid);
+                            }
 
                             //Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding');
 

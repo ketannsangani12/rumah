@@ -318,9 +318,7 @@ class Common extends Component
             }
             $goldtransaction = new GoldTransactions();
             $goldtransaction->user_id = $user_id;
-            if($reffer_id!='') {
-                $goldtransaction->refferer_id = $reffer_id;
-            }
+            $goldtransaction->refferer_id = $reffer_id;
             $goldtransaction->gold_coins = $goldcoins;
             $goldtransaction->transaction_id = $transaction_id;
             $goldtransaction->olduserbalance = isset($usercoinsbalance1)?$usercoinsbalance1:NULL;
@@ -414,7 +412,7 @@ class Common extends Component
                 return false;
             }
 
-        }   else {
+        }   else if($type!='Onboarding') {
             $usercoinsbalance = Users::getcoinsbalance($user_id);
             $goldtransaction = new GoldTransactions();
             $goldtransaction->user_id = $user_id;
