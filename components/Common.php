@@ -124,6 +124,9 @@ class Common extends Component
             case "Tenancy signed";
                 return "<span class='btn bg-blue btn-xs'>Tenancy signed</span>";
                 break;
+            case "1st Property Listed";
+                return "<span class='btn bg-orange btn-xs'>1st Property Listed</span>";
+                break;
             case "1st Rent Listed";
                 return "<span class='btn bg-orange btn-xs'>1st Rent Listed</span>";
                 break;

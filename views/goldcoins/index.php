@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value'=> function($model){
                         return Yii::$app->common->getGolcointype($model->reftype);
                     },
-                    'filter'=>array("Rental On Time"=>"Rental On Time","In App Purchase"=>"In App Purchase","Onboarding"=>"Onboarding","Tenancy signed"=>"Tenancy signed","1st Rent Listed"=>"1st Rent Listed"),
+                    'filter'=>array("Rental On Time"=>"Rental On Time","In App Purchase"=>"In App Purchase","Onboarding"=>"Onboarding","Tenancy signed"=>"Tenancy signed","1st Property Listed"=>"1st Property Listed"),
                     'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 
                 ],
