@@ -151,7 +151,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'facebookuser_id'=>'Facebook User id',
             'secondarypassword'=>'Secondary Password',
             'userid'=>'User ID',
-            'properties_posted'=>'Properties Posted'
+            'properties_posted'=>'Properties Posted',
+            'ekyc_document'=>'Ekyc Document'
         ];
     }
 

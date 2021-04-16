@@ -182,12 +182,68 @@ class BookingrequestsController extends Controller
         $model->scenario = 'choosetemplate';
         if ($model->load(Yii::$app->request->post())) {
             if($model->validate()) {
-                $model->status = 'Agreement Processing';
-                $model->subtotal = $model->subtotal + $model->stamp_duty;
-                $model->total = $model->total + $model->stamp_duty;
+//                $model->status = 'Agreement Processing';
+//                $model->subtotal = $model->subtotal + $model->stamp_duty;
+//                $model->total = $model->total + $model->stamp_duty;
                 $model->updated_at = date('Y-m-d H:i:s');
                 $model->updated_by = Yii::$app->user->id;
                 if($model->save(false)){
+                    $tenantmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->user_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
+                    $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
+                    if(empty($tenantmscmodel) || empty($landlordmscmodel)){
+                        Yii::$app->session->setFlash('error', "Verification process still in progress for this Booking request.Once its done you can move ahead.");
+                        return $this->redirect(['index']);
+                    }
+
+                    $content = $model->document_content;
+
+                    // setup kartik\mpdf\Pdf component
+                    $pdf = new Pdf([
+                        // set to use core fonts only
+                        'mode' => Pdf::MODE_CORE,
+                        // A4 paper format
+                        'format' => Pdf::FORMAT_A4,
+                        // portrait orientation
+                        'orientation' => Pdf::ORIENT_PORTRAIT,
+                        // stream to browser inline
+                        'destination' => Pdf::DEST_BROWSER,
+                        // your html content input
+                        'content' => $content,
+                        // format content from your own css file if needed or use the
+                        // enhanced bootstrap css built by Krajee for mPDF formatting
+                        //'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/bootstrap.css',
+
+                        // any css to be embedded if required
+                        'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+
+                        // any css to be embedded if required
+                        'cssInline' => '.kv-heading-1{font-size:18px}',
+                        // call mPDF methods on the fly
+                        'methods' => [
+                            'SetHeader' => [''],
+                            'SetFooter' => [''],
+                        ]
+                    ]);
+                    $filename = \Yii::$app->security
+                            ->generateRandomString().time().".pdf";
+                    // return the pdf output as per the destination setting
+                    $pdf->output($content,'uploads/agreements/' .$filename,'F');
+                    $model->agreement_document = 'uploads/agreements/' .$filename;
+                    $model->updated_at = date('Y-m-d H:i:s');
+                    $model->save(false);
+                    $landlordmscmodel->x1 = $model->landlordx1;
+                    $landlordmscmodel->y1 = $model->landlordy1;
+                    $landlordmscmodel->x2 = $model->landlordx2;
+                    $landlordmscmodel->y2 = $model->landlordy2;
+                    $landlordmscmodel->page_no = $model->landlordpageno;
+                    $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
+                    $landlordmscmodel->save(false);
+                    $tenantmscmodel->x1 = $model->tenantx1;
+                    $tenantmscmodel->x2 = $model->tenantx2;
+                    $tenantmscmodel->y1 = $model->tenanty1;
+                    $tenantmscmodel->y2 = $model->tenanty2;
+                    $tenantmscmodel->page_no = $model->tenantpageno;
+                    $tenantmscmodel->save(false);
                     return $this->redirect(['index']);
 
                 }else{
@@ -399,13 +455,13 @@ curl_setopt_array($curl, array(
     }
     public function actionDownload($id){
         $model = $this->findModel($id);
-        if ($model->status!='Agreement Processed' || $model->signed_agreement=='') {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+//        if ($model->status!='Agreement Processed' || $model->signed_agreement=='') {
+//            throw new NotFoundHttpException('The requested page does not exist.');
+//        }
         //echo "<pre>";print_r($model->signed_agreement);exit;
         $decoded = base64_decode($model->signed_agreement);
         $pdf_base64 = 'blank.pdf';
-        file_put_contents(time().'blank.pdf',$decoded);
+        file_put_contents('uploads/agreements/'.time().'blank.pdf',$decoded);
 
         //$pdf_base64 = "base64pdf.txt";
 //Get File content from txt file
@@ -449,37 +505,32 @@ curl_setopt_array($curl, array(
         $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking'])->one();
         $model->scenario = 'uploadagreement';
         if ($model->load(Yii::$app->request->post())) {
-            $model->agreement = \yii\web\UploadedFile::getInstance($model, 'agreement');
-            if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
-                $model->stampdutycertificate = \yii\web\UploadedFile::getInstance($model, 'stampdutycertificate');
-            }
+            $model->stampdutycertificate = \yii\web\UploadedFile::getInstance($model, 'stampdutycertificate');
+            //$model->agreement = \yii\web\UploadedFile::getInstance($model, 'agreement');
+//            if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
+//                $model->stampdutycertificate = \yii\web\UploadedFile::getInstance($model, 'stampdutycertificate');
+//            }
             if($model->validate()) {
-                $newFileName = \Yii::$app->security
-                        ->generateRandomString().'.'.$model->agreement->extension;
-                $model->agreement_document = $newFileName;
-                if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
+//                $newFileName = \Yii::$app->security
+//                        ->generateRandomString().'.'.$model->agreement->extension;
+//                $model->agreement_document = $newFileName;
+                //if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
                     $newFileName1 = \Yii::$app->security
                             ->generateRandomString().'.'.$model->stampdutycertificate->extension;
                     $model->stampduty_certificate = $newFileName1;
 
-                }
-                $oldstatus = $model->status;
-                    if($model->status=='Agreement Processed'){
-                    $model->status = 'Payment Requested';
-                }
+                //}
+               // $oldstatus = $model->status;
+
                 $model->updated_at = date('Y-m-d H:i:s');
                 $model->updated_by = Yii::$app->user->id;
                 if($model->save(false)){
-                    if($oldstatus =='Agreement Processed') {
-                        $todomodel->status = 'Unpaid';
-                        $todomodel->updated_at = date('Y-m-d H:i:s');
-                        $todomodel->save(false);
-                    }
-                    $model->agreement->saveAs('uploads/agreements/' . $newFileName);
-                    if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
+
+                    //$model->agreement->saveAs('uploads/agreements/' . $newFileName);
+                    //if(!empty($_FILES) && isset($_FILES['BookingRequests']['name']['stampdutycertificate']) && $_FILES['BookingRequests']['name']['stampdutycertificate']!='') {
                         $model->stampdutycertificate->saveAs('uploads/agreements/' . $newFileName1);
 
-                    }
+                   // }
                         return $this->redirect(['index']);
 
                 }else{

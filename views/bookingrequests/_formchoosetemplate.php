@@ -47,6 +47,55 @@ use yii\widgets\ActiveForm;
                             ],
                         ]); ?>
                         <?= $form->field($model, 'stamp_duty')->textInput(); ?>
+                        <div class="row">
+                            <h4>For Tenant</h4>
+                            <div class="col-md-3">
+                                <?= $form->field($model, 'tenantx1')->textInput() ?>
+
+                            </div>
+                            <div class="col-md-3">
+                                <?= $form->field($model, 'tenanty1')->textInput() ?>
+
+                            </div>
+                            <div class="col-md-3">
+                                <?= $form->field($model, 'tenantx2')->textInput() ?>
+
+                            </div>
+                            <div class="col-md-3">
+                                <?= $form->field($model, 'tenanty2')->textInput() ?>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h4>For Landlord</h4>
+                            <div class="col-md-3">
+                                <?= $form->field($model, 'landlordx1')->textInput() ?>
+
+                            </div>
+                            <div class="col-md-3">
+                                <?= $form->field($model, 'landlordy1')->textInput() ?>
+
+                            </div>
+                            <div class="col-md-3">
+                                <?= $form->field($model, 'landlordx2')->textInput() ?>
+
+                            </div>
+                            <div class="col-md-3">
+                                <?= $form->field($model, 'landlordy2')->textInput() ?>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?= $form->field($model, 'tenantpageno')->textInput() ?>
+
+                            </div>
+                            <div class="col-md-6">
+                                <?= $form->field($model, 'landlordpageno')->textInput() ?>
+
+                            </div>
+
+                        </div>
 
                     </div>
                 </div>

@@ -15,6 +15,7 @@ use app\models\GoldTransactions;
 use app\models\Ilifestyle;
 use app\models\Images;
 use app\models\Istories;
+use app\models\ManualKyc;
 use app\models\Msc;
 use app\models\Notifications;
 use app\models\Packages;
@@ -176,7 +177,7 @@ class ApiusersController extends ActiveController
                 $model->scenario = 'login';
                 $model->attributes = Yii::$app->request->post();
                 if($model->validate()){
-                    $userexist = Users::find()->select(['*',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where([
+                    $userexist = Users::find()->select(['id','userid','role','full_name','wallet_balance','coins','property_credited','properties_posted','membership_expire_date','contact_no','email','company_name','document_no','gender','registration_no','dob','race','nationality','education_level','bank_account_name','bank_account_no','bank_name','document_type','referred_by','status','identity_status','ekyc_response','current_status','created_at',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where([
                         'email' => $model->email,
                         'password' => md5($model->password)
                     ])->andWhere(['in','role',['User']])->asArray()->one();
@@ -2561,8 +2562,69 @@ class ApiusersController extends ActiveController
 
                     }
                      break;
-
                     case "fifth";
+                        if ($model->status=='Agreement Processing'  && isset($_POST['status']) && !empty($_POST['status']) && $model->landlord_id==$this->user_id){
+                            $transaction1 = Yii::$app->db->beginTransaction();
+
+                            try {
+                                $status = $_POST['status'];
+                                if($status=='Accepted'){
+                                    $model->status = 'Payment Requested';
+                                    $model->updated_at = date('Y-m-d H:i:s');
+                                    $model->updated_by = $this->user_id;
+                                    if ($model->save(false)) {
+                                        $todomodel->status = 'Unpaid';
+                                        $todomodel->updated_at = date('Y-m-d H:i:s');
+                                        if ($todomodel->save(false)) {
+                                            $transaction1->commit();
+
+                                            return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
+
+                                        } else {
+                                            $transaction1->rollBack();
+                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                        }
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                }else if($status=='Rejected'){
+                                    $model->status = 'Cancelled';
+                                    $model->updated_at = date('Y-m-d H:i:s');
+                                    $model->updated_by = $this->user_id;
+                                    if ($model->save(false)) {
+                                        $todomodel->remarks = 'Cancelled due to Landlord Rejected MSC';
+                                        $todomodel->status = 'Rejected';
+                                        $todomodel->updated_at = date('Y-m-d H:i:s');
+                                        if ($todomodel->save(false)) {
+                                            $transaction1->commit();
+
+                                            return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
+
+                                        } else {
+                                            $transaction1->rollBack();
+                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                        }
+                                    } else {
+                                        $transaction1->rollBack();
+                                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                    }
+                                }
+
+
+                            } catch (Exception $e) {
+                                // # if error occurs then rollback all transactions
+                                $transaction1->rollBack();
+                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                            }
+
+                        }
+                        break;
+                    case "sixth";
                     if ($model->status=='Payment Requested' && $model->user_id==$this->user_id && isset($_POST['amount']) && $_POST['amount']!=''){
                         $promocode = (isset($_POST['promo_code']) && $_POST['promo_code']!='')?$_POST['promo_code']:'';
                         $amount = (isset($_POST['amount']) && $_POST['amount']!='')?$_POST['amount']:'';
@@ -2771,7 +2833,7 @@ class ApiusersController extends ActiveController
                                             $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
 
                                             $transaction1->commit();
-                                            return array('status' => 1, 'message' => 'You have rented property successfully.');
+                                            return array('status' => 1, 'message' => 'You have rented property successfully.Agreement will display in your MyDocs Shortly.');
 
 
                                         }else{
@@ -2848,10 +2910,10 @@ class ApiusersController extends ActiveController
                         $query->select('id,property_no,title,location');
                     },
                     'user' => function ($query) {
-                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","document_no"]);
                     },
                     'landlord' => function ($query) {
-                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","document_no"]);
 
                     },
                     'agent'=>function($query){
@@ -2889,7 +2951,20 @@ class ApiusersController extends ActiveController
                         case "Booking";
                             if($todolist['user_id']==$user_id){
                                 if(($todolist['status']=='Pending' && $todolist['request']['credit_score']=='') || $todolist['status']=='New' || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
-                                    $data[] = $todolist;
+                                    if($todolist['status']=='Approved'){
+                                        if($todolist['user']['identity_status']=='Verified'){
+                                            $data[] = $todolist;
+                                        }else{
+                                            $manualkycexist = ManualKyc::find()->where(['user_id'=>$user_id,'request_id'=>$todolist['request']['id'],'status'=>'Pending'])->one();
+                                            if(empty($manualkycexist)){
+                                                $data[] = $todolist;
+                                            }
+                                        }
+
+                                    }else{
+                                        $data[] = $todolist;
+                                    }
+
                                 }else if($todolist['request']['status']=='Rented' && $todolist['request']['movein_document']!=''){
                                     $reviewexist = PropertyRatings::find()->where(['request_id'=>$todolist['request_id'],'user_id'=>$user_id,'property_id'=>$todolist['property_id']])->one();
                                     if(empty($reviewexist)){
@@ -2898,8 +2973,19 @@ class ApiusersController extends ActiveController
                                 }
 
                             }else if($todolist['landlord_id']==$user_id){
-                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') ||  $todolist['status']=='Processing'){
-                                    $data[] = $todolist;
+                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') ||  $todolist['status']=='Processing' || $todolist['request']['status']=='Agreement Processing'){
+                                    if($todolist['status']=='Processing'){
+                                        if($todolist['landlord']['identity_status']=='Verified'){
+                                            $data[] = $todolist;
+                                        }else{
+                                            $manualkycexist = ManualKyc::find()->where(['user_id'=>$user_id,'request_id'=>$todolist['request']['id'],'status'=>'Pending'])->one();
+                                            if(empty($manualkycexist)){
+                                                $data[] = $todolist;
+                                            }
+                                        }
+                                    }else {
+                                        $data[] = $todolist;
+                                    }
                                 }
                             }
 
@@ -3054,10 +3140,10 @@ class ApiusersController extends ActiveController
                             $query->select('id,property_no,title');
                         },
                         'user' => function ($query) {
-                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document"]);
                         },
                         'landlord' => function ($query) {
-                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document"]);
 
                         },
                         'agent'=>function($query){
@@ -3234,7 +3320,7 @@ class ApiusersController extends ActiveController
             $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'worker_id' ,'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document")])
                 ->with([
                     'request' => function ($query) {
-                        $query->select(['id','commencement_date','tenancy_period','status',new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `stampduty_certificate`) as stampduty_certificate"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document"),'updated_at']);
+                        $query->select(['id','commencement_date','tenancy_period','status','signed_agreement','signed_agreement_document',new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `stampduty_certificate`) as stampduty_certificate"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document"),'updated_at']);
                     },
                     'servicerequest'=>function ($query) {
                         $query->select(['id','property_id','vendor_id','user_id','todo_id','date','time','description','document','reftype','status','amount','subtotal','sst','total_amount']);
@@ -3281,8 +3367,8 @@ class ApiusersController extends ActiveController
                                          $moveindocument['date'] = date('d-m-Y',strtotime($todolist['request']['updated_at']));
                                          $data[] = $moveindocument;
                                      }
-                                     if($todolist['request']['agreement_document']!=''){
-                                         $agreementdocument['document'] = $todolist['request']['agreement_document'];
+                                     if($todolist['request']['signed_agreement_document']!='' && $todolist['request']['signed_agreement']!=''){
+                                         $agreementdocument['document'] = $todolist['request']['signed_agreement_document'];
                                          $agreementdocument['type'] = 'Agreement';
                                          $agreementdocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
                                          $agreementdocument['location'] = $todolist['property']['location'];
@@ -3337,8 +3423,8 @@ class ApiusersController extends ActiveController
 
                                         $data[] = $moveindocument;
                                     }
-                                    if($todolist['request']['agreement_document']!=''){
-                                        $agreementdocument['document'] = $todolist['request']['agreement_document'];
+                                    if($todolist['request']['signed_agreement_document']!='' && $todolist['request']['signed_agreement']!=''){
+                                        $agreementdocument['document'] = $todolist['request']['signed_agreement_document'];
                                         $agreementdocument['type'] = 'Agreement';
                                         $agreementdocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
                                         $agreementdocument['location'] = $todolist['property']['location'];
@@ -6419,6 +6505,37 @@ public function actionPaysuccess(){
 
 
     }
+    public function actionManualkyc()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['document_no']) && $_POST['document_no']!='' && isset($_POST['selfie']) && $_POST['selfie']!='' && isset($_POST['request_id']) && $_POST['request_id']!='' && isset($_POST['type']) && $_POST['type']!='') {
+                $requestmodel = BookingRequests::findOne($_POST['request_id']);
+                $type = $_POST['type'];
+
+                $user_id = $this->user_id;
+                $manualkyc = new ManualKyc();
+                $manualkyc->request_id =$_POST['request_id'];
+                $manualkyc->user_id = $this->user_id;
+                $manualkyc->document = $_POST['document'];
+                $manualkyc->document_no = $_POST['document_no'];
+                $manualkyc->selfie = $_POST['selfie'];
+                $manualkyc->type = $type;
+                $manualkyc->status = 'Pending';
+                $manualkyc->created_at = date('Y-m-d H:i:s');
+                if($manualkyc->save(false)){
+                    return array('status' => 0, 'message' => 'We have submitted your documents to admin for manual approval.Will update you shortly.');
+                }else{
+
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+    }
 
     public function actionVerifydocument()
     {
@@ -6834,13 +6951,13 @@ public function actionMsctrustgate()
         $user_id = $this->user_id;
         $userdetails = Users::findOne($user_id);
         $mobile_no  = $userdetails->contact_no;
-            $certificateexist = Msc::find()->where(['document_no'=>$identification_no,'user_id'=>$this->user_id,'status'=>'Approved'])->orderBy(['id'=>SORT_ASC])->one();
+            $certificateexist = Msc::find()->where(['document_no'=>$identification_no,'user_id'=>$this->user_id,'status'=>'Completed'])->orderBy(['id'=>SORT_ASC])->one();
             if(!empty($certificateexist)){
                 $mscmodel = New Msc();
                 $mscmodel->user_id = $user_id;
                 $mscmodel->request_id = $_POST['request_id'];
-                $mscmodel->document_front = $document_front;
-                $mscmodel->document_back = ($_POST['document_back']!='')?$_POST['document_back']:null;
+                $mscmodel->document_front = $certificateexist->document_front;
+                $mscmodel->document_back = $certificateexist->document_back;
                 $mscmodel->full_name = $full_name;
                 $mscmodel->document_no = $identification_no;
                 $mscmodel->type = $type;

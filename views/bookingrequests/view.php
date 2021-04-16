@@ -155,9 +155,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'agreement_document',
-                        'label' => 'Agreement document(Stamped)',
+                        'label' => 'Agreement document(Signed)',
                         'value' => function ($model) {
-                            return ($model->agreement_document!='')?Html::a('Print', Yii::$app->homeUrl.'uploads/agreements/'.$model->agreement_document):'Not Uploaded';
+                            return ($model->signed_agreement_document!='')?Html::a('Print', Yii::$app->homeUrl.$model->signed_agreement_document):'Not Uploaded';
                         },
                         'format' => 'raw',
                     ],

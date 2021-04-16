@@ -794,4 +794,142 @@ class HelloController extends Controller
 
     }
 
+    public function actionUploadtomsc()
+    {
+        $bookingrequests = BookingRequests::find()->where(['status' => 'Rented'])->andWhere(['=','signed_agreement',''])->all();
+
+        //->andWhere(['=','signed_agreement',''])->all();
+        if (!empty($bookingrequests)) {
+            foreach ($bookingrequests as $model) {
+
+                $agreementdocument = $model->agreement_document;
+                if ($agreementdocument != '') {
+
+                    $tenantmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->user_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
+                    $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
+                    if (!empty($tenantmscmodel) && !empty($landlordmscmodel)) {
+
+                        $b64Doc = chunk_split(base64_encode(file_get_contents($agreementdocument)));
+
+
+                        $landlordmscmodel->pdf = $b64Doc;
+                        $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
+                        if ($landlordmscmodel->save(false)) {
+
+                            $tenantmscmodel->save(false);
+                            $signpdfresponse = $this->actionSignpdf($landlordmscmodel, $model);
+
+
+                            if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] == '000') {
+                                $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                $landlordmscmodel->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
+                                $landlordmscmodel->status = 'Completed';
+                                $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
+                                $landlordmscmodel->save(false);
+
+                                if (isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64'] != '') {
+                                    $tenantmscmodel->pdf = $signpdfresponse['return']['signedPdfInBase64'];
+                                    $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                    $tenantmscmodel->save(false);
+                                    $signpdftenantresponse = $this->actionSignpdf($tenantmscmodel, $model);
+                                    if (!empty($signpdftenantresponse) && isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode'] == '000') {
+                                        $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                        $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                        $tenantmscmodel->status = 'Completed';
+                                        $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                        if ($tenantmscmodel->save(false)) {
+
+                                            $model->signed_agreement = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                            $model->updated_at = date('Y-m-d H:i:s');
+                                            $decoded = base64_decode($model->signed_agreement);
+                                            $filename = "signedagreement_" . time() . $model->reference_no . '.pdf';
+                                            file_put_contents('uploads/agreements/' . $filename, $decoded);
+                                            $model->signed_agreement_document = 'uploads/agreements/' . $filename;
+                                            //$model->status = 'Agreement Processed';
+                                            $model->save(false);
+
+
+                                        }
+
+                                    } else {
+                                        $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                        $tenantmscmodel->save(false);
+
+//
+                                    }
+
+                                } else {
+                                    $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                    $landlordmscmodel->save(false);
+
+
+                                }
+
+                            } else {
+                                $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                $landlordmscmodel->save(false);
+
+
+                            }
+
+                        } else {
+
+                        }
+
+                        //return $this->redirect(['index']);
+
+                    } else {
+                        //Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
+                    }
+
+
+                }
+            }
+        }
+
+
+    }
+    private function actionSignpdf($mscmodel,$model){
+        //echo "<pre>";  print_r($mscmodel);exit;
+
+        $curl = curl_init();
+
+        $sadfc=  curl_setopt_array($curl, array(
+            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:SignPDF>\n         <UserID>".$mscmodel->document_no."</UserID>\n         <FullName>".$mscmodel->full_name."</FullName>\n         <!--Optional:-->\n         <AuthFactor></AuthFactor>\n\t\t<SignatureInfo>\n            <!--Optional:-->\n            <pageNo>".$mscmodel->page_no."</pageNo>\n            <!--Optional:-->\n            <pdfInBase64>".$mscmodel->pdf."</pdfInBase64>\n            <sigImageInBase64></sigImageInBase64>\n            <!--Optional:-->\n            <visibility>true</visibility>\n            <!--Optional:-->\n            <x1>".$mscmodel->x1."</x1>\n            <!--Optional:-->\n            <x2>".$mscmodel->x2."</x2>\n            <!--Optional:-->\n            <y1>".$mscmodel->y1."</y1>\n            <!--Optional:-->\n            <y2>".$mscmodel->y2."</y2>\n         </SignatureInfo>\n      </mtsa:SignPDF>\n   </soapenv:Body>\n</soapenv:Envelope>",
+            CURLOPT_HTTPHEADER => array(
+                "Username: rumahi",
+                "Password: YcuLxvMMcXWPLRaW",
+                "Content-Type: text/xml"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+        if ($err) {
+            return false;
+        } else {
+            $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $response);
+            $xml = new \SimpleXMLElement($response);
+            $body = $xml->xpath('//SBody')[0];
+            $responsearray = json_decode(json_encode((array)$body), TRUE);
+
+            if(!empty($responsearray) &&  isset($responsearray['ns2SignPDFResponse'])  && !empty($responsearray['ns2SignPDFResponse'])){
+                return $responsearray['ns2SignPDFResponse'];
+            }else{
+                return false;
+            }
+            //echo $response;exit;
+        }
+    }
+
 }

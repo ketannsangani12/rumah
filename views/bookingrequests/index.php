@@ -127,7 +127,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return ($model->status=='Agreement Processed');
                     },
                     'uploadagreement' => function ($model) {
-                        return ($model->status=='Agreement Processed' || $model->status=='Payment Requested' || $model->status=='Rented');
+                        return ($model->status=='Rented' && $model->signed_agreement_document!='');
                     },
                     'uploadmovein' => function ($model) {
                         $reviewexist = \app\models\PropertyRatings::find()->where(['request_id'=>$model->id,'user_id'=>$model->user_id,'property_id'=>$model->property_id])->one();
@@ -187,16 +187,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
 
                     },
-                    'msctrustgate' => function ($url, $model) {
-
-                        return Html::a('<i class="fa fa-certificate" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadtomsc', 'id' => $model->id])], [
-
-                            'title' => 'Send Agreement For Signing',
-                            'class' =>'btn btn-sm bg-red datatable-operation-btn'
-
-                        ]);
-
-                    },
+//                    'msctrustgate' => function ($url, $model) {
+//
+//                        return Html::a('<i class="fa fa-certificate" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadtomsc', 'id' => $model->id])], [
+//
+//                            'title' => 'Send Agreement For Signing',
+//                            'class' =>'btn btn-sm bg-red datatable-operation-btn'
+//
+//                        ]);
+//
+//                    },
                     'download' => function ($url, $model) {
 
                         return Html::a('<i class="fa fa-download" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/download', 'id' => $model->id])], [
@@ -212,7 +212,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         return Html::a('<i class="fa fa-legal" aria-hidden="true"></i>', [\yii\helpers\Url::to([Yii::$app->controller->id.'/uploadagreement', 'id' => $model->id])], [
 
-                            'title' => 'Upload Agreement',
+                            'title' => 'Upload Stamp Duty Certificate',
                             'class' =>'btn btn-sm bg-purple datatable-operation-btn'
 
                         ]);

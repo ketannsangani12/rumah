@@ -78,10 +78,10 @@ class BookingRequests extends \yii\db\ActiveRecord
 
             [['credit_score','report'], 'required','on' => 'updatecreditscore'],
             [['identification_no','full_name','kyc_document','spa_document'], 'required','on' => 'bookingprocesssecondstep'],
-            [['agreement'], 'required','on' => 'uploadagreement'],
+            [['stampdutycertificate'], 'required','on' => 'uploadagreement'],
             [['movein'], 'required','on' => 'uploadmovein'],
             [['moveout_date','moveout'], 'required','on' => 'uploadmoveout'],
-            [['template_id','document_content'], 'required','on' => 'choosetemplate'],
+            [['template_id','document_content','tenantx1','tenantx2','tenanty1','tenanty2','landlordx1','landlordx2','landlordy1','landlordy2','tenantpageno','landlordpageno'], 'required','on' => 'choosetemplate'],
             [['agreement'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpeg,jpg,png,pdf'],
             [['stampdutycertificate'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpeg,jpg,png,pdf'],
             [['pdf'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
@@ -156,6 +156,7 @@ class BookingRequests extends \yii\db\ActiveRecord
             'selfie'=>'Selfie',
             'tenantpageno' => 'Page No.(For Tenant)',
             'landlordpageno' => 'Page No.(For Landlord)',
+            'signed_agreement_document'=>'Signed Agreement Document'
 
         ];
     }

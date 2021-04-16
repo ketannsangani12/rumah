@@ -15,9 +15,11 @@ use app\models\GoldTransactions;
 use app\models\Ilifestyle;
 use app\models\Images;
 use app\models\Istories;
+use app\models\ManualKyc;
 use app\models\Msc;
 use app\models\Notifications;
 use app\models\Packages;
+use app\models\Payments;
 use app\models\PromoCodes;
 use app\models\Properties;
 use app\models\PropertyRatings;
@@ -170,11 +172,12 @@ class ApiusersController extends ActiveController
         } else {
             if (!empty($_POST)){
 
+                \Yii::error("here");
                 $model = new Users();
                 $model->scenario = 'login';
                 $model->attributes = Yii::$app->request->post();
                 if($model->validate()){
-                    $userexist = Users::find()->select(['*',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where([
+                    $userexist = Users::find()->select(['id','userid','role','full_name','wallet_balance','coins','property_credited','properties_posted','membership_expire_date','contact_no','email','company_name','document_no','gender','registration_no','dob','race','nationality','education_level','bank_account_name','bank_account_no','bank_name','document_type','referred_by','status','identity_status','ekyc_response','current_status','created_at',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where([
                         'email' => $model->email,
                         'password' => md5($model->password)
                     ])->andWhere(['in','role',['User']])->asArray()->one();
@@ -268,8 +271,9 @@ class ApiusersController extends ActiveController
                             $packagemodel = new UserPackages();
                             $packagemodel->user_id = $model->id;
                             $packagemodel->package_id = 1;
+                            $packagemodel->quantity = $package->quantity;
                             $packagemodel->start_date = date('Y-m-d');
-                            $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                            $packagemodel->end_date = NULL;
                             $packagemodel->created_at = date('Y-m-d H:i:s');
                             if($packagemodel->save(false)){
                                 $model->property_credited = $package->quantity;
@@ -338,9 +342,10 @@ class ApiusersController extends ActiveController
                             $package = Packages::findOne(1);
                             $packagemodel = new UserPackages();
                             $packagemodel->user_id = $model->id;
+                            $packagemodel->quantity = $package->quantity;
                             $packagemodel->package_id = 1;
                             $packagemodel->start_date = date('Y-m-d');
-                            $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                            $packagemodel->end_date = NULL;
                             $packagemodel->created_at = date('Y-m-d H:i:s');
                             if($packagemodel->save(false)){
                                 $model->property_credited = $package->quantity;
@@ -467,10 +472,12 @@ class ApiusersController extends ActiveController
                         $packagemodel = new UserPackages();
                         $packagemodel->user_id = $model->id;
                         $packagemodel->package_id = 1;
+                        $packagemodel->quantity = $package->quantity;
                         $packagemodel->start_date = date('Y-m-d');
-                        $packagemodel->end_date = date('Y-m-d', strtotime('+1 years'));
+                        $packagemodel->end_date = NULL;
                         $packagemodel->created_at = date('Y-m-d H:i:s');
                         if($packagemodel->save(false)){
+                            $model->userid = "CUS".Yii::$app->common->generatereferencenumber($model->id);
                             $model->property_credited = $package->quantity;
                             $model->save(false);
 
@@ -641,9 +648,11 @@ class ApiusersController extends ActiveController
                         $model->status = 1;
                         if($model->save(false)){
                             $userid = $model->referred_by;
-                            $user_id = $model->id;
-                            $gold_coins = 188;
-                            Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding',$userid);
+                            if($model->referred_by!='') {
+                                $user_id = $model->id;
+                                $gold_coins = 188;
+                                Yii::$app->common->addgoldcoinspurchase($user_id, $gold_coins, null, 'Onboarding', $userid);
+                            }
 
                             //Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,null,'Onboarding');
 
@@ -848,38 +857,48 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             $packages = Packages::find()->all();
-            $currentpackage = UserPackages::find()->where(['user_id'=>$this->user_id])->orderBy(['id'=>SORT_DESC])->one();
+            $currentpackage = UserPackages::find()->where(['user_id'=>$this->user_id])->andWhere(['>=','end_date',date("Y-m-d")])->orderBy(['id'=>SORT_DESC])->one();
             $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
             // $mypropertiescount = 100;
             $userdetails = Users::findOne($this->user_id);
             $currentpackageid = '';
             if(!empty($currentpackage)){
                 $currentpackageid = $currentpackage->package_id;
+            }else{
+                $currentpackageid = 1;
             }
+            $userdetails = Users::findOne($this->user_id);
+            $totalpropertyadded = $userdetails->properties_posted;
+            $currentcredit = $userdetails->property_credited;
+            $remaining = $currentcredit- $totalpropertyadded;
             $data = array();
-            $remaining = 0;
+            //$remaining = 0;
 
             if(!empty($packages)){
                 foreach ($packages as $key=>$package){
                     if($currentpackageid==$package->id) {
-                        $data[$key]['remaining'] = $package->quantity - $mypropertiescount;
+                        $data[$key]['remaining'] = ($remaining>0)?$remaining:0;
                         $data[$key]['id'] = $package->id;
                         $data[$key]['package'] = $package->name;
                         $data[$key]['price'] = $package->price;
                         $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                         $data[$key]['total'] = $package->quantity;
-
-                        $remaining = $package->quantity - $mypropertiescount;
                         $currentkey = $key;
-                    }
-                    if(($remaining==0 && $package->id>1) || $currentpackageid==''){
+                    }else if(($currentpackageid==1) || ($package->id >1 && $currentpackageid < $package->id)){
                         $data[$key]['id'] = $package->id;
                         $data[$key]['package'] = $package->name;
                         $data[$key]['price'] = $package->price;
                         $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                         $data[$key]['total'] = $package->quantity;
-
                     }
+//                   if(($remaining==0 && $package->id>1) || $currentpackageid==''){
+//                       $data[$key]['id'] = $package->id;
+//                       $data[$key]['package'] = $package->name;
+//                       $data[$key]['price'] = $package->price;
+//                       $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
+//                       $data[$key]['total'] = $package->quantity;
+//
+//                   }
 
 
 
@@ -901,49 +920,68 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
             if(!empty($_POST) && $_POST['package_id']!='') {
+                $promocode = (isset($_POST['promo_code']) && $_POST['promo_code'] != '') ? $_POST['promo_code'] : '';
+                $amount = (isset($_POST['amount']) && $_POST['amount'] != '') ? $_POST['amount'] : '';
+                $discount = (isset($_POST['discount']) && $_POST['discount'] != '') ? $_POST['discount'] : 0;
+                $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins'] != '') ? $_POST['gold_coins'] : 0;
+                $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings'] != '') ? $_POST['coins_savings'] : 0;
+                if ($promocode != '') {
+                    $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
+                }
                 $model = new UserPackages();
-                $model->attributes = Yii::$app->request->post();
-                if($model->validate()){
-                    $packagedetails = Packages::findOne($_POST['package_id']);
-                    $userbalance = Users::getbalance($this->user_id);
-                    if($packagedetails->price>$userbalance){
-                        return array('status' => 0, 'message' => 'You do not have enough balance to upgrade package.');
-                    }
+                $model->package_id = $_POST['package_id'];
 
-                    $model->user_id = $this->user_id;
-                    $model->start_date = date('Y-m-d');
-                    $model->end_date = date('Y-m-d', strtotime('+1 years'));
-                    $model->created_at = date('Y-m-d H:i:s');
-                    $model->updated_at = date('Y-m-d H:i:s');
-                    if ($model->save()) {
-                        $transactionmodel = new Transactions();
-                        $transactionmodel->user_id = $model->user_id;
-                        $transactionmodel->amount = $packagedetails->price;
-                        $transactionmodel->total_amount = $packagedetails->price;
-                        $transactionmodel->package_id = $model->id;
-                        $transactionmodel->created_at = date('Y-m-d H:i:s');
-                        $transactionmodel->reftype = 'Package Purchase';
-                        $transactionmodel->status = 'Completed';
-                        if($transactionmodel->save()){
-                            $lastid = $transactionmodel->id;
-                            $reference_no = Yii::$app->common->generatereferencenumber($lastid);
-                            $transactionmodel->reference_no = "TR".$reference_no;
-                            $transactionmodel->save(false);
-                            $user = Users::findOne($model->user_id);
-                            if ($user->membership_expire_date == NULL) {
-                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 years'));
-                            } else {
-                                $user->membership_expire_date = date('Y-m-d', strtotime('+1 year', strtotime($user->membership_expire_date)));
+                $packagedetails = Packages::findOne($_POST['package_id']);
+                $userbalance = Users::getbalance($this->user_id);
+                $amountwithoutsst = $packagedetails->price;
+                $totaldiscount = $discount+$coins_savings;
+                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                // echo $totalamount."<br>".$amountwithoutsst."<br>".$tr."<br>".$sstafterdiscount."<br>".$totalamountafterdiscount;exit;
+
+                if ($userbalance < $totalamountafterdiscount) {
+                    return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
+
+                }
+
+                $model->user_id = $this->user_id;
+                $model->start_date = date('Y-m-d');
+                $model->end_date = date('Y-m-d', strtotime('+1 month'));
+                $model->quantity = $packagedetails->quantity;
+                $model->created_at = date('Y-m-d H:i:s');
+                if ($model->save()) {
+                    $transactionmodel = new Transactions();
+                    $transactionmodel->user_id = $model->user_id;
+                    $transactionmodel->amount = $packagedetails->price;
+                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
+                    $transactionmodel->amount = $amountwithoutsst;
+                    $transactionmodel->discount = $discount;
+                    $transactionmodel->coins = $goldcoins;
+                    $transactionmodel->sst = $sstafterdiscount;
+                    $transactionmodel->coins_savings = $coins_savings;
+                    $transactionmodel->total_amount = $totalamountafterdiscount;
+                    $transactionmodel->package_id = $model->id;
+                    $transactionmodel->created_at = date('Y-m-d H:i:s');
+                    $transactionmodel->type = 'Payment';
+                    $transactionmodel->reftype = 'Package Purchase';
+                    $transactionmodel->status = 'Completed';
+                    if($transactionmodel->save()){
+                        $lastid = $transactionmodel->id;
+                        $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                        $transactionmodel->reference_no = "TR".$reference_no;
+                        $transactionmodel->save(false);
+                        $user = Users::findOne($model->user_id);
+                        $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
+                        $user->property_credited += $packagedetails->quantity;
+                        if($user->save(false)){
+                            Users::updatebalance($userbalance-$totalamountafterdiscount,$this->user_id);
+                            if($goldcoins>0) {
+                                Yii::$app->common->deductgoldcoinspurchase($this->user_id, $goldcoins, $lastid);
                             }
-                            $user->property_credited += $packagedetails->quantity;
-                            if($user->save(false)){
-                                Users::updatebalance($userbalance-$packagedetails->price,$this->user_id);
-                                return array('status' => 1, 'message' => 'You have purchased package successfully.');
-
-                            }else{
-                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
-                            }
+                            $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
+                            Yii::$app->common->addgoldcoinspurchase($this->user_id,$gold_coins,$lastid);
+                            return array('status' => 1, 'message' => 'You have purchased package successfully.');
 
                         }else{
                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -951,13 +989,15 @@ class ApiusersController extends ActiveController
                         }
 
                     }else{
-                        return array('status' => 0, 'message' => $model->getErrors());
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                     }
+
                 }else{
                     return array('status' => 0, 'message' => $model->getErrors());
 
                 }
+
             }else{
                 return array('status' => 0, 'message' => 'Please enter mandatory fields.');
 
@@ -1230,11 +1270,13 @@ class ApiusersController extends ActiveController
         } else {
 
             $userdetails = Users::find()->select(['id','full_name', 'coins',new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")])->where(['id'=>$this->user_id])->asArray()->one();
-            $transactions = GoldTransactions::find()->where(['user_id'=>$this->user_id])->orWhere(['refferer_id'=>$this->user_id])->andWhere(['status'=>'Completed'])->asArray()->all();
+            $transactions = GoldTransactions::find()->where(['user_id'=>$this->user_id])->orWhere(['refferer_id'=>$this->user_id])->andWhere(['status'=>'Completed'])->orderBy(['id'=>SORT_DESC])->asArray()->all();
+
             $goldtransactions = array();
+            $goldtransactions1 = array();
             if(!empty($transactions)){
                 foreach ($transactions as $transaction){
-                    if($transaction['reftype']=='1st Property Listed' ){
+                    if($transaction['reftype']=='Tenancy signed' || $transaction['reftype']=='Onboarding'){
                         if($transaction['refferer_id']==$this->user_id) {
                             $goldtransactions[] = $transaction;
                         }
@@ -1243,8 +1285,9 @@ class ApiusersController extends ActiveController
                     }
                 }
             }
+            //echo "<pre>";print_r($goldtransactions);exit;
             $userdetails['coins'] = round($userdetails['coins']);
-            return array('status' => 1, 'userdetails' => $userdetails,'data'=>$transactions);
+            return array('status' => 1, 'userdetails' => $userdetails,'data'=>$goldtransactions);
 
 
         }
@@ -1442,7 +1485,12 @@ class ApiusersController extends ActiveController
                 $model->attributes = Yii::$app->request->post();
 
                 if ($model->validate()) {
-                    if($model->save()){
+                    $validatepassword = Yii::$app->common->validatesecondarypassword($this->user_id,$model->secondarypassword);
+                    if(!$validatepassword){
+                        return array('status' => 0, 'message' => 'You have entered invalid wrong PIN.');
+                    }
+                    unset($model->secondarypassword);
+                    if($model->save(false)){
                         return array('status' => 1, 'message' => 'You have updated bank account successfully.');
 
                     }else{
@@ -1609,7 +1657,7 @@ class ApiusersController extends ActiveController
                                 $reference_no = Yii::$app->common->generatereferencenumber($lastid);
                                 $transactionmodel->reference_no = $reference_no;
                                 if($transactionmodel->save()){
-                                    $model->reference_no = $reference_no;
+                                    $model->reference_no = "TR".$reference_no;
                                     $model->save(false);
                                     Users::updatebalance($model->new_balance,$this->user_id);
                                     $transaction->commit();
@@ -1661,8 +1709,10 @@ class ApiusersController extends ActiveController
                 if($propertymodel->validate()){
                     $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
                     $userdetails = Users::findOne($this->user_id);
-                    if($mypropertiescount >= $userdetails->property_credited){
-                        return array('status' => 0, 'message' => 'You have already exceeded limit of Post Property. So Please purchase package');
+                    $totalpropertyadded = $userdetails->properties_posted;
+                    $currentcredit = $userdetails->property_credited;
+                    if($totalpropertyadded >= $currentcredit){
+                        return array('status' => 0, 'message' => 'You have already exceeded limit of Post Property. So Please purchase package or delete your listings');
 
                     }
                     $pictures = $propertymodel->pictures;
@@ -1697,15 +1747,17 @@ class ApiusersController extends ActiveController
                                 $modelCustomer->created_at = date('Y-m-d H:i:s');
                                 $modelCustomer->save(false);
                             }
+                            $userdetails->properties_posted = $userdetails->properties_posted+1;
+                            $userdetails->save(false);
                             $countproperties = Properties::find()->where(['user_id'=>$this->user_id])->count();
                             if($countproperties==1) {
                                 $userdetails = Users::findOne($this->user_id);
-                                if($userdetails->referred_by!=''){
-                                    $gold_coins = 188;
-                                    Yii::$app->common->addgoldcoinspurchase($this->user_id,$gold_coins,null,'1st Property Listed',$userdetails->referred_by);
+                                //if($userdetails->referred_by!=''){
+                                $gold_coins = 188;
+                                Yii::$app->common->addgoldcoinspurchase($this->user_id,$gold_coins,null,'1st Property Listed',$userdetails->referred_by);
 
 
-                                }
+                                //}
                             }
                             return array('status' => 1, 'message' => 'You have added property successfully.');
 
@@ -1757,6 +1809,8 @@ class ApiusersController extends ActiveController
                 $size = (isset($_POST['size']) && $_POST['size']!='')?$_POST['size']:'';
                 $search = (isset($_POST['search']) && $_POST['search']!='')?$_POST['search']:'';
                 $location = (isset($_POST['location']) && $_POST['location']!='')?$_POST['location']:'';
+                $sort = (isset($_POST['sort']) && $_POST['sort']!='')?$_POST['sort']:'';
+
                 //print_r($price);exit;
                 // $searchword = $_POST['search'];
 
@@ -1765,7 +1819,7 @@ class ApiusersController extends ActiveController
                 $harvesformula1 = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
 
                 $query1 = Properties::find()
-                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,status,price,'.$harvesformula)
+                    ->select('id,user_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,status,price,'.$harvesformula)
                     ->with([
                         'pictures'=>function ($query) use($baseurl) {
                             $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
@@ -1835,10 +1889,23 @@ class ApiusersController extends ActiveController
 
                 }
 
+                if($sort!=''){
+                    if($sort=='pricedesc'){
+                        $query1->orderBy(['price' => SORT_DESC]);
 
+                    }else if($sort=='priceasc'){
+                        $query1->orderBy(['price' => SORT_ASC]);
 
-                if($lat!='' && $long!=''){
-                    $query1->orderBy(['distance'=>SORT_ASC]);
+                    }else if($sort=='posting_date'){
+                        $query1->orderBy(['created_at' => SORT_DESC]);
+
+                    }
+
+                }else {
+
+                    if ($lat != '' && $long != '') {
+                        $query1->orderBy(['distance' => SORT_ASC]);
+                    }
                 }
 
                 //$query1->all();
@@ -1848,7 +1915,7 @@ class ApiusersController extends ActiveController
                 $properties1 = array();
                 if(!empty($properties)){
                     foreach ($properties as $key=>$property){
-                        if($property['status']=='Active') {
+                        if($property['status']=='Active' && $property['user_id']!=$user_id) {
                             $properties[$key]['favourite'] = Properties::checkfavourite($property['id'], $user_id);
                             $properties1[] = $property;
 
@@ -1945,7 +2012,7 @@ class ApiusersController extends ActiveController
                         $agentratings = $ratings/$totalratings;
                     }
                 }
-                $data['agentratings'] = $agentratings;
+                $data['agentratings'] = number_format((float)$agentratings, 2, '.', '');
                 return array('status' => 1, 'data' => $data);
 
 
@@ -2076,10 +2143,15 @@ class ApiusersController extends ActiveController
                             $todomodel->updated_at = date('Y-m-d H:i:s');
                             $todomodel->reftype = 'Booking';
                             $todomodel->status = 'New';
-                            if ($todomodel->save()) {
+                            if ($todomodel->save(false)) {
                                 $transaction->commit();
+                                $subject = 'Booking Request';
+                                $textmessage = 'You have a booking request pending for action, confirm now to secure the unit.';
+                                Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$todomodel->property_id,$todomodel->id);
 
-                                return array('status' => 1, 'message' => 'You have sent request successfully.');
+                                Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+
+                                return array('status' => 1, 'message' => 'You have sent booking request successfully.');
 
                             } else {
                                 $transaction->rollBack();
@@ -2262,6 +2334,21 @@ class ApiusersController extends ActiveController
                                     $todomodel->updated_at = date('Y-m-d H:i:s');
                                     if ($todomodel->save(false)) {
                                         $transaction1->commit();
+                                        if($model->status=='Rejected'){
+                                            $subject = 'Booking Request Rejected';
+                                            $textmessage = 'You have a booking has been rejected.';
+                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id);
+
+                                            Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+
+                                        }else{
+                                            $subject = 'Agreement preparation';
+                                            $textmessage = 'You have one agreement pending for your action, kindly insert tenancy details to proceed for tenancy signing.';
+                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id);
+
+                                            Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+
+                                        }
                                         return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
 
                                     } else {
@@ -2290,33 +2377,37 @@ class ApiusersController extends ActiveController
                             try {
                                 $model->scenario = 'bookingprocesssecondstep';
                                 $model->attributes = Yii::$app->request->post();
+                                //$model->spa_document = UploadedFile::getInstanceByName('spa_document');
                                 if ($model->validate()) {
-                                    $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
-                                    if(!empty($checkidexist)){
-                                        $transaction1->rollBack();
-
-                                        return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
-
-                                    }
+//                                    $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->user_id])->one();
+//                                    if(!empty($checkidexist)){
+//                                        $transaction1->rollBack();
+//
+//                                        return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
+//
+//                                    }
                                     $kyc_document = $model->kyc_document;
                                     $spa_document = $model->spa_document;
                                     $model->kyc_document = null;
-                                    $model->spa_document = null;
+
                                     $filename = uniqid();
 
                                     $data = Yii::$app->common->processBase64($kyc_document);
 
                                     file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                    $filename1 = uniqid();
-
-                                    $data1 = Yii::$app->common->processBase64($spa_document);
-
+                                    $data1 = Yii::$app->common->processBase64pdf($spa_document);
+                                    $filename1 = rand().uniqid();
                                     file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
+//                                    $data1 = Yii::$app->common->processBase64($spa_document);
+//
+//                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
+//
+                                    $model->spa_document=null;
                                     $documents = new UsersDocuments();
                                     $documents->request_id = $_POST['request_id'];
                                     $documents->user_id = $this->user_id;
                                     $documents->ekyc_document = $filename . '.' . $data['type'];
-                                    $documents->supporting_document = $filename1 . '.' . $data1['type'];
+                                    $documents->supporting_document = $filename1. '.' . $data1['type'];
                                     $documents->created_at = date('Y-m-d H:i:s');
                                     $full_name = $model->full_name;
                                     $identification_no = $model->identification_no;
@@ -2382,21 +2473,24 @@ class ApiusersController extends ActiveController
                                 $model->scenario = 'bookingprocessfirststepapprove';
                                 $useridtenant = $model->user_id;
                                 $model->attributes = Yii::$app->request->post();
+                                //$model->spa_document = UploadedFile::getInstanceByName('spa_document');
                                 if ($model->validate()) {
-                                    $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->landlord_id])->one();
-                                    if(!empty($checkidexist)){
-                                        return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
-
-                                    }
+//                                $checkidexist = Users::find()->where(['document_no'=>trim($model->identification_no)])->andWhere(['!=','id',$model->landlord_id])->one();
+//                                if(!empty($checkidexist)){
+//                                    return array('status' => 0, 'message' => 'IC number you entered already exist in system.');
+//
+//                                }
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
-                                    $subtotal = $model->tenancy_fees+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit-$model->booking_fees;
-                                    $sst = number_format($model->tenancy_fees * 6 / 100, 2, '.', '');
-
-                                    // $sst = Yii::$app->common->calculatesst($subtotal);
-                                    $model->subtotal = $subtotal;
+                                    $sstappliedamount = $model->tenancy_fees;
+                                    $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit;
+                                    $sst =Yii::$app->common->calculatesst($sstappliedamount);
+                                    $tenancyfeeswithsst = $sstappliedamount+$sst;
+                                    $bookingfees = $model->booking_fees;
+                                    $stamp_duty = $model->stamp_duty;
+                                    $model->subtotal = $subtotal+$model->tenancy_fees+$stamp_duty-$bookingfees;
                                     $model->sst = $sst;
-                                    $model->total = $subtotal+$sst;
+                                    $model->total = $subtotal+$tenancyfeeswithsst+$stamp_duty-$bookingfees;
                                     $model->commencement_date = date('Y-m-d',strtotime($model->commencement_date));
                                     $full_name = $model->full_name;
                                     $identification_no = $model->identification_no;
@@ -2409,22 +2503,29 @@ class ApiusersController extends ActiveController
                                     $kyc_document = $model->kyc_document;
                                     $spa_document = $model->spa_document;
                                     $model->kyc_document = null;
-                                    $model->spa_document = null;
+                                    $model->spa_document=null;
+                                    //$model->spa_document = null;
                                     $filename = uniqid();
 
                                     $data = Yii::$app->common->processBase64($kyc_document);
 
                                     file_put_contents('uploads/user_documents/' . $filename . '.' . $data['type'], $data['data']);
-                                    $filename1 = uniqid();
-
-                                    $data1 = Yii::$app->common->processBase64($spa_document);
-
+                                    $data1 = Yii::$app->common->processBase64pdf($spa_document);
+                                    $filename1 = rand().uniqid();
                                     file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
+
+//                                    $data1 = Yii::$app->common->processBase64($spa_document);
+//
+//                                    file_put_contents('uploads/user_documents/' . $filename1 . '.' . $data1['type'], $data1['data']);
+//
+                                    //$filename1 = uniqid().'.'.$model->spa_document->extension;;
+                                    //$model->spa_document->saveAs('uploads/user_documents/' . $filename1);
+                                    $model->spa_document = null;
                                     $documents = new UsersDocuments();
                                     $documents->request_id = $_POST['request_id'];
                                     $documents->user_id = $this->user_id;
                                     $documents->ekyc_document = $filename . '.' . $data['type'];
-                                    $documents->supporting_document = $filename1 . '.' . $data1['type'];
+                                    $documents->supporting_document = $filename1. '.' . $data1['type'];
                                     $documents->created_at = date('Y-m-d H:i:s');
                                     $documents->save(false);
 
@@ -2474,8 +2575,17 @@ class ApiusersController extends ActiveController
                             }
                             $sst = $model->sst;
                             $totalamount = $amount;
-                            $totalamountafterdiscount = (int)$totalamount-(int)$discount-(int)$coins_savings;
+                            $tenancyfees = $model->tenancy_fees;
+                            $totaldiscount = (int)$discount-(int)$coins_savings;
+                            $totaltenancyfees = $model->tenancy_fees-$totaldiscount;
+                            $sst =Yii::$app->common->calculatesst($totaltenancyfees);
+                            $tenancyfeeswithsst = $totaltenancyfees+$sst;
+                            $bookingfees = $model->booking_fees;
+                            $stamp_duty = $model->stamp_duty;
+                            $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
 
+                            $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
+                            $totalamountafterdiscount = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
                             $receiverbalance = Users::getbalance($model->landlord_id);
                             $senderbalance = Users::getbalance($model->user_id);
                             if($senderbalance < $totalamount){
@@ -2493,7 +2603,7 @@ class ApiusersController extends ActiveController
                                 $transaction->request_id = $model->id;
                                 $transaction->landlord_id = $model->landlord_id;
                                 $transaction->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
-                                $transaction->amount = $totalamount;
+                                $transaction->amount = $subtotal;
                                 $transaction->sst = $sst;
                                 $transaction->discount = $discount;
                                 $transaction->coins = $goldcoins;
@@ -2610,6 +2720,9 @@ class ApiusersController extends ActiveController
                                                         $todorequest->save(false);
                                                         if($todorequest->receive_via=='Rumah-i') {
                                                             $commision = $todorequest->commission;
+                                                            $servicefees = number_format($commision * 1.5 / 100, 2, '.', '');
+                                                            $sst = \Yii::$app->common->calculatesst($servicefees);
+                                                            $commissionamount = $commision - $servicefees - $sst;
                                                             $agentbalance = Users::getbalance($model->property->agent_id);
                                                             $commisiontransaction = new Transactions();
                                                             $commisiontransaction->reftype = 'Agent Commision';
@@ -2617,7 +2730,10 @@ class ApiusersController extends ActiveController
                                                             $commisiontransaction->property_id = $model->property_id;
                                                             $commisiontransaction->todo_id = $todorequest->id;
                                                             $commisiontransaction->amount = $commision;
-                                                            $commisiontransaction->total_amount = $commision;
+                                                            $commisiontransaction->subtotal = $commision;
+                                                            $commisiontransaction->sst = $sst;
+                                                            $commisiontransaction->service_fees = $servicefees;
+                                                            $commisiontransaction->total_amount = $commissionamount;
                                                             $commisiontransaction->type = 'Payment';
                                                             $commisiontransaction->status = 'Completed';
                                                             $commisiontransaction->created_at = date('Y-m-d H:i:s');
@@ -2626,7 +2742,7 @@ class ApiusersController extends ActiveController
                                                                 $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid1);
                                                                 $commisiontransaction->reference_no = $reference_no;
                                                                 $commisiontransaction->save(false);
-                                                                Users::updatebalance($agentbalance+$commision,$model->property->agent_id);
+                                                                Users::updatebalance($agentbalance+$commissionamount,$model->property->agent_id);
                                                             }else{
                                                                 $transaction1->rollBack();
                                                                 return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -2640,11 +2756,19 @@ class ApiusersController extends ActiveController
                                                 if($goldcoins>0) {
                                                     Yii::$app->common->deductgoldcoinspurchase($model->user_id, $goldcoins, $lastid);
                                                 }
-                                                $gold_coins = $totalamountafterdiscount*1.5;
+                                                $gold_coins = $totalcoinsamountapplied*1.5;
                                                 Yii::$app->common->addgoldcoinspurchase($model->user_id,$gold_coins,$lastid);
+                                                $usermodel = Users::findOne($model->user_id);
+                                                if($usermodel->referred_by!='') {
+                                                    $checkgoldcoinsalreadyreceived = GoldTransactions::find()->where(['user_id'=>$model->user_id,'refferer_id'=>$usermodel->referred_by,'reftype'=>'Tenancy Signed'])->one();
+                                                    if(empty($checkgoldcoinsalreadyreceived)) {
 
+                                                        $gold_coinsreffer = 4688;
+                                                        Yii::$app->common->addgoldcoinspurchase($model->user_id, $gold_coinsreffer, $lastid, 'Tenancy Signed', $usermodel->referred_by);
+                                                    }
+                                                }
                                                 $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
-                                                $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->booking_fees+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
+                                                $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                                 $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
 
                                                 $transaction1->commit();
@@ -2710,7 +2834,7 @@ class ApiusersController extends ActiveController
         } else {
             $user_id = $this->user_id;
             // echo $user_id;exit;
-            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','worker_id','msc_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','subtotal','sst','total', new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),"commission"])
+            $todolists = TodoList::find()->select(['id','title','description','reftype','status','request_id','renovation_quote_id','service_request_id','property_id','user_id','landlord_id','agent_id','vendor_id','worker_id','msc_id','created_at','updated_at','rent_startdate','rent_enddate','pay_from','service_type','due_date','appointment_date','appointment_time','stamp_duty','subtotal','sst','total', new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),"commission"])
                 ->with([
                     'request'=>function ($query) {
                         $query->select(['id','reference_no','booking_fees','credit_score','monthly_rental','tenancy_fees','stamp_duty','keycard_deposit','rental_deposit','utilities_deposit','subtotal','sst','total','commencement_date','tenancy_period','security_deposit','status',new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"),new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"),new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
@@ -2725,10 +2849,10 @@ class ApiusersController extends ActiveController
                         $query->select('id,property_no,title,location');
                     },
                     'user' => function ($query) {
-                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","document_no"]);
                     },
                     'landlord' => function ($query) {
-                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","document_no"]);
 
                     },
                     'agent'=>function($query){
@@ -2766,7 +2890,20 @@ class ApiusersController extends ActiveController
                         case "Booking";
                             if($todolist['user_id']==$user_id){
                                 if(($todolist['status']=='Pending' && $todolist['request']['credit_score']=='') || $todolist['status']=='New' || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
-                                    $data[] = $todolist;
+                                    if($todolist['status']=='Approved'){
+                                        if($todolist['user']['identity_status']=='Verified'){
+                                            $data[] = $todolist;
+                                        }else{
+                                            $manualkycexist = ManualKyc::find()->where(['user_id'=>$user_id,'request_id'=>$todolist['request']['id'],'status'=>'Pending'])->one();
+                                            if(empty($manualkycexist)){
+                                                $data[] = $todolist;
+                                            }
+                                        }
+
+                                    }else{
+                                        $data[] = $todolist;
+                                    }
+
                                 }else if($todolist['request']['status']=='Rented' && $todolist['request']['movein_document']!=''){
                                     $reviewexist = PropertyRatings::find()->where(['request_id'=>$todolist['request_id'],'user_id'=>$user_id,'property_id'=>$todolist['property_id']])->one();
                                     if(empty($reviewexist)){
@@ -2775,8 +2912,19 @@ class ApiusersController extends ActiveController
                                 }
 
                             }else if($todolist['landlord_id']==$user_id){
-                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') ||  $todolist['status']=='Processing'){
-                                    $data[] = $todolist;
+                                if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') ||  $todolist['status']=='Processing' || $todolist['request']['status']=='Agreement Processing'){
+                                    if($todolist['status']=='Processing'){
+                                        if($todolist['landlord']['identity_status']=='Verified'){
+                                            $data[] = $todolist;
+                                        }else{
+                                            $manualkycexist = ManualKyc::find()->where(['user_id'=>$user_id,'request_id'=>$todolist['request']['id'],'status'=>'Pending'])->one();
+                                            if(empty($manualkycexist)){
+                                                $data[] = $todolist;
+                                            }
+                                        }
+                                    }else {
+                                        $data[] = $todolist;
+                                    }
                                 }
                             }
 
@@ -2869,6 +3017,11 @@ class ApiusersController extends ActiveController
                             $date = date('Y-m-d');
                             if($todolist['status']=='Pending' && $date<=$todolist['appointment_date']){
                                 $data[] = $todolist;
+                            }elseif ($todolist['status']=='Completed'){
+                                $reviewexist = AgentRatings::find()->where(['todo_id'=>$todolist['id'],'user_id'=>$user_id])->one();
+                                if(empty($reviewexist)) {
+                                    $data[] = $todolist;
+                                }
                             }
                             break;
                         case "Service";
@@ -2911,7 +3064,7 @@ class ApiusersController extends ActiveController
 
                 $user_id = $this->user_id;
                 // echo $user_id;exit;
-                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'worker_id' ,'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),'commission'])
+                $todolists = TodoList::find()->select(['id', 'title', 'description', 'reftype', 'status', 'request_id', 'renovation_quote_id', 'service_request_id', 'property_id', 'user_id', 'landlord_id', 'worker_id' ,'agent_id', 'vendor_id', 'created_at', 'updated_at', 'rent_startdate', 'rent_enddate', 'due_date', 'appointment_date','appointment_time','service_type','subtotal','service_fees','stamp_duty','sst','total',new \yii\db\Expression("CONCAT('/uploads/tododocuments/', '', `document`) as document"),'commission'])
                     ->with([
                         'request' => function ($query) {
                             $query->select(['id', 'booking_fees', 'credit_score', 'monthly_rental', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'rental_deposit', 'utilities_deposit', 'subtotal', 'total','sst', 'commencement_date', 'tenancy_period', 'security_deposit','status', new \yii\db\Expression("CONCAT('/uploads/creditscorereports/', '', `credit_score_report`) as credit_score_report"), new \yii\db\Expression("CONCAT('/uploads/agreements/', '', `agreement_document`) as agreement_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `movein_document`) as movein_document"), new \yii\db\Expression("CONCAT('/uploads/moveinout/', '', `moveout_document`) as moveout_document")]);
@@ -2926,10 +3079,10 @@ class ApiusersController extends ActiveController
                             $query->select('id,property_no,title');
                         },
                         'user' => function ($query) {
-                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document"]);
                         },
                         'landlord' => function ($query) {
-                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture")]);
+                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document"]);
 
                         },
                         'agent'=>function($query){
@@ -3069,7 +3222,7 @@ class ApiusersController extends ActiveController
                         $query->select(['id', 'todo_id', 'description', 'price', 'reftype']);
 
                     },
-                ])->where(['reftype' => 'General'])->where(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->asArray()->all();
+                ])->where(['reftype' => 'General'])->andWhere(['user_id'=>$user_id])->orWhere(['landlord_id'=>$user_id])->andWhere(['!=','status','Rejected'])->asArray()->all();
 
             $data = array();
             //echo "<pre>";print_r($todolists);exit;
@@ -3309,6 +3462,12 @@ class ApiusersController extends ActiveController
                     $chat->msg_type = 'text';
                     $chat->created_at = date('Y-m-d H:i:s');
                     $chat->save(false);
+                    $subject = 'Property booking transfer approval';
+                    $textmessage = 'One of your property '.$todorequestexist->property->property_no.' booking transfer has been approved, kindly check with respective landlord for further action.';
+                    Yii::$app->common->Savenotification($todorequestexist->agent_id,$subject,$textmessage,'',$todorequestexist->property_id,$todorequestexist->id);
+
+                    Yii::$app->common->Sendpushnotification($todorequestexist->agent_id,$subject,$textmessage,'Partner');
+
                     return array('status' => 1, 'message' => 'You have accepted transfer request.');
                 }else{
                     return array('status' => 0, 'data' => $todorequestexist->getErrors());
@@ -3329,7 +3488,7 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if (!empty($_POST) && isset($_POST['request_id']) && $_POST['request_id']!='') {
+            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='') {
 
                 $user_id = $this->user_id;
                 $model = new AgentRatings();
@@ -3337,14 +3496,14 @@ class ApiusersController extends ActiveController
                 $model->attributes = Yii::$app->request->post();
                 $model->user_id =  $user_id;
                 if($model->validate()){
-                    $bookingrequest = BookingRequests::findOne($model->request_id);
+                    $bookingrequest = TodoList::findOne($model->todo_id);
                     if(empty($bookingrequest)){
                         return array('status' => 0, 'message' => 'Data not found.');
                     }
                     $model->property_id = $bookingrequest->property_id;
                     $model->agent_id = $bookingrequest->agent_id;
                     $model->created_at = date('Y-m-d H:i:s');
-                    if($model->save()){
+                    if($model->save(false)){
                         return array('status' => 1, 'message' => 'You have reviewed agent successfully.');
                     }else{
                         return array('status' => 0, 'data' => $model->getErrors());
@@ -3524,6 +3683,158 @@ class ApiusersController extends ActiveController
             }
         }
     }
+
+    public function actionPayonline()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST) && (isset($_POST['todo_id']) && $_POST['todo_id']!='') || (isset($_POST['package_id']) && $_POST['package_id']!='') || isset($_POST['type'])) {
+                if(isset($_POST['package_id']) && $_POST['package_id']!=''){
+                    $packagedetails = Packages::findOne($_POST['package_id']);
+                    $promocode = (isset($_POST['promo_code']) && $_POST['promo_code'] != '') ? $_POST['promo_code'] : '';
+                    $amount = (isset($_POST['amount']) && $_POST['amount'] != '') ? $_POST['amount'] : '';
+                    $discount = (isset($_POST['discount']) && $_POST['discount'] != '') ? $_POST['discount'] : 0;
+                    $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins'] != '') ? $_POST['gold_coins'] : 0;
+                    $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings'] != '') ? $_POST['coins_savings'] : 0;
+                    if ($promocode != '') {
+                        $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
+                    }
+                    $amountwithoutsst = $packagedetails->price;
+                    $totaldiscount = $discount+$coins_savings;
+                    $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                    $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                    $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                    $payment = new Payments();
+                    $payment->user_id = $this->user_id;
+                    $payment->package_id = $_POST['package_id'];
+                    $payment->order_id = time().uniqid();
+                    $payment->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
+                    $payment->amount = $amountwithoutsst;
+                    $payment->sst = $sstafterdiscount;
+                    $payment->discount = $discount;
+                    $payment->coins = $goldcoins;
+                    $payment->coins_savings = $coins_savings;
+                    $payment->total_amount = $totalamountafterdiscount;
+                    $payment->status = 'Pending';
+                    $payment->created_at = date('Y-m-d H:i:s');
+                    if($payment->save(false)){
+                        return array('status' => 1, 'order_id' => $payment->order_id);
+
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
+
+                }else if($_POST['type']!='' && $_POST['type']='topup' && $_POST['amount']!=''){
+                    $payment = new Payments();
+                    $payment->user_id = $this->user_id;
+                    $payment->package_id = NULL;
+                    $payment->todo_id = NULL;
+                    $payment->order_id = time().uniqid();
+                    $payment->amount = $_POST['amount'];
+                    $payment->total_amount = $_POST['amount'];
+                    $payment->status = 'Pending';
+                    $payment->created_at = date('Y-m-d H:i:s');
+                    if($payment->save(false)){
+                        return array('status' => 1, 'order_id' => $payment->order_id);
+
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
+                }else {
+                    $systemaccount = Yii::$app->common->getsystemaccount();
+                    $user_id = $this->user_id;
+                    $todomodel = TodoList::find()->where(['id' => $_POST['todo_id']])->one();
+                    if (empty($todomodel)) {
+                        return array('status' => 0, 'message' => 'Data not found.');
+                    }
+                    $todo_id = $_POST['todo_id'];
+                    $todomodel = TodoList::findOne($todo_id);
+                    $promocode = (isset($_POST['promo_code']) && $_POST['promo_code'] != '') ? $_POST['promo_code'] : '';
+                    $amount = (isset($_POST['amount']) && $_POST['amount'] != '') ? $_POST['amount'] : '';
+                    $discount = (isset($_POST['discount']) && $_POST['discount'] != '') ? $_POST['discount'] : 0;
+                    $goldcoins = (isset($_POST['gold_coins']) && $_POST['gold_coins'] != '') ? $_POST['gold_coins'] : 0;
+                    $coins_savings = (isset($_POST['coins_savings']) && $_POST['coins_savings'] != '') ? $_POST['coins_savings'] : 0;
+                    if ($promocode != '') {
+                        $promocodedetails = PromoCodes::find()->where(['promo_code' => $promocode])->one();
+                    }
+//                    $totalamount = $amount;
+//                    $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+//
+                    if($todomodel->reftype=='Booking'){
+                        $model = BookingRequests::findOne($todomodel->request_id);
+                        $amountwithoutsst = $todomodel->subtotal;
+                        $tenancyfees = $model->tenancy_fees;
+                        $totaldiscount = (int)$discount-(int)$coins_savings;
+                        $totaltenancyfees = $model->tenancy_fees-$totaldiscount;
+                        $sstafterdiscount =Yii::$app->common->calculatesst($totaltenancyfees);
+                        $tenancyfeeswithsst = $totaltenancyfees+$sstafterdiscount;
+                        $bookingfees = $model->booking_fees;
+                        $stamp_duty = $model->stamp_duty;
+                        $totaldiscount = $discount+$coins_savings;
+                        $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
+                        $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sstafterdiscount+$stamp_duty-$bookingfees;
+                    }elseif($todomodel->reftype=='Insurance'){
+                        $stamp_duty = $todomodel->stamp_duty;
+                        $totalamount = $amount;
+                        $amountwithoutsst = $todomodel->subtotal;
+                        $totaldiscount = $discount+$coins_savings;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                        $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                        $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount+$stamp_duty;
+                    }elseif($todomodel->reftype=='General'){
+                        $totalamount = $amount;
+                        $amountwithoutsst = $todomodel->subtotal;
+                        $totaldiscount = $discount+$coins_savings;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                        if($todomodel->is_sst==1){
+                            $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+
+                        }else{
+                            $sstafterdiscount = $todomodel->sst;
+                            $totalamountafterdiscount = $totalamountafterdiscount;
+                        }
+                    }else {
+                        $totalamount = $amount;
+                        $amountwithoutsst = $todomodel->subtotal;
+                        $totaldiscount = $discount + $coins_savings;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                        $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                        $totalamountafterdiscount = $totalamountafterdiscount + $sstafterdiscount;
+                    }
+                    $transactionmodel = new Payments();
+                    $transactionmodel->user_id = $user_id;
+                    $transactionmodel->todo_id = $todo_id;
+                    $transactionmodel->order_id = time().uniqid();
+                    $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
+                    $transactionmodel->amount = $amountwithoutsst;
+                    $transactionmodel->sst = $sstafterdiscount;
+                    $transactionmodel->discount = $discount;
+                    $transactionmodel->coins = $goldcoins;
+                    $transactionmodel->coins_savings = $coins_savings;
+                    $transactionmodel->total_amount = $totalamountafterdiscount;
+                    $transactionmodel->status = 'Pending';
+                    $transactionmodel->created_at = date('Y-m-d H:i:s');
+                    if($transactionmodel->save(false)){
+                        return array('status' => 1, 'order_id' => $transactionmodel->order_id);
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.'.$transactionmodel->getErrors());
+
+                    }
+                }
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+
+            }
+        }
+
+    }
+
     public function actionPaytodo()
     {
 
@@ -3535,11 +3846,27 @@ class ApiusersController extends ActiveController
 
                 $user_id = $this->user_id;
                 $status = $_POST['status'];
+                //$order_id = (isset($_POST['order_id']) && $_POST['order_id']!='')?$_POST['order_id']:'';
                 $systemaccount = Yii::$app->common->getsystemaccount();
                 $todomodel = TodoList::find()->where(['id'=>$_POST['todo_id']])->one();
                 if (empty($todomodel)){
                     return array('status' => 0, 'message' => 'Data not found.');
                 }
+//                if($order_id!=''){
+//                    $paymentmodel = Payments::find()->where(['order_id'=>$order_id,'status'=>'Pending'])->one();
+//                    $post = $_POST;
+//                    $post['todo_id'] = $paymentmodel->todo_id;
+//                    $post['amount'] = $paymentmodel->amount;
+//                    $post['discount'] = $paymentmodel->discount;
+//                    $post['promo_code'] = $paymentmodel->promo_code;
+//                    $post['gold_coins'] = $paymentmodel->gold_coins;
+//                    $post['coins_savings'] = $paymentmodel->coins_savings;
+//
+//                }else{
+                $paymentmodel = array();
+                $post = $_POST;
+                //}
+
                 $return =  $this->actionUpdatetodostatus($_POST['todo_id'],$status,$todomodel->reftype,$_POST);
 
                 return $return;
@@ -3555,24 +3882,40 @@ class ApiusersController extends ActiveController
     }
 
 
-    public function actionPayinsurance()
-    {
-
+    public function actionPaysuccess(){
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='') {
+            if (!empty($_POST) && isset($_POST['order_id']) && $_POST['order_id']!='' ) {
 
                 $user_id = $this->user_id;
+                $status = $_POST['status'];
+                $order_id = (isset($_POST['order_id']) && $_POST['order_id']!='')?$_POST['order_id']:'';
                 $systemaccount = Yii::$app->common->getsystemaccount();
-                $todomodel = TodoList::find()->where(['reftype'=>'Insurance','id'=>$_POST['todo_id'],'status'=>'Unpaid'])->one();
-                if (empty($todomodel)){
+                $paymentmodel = Payments::find()->where(['order_id'=>$order_id,'status'=>'Pending'])->one();
+                if(empty($paymentmodel)){
                     return array('status' => 0, 'message' => 'Data not found.');
+
                 }
-                $this->actionUpdatetodostatus($_POST['todo_id'],'Accepted','Insurance');
+                $paymentmodel->status = 'Completed';
+                $paymentmodel->updated_at = date('Y-m-d H:i:s');
+                if($paymentmodel->save()) {
+                    $post['amount'] = $paymentmodel->amount;
+                    $post['discount'] = $paymentmodel->discount;
+                    $post['promo_code'] = $paymentmodel->promo_code;
+                    $post['gold_coins'] = $paymentmodel->gold_coins;
+                    $post['coins_savings'] = $paymentmodel->coins_savings;
+                    $todomodel = TodoList::findOne($paymentmodel->todo_id);
 
 
+                    $return = $this->actionUpdatetodostatus($paymentmodel->todo_id, 'Accepted', $todomodel->reftype, $post,$paymentmodel->id);
+
+                    return $return;
+                }else{
+                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                }
 
                 //$todoitems = TodoItems::find()->where(['todo_id'=>$_POST['todo_id']])
 
@@ -3584,37 +3927,10 @@ class ApiusersController extends ActiveController
         }
     }
 
-    public function actionPayinvoice()
+
+    public function actionUpdatetodostatus($todo_id,$status,$reftype,$post=array(),$order_id='')
     {
 
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='') {
-
-                $user_id = $this->user_id;
-                $systemaccount = Yii::$app->common->getsystemaccount();
-                $todomodel = TodoList::find()->where(['reftype'=>'General','id'=>$_POST['todo_id'],'status'=>'Unpaid'])->one();
-                if (empty($todomodel)){
-                    return array('status' => 0, 'message' => 'Data not found.');
-                }
-                $this->actionUpdatetodostatus($_POST['todo_id'],'Accepted','General');
-
-
-
-                //$todoitems = TodoItems::find()->where(['todo_id'=>$_POST['todo_id']])
-
-
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-        }
-    }
-
-    public function actionUpdatetodostatus($todo_id,$status,$reftype,$post=array())
-    {
         $systemaccount = Yii::$app->common->getsystemaccount();
         $user_id = $this->user_id;
         $todomodel = TodoList::findOne($todo_id);
@@ -3817,7 +4133,12 @@ class ApiusersController extends ActiveController
 
                         if ($status == 'Accepted') {
                             $totalamount = $amount;
-                            $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+                            $amountwithoutsst = $todomodel->subtotal;
+                            $totaldiscount = $discount+$coins_savings;
+                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                            $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+                            // echo $totalamount."<br>".$amountwithoutsst."<br>".$tr."<br>".$sstafterdiscount."<br>".$totalamountafterdiscount;exit;
                             $senderbalance = Users::getbalance($todomodel->landlord_id);
                             if ($senderbalance < $totalamountafterdiscount) {
                                 return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
@@ -3835,16 +4156,17 @@ class ApiusersController extends ActiveController
                                     $transactionmodel->renovation_quote_id = $todomodel->renovation_quote_id;
                                     $transactionmodel->todo_id = $todo_id;
                                     $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                    $transactionmodel->amount = $totalamount;
+                                    $transactionmodel->amount = $amountwithoutsst;
                                     $transactionmodel->discount = $discount;
                                     $transactionmodel->coins = $goldcoins;
+                                    $transactionmodel->sst = $sstafterdiscount;
                                     $transactionmodel->coins_savings = $coins_savings;
                                     $transactionmodel->total_amount = $totalamountafterdiscount;
                                     $transactionmodel->type = 'Payment';
                                     $transactionmodel->reftype = 'Renovation Payment';
                                     $transactionmodel->status = 'Completed';
                                     $transactionmodel->created_at = date('Y-m-d H:i:s');
-                                    if ($transactionmodel->save()) {
+                                    if ($transactionmodel->save(false)) {
                                         $flag = false;
                                         $lastid = $transactionmodel->id;
                                         $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
@@ -3885,7 +4207,7 @@ class ApiusersController extends ActiveController
                                                 if($goldcoins>0) {
                                                     Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                 }
-                                                $gold_coins = $totalamountafterdiscount*1.5;
+                                                $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                                 Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
 
 //                                               if ($goldcoins > 0) {
@@ -3966,8 +4288,15 @@ class ApiusersController extends ActiveController
                     if($todomodel->status == 'Unpaid') {
                         if ($status == 'Accepted') {
                             $totalpayableamount = $todomodel->total;
+                            $stamp_duty = $todomodel->stamp_duty;
+                            $totalamount = $amount;
+                            $amountwithoutsst = $todomodel->subtotal;
+                            $totaldiscount = $discount+$coins_savings;
+                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings ;
+                            $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount+$stamp_duty;
                             $senderbalance = Users::getbalance($todomodel->landlord_id);
-                            if ($totalpayableamount > $senderbalance) {
+                            if ($totalamountafterdiscount > $senderbalance) {
                                 return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                             }
@@ -3977,16 +4306,15 @@ class ApiusersController extends ActiveController
                                 $sst = $todomodel->sst;
 
                                 if (!empty($todoitems)) {
-                                    $totalamount = $amount;
-                                    $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
 
                                     $transactionmodel = new Transactions();
                                     $transactionmodel->landlord_id = $todomodel->landlord_id;
                                     $transactionmodel->property_id = $todomodel->property_id;
                                     $transactionmodel->todo_id = $todo_id;
                                     $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                    $transactionmodel->amount = $totalamount;
-                                    $transactionmodel->sst = $todomodel->sst;
+                                    $transactionmodel->amount = $amountwithoutsst;
+                                    //$transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                                    $transactionmodel->sst = $sstafterdiscount;
                                     $transactionmodel->discount = $discount;
                                     $transactionmodel->coins = $goldcoins;
                                     $transactionmodel->coins_savings = $coins_savings;
@@ -4031,7 +4359,7 @@ class ApiusersController extends ActiveController
                                                 if($goldcoins>0) {
                                                     Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                 }
-                                                $gold_coins = $totalamountafterdiscount*1.5;
+                                                $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                                 Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                 $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->landlord_id);
                                                 $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
@@ -4099,6 +4427,20 @@ class ApiusersController extends ActiveController
                             if ($todomodel->save()) {
                                 $todoitems = $todomodel->todoItems;
                                 $totalpayableamount = $todomodel->total;
+                                $totalamount = $amount;
+                                $amountwithoutsst = $todomodel->subtotal;
+                                $totaldiscount = $discount+$coins_savings;
+                                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                                if($todomodel->is_sst==1){
+                                    $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                                    $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
+
+                                }else{
+                                    $sstafterdiscount = $todomodel->sst;
+                                    $totalamountafterdiscount = $totalamountafterdiscount;
+                                }
+
+
                                 if ($todomodel->pay_from == 'Tenant') {
                                     $senderbalance = Users::getbalance($todomodel->user_id);
 
@@ -4107,15 +4449,12 @@ class ApiusersController extends ActiveController
 
                                 }
 
-                                if ($totalpayableamount > $senderbalance) {
+                                if ($totalamountafterdiscount > $senderbalance) {
                                     $transaction->rollBack();
                                     return array('status' => 0, 'message' => 'You don`t have enough balance.Please recharge your wallet.');
 
                                 }
                                 if (!empty($todoitems)) {
-                                    $totalamount = $amount;
-                                    $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
-
 
                                     $transactionmodel = new Transactions();
                                     if ($todomodel->pay_from == 'Tenant') {
@@ -4128,8 +4467,8 @@ class ApiusersController extends ActiveController
                                     $transactionmodel->property_id = $todomodel->property_id;
                                     $transactionmodel->todo_id = $todo_id;
                                     $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                    $transactionmodel->amount = $totalamount;
-                                    $transactionmodel->sst = $todomodel->sst;
+                                    $transactionmodel->amount = $amountwithoutsst;
+                                    $transactionmodel->sst = $sstafterdiscount;
                                     $transactionmodel->discount = $discount;
                                     $transactionmodel->coins = $goldcoins;
                                     $transactionmodel->coins_savings = $coins_savings;
@@ -4179,8 +4518,8 @@ class ApiusersController extends ActiveController
                                                 if($goldcoins>0) {
                                                     Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                 }
-                                                $gold_coins = $totalamountafterdiscount*1.5;
-                                                Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
+//                                               $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
+//                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                 $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, ($todomodel->pay_from == 'Tenant') ? $todomodel->user_id : $todomodel->landlord_id);
                                                 $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                 if ($updatereceiverbalance && $updatesenderbalance) {
@@ -4217,7 +4556,7 @@ class ApiusersController extends ActiveController
                             }
                         } else if ($status == 'Rejected') {
                             $todomodel->status = $status;
-                            if ($todomodel->save()) {
+                            if ($todomodel->save(false)) {
                                 $transaction->commit();
                                 return array('status' => 1, 'message' => 'You have rejected payment successfully.');
 
@@ -4256,7 +4595,7 @@ class ApiusersController extends ActiveController
                                 }
                                 if (!empty($todoitems)) {
                                     $totalamount = $amount;
-                                    $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+                                    $totalamountafterdiscount = $totalamount;
 
 
                                     $transactionmodel = new Transactions();
@@ -4270,7 +4609,8 @@ class ApiusersController extends ActiveController
                                     $transactionmodel->property_id = $todomodel->property_id;
                                     $transactionmodel->todo_id = $todo_id;
                                     $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                    $transactionmodel->amount = $totalamount;
+                                    $transactionmodel->amount = $todomodel->subtotal;
+                                    $transactionmodel->sst = $todomodel->sst;
                                     $transactionmodel->discount = $discount;
                                     $transactionmodel->coins = $goldcoins;
                                     $transactionmodel->coins_savings = $coins_savings;
@@ -4320,8 +4660,8 @@ class ApiusersController extends ActiveController
                                                 if($goldcoins>0) {
                                                     Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                                 }
-                                                $gold_coins = $totalamountafterdiscount*1.5;
-                                                Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
+//                                               $gold_coins = $totalamountafterdiscount*1.5;
+//                                               Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                                 $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, ($todomodel->pay_from == 'Tenant') ? $todomodel->user_id : $todomodel->user_id);
                                                 $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
                                                 if ($updatereceiverbalance && $updatesenderbalance) {
@@ -4498,6 +4838,11 @@ class ApiusersController extends ActiveController
                             $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
                             $totalpayableamount = $todomodel->total;
                             $sst = $todomodel->sst;
+                            $totaldiscount = $discount+$coins_savings;
+                            $amountwithoutsst = $todomodel->subtotal;
+                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                            $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
 
                             $senderbalance = Users::getbalance($todomodel->user_id);
                             if ($totalpayableamount > $senderbalance) {
@@ -4506,15 +4851,15 @@ class ApiusersController extends ActiveController
                             }
                             if (!empty($todoitems)) {
                                 $totalamount = $amount;
-                                $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
                                 $receiverbalance = Users::getbalance($systemaccount->id);
                                 $transactionmodel = new Transactions();
                                 $transactionmodel->user_id = $todomodel->user_id;
                                 $transactionmodel->property_id = $todomodel->property_id;
                                 $transactionmodel->todo_id = $todo_id;
                                 $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                $transactionmodel->amount = $totalamount;
-                                $transactionmodel->sst = $sst;
+                                $transactionmodel->amount = $amountwithoutsst;
+                                //$transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;
+                                $transactionmodel->sst = $sstafterdiscount;
                                 $transactionmodel->discount = $discount;
                                 $transactionmodel->coins = $goldcoins;
                                 $transactionmodel->coins_savings = $coins_savings;
@@ -4558,7 +4903,7 @@ class ApiusersController extends ActiveController
                                             if($goldcoins>0) {
                                                 Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                             }
-                                            $gold_coins = $totalamountafterdiscount*1.5;
+                                            $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                             Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                             $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
                                             $updatereceiverbalance = Users::updatebalance($receiverbalance + $totalamount, $systemaccount->id);
@@ -4653,30 +4998,34 @@ class ApiusersController extends ActiveController
 
                             $todoitems = $todomodel->todoItems;
                             $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
-                            $totalpayableamount = $todomodel->total;
-                            $sst = $todomodel->sst;
+                            $totalamount = $amount;
+                            $amountwithoutsst = $todomodel->subtotal;
+                            $totaldiscount = $discount+$coins_savings;
+                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                            $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
                             $systemaccount = Yii::$app->common->getsystemaccount();
                             $systemaccountbalance = $systemaccount->wallet_balance;
 
                             $senderbalance = Users::getbalance($todomodel->user_id);
                             $receiverbalance = Users::getbalance($todomodel->vendor_id);
 
-                            if ($totalpayableamount > $senderbalance) {
+                            if ($totalamountafterdiscount > $senderbalance) {
                                 $transaction->rollBack();
                                 return array('status' => 0, 'message' => 'You don`t have enough balance.Please topup your wallet.');
 
                             }
                             if (!empty($todoitems)) {
-                                $totalamount = $amount;
-                                $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+
                                 $transactionmodel = new Transactions();
                                 $transactionmodel->user_id = $todomodel->user_id;
                                 $transactionmodel->property_id = $todomodel->property_id;
                                 $transactionmodel->vendor_id = $todomodel->vendor_id;
                                 $transactionmodel->todo_id = $todo_id;
                                 $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                $transactionmodel->amount = $totalamount;
-                                $transactionmodel->sst = $sst;
+                                $transactionmodel->amount = $amountwithoutsst;
+                                //$transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;;
+                                $transactionmodel->sst = $sstafterdiscount;
                                 $transactionmodel->discount = $discount;
                                 $transactionmodel->coins = $goldcoins;
                                 $transactionmodel->coins_savings = $coins_savings;
@@ -4765,11 +5114,11 @@ class ApiusersController extends ActiveController
                                             if($goldcoins>0) {
                                                 Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                             }
-                                            $gold_coins = $totalamountafterdiscount*1.5;
+                                            $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                             Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                             $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
                                             $updatereceiverbalance = Users::updatebalance($receiverbalance + $totaladdedtovendor, $todomodel->vendor_id);
-                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$totalplatform_added+$sst,$systemaccount->id);
+                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$totalplatform_added+$sstafterdiscount,$systemaccount->id);
 
                                             if ($updatereceiverbalance && $updatesenderbalance && $updatesystemaccountbalance) {
                                                 $todomodel->payment_date = date('Y-m-d H:i:s');
@@ -4862,30 +5211,34 @@ class ApiusersController extends ActiveController
 
                             $todoitems = $todomodel->todoItems;
                             $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
-                            $totalpayableamount = $todomodel->total;
-                            $sst = $todomodel->sst;
+                            $totalamount = $amount;
+                            $amountwithoutsst = $todomodel->subtotal;
+                            $totaldiscount = $discount+$coins_savings;
+                            $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $amountwithoutsst - $discount - $coins_savings;
+                            $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
+                            $totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
                             $systemaccount = Yii::$app->common->getsystemaccount();
                             $systemaccountbalance = $systemaccount->wallet_balance;
 
                             $senderbalance = Users::getbalance($todomodel->user_id);
                             $receiverbalance = Users::getbalance($todomodel->vendor_id);
 
-                            if ($totalpayableamount > $senderbalance) {
+                            if ($totalamountafterdiscount > $senderbalance) {
                                 $transaction->rollBack();
                                 return array('status' => 0, 'message' => 'You don`t have enough balance.Please topup your wallet.');
 
                             }
                             if (!empty($todoitems)) {
-                                $totalamount = $amount;
-                                $totalamountafterdiscount = $totalamount - $discount - $coins_savings;
+
                                 $transactionmodel = new Transactions();
                                 $transactionmodel->user_id = $todomodel->user_id;
                                 $transactionmodel->property_id = $todomodel->property_id;
                                 $transactionmodel->vendor_id = $todomodel->vendor_id;
                                 $transactionmodel->todo_id = $todo_id;
                                 $transactionmodel->promo_code = ($promocode != '') ? $promocodedetails->id : NULL;
-                                $transactionmodel->amount = $totalamount;
-                                $transactionmodel->sst = $sst;
+                                $transactionmodel->amount = $amountwithoutsst;
+                                //$transactionmodel->amount = ($totaldiscount>0)?$totalamount:$amountwithoutsst;;;
+                                $transactionmodel->sst = $sstafterdiscount;
                                 $transactionmodel->discount = $discount;
                                 $transactionmodel->coins = $goldcoins;
                                 $transactionmodel->coins_savings = $coins_savings;
@@ -4974,11 +5327,11 @@ class ApiusersController extends ActiveController
                                             if($goldcoins>0) {
                                                 Yii::$app->common->deductgoldcoinspurchase($user_id, $goldcoins, $lastid);
                                             }
-                                            $gold_coins = $totalamountafterdiscount*1.5;
+                                            $gold_coins = $totalamountafterdiscountwithoutsst*1.5;
                                             Yii::$app->common->addgoldcoinspurchase($user_id,$gold_coins,$lastid);
                                             $updatesenderbalance = Users::updatebalance($senderbalance - $totalamountafterdiscount, $todomodel->user_id);
                                             $updatereceiverbalance = Users::updatebalance($receiverbalance + $totaladdedtovendor, $todomodel->vendor_id);
-                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$totalplatform_added+$sst,$systemaccount->id);
+                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$totalplatform_added+$sstafterdiscount,$systemaccount->id);
 
                                             if ($updatereceiverbalance && $updatesenderbalance && $updatesystemaccountbalance) {
                                                 $todomodel->payment_date = date('Y-m-d H:i:s');
@@ -5197,6 +5550,7 @@ class ApiusersController extends ActiveController
 
         }
     }
+
     public function actionApplypromocode(){
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method != 'POST') {
@@ -5223,7 +5577,12 @@ class ApiusersController extends ActiveController
                     $discountamount = $countpercentage;
 
                 }
-                return array('status' => 1, 'data' => array('discountamout'=>$discountamount));
+                if($discountamount>$amount){
+                    return array('status' => 0, 'message' => 'Promo code is not applicable for this amount.');
+                }else{
+                    return array('status' => 1, 'data' => array('discountamout'=>$discountamount));
+                }
+
 
 
 
@@ -5325,6 +5684,9 @@ class ApiusersController extends ActiveController
                     $propertydetails->status = 'Deleted';
                     $propertydetails->updated_at = date('Y-m-d H:i:s');
                     if($propertydetails->save(false)){
+                        $usermodel = Users::findOne($user_id);
+                        $usermodel->properties_posted = $usermodel->properties_posted - 1;
+                        $usermodel->save(false);
                         return array('status' => 1, 'message' => 'You have deleted property successfully.');
 
                     }else{
@@ -5405,6 +5767,7 @@ class ApiusersController extends ActiveController
                         $tododocument->document = $filename . '.' . $data['type'];
                         $tododocument->created_at = date('Y-m-d H:i:s');
                         if ($tododocument->save(false)) {
+
                             return array('status' => 1, 'message' => 'You have submitted defect report successfully.');
 
                         } else {
@@ -5650,6 +6013,12 @@ class ApiusersController extends ActiveController
                                                 $cleaner->current_status = 'Busy';
                                                 $cleaner->save(false);
                                                 $transaction->commit();
+                                                $subject = 'Service order placed';
+                                                $textmessage = 'You got one service order pending for action, kindly accept now.';
+                                                Yii::$app->common->Savenotification($todolist->vendor_id,$subject,$textmessage,'',$model->property_id,$todolist->id);
+
+                                                Yii::$app->common->Sendpushnotification($todolist->vendor_id,$subject,$textmessage,'Partner');
+
                                                 return array('status' => 1, 'message' => 'You have submitted Service Request successfully.');
                                             }else{
                                                 $transaction->rollBack();
@@ -5868,10 +6237,17 @@ class ApiusersController extends ActiveController
                             $mytransactions[$key]['incoming'] = ($user_id==$transaction->landlord_id)?1:0;
                             $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
                             break;
+                        case "Package Purchase";
+                            $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                            $mytransactions[$key]['title'] = $transaction->reftype;
+                            $mytransactions[$key]['property'] = '';
+                            $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                            $mytransactions[$key]['incoming'] = 0;
+                            $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
                         case "Insurance";
                             $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                             $mytransactions[$key]['title'] = $transaction->reftype;
-                            $mytransactions[$key]['property'] = $transaction->property->title;
+                            $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
                             $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                             $mytransactions[$key]['incoming'] = 0;
                             $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
@@ -5968,25 +6344,24 @@ class ApiusersController extends ActiveController
                             $mytransactions[$key]['items'] = $items;
                             break;
                         case "Withdrawal";
-                            switch ($transaction->withdrawal->status){
-                                case 1;
-                                    $status = "Pending";
-                                    break;
-                                case 2;
-                                    $status = "Completed";
-                                    break;
-                                case 3;
-                                    $status = "Rejected";
-                                    break;
-
-                            }
                             $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                             $mytransactions[$key]['name'] = "";
                             $mytransactions[$key]['title'] = "Withdrawal";
-                            $mytransactions[$key]['description'] = $status;
+                            $mytransactions[$key]['description'] = $transaction->status;
                             $mytransactions[$key]['incoming'] = 0;
                             $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
-                            $mytransactions[$key]['date'] = date('Y-m-d H:i:s',strtotime($transaction->created_at));
+                            $mytransactions[$key]['date'] = date('Y-m-d H:i:s', strtotime($transaction->created_at));
+
+                            break;
+                        case "Topup";
+                            $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                            $mytransactions[$key]['name'] = "";
+                            $mytransactions[$key]['title'] = "Topup";
+                            $mytransactions[$key]['description'] = $transaction->status;
+                            $mytransactions[$key]['incoming'] = 1;
+                            $mytransactions[$key]['amount'] = number_format($transaction->amount, 2, '.', '');
+                            $mytransactions[$key]['date'] = date('Y-m-d H:i:s', strtotime($transaction->created_at));
+
                             break;
 
                     }
@@ -6069,6 +6444,37 @@ class ApiusersController extends ActiveController
 
 
     }
+    public function actionManualkyc()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['document_no']) && $_POST['document_no']!='' && isset($_POST['selfie']) && $_POST['selfie']!='' && isset($_POST['request_id']) && $_POST['request_id']!='' && isset($_POST['type']) && $_POST['type']!='') {
+                $requestmodel = BookingRequests::findOne($_POST['request_id']);
+                $type = $_POST['type'];
+
+                $user_id = $this->user_id;
+                $manualkyc = new ManualKyc();
+                $manualkyc->request_id =$_POST['request_id'];
+                $manualkyc->user_id = $this->user_id;
+                $manualkyc->document = $_POST['document'];
+                $manualkyc->document_no = $_POST['document_no'];
+                $manualkyc->selfie = $_POST['selfie'];
+                $manualkyc->type = $type;
+                $manualkyc->status = 'Pending';
+                $manualkyc->created_at = date('Y-m-d H:i:s');
+                if($manualkyc->save(false)){
+                    return array('status' => 0, 'message' => 'We have submitted your documents to admin for manual approval.Will update you shortly.');
+                }else{
+
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+    }
 
     public function actionVerifydocument()
     {
@@ -6085,32 +6491,34 @@ class ApiusersController extends ActiveController
                 if($type=='N') {
                     $journeyid = $this->createjourneyid();
                     if($journeyid!='') {
-
                         $document = $_POST['document'];
                         $selfie = $_POST['selfie'];
                         $filename = 'uploads/sampleimage.jpg'; // output file name
 
-                        $im = imagecreatefromstring(base64_decode($selfie));
-                        $source_width = imagesx($im);
-                        $source_height = imagesy($im);
-                        $ratio =  $source_width / $source_height;
-
-                        $new_height = 720; // assign new width to new resized image
-                        $new_width = $ratio * $source_width;
-
-                        $thumb = imagecreatetruecolor($new_width, $new_height);
-
-                        $transparency = imagecolorallocatealpha($thumb, 255, 255, 255, 127);
-                        imagefilledrectangle($thumb, 0, 0, $new_width, $new_height, $transparency);
-
-                        imagecopyresampled($thumb, $im, 0, 0, 0, 0, $new_width, $new_height, $source_width, $source_height);
-                        imagepng($thumb, $filename, 9);
-                        imagedestroy($im);
-                        $path = 'uploads/sampleimage.jpg';
-                        $type = pathinfo($path, PATHINFO_EXTENSION);
-                        $data = file_get_contents($path);
-                        $base64 =  base64_encode($data);
-                        $selfie = $base64;
+//                          $im = imagecreatefromstring(base64_decode($selfie));
+//                          $source_width = imagesx($im);
+//                          $source_height = imagesy($im);
+//                          $ratio =  $source_width / $source_height;
+//
+//                          $new_height = 720; // assign new width to new resized image
+//                          $new_width = $ratio * $source_width;
+//
+//                          $thumb = imagecreatetruecolor($new_width, $new_height);
+//
+//                          $transparency = imagecolorallocatealpha($thumb, 255, 255, 255, 127);
+//                          imagefilledrectangle($thumb, 0, 0, $new_width, $new_height, $transparency);
+//
+//                          imagecopyresampled($thumb, $im, 0, 0, 0, 0, $new_width, $new_height, $source_width, $source_height);
+//                          imagepng($thumb, $filename, 9);
+//                          imagedestroy($im);
+//                          $path = 'uploads/sampleimage.jpg';
+//                          $type = pathinfo($path, PATHINFO_EXTENSION);
+//                          $data = file_get_contents($path);
+                        //$base64 =  base64_encode($data);
+                        //$selfie = $base64;
+                        //echo $selfie;exit;
+                        $requestmodel->selfie = $selfie;
+                        $requestmodel->save(false);
                         $checkmycad = $this->mykadokaydoc($journeyid, $document);
                         if (!empty($checkmycad)) {
                             if ($checkmycad->status == 'success' && $checkmycad->messageCode == 'api.success') {
@@ -6135,7 +6543,7 @@ class ApiusersController extends ActiveController
                                                     $usermodel->ekyc_response = json_encode($getscorecardresult);
                                                     $usermodel->identity_status = 'Verified';
                                                     $usermodel->save(false);
-                                                    return array('status' => 1, 'message' => 'Done', 'response' => $getscorecardresult);
+                                                    return array('status' => 1, 'message' => 'done', 'response' => $getscorecardresult);
 
                                                 } else {
                                                     return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : scorecardStatus is suspicious )' , 'response' => $getscorecardresult, 'here' => 'there');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
@@ -6147,7 +6555,7 @@ class ApiusersController extends ActiveController
                                             }
 
                                         } else {
-                                            return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                                            return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : '.$getscorecardresult->message.')');
 
 
                                         }
@@ -6157,7 +6565,7 @@ class ApiusersController extends ActiveController
                                     }
 
                                 } else {
-                                    return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                                    return array('status' => 0, 'message' => 'please upload MyKAD again. (Error : '.$checkscoreandface->message.')');
 
                                 }
                             } else {
@@ -6165,16 +6573,17 @@ class ApiusersController extends ActiveController
 
                             }
                         }else{
-                            return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                            return array('status' => 0, 'message' => 'please upload MyKAD again.No response from check mycad ');
 
                         }
                     }else{
-                        return array('status' => 0, 'message' => 'please upload MyKAD again.');
+                        return array('status' => 0, 'message' => 'please upload MyKAD again.'.json_encode($journeyid));
 
                     }
                 }else if($type=='P'){
                     $journeyid = $this->createjourneyid();
-                    if($journeyid!=''){
+                    if($journeyid!='') {
+
                         $document = $_POST['document'];
                         $selfie = $_POST['selfie'];
                         $checkpassport = $this->passportokaydoc($journeyid, $document);
@@ -6205,7 +6614,7 @@ class ApiusersController extends ActiveController
                                                         $usermodel->ekyc_response = json_encode($getscorecardresult);
                                                         $usermodel->identity_status = 'Verified';
                                                         $usermodel->save(false);
-                                                        return array('status' => 1, 'message' => 'Done','response'=>$getscorecardresult);
+                                                        return array('status' => 1, 'message' => 'done','response'=>$getscorecardresult);
 
                                                     } else{
                                                         return array('status' => 0, 'message' => 'please upload passport again. (Error : scorecardStatus is suspicious )','response'=>$getscorecardresult,'here'=>'here');//$getscorecardresult->scorecardResultList[0]->scorecardStatus
@@ -6226,7 +6635,7 @@ class ApiusersController extends ActiveController
 
                                         }
                                     }else{
-                                        return array('status' => 0, 'message' => 'please upload passport again. (Error : '.$checkpassport->message.')');
+                                        return array('status' => 0, 'message' => 'please upload passport again. (Error : '.$checkscoreandface->message.')');
 
                                     }
 
@@ -6243,7 +6652,7 @@ class ApiusersController extends ActiveController
 
                         }
                     }else{
-                        return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes.');
+                        return array('status' => 0, 'message' => 'Something went wrong. Please try after sometimes '.json_encode($journeyid));
 
                     }
 
@@ -6310,7 +6719,7 @@ class ApiusersController extends ActiveController
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS =>"{\n    \"journeyId\":\"$journeyid\",\n    \"type\":\"nonpassport\",\n    \"idImageBase64Image\": \"$doc\",\n    \"version\": \"7\",\n    \"docType\":\"mykad\",\n    \"landmarkCheck\":\"true\",\n    \"fontCheck\":\"true\",\n    \"microprintCheck\":\"true\",\n    \"photoSubstitutionCheck\":\"true\",\n \"screenDetection\":\"true\",\n    \"ghostPhotoColorDetection\":\"true\",\n   \"icTypeCheck\":\"true\",\n    \"colorMode\":\"true\",\n    \"hologram\":\"true\"\n    \n}",
+            CURLOPT_POSTFIELDS =>"{\n    \"journeyId\":\"$journeyid\",\n    \"type\":\"nonpassport\",\n    \"idImageBase64Image\": \"$doc\",\n    \"version\": \"7\",\n    \"docType\":\"mykad\",\n    \"landmarkCheck\":\"true\",\n    \"fontCheck\":\"true\",\n    \"microprintCheck\":\"true\",\n    \"photoSubstitutionCheck\":\"true\",\n \"screenDetection\":\"true\",\n    \"ghostPhotoColorDetection\":\"true\",\n   \"icTypeCheck\":\"true\",\n    \"colorMode\":\"true\",\n    \"hologram\":\"false\"\n    \n}",
             CURLOPT_HTTPHEADER => array(
                 "Content-Type: application/json"
             ),
@@ -6473,6 +6882,7 @@ class ApiusersController extends ActiveController
     {
         if (!empty($_POST) && isset($_POST['full_name']) && $_POST['full_name'] != '' && isset($_POST['identification_no']) && $_POST['identification_no'] != '' && isset($_POST['document']) && $_POST['document'] != '' && isset($_POST['type']) && $_POST['type'] != '' && isset($_POST['request_id']) && $_POST['request_id'] != '') {
             $requestmodel = BookingRequests::findOne($_POST['request_id']);
+
             $type = $_POST['type'];
             $document_front =  $_POST['document'];
             $full_name = $_POST['full_name'];
@@ -6480,6 +6890,29 @@ class ApiusersController extends ActiveController
             $user_id = $this->user_id;
             $userdetails = Users::findOne($user_id);
             $mobile_no  = $userdetails->contact_no;
+            $certificateexist = Msc::find()->where(['document_no'=>$identification_no,'user_id'=>$this->user_id,'status'=>'Approved'])->orderBy(['id'=>SORT_ASC])->one();
+            if(!empty($certificateexist)){
+                $mscmodel = New Msc();
+                $mscmodel->user_id = $user_id;
+                $mscmodel->request_id = $_POST['request_id'];
+                $mscmodel->document_front = $document_front;
+                $mscmodel->document_back = ($_POST['document_back']!='')?$_POST['document_back']:null;
+                $mscmodel->full_name = $full_name;
+                $mscmodel->document_no = $identification_no;
+                $mscmodel->type = $type;
+                $mscmodel->mobile_no = $mobile_no;
+                $mscmodel->created_at = date('Y-m-d H:i:s');
+                $mscmodel->mscrequest_id = $certificateexist->mscrequest_id;
+                $mscmodel->requestekyc_response = $certificateexist->requestekyc_response;
+                $mscmodel->getrequeststatus_response = $certificateexist->getrequeststatus_response;
+                $mscmodel->getactivationlink_response = $certificateexist->getactivationlink_response;
+                $mscmodel->status = 'Approved';
+                $mscmodel->created_at = date('Y-m-d H:i:s');
+                $mscmodel->save(false);
+                return array('status' => 1, 'message' => 'Your MSC certificate already exist in our system.So we are moving ahead to proceed signing');exit;
+
+            }
+
             $dataarray['type'] = $type;
             $dataarray['document_front'] = $document_front;
             $dataarray['document_back'] = '';
@@ -6501,6 +6934,7 @@ class ApiusersController extends ActiveController
                 $errors1 = 'Document verification has failed, please upload myKAD again';
 
             }
+
             $requestcertificatewithkycresponse = $this->Requestcertificatewithekyc($dataarray,$_POST['request_id'],$user_id);
             if(!empty($requestcertificatewithkycresponse)){
 
@@ -6521,8 +6955,68 @@ class ApiusersController extends ActiveController
                         $mscmodel->status = 'Pending';
                         $mscmodel->save(false);
                         $userdetails->msccertificate = $requestcertificatewithkycresponse['certRequestID'];
-                        $userdetails->save(false);
-                        return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.', 'errorresponse' => '', 'typeapi' => 'getactivationlink');
+                        if($userdetails->save(false)){
+                            $getrequeststatus = $this->Getrequeststatus($mscmodel);
+                            if (!empty($getrequeststatus)) {
+                                $mscmodel->getrequeststatus_response = json_encode($getrequeststatus);
+                                $mscmodel->updated_at = date('Y-m-d H:i:s');
+                                $mscmodel->save(false);
+                                if ($getrequeststatus['statusCode'] == 000 && $getrequeststatus['dataList']['requestStatus'] == 'Pending Activation') {
+                                    $mscmodel->status = 'Pending Activation';
+                                    $mscmodel->save(false);
+                                    $getactivationlink = $this->Getactivationlink($mscmodel);
+                                    if (!empty($getactivationlink)) {
+                                        $mscmodel->getactivationlink_response = json_encode($getactivationlink);
+                                        $mscmodel->updated_at = date('Y-m-d H:i:s');
+                                        $mscmodel->save(false);
+                                        if ($getactivationlink['statusCode'] == 000 && $getactivationlink['statusMsg'] == 'Success') {
+                                            $mscmodel->activation_link = $getactivationlink['activationLink'];
+                                            $mscmodel->status = 'Need Activation';
+                                            $mscmodel->updated_at = date('Y-m-d H:i:s');
+                                            $mscmodel->save(false);
+                                            $todomodel = new TodoList();
+                                            $todomodel->user_id = $user_id;
+                                            $todomodel->msc_id = $mscmodel->id;
+                                            $todomodel->property_id = $requestmodel->property_id;
+                                            $todomodel->request_id = $mscmodel->request_id;
+                                            $todomodel->reftype = 'Activation Link';
+                                            $todomodel->created_at = date('Y-m-d H:i:s');
+                                            $todomodel->updated_at = date('Y-m-d H:i:s');
+                                            $todomodel->status = 'Pending';
+                                            $todomodel->save(false);
+                                            return array('status' => 1, 'message' => 'We have sent your document to MSC Trustgate.You will get activation link in your Todo List.', 'errorresponse' => '', 'typeapi' => 'getactivationlink');
+
+
+                                        } else {
+                                            \Yii::error("1-".$errors1." (Error : ".$getactivationlink['statusCode'].")");
+                                            return array('status' => 0, 'message'=>$errors1." (Error : ".$getactivationlink['statusCode'].")",'message1' => $getrequeststatus['statusMsg'], 'error' => json_encode($getactivationlink), 'typeapi' => 'getactivationlink');
+
+                                        }
+
+                                    } else {
+                                        \Yii::error("2-".$errors1." (Error : ".$getrequeststatus['statusCode'].")");
+                                        return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
+
+                                    }
+
+                                } else if ($getrequeststatus['statusCode'] == 000 && ($getrequeststatus['dataList']['requestStatus'] == 'Submitted' || $getrequeststatus['dataList']['requestStatus'] == 'Verified')) {
+                                    $mscmodel->status = 'Pending MSC Approval';
+                                    $mscmodel->save(false);
+                                    $mscmodel->status = 'Pending MSC Approval';
+                                    $requestmodel->save(false);
+                                    return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+
+                                } else {
+                                    \Yii::error("3-".$errors1." (Error : ".$getrequeststatus['statusCode'].")");
+                                    return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
+
+                                }
+                            } else {
+                                \Yii::error("4-".$errors1."ketan here");
+                                return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getrequeststatus');
+
+                            }
+                        }
 
                     }else if($requestcertificatewithkycresponse['statusCode']=='CR100'){
                         $mscrequestmodel = Msc::find()->where(['request_id' => $_POST['request_id'], 'user_id' => $user_id,'status'=>'Approved'])->orderBy(['id' => SORT_DESC])->one();
@@ -6589,11 +7083,13 @@ class ApiusersController extends ActiveController
 
 
                                         } else {
+                                            \Yii::error("1-".$errors1." (Error : ".$getactivationlink['statusCode'].")");
                                             return array('status' => 0, 'message'=>$errors1." (Error : ".$getactivationlink['statusCode'].")",'message1' => $getrequeststatus['statusMsg'], 'error' => json_encode($getactivationlink), 'typeapi' => 'getactivationlink');
 
                                         }
 
                                     } else {
+                                        \Yii::error("2-".$errors1." (Error : ".$getrequeststatus['statusCode'].")");
                                         return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getactivationlink');
 
                                     }
@@ -6606,20 +7102,23 @@ class ApiusersController extends ActiveController
                                     return array('status' => 1, 'message' => 'Your document submitted to Admin For Approval.We will send you activation link once done', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                 } else {
+                                    \Yii::error("3-".$errors1." (Error : ".$getrequeststatus['statusCode'].")");
                                     return array('status' => 0, 'message'=>$errors1." (Error : ".$getrequeststatus['statusCode'].")",'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'errorresponse' => json_encode($getrequeststatus), 'typeapi' => 'getrequeststatus');
 
                                 }
                             } else {
+                                \Yii::error("4-".$errors1."ketan here");
                                 return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.', 'typeapi' => 'getrequeststatus');
 
                             }
 
                         } else {
                             if($requestcertificatewithkycresponse['statusCode']=='WS118' || $requestcertificatewithkycresponse['statusCode']=='WS117' || $requestcertificatewithkycresponse['statusCode']=='WS115'){
+                                \Yii::error("5-".$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
                                 return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
 
                             }else {
-
+                                \Yii::error("6-".$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
                                 return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => $requestcertificatewithkycresponse['statusMsg'], 'errorresponse' => json_encode($requestcertificatewithkycresponse));
                             }
 
@@ -6629,12 +7128,14 @@ class ApiusersController extends ActiveController
                     }
 
                 }else{
+                    \Yii::error("7-".$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")");
                     return array('status' => 0,'message'=>$errors1." (Error : ".$requestcertificatewithkycresponse['statusCode'].")", 'message1' => $requestcertificatewithkycresponse['statusMsg'],'errorresponse'=>json_encode($requestcertificatewithkycresponse),'typeapi'=>'requestcertificatewithkycresponse');
 
                 }
                 //echo "<pre>";print_r($requestcertificatewithkycresponse);exit;
 
             }else{
+                \Yii::error("8-".$errors1."ketan 123");
                 return array('status' => 0,'message'=>$errors1, 'message1' => 'There is something went wrong with MSC trustgate.Please try after sometimes.','typeapi'=>'requestcertificatewithkycresponse');
 
             }
@@ -6644,6 +7145,7 @@ class ApiusersController extends ActiveController
 
 
         }else{
+            \Yii::error("9 - mandatory");
             return array('status' => 0, 'message' => 'Please enter mandatory fields.');
 
         }
@@ -6880,6 +7382,38 @@ class ApiusersController extends ActiveController
         }
 
     }
+
+
+
+    public function actionCheckpaymentstatus()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $user_id = $this->user_id;
+            if(!empty($_POST) &&  isset($_POST['order_id']) && $_POST['order_id']!=''){
+                $payments = Payments::find()->where(['order_id'=>$_POST['order_id'],'user_id'=>$user_id])->one();
+                if(!empty($payments)){
+                    if($payments->status=='Completed'){
+                        $transaction = Transactions::find()->where(['payment_id'=>$payments->id])->one();
+                        return array('status' => 1,'message'=>'Your payment is successful.','payment_id'=>$payments->id,'reference_no'=>$transaction->reference_no);
+                    }elseif ($payments->status=='Failed'){
+                        return array('status' => 1,'message'=>'Your payment is failed.');
+                    }else{
+                        return array('status' => 1,'message'=>'Your payment is pending.');
+                    }
+                }else{
+                    return array('status' => 0, 'message' => 'Something went wrong please try after sometimes.');
+                }
+
+            }else{
+                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+            }
+        }
+
+    }
+
 
 
 }

@@ -11,14 +11,14 @@ use yii\widgets\ActiveForm;
     <div class="col-md-6">
         <div class="booking-requests-form box box-primary">
             <div class="box-header with-border">
-                <h4>Upload Agreement</h4>
+                <h4>Upload Stamp Duty Certificate</h4>
             </div>
 
             <?php $form = ActiveForm::begin(); ?>
             <div class="box-body table-responsive">
                 <div class="row">
                     <div class="col-md-10">
-                        <?= $form->field($model, 'agreement')->fileInput() ?>
+
                         <?= $form->field($model, 'stampdutycertificate')->fileInput() ?>
 
                     </div>
