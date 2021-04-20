@@ -100,6 +100,7 @@
                     ['label' => 'Properties', 'icon' => ' fa-home', 'url' => ['/properties'],'active'=>($item == 'properties' || ($item=='images' && $action=='create'))],
                     ['label' => 'Managed Properties', 'icon' => ' fa-cube', 'url' => ['/managedproperties'],'active'=>($item == 'managedproperties' || ($item=='images' && $action='add'))],
                     ['label' => 'Booking Requests', 'icon' => '  fa-database', 'url' => ['/bookingrequests'],'active'=>($item == 'bookingrequests')],
+                    ['label' => 'Manual Ekyc', 'icon' => ' fa-check-circle', 'url' => ['/manualkyc'],'active'=>($item == 'manualkyc')],
                     ['label' => 'Renovation Quotes', 'icon' => ' fa-recycle', 'url' => ['/renovationquotes'],'active'=>($item == 'renovationquotes')],
                     ['label' => 'Insurances', 'icon' => ' fa-shield', 'url' => ['/insurances'],'active'=>($item == 'insurances')],
                     ['label' => 'Defect Reports', 'icon' => ' fa-bug', 'url' => ['/defectreports'],'active'=>($item == 'defectreports')],
