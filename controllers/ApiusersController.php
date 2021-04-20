@@ -862,10 +862,13 @@ class ApiusersController extends ActiveController
            // $mypropertiescount = 100;
             $userdetails = Users::findOne($this->user_id);
             $currentpackageid = '';
+            $expired_date = '';
            if(!empty($currentpackage)){
                $currentpackageid = $currentpackage->package_id;
+               $expired_date = ($currentpackage->end_date!='')?date('d-m-Y',strtotime($currentpackage->end_date)):'';
             }else{
                $currentpackageid = 1;
+               $expired_date = '';
            }
             $userdetails = Users::findOne($this->user_id);
             $totalpropertyadded = $userdetails->properties_posted;
@@ -883,6 +886,7 @@ class ApiusersController extends ActiveController
                        $data[$key]['price'] = $package->price;
                        $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                        $data[$key]['total'] = $package->quantity;
+                        $data[$key]['expired_date'] = $expired_date;
                        $currentkey = $key;
                    }else if(($currentpackageid==1) || ($package->id >1 && $currentpackageid < $package->id)){
                        $data[$key]['id'] = $package->id;
@@ -890,7 +894,9 @@ class ApiusersController extends ActiveController
                        $data[$key]['price'] = $package->price;
                        $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                        $data[$key]['total'] = $package->quantity;
+                        $data[$key]['expired_date'] = $expired_date;
                    }
+                  // $data[$key]['expired_date'] = $expired_date;
 //                   if(($remaining==0 && $package->id>1) || $currentpackageid==''){
 //                       $data[$key]['id'] = $package->id;
 //                       $data[$key]['package'] = $package->name;

@@ -885,6 +885,10 @@ class HelloController extends Controller
 
                 }
             }
+            $cronjob = new Cronjobs();
+            $cronjob->type = 'Upload to msc and get signed pdf';
+            $cronjob->created_at = date('Y-m-d H:i:s');
+            $cronjob->save(false);
         }
 
 
