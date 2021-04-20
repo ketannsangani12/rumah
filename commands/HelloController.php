@@ -885,13 +885,13 @@ class HelloController extends Controller
 
                 }
             }
-            $cronjob = new Cronjobs();
-            $cronjob->type = 'Upload to msc and get signed pdf';
-            $cronjob->created_at = date('Y-m-d H:i:s');
-            $cronjob->save(false);
+
         }
 
-
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Upload to msc and get signed pdf';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
     }
     private function actionSignpdf($mscmodel,$model){
         //echo "<pre>";  print_r($mscmodel);exit;
