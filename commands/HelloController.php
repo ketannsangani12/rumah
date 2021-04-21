@@ -842,7 +842,7 @@ class HelloController extends Controller
 
                             $tenantmscmodel->save(false);
                             $signpdfresponse = $this->actionSignpdf($landlordmscmodel, $model);
-                            echo "<pre>";print_r($signpdfresponse);exit;
+                            //echo "<pre>";print_r($signpdfresponse);exit;
 
                             if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] == '000') {
                                 $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
@@ -856,6 +856,7 @@ class HelloController extends Controller
                                     $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
                                     $tenantmscmodel->save(false);
                                     $signpdftenantresponse = $this->actionSignpdf($tenantmscmodel, $model);
+                                    echo "<pre>";print_r($signpdftenantresponse);exit;
                                     if (!empty($signpdftenantresponse) && isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode'] == '000') {
                                         $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
                                         $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
