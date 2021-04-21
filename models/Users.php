@@ -152,7 +152,8 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'secondarypassword'=>'Secondary Password',
             'userid'=>'User ID',
             'properties_posted'=>'Properties Posted',
-            'ekyc_document'=>'Ekyc Document'
+            'ekyc_document'=>'Ekyc Document',
+            'ekyc_document_back'=>'Ekcy Document Back'
         ];
     }
 

@@ -38,7 +38,7 @@ class ManualKyc extends \yii\db\ActiveRecord
         return [
             [['status'], 'required','on'=>'updatestatus'],
             [['request_id', 'user_id'], 'integer'],
-            [['document', 'selfie', 'status'], 'string'],
+            [['document', 'selfie', 'status','document_back'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['type'], 'string', 'max' => 5],
             [['request_id'], 'exist', 'skipOnError' => true, 'targetClass' => BookingRequests::className(), 'targetAttribute' => ['request_id' => 'id']],

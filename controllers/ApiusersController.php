@@ -2918,10 +2918,10 @@ class ApiusersController extends ActiveController
                         $query->select('id,property_no,title,location');
                     },
                     'user' => function ($query) {
-                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","document_no"]);
+                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","ekyc_document_back","document_no"]);
                     },
                     'landlord' => function ($query) {
-                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","document_no"]);
+                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","ekyc_document_back","document_no"]);
 
                     },
                     'agent'=>function($query){
@@ -3148,10 +3148,10 @@ class ApiusersController extends ActiveController
                             $query->select('id,property_no,title');
                         },
                         'user' => function ($query) {
-                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document"]);
+                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","ekyc_document_back"]);
                         },
                         'landlord' => function ($query) {
-                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document"]);
+                            $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","ekyc_document_back"]);
 
                         },
                         'agent'=>function($query){
@@ -6522,13 +6522,14 @@ public function actionPaysuccess(){
             if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['document_no']) && $_POST['document_no']!='' && isset($_POST['selfie']) && $_POST['selfie']!='' && isset($_POST['request_id']) && $_POST['request_id']!='' && isset($_POST['type']) && $_POST['type']!='') {
                 $requestmodel = BookingRequests::findOne($_POST['request_id']);
                 $type = $_POST['type'];
-
+                $document_back = (isset($_POST['document_back']) && $_POST['document_back']!='')?$_POST['document_back']:NULL;
                 $user_id = $this->user_id;
                 $manualkyc = new ManualKyc();
                 $manualkyc->request_id =$_POST['request_id'];
                 $manualkyc->user_id = $this->user_id;
                 $manualkyc->document = $_POST['document'];
                 $manualkyc->document_no = $_POST['document_no'];
+                $manualkyc->document_back = $document_back;
                 $manualkyc->selfie = $_POST['selfie'];
                 $manualkyc->type = $type;
                 $manualkyc->status = 'Pending';

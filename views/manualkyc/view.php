@@ -46,6 +46,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => 'data:image/jpeg;base64,' . $model->selfie,
                     'format' => ['image', ['width' => '100', 'height' => '100']]
                 ],
+                [
+                    'attribute' => 'document_back',
+                    'value' => ($model->document_back!='')?'data:image/jpeg;base64,' . $model->document_back:'',
+                    'format' => ($model->document_back!='')?['image', ['width' => '100', 'height' => '100']]:'',
+                    'visible'=>($model->document_back!='')
+                ],
                 //'selfie:ntext',
                 'status',
                 'created_at:datetime',
