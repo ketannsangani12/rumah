@@ -816,7 +816,12 @@ class HelloController extends Controller
     public function actionUploadtomsc()
     {
         date_default_timezone_set("Asia/Kuala_Lumpur");
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Upload to msc and get signed pdf';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
         $bookingrequests = BookingRequests::find()->where(['status' => 'Rented'])->andWhere(['is', 'signed_agreement', new \yii\db\Expression('null')])->all();
+
         //->andWhere(['=','signed_agreement',''])->all();
         if (!empty($bookingrequests)) {
             foreach ($bookingrequests as $model) {
@@ -907,10 +912,7 @@ class HelloController extends Controller
 
         }
 
-        $cronjob = new Cronjobs();
-        $cronjob->type = 'Upload to msc and get signed pdf';
-        $cronjob->created_at = date('Y-m-d H:i:s');
-        $cronjob->save(false);
+
     }
     private function actionSignpdf($mscmodel,$model){
         //echo "<pre>";  print_r($mscmodel);exit;
