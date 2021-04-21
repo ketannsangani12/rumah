@@ -229,6 +229,7 @@ class BookingrequestsController extends Controller
                     // return the pdf output as per the destination setting
                     $pdf->output($content,'uploads/agreements/' .$filename,'F');
                     $model->agreement_document = 'uploads/agreements/' .$filename;
+                    $model->status = 'Agreement Processing';
                     $model->updated_at = date('Y-m-d H:i:s');
                     $model->save(false);
                     $landlordmscmodel->x1 = $model->landlordx1;
