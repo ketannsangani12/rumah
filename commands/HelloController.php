@@ -796,6 +796,7 @@ class HelloController extends Controller
 
     public function actionUploadtomsc()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $bookingrequests = BookingRequests::find()->where(['status' => 'Rented'])->andWhere(['is', 'signed_agreement', new \yii\db\Expression('null')])->all();
 
         //->andWhere(['=','signed_agreement',''])->all();
