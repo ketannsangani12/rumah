@@ -532,6 +532,10 @@ class HelloController extends Controller
 
             }
         }
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Sendappointmentreminder';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
 
     }
 
@@ -560,6 +564,10 @@ class HelloController extends Controller
 
             }
         }
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Sendunpaidbillreminder';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
 
     }
 
@@ -584,6 +592,10 @@ class HelloController extends Controller
 
             }
         }
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Sendunpaidrentalreminder';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
 
     }
     public function actionRequery(){
@@ -772,6 +784,10 @@ class HelloController extends Controller
             }
             exit;
         }
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Requery';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
 
 
     }
@@ -790,7 +806,10 @@ class HelloController extends Controller
                 }
             }
         }
-
+        $cronjob = new Cronjobs();
+        $cronjob->type = 'Unsubscribepackage';
+        $cronjob->created_at = date('Y-m-d H:i:s');
+        $cronjob->save(false);
 
     }
 
