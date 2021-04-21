@@ -842,7 +842,7 @@ class HelloController extends Controller
 
                             $tenantmscmodel->save(false);
                             $signpdfresponse = $this->actionSignpdf($landlordmscmodel, $model);
-
+                            echo "<pre>";print_r($signpdfresponse);exit;
 
                             if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] == '000') {
                                 $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
