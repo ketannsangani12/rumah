@@ -2327,6 +2327,7 @@ class ApiusersController extends ActiveController
                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                         }
+                        break;
                     case "second";
                         if ($model->status=='Pending' && isset($_POST['status']) && !empty($_POST['status']) && $model->landlord_id==$this->user_id) {
                             $transaction1 = Yii::$app->db->beginTransaction();
@@ -2376,6 +2377,7 @@ class ApiusersController extends ActiveController
                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                         }
+                        break;
                     case "third";
                         if ($model->status=='Approved'  && $model->user_id==$this->user_id) {
                             $transaction1 = Yii::$app->db->beginTransaction();
@@ -6532,7 +6534,7 @@ public function actionPaysuccess(){
                 $manualkyc->status = 'Pending';
                 $manualkyc->created_at = date('Y-m-d H:i:s');
                 if($manualkyc->save(false)){
-                    return array('status' => 0, 'message' => 'We have submitted your documents to admin for manual approval.Will update you shortly.');
+                    return array('status' => 1, 'message' => 'We have submitted your documents to admin for manual approval.Will update you shortly.');
                 }else{
 
                 }
