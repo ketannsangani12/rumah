@@ -1440,7 +1440,7 @@ class SiteController extends Controller
     public function actionUploadtomsc()
     {
         $bookingrequests = BookingRequests::find()->where(['status' => 'Rented'])->andWhere(['is', 'signed_agreement', new \yii\db\Expression('null')])->all();
-        //echo "<pre>";print_r($bookingrequests);exit;
+        echo "<pre>";print_r($bookingrequests);;
 
         //->andWhere(['=','signed_agreement',''])->all();
         if (!empty($bookingrequests)) {
@@ -1453,6 +1453,7 @@ class SiteController extends Controller
                     $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
 
                     if (!empty($tenantmscmodel) && !empty($landlordmscmodel)) {
+                        echo "Sdsd";exit;
 
                         $b64Doc = chunk_split(base64_encode(file_get_contents($agreementdocument)));
 

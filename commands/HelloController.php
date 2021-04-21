@@ -796,7 +796,7 @@ class HelloController extends Controller
 
     public function actionUploadtomsc()
     {
-        $bookingrequests = BookingRequests::find()->where(['status' => 'Rented'])->andWhere(['=','signed_agreement',''])->all();
+        $bookingrequests = BookingRequests::find()->where(['status' => 'Rented'])->andWhere(['is', 'signed_agreement', new \yii\db\Expression('null')])->all();
 
         //->andWhere(['=','signed_agreement',''])->all();
         if (!empty($bookingrequests)) {
