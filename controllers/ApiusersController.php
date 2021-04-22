@@ -886,16 +886,18 @@ class ApiusersController extends ActiveController
                        $data[$key]['price'] = $package->price;
                        $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                        $data[$key]['total'] = $package->quantity;
-                        $data[$key]['expired_date'] = $expired_date;
-                       $currentkey = $key;
+                        $data[$key]['expired_date'] = ($currentpackageid>1)?$expired_date:'';
+
+                        $currentkey = $key;
                    }else if(($currentpackageid==1) || ($package->id >1 && $currentpackageid < $package->id)){
                        $data[$key]['id'] = $package->id;
                        $data[$key]['package'] = $package->name;
                        $data[$key]['price'] = $package->price;
                        $data[$key]['current'] = ($currentpackageid==$package->id)?1:0;
                        $data[$key]['total'] = $package->quantity;
-                        $data[$key]['expired_date'] = $expired_date;
-                   }
+                        $data[$key]['expired_date'] = ($currentpackageid>1)?$expired_date:'';
+
+                    }
                   // $data[$key]['expired_date'] = $expired_date;
 //                   if(($remaining==0 && $package->id>1) || $currentpackageid==''){
 //                       $data[$key]['id'] = $package->id;
