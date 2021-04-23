@@ -2445,7 +2445,7 @@ class ApiusersController extends ActiveController
                                         }else{
                                             $transaction1->rollBack();
 
-                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                            return array('status' => 0, 'message' => $todomodel->getErrors());
 
                                         }
                                     } else {
@@ -2469,7 +2469,7 @@ class ApiusersController extends ActiveController
                             }
                         }else{
 
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes here.');
 
                         }
 
