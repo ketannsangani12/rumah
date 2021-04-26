@@ -172,7 +172,6 @@ class ApiusersController extends ActiveController
         } else {
             if (!empty($_POST)){
 
-                \Yii::error("here");
                 $model = new Users();
                 $model->scenario = 'login';
                 $model->attributes = Yii::$app->request->post();
@@ -467,6 +466,8 @@ class ApiusersController extends ActiveController
                     $save = $model->save();
 
                     if($save){
+                        $model->userid = "CUS".Yii::$app->common->generatereferencenumber($model->id);
+                        $model->save(false);
                         $contact_no = $model->contact_no;
                         $package = Packages::findOne(1);
                         $packagemodel = new UserPackages();
@@ -477,7 +478,6 @@ class ApiusersController extends ActiveController
                         $packagemodel->end_date = NULL;
                         $packagemodel->created_at = date('Y-m-d H:i:s');
                         if($packagemodel->save(false)){
-                            $model->userid = "CUS".Yii::$app->common->generatereferencenumber($model->id);
                             $model->property_credited = $package->quantity;
                             $model->save(false);
 
@@ -3501,7 +3501,7 @@ class ApiusersController extends ActiveController
                                          $data[] = $moveindocument;
                                      }
                                      if($todolist['request']['signed_agreement_document']!='' && $todolist['request']['signed_agreement']!=''){
-                                         $agreementdocument['document'] = $todolist['request']['signed_agreement_document'];
+                                         $agreementdocument['document'] = '/'.$todolist['request']['signed_agreement_document'];
                                          $agreementdocument['type'] = 'Agreement';
                                          $agreementdocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
                                          $agreementdocument['location'] = $todolist['property']['location'];
@@ -3557,7 +3557,7 @@ class ApiusersController extends ActiveController
                                         $data[] = $moveindocument;
                                     }
                                     if($todolist['request']['signed_agreement_document']!='' && $todolist['request']['signed_agreement']!=''){
-                                        $agreementdocument['document'] = $todolist['request']['signed_agreement_document'];
+                                        $agreementdocument['document'] = '/'.$todolist['request']['signed_agreement_document'];
                                         $agreementdocument['type'] = 'Agreement';
                                         $agreementdocument['property'] = $todolist['property']['property_no'] . " " . $todolist['property']['title'];
                                         $agreementdocument['location'] = $todolist['property']['location'];

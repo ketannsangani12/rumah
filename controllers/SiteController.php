@@ -77,7 +77,7 @@ class SiteController extends Controller
      * @return string
      */
     public function actionIndex()
-    {
+    { echo Yii::$app->common->generatereferencenumber(217);exit;
         $start_date = date('Y-m-d H:i:s', strtotime('first day of january this year'));
         $last_date = date('Y-m-d 23:59:00', strtotime('last day of december this year'));
         $current_date = date("Y-m-d");
