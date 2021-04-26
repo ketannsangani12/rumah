@@ -1325,8 +1325,13 @@ class ApiusersController extends ActiveController
                 'views'=>function ($query) use($baseurl) {
                     $query->select('COUNT(*) as views,property_id')->all();
                 },
+                'request'=>function ($query) use($baseurl) {
+                    $query->select('id,commencement_date,monthly_rental,tenancy_period,user_id')->all();
+                },
+                'request.user'=>function ($query) use($baseurl) {
+                    $query->select("id,full_name")->all();
+                },
             ])->where(['user_id'=>$user_id,'status'=>'Rented'])->asArray()->all();
-            echo "<pre>";print_r($rentedproperties);exit;
             if(!empty($rentedproperties)){
                 foreach ($rentedproperties as $key=>$rentedproperty){
                     $commencmentdate = $rentedproperty['request']['commencement_date'];
