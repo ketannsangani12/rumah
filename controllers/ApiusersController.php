@@ -1329,7 +1329,7 @@ class ApiusersController extends ActiveController
                     $query->select('commencement_date,monthly_rental,tenancy_period,user_id')->all();
                 },
                 'request.user'=>function ($query) use($baseurl) {
-                    $query->select("id ,full_name")->all();
+                    $query->select("id,full_name")->all();
                 },
             ])->where(['user_id'=>$user_id,'status'=>'Rented'])->asArray()->all();
             if(!empty($rentedproperties)){
