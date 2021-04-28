@@ -67,6 +67,7 @@ class ApipartnersController extends ActiveController
     }
     public function init()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 
         if($_SERVER['HTTP_HOST'] != 'rumah.test') {
             $this->baseurl = Url::base('https');

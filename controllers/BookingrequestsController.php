@@ -130,6 +130,7 @@ class BookingrequestsController extends Controller
      */
     public function actionUpdate($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $model->scenario = 'updatecreditscore';
         if ($model->load(Yii::$app->request->post())) {
@@ -154,7 +155,7 @@ class BookingrequestsController extends Controller
                    $model->report->saveAs('uploads/creditscorereports/' . $newFileName);
                    $subject = 'Credit report ready';
                    $textmessage = 'Credit report is ready for your action, kindly confirm to proceed for tenancy signing.';
-                   Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id);
+                   Yii::$app->common->Savenotification($model->landlord_id,$subject,$textmessage,'',$model->property_id,$todomodel->id);
 
                    Yii::$app->common->Sendpushnotification($model->landlord_id,$subject,$textmessage,'User');
 
@@ -178,6 +179,7 @@ class BookingrequestsController extends Controller
     }
     public function actionChoosetemplate($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $model->scenario = 'choosetemplate';
         if ($model->load(Yii::$app->request->post())) {
@@ -265,6 +267,7 @@ class BookingrequestsController extends Controller
     }
     public function actionUploadtomsc($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         if ($model->status!='Agreement Processing') {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -502,6 +505,7 @@ curl_setopt_array($curl, array(
     }
     public function actionUploadagreement($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking'])->one();
         $model->scenario = 'uploadagreement';
@@ -552,6 +556,7 @@ curl_setopt_array($curl, array(
     }
     public function actionUploadmovein($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $todomodel = TodoList::find()->where(['request_id'=>$model->id,'reftype'=>'Booking'])->one();
         $model->scenario = 'uploadmovein';
@@ -587,7 +592,7 @@ curl_setopt_array($curl, array(
     }
     public function actionUploadmoveout($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         if($model->status!='Rented'){
             return $this->redirect(['index']);
@@ -625,7 +630,7 @@ curl_setopt_array($curl, array(
     }
     public function actionMoveoutinvoice($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         if($model->status!='Rented'){
             return $this->redirect(['index']);
@@ -707,6 +712,7 @@ curl_setopt_array($curl, array(
     public function actionMoveoutinvoiceupdate($id)
     {
 
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         if($model->status!='Rented'){
             return $this->redirect(['index']);
@@ -781,7 +787,7 @@ curl_setopt_array($curl, array(
     }
     public function actionCancelbooking($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         if($model->status!='Agreement Processed'){
             return $this->redirect(['index']);
@@ -862,6 +868,7 @@ curl_setopt_array($curl, array(
      */
     public function actionDelete($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

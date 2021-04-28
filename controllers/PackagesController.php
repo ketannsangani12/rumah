@@ -76,6 +76,7 @@ class PackagesController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = new Packages();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -95,6 +96,7 @@ class PackagesController extends Controller
      */
     public function actionUpdate($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

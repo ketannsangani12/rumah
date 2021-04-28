@@ -109,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($model) {
                         $months = $model->tenancy_period;
                         $effectiveDate = date('Y-m-d', strtotime("+".$months." months", strtotime($model->commencement_date)));
-                        return date('d-m-Y', strtotime("+".$months." months", strtotime($effectiveDate)));
+                        return date('d-m-Y', strtotime($effectiveDate));
 
                     },
 

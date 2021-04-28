@@ -71,6 +71,7 @@ class ApiusersController extends ActiveController
     }
     public function init()
   {
+      date_default_timezone_set("Asia/Kuala_Lumpur");
 
       if($_SERVER['HTTP_HOST'] != 'rumah.test') {
           $this->baseurl = Url::base('https');
@@ -2350,14 +2351,14 @@ class ApiusersController extends ActiveController
                                         if($model->status=='Rejected'){
                                             $subject = 'Booking Request Rejected';
                                             $textmessage = 'You have a booking has been rejected.';
-                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id);
+                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id,$todomodel->id);
 
                                             Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
 
                                         }else{
                                             $subject = 'Agreement preparation';
                                             $textmessage = 'You have one agreement pending for your action, kindly insert tenancy details to proceed for tenancy signing.';
-                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id);
+                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id,$todomodel->id);
 
                                             Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
 

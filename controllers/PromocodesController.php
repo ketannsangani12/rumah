@@ -75,6 +75,7 @@ class PromocodesController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = new PromoCodes();
         $model->scenario = 'addpromocode';
         if ($model->load(Yii::$app->request->post())) {
@@ -105,6 +106,7 @@ class PromocodesController extends Controller
      */
     public function actionUpdate($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $model->scenario = 'addpromocode';
 

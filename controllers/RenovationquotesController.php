@@ -84,6 +84,7 @@ class RenovationquotesController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = new RenovationQuotes();
         $model->scenario = 'addquote';
         if ($model->load(Yii::$app->request->post())) {
@@ -126,6 +127,7 @@ class RenovationquotesController extends Controller
     }
     public function actionUpdate($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $model->scenario = 'updateremarks';
         if ($model->load(Yii::$app->request->post())) {
@@ -153,6 +155,7 @@ class RenovationquotesController extends Controller
      */
     public function actionMilestones($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         if($model->status=='Pending' || $model->status=='Rejected'){
             return $this->redirect(['index']);
@@ -176,6 +179,7 @@ class RenovationquotesController extends Controller
     }
     public function actionCreatemilestone($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 
         $model = $this->findModel($id);
         $modelCustomer = new TodoList();
@@ -256,7 +260,7 @@ class RenovationquotesController extends Controller
 
     public function actionUpdatemilestone($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $modelCustomer = TodoList::findOne($id);
 
         $model = $this->findModel($modelCustomer->renovation_quote_id);
@@ -334,6 +338,7 @@ class RenovationquotesController extends Controller
 
     public function actionViewmilestone($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $query = TodoItems::find()->where(['todo_id'=>$id]);
         $query2 = TodoDocuments::find()->where(['todo_id'=>$id]);
         $model = TodoList::find()->where(['id'=>$id,'reftype'=>'Renovation Milestone'])->one();
@@ -361,7 +366,7 @@ class RenovationquotesController extends Controller
 
     public function actionUploadmilestonedocument($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $modelCustomer = TodoList::findOne($id);
 
         $model = $this->findModel($modelCustomer->renovation_quote_id);

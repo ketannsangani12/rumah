@@ -93,6 +93,7 @@ class ServicerequestsController extends Controller
 
     public function actionUploadquote($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $todoexist = TodoList::find()->where(['service_request_id'=>$id,'reftype'=>'Service','status'=>'New'])->one();
         if($todoexist==null){
@@ -135,7 +136,7 @@ class ServicerequestsController extends Controller
     }
     public function actionIssueinvoice($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
 
         $modelCustomer = TodoList::findOne($model->todo_id);
@@ -206,6 +207,7 @@ class ServicerequestsController extends Controller
 
     public function actionIssueinvoiceupdate($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 
         $model = $this->findModel($id);
 
@@ -285,6 +287,7 @@ class ServicerequestsController extends Controller
      */
     public function actionCreatecleaningorder()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = new ServiceRequests();
         $model->scenario = 'createcleaningorder';
         $transaction = Yii::$app->db->beginTransaction();
@@ -418,6 +421,7 @@ class ServicerequestsController extends Controller
     }
     public function actionCreatemoverorder()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = new ServiceRequests();
         $model->scenario = 'createmoverorder';
 
@@ -500,6 +504,7 @@ class ServicerequestsController extends Controller
      */
     public function actionUpdatestatus($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $merchantmodel = $this->findModel($id);
         if(($merchantmodel->reftype=='Laundry' || $merchantmodel->reftype=='Cleaner')){
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -540,6 +545,7 @@ class ServicerequestsController extends Controller
     }
     public function actionAssignvendor($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $merchantmodel = $this->findModel($id);
         if(($merchantmodel->reftype=='Laundry' || $merchantmodel->reftype=='Cleaner')){
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -600,6 +606,7 @@ class ServicerequestsController extends Controller
     }
     public function actionReassignvendor($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $merchantmodel = $this->findModel($id);
         $oldvendor = $merchantmodel->vendor_id;
         if($merchantmodel->reftype!='Cleaner'){
@@ -665,7 +672,7 @@ class ServicerequestsController extends Controller
     }
 
     public function actionRefund($id)
-    {
+    {date_default_timezone_set("Asia/Kuala_Lumpur");
 
         $model = $this->findModel($id);
 

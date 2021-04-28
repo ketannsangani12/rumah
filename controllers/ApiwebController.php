@@ -52,6 +52,7 @@ class ApiwebController extends ActiveController
     }
     public function init()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 
         $this->baseurl = Url::base(true);
 

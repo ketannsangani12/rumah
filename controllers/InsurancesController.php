@@ -76,6 +76,7 @@ class InsurancesController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         //$model = $this->findModel($id);
 //        if($model->status!='Approved'){
 //            return $this->redirect(['index']);
@@ -170,7 +171,7 @@ class InsurancesController extends Controller
 
     public function actionUpdate($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 
         $modelCustomer = TodoList::find()->where(['id'=>$id,'reftype'=>'Insurance'])->andWhere(['in','status',['Pending','Unpaid']])->one();
         if ($modelCustomer == null) {
@@ -248,7 +249,7 @@ class InsurancesController extends Controller
     public function actionUploadcovernote($id)
     {
 
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $modeldocument1 = TodoDocuments::find()->where(['todo_id'=>$id])->one();
         $modeldocument = (!empty($modeldocument1))?$modeldocument1:new TodoDocuments();

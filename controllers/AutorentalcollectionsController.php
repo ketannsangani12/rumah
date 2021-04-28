@@ -59,6 +59,7 @@ class AutorentalcollectionsController extends Controller
      */
     public function actionIndex()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $daterange = (isset($_POST['daterange']))?$_POST['daterange']:'';
         $model = new TodoList();
         $searchModel = new TodoListSearch();
@@ -82,6 +83,7 @@ class AutorentalcollectionsController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         //$model = $this->findModel($id);
 //        if($model->status!='Approved'){
 //            return $this->redirect(['index']);
@@ -156,6 +158,7 @@ class AutorentalcollectionsController extends Controller
 
     public function actionUpdate($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 
         $model = $this->findModel($id);
 
@@ -219,7 +222,7 @@ class AutorentalcollectionsController extends Controller
 
     public function actionUploadcovernote($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 
         $model = TodoList::find()->where(['id'=>$id,'reftype'=>'Insurance'])->one();
         $modeldocument1 = TodoDocuments::find()->where(['todo_id'=>$id])->one();

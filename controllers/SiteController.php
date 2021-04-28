@@ -77,7 +77,8 @@ class SiteController extends Controller
      * @return string
      */
     public function actionIndex()
-    {   $start_date = date('Y-m-d H:i:s', strtotime('first day of january this year'));
+    {  date_default_timezone_set("Asia/Kuala_Lumpur");
+        $start_date = date('Y-m-d H:i:s', strtotime('first day of january this year'));
         $last_date = date('Y-m-d 23:59:00', strtotime('last day of december this year'));
         $current_date = date("Y-m-d");
         /*upper part*/
@@ -555,6 +556,7 @@ class SiteController extends Controller
 
     public function actionPaysuccess()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         if(!empty($_REQUEST)) {
             $transaction = Payments::find()->where(['order_id' => $_REQUEST['RefNo'], 'status' => 'Pending'])->one();
             if ($_REQUEST['Status'] == 1) {
@@ -712,6 +714,7 @@ class SiteController extends Controller
 
     public function actionPayment()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 //
         if(isset($_GET['order_id']) && $_GET['order_id']!='')
         {
@@ -808,7 +811,7 @@ class SiteController extends Controller
         }
     public function actionSuccess()
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 //        $merchant_id = '539158696551957';
 //        $secretkey = '2449-770';
         $merchant_id = '167157975459962';

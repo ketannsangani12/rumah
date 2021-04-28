@@ -76,7 +76,7 @@ class InvoicesController extends Controller
      */
     public function actionCreate()
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $modelCustomer = new TodoList();
         $modelCustomer->scenario = 'addinvoice';
         $modelsAddress = [new TodoItems()];
@@ -180,7 +180,7 @@ class InvoicesController extends Controller
 
     public function actionUpdate($id)
     {
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
 
         $modelCustomer = TodoList::find()->where(['id'=>$id,'reftype'=>'General','status'=>'Unpaid'])->one();
         if ($modelCustomer == null) {

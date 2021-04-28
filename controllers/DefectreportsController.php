@@ -69,6 +69,7 @@ class DefectreportsController extends Controller
 
     public function actionUploadquote($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = TodoList::find()->where(['id'=>$id])->one();
         $model->scenario = 'uploadquote';
         if ($model->load(Yii::$app->request->post())) {
@@ -115,6 +116,7 @@ class DefectreportsController extends Controller
      */
     public function actionCreatequote($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         //$model = $this->findModel($id);
 //        if($model->status!='Approved'){
 //            return $this->redirect(['index']);
@@ -208,7 +210,7 @@ class DefectreportsController extends Controller
     public function actionUpdatequote($id)
     {
 
-
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $modelCustomer = TodoList::find()->where(['id'=>$id])->one();
         $modelsAddress = $modelCustomer->todoItems;
 
@@ -278,6 +280,7 @@ class DefectreportsController extends Controller
 
     public function actionUpdatestatus($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = TodoList::find()->where(['id'=>$id])->one();;
         if(($model->status!='In Progress' )){
             throw new NotFoundHttpException('The requested page does not exist.');

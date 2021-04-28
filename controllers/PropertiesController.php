@@ -88,6 +88,7 @@ class PropertiesController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = new Properties();
         $model->scenario = 'create';
         if ($model->load(Yii::$app->request->post())) {
@@ -120,6 +121,7 @@ class PropertiesController extends Controller
      */
     public function actionUpdate($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
@@ -155,6 +157,7 @@ class PropertiesController extends Controller
      */
     public function actionDelete($id)
     {
+        date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
         $model->status = 'Deleted';
         $model->deleted_at = date('Y-m-d H:i:s');
