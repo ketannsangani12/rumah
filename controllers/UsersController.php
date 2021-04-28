@@ -93,10 +93,12 @@ class UsersController extends Controller
                 $model->password = md5($password);
                 $model->status = 1;
                 $model->created_at = date('Y-m-d h:i:s');
-                if($model->save()){
+                if($model->save(false)){
+                    $model->userid = "CUS".Yii::$app->common->generatereferencenumber($model->id);
+                    $model->save(false);
                     Yii::$app->mailer->compose('adduser',
                         ['password'=>$password]) // a view rendering result becomes the message body here
-                    ->setFrom('tlssocietyapps@gmail.com')
+                    ->setFrom('rumahimy@gmail.com')
                         ->setTo($model->email)
                         ->setSubject('Account Created')
                         ->send();

@@ -266,6 +266,8 @@ class ApiusersController extends ActiveController
                     }
                     if($model->save(false)){
                         if(empty($userexist)){
+                            $model->userid = "CUS".Yii::$app->common->generatereferencenumber($model->id);
+                            $model->save(false);
                             $package = Packages::findOne(1);
                             $packagemodel = new UserPackages();
                             $packagemodel->user_id = $model->id;
@@ -338,6 +340,8 @@ class ApiusersController extends ActiveController
                     }
                     if($model->save(false)){
                         if(empty($userexist)){
+                            $model->userid = "CUS".Yii::$app->common->generatereferencenumber($model->id);
+                            $model->save(false);
                             $package = Packages::findOne(1);
                             $packagemodel = new UserPackages();
                             $packagemodel->user_id = $model->id;
