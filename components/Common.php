@@ -314,6 +314,7 @@ class Common extends Component
 
     }
     public function addgoldcoinspurchase($user_id,$goldcoins,$transaction_id,$type='',$reffer_id=''){
+
         date_default_timezone_set("Asia/Kuala_Lumpur");
         if($type=='Onboarding' && $reffer_id!=''){
             $usercoinsbalance = Users::getcoinsbalance($user_id);
