@@ -284,18 +284,7 @@ class ApichatController extends ActiveController
             $data = $query->asArray()->all();
             $property_id = $_POST['property_id'];
             $propertymodel = Properties::findOne($property_id);
-            $bookingrequestmodel = BookingRequests::find()->select('id,status')->where(['property_id'=>$property_id])->one();
-            if(!empty($bookingrequestmodel)){
-                if($bookingrequestmodel->status=='Approved' || $bookingrequestmodel->status=='Processing' || $bookingrequestmodel->status=='Processed' || $bookingrequestmodel->status=='Agreement Processing' || $bookingrequestmodel->status=='Payment Requested' || $bookingrequestmodel->status=='Rented'){
-                  $bookingexists = 1;
-                }else{
-                  $bookingexists = 0;
-                }
 
-            }else{
-                $bookingexists = 0;
-            }
-            $data['bookingexists'] = $bookingexists;
             return array('status' => 1, 'data' => $data);
         }
     }
