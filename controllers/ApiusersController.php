@@ -801,17 +801,20 @@ class ApiusersController extends ActiveController
                 $model->user_id = $this->user_id;
                 if($model->validate()){
 
-                    $usermodel = Devices::findOne(['user_id'=>$_POST['user_id'],'device_token'=>$model->device_token]);
-                    if (!empty($usermodel)){
-                        return array('status' => 0, 'message' => 'You have already added this device.');
-                    }else{
+                    $tokentexist = Devices::find()->where(['user_id'=>$this->user_id,'device_token'=>$model->device_token])->all();
+                    if(!empty($tokentexist)){
+                        return array('status' => 1, 'message' => 'You have added device Successfully.');
+                    }else {
+                        $tokentexistotheruser = Devices::find()->where(['device_token'=>$model->device_token])->one();
+                        if(!empty($tokentexistotheruser) && $tokentexistotheruser->user_id!=$this->user_id){
+                            $tokentexistotheruser->delete();
+                        }
                         $model->created_at = date('Y-m-d H:i:s');
-                        if($model->save()){
-                            return array('status' => 1, 'message' => 'You have saved device successfullly.');
-
-                        }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
-
+                        $save = $model->save(false);
+                        if ($save) {
+                            return array('status' => 1, 'message' => 'You have added device Successfully.');
+                        } else {
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes');
                         }
                     }
 
