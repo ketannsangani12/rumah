@@ -2025,7 +2025,7 @@ class ApiusersController extends ActiveController
                         $agentratings = $ratings/$totalratings;
                     }
                 }
-                $bookingrequestmodel = BookingRequests::find()->select('id,status')->where(['property_id'=>$property_id])->one();
+                $bookingrequestmodel = BookingRequests::find()->select('id,status')->where(['property_id'=>$_POST['property_id']])->one();
                 if(!empty($bookingrequestmodel)){
                     if($bookingrequestmodel->status=='Approved' || $bookingrequestmodel->status=='Processing' || $bookingrequestmodel->status=='Processed' || $bookingrequestmodel->status=='Agreement Processing' || $bookingrequestmodel->status=='Payment Requested' || $bookingrequestmodel->status=='Rented'){
                         $bookingexists = 1;
