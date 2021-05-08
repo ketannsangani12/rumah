@@ -2005,6 +2005,18 @@ class ApiusersController extends ActiveController
 
                     }
                 }
+                $bookingrequestmodel = BookingRequests::find()->select('id,status')->where(['property_id'=>$_POST['property_id']])->one();
+                if(!empty($bookingrequestmodel)){
+                    if($bookingrequestmodel->status=='Approved' || $bookingrequestmodel->status=='Processing' || $bookingrequestmodel->status=='Processed' || $bookingrequestmodel->status=='Agreement Processing' || $bookingrequestmodel->status=='Payment Requested' || $bookingrequestmodel->status=='Rented'){
+                        $bookingexists = 1;
+                    }else{
+                        $bookingexists = 0;
+                    }
+
+                }else{
+                    $bookingexists = 0;
+                }
+                $propertydata['bookingexists'] = $bookingexists;
                 $data['propertydata'] = $propertydata;
                 $data['similarproperties'] = $properties;
                 $propertyviewexist = PropertyViews::find()->where(['property_id'=>$_POST['property_id'],'user_id'=>$user_id])->one();
@@ -2025,18 +2037,8 @@ class ApiusersController extends ActiveController
                         $agentratings = $ratings/$totalratings;
                     }
                 }
-                $bookingrequestmodel = BookingRequests::find()->select('id,status')->where(['property_id'=>$_POST['property_id']])->one();
-                if(!empty($bookingrequestmodel)){
-                    if($bookingrequestmodel->status=='Approved' || $bookingrequestmodel->status=='Processing' || $bookingrequestmodel->status=='Processed' || $bookingrequestmodel->status=='Agreement Processing' || $bookingrequestmodel->status=='Payment Requested' || $bookingrequestmodel->status=='Rented'){
-                        $bookingexists = 1;
-                    }else{
-                        $bookingexists = 0;
-                    }
 
-                }else{
-                    $bookingexists = 0;
-                }
-                $propertydata['bookingexists'] = $bookingexists;
+
                 $data['agentratings'] = number_format((float)$agentratings, 2, '.', '');
                 return array('status' => 1, 'data' => $data);
 
