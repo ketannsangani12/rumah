@@ -667,6 +667,47 @@ class SiteController extends Controller
                             }
 
 
+                        }else if($transaction->request_id!='' && $transaction->todo_id!='') {
+                            $bookingrequestmodel = BookingRequests::findOne($transaction->request_id);
+                            $todomodel = TodoList::findOne($transaction->todo_id);
+                            $transactionmodel = new Transactions();
+                            $transactionmodel->user_id = $bookingrequestmodel->user_id;
+                            $transactionmodel->request_id = $transaction->request_id;
+                            $transactionmodel->landlord_id = $bookingrequestmodel->landlord_id;
+                            $transactionmodel->amount = $transaction->amount;
+                            $transactionmodel->total_amount = $transaction->amount;
+                            $transactionmodel->payment_id = $transaction->id;
+                            $transactionmodel->reftype = 'Booking Fees Payment';
+                            $transactionmodel->status = 'Completed';
+                            $transactionmodel->created_at = date('Y-m-d H:i:s');
+                            if($transactionmodel->save(false)){
+                                $lastid = $transactionmodel->id;
+                                $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                                $transactionmodel->reference_no = "TR".$reference_no;
+                                if($transactionmodel->save(false)){
+                                    $bookingrequestmodel->status = 'Confirmed';
+                                    $bookingrequestmodel->updated_by = $bookingrequestmodel->user_id;
+                                    $bookingrequestmodel->updated_at = date('Y-m-d H:i:s');
+                                    if($bookingrequestmodel->save(false)){
+                                        $todomodel->status = 'Confirmed';
+                                        $todomodel->updated_at = date('Y-m-d H:i:s');
+                                        $todomodel->save(false);
+                                        $transaction1->commit();
+                                        echo "RECEIVEOK";exit;
+                                    }else{
+                                        $transaction1->rollBack();
+                                        echo "FAILED";exit;
+                                    }
+
+                                }else{
+                                    $transaction1->rollBack();
+                                    echo "FAILED";exit;
+                                }
+                            }else{
+                                $transaction1->rollBack();
+                                echo "FAILED";exit;
+                            }
+
                         } else {
                             $post['amount'] = $transaction->amount;
                             $post['discount'] = $transaction->discount;
@@ -726,6 +767,9 @@ class SiteController extends Controller
                     //$hashed_string = md5($secretkey . $detail . $transaction->amount . $_GET['order_id']);
                 }else if($transaction->package_id==NULL && $transaction->todo_id==NULL){
                     $detail = "Topup Wallet";
+
+                }else if($transaction->request_id!='' && $transaction->todo_id!=''){
+                    $detail = "Booking Fees Payment";
 
                 }else {
                     $tododetails = TodoList::findOne($transaction->todo_id);
@@ -931,7 +975,52 @@ class SiteController extends Controller
                                 }
 
 
-                        } else {
+                        }else if($transaction->request_id!='' && $transaction->todo_id!='') {
+                            $bookingrequestmodel = BookingRequests::findOne($transaction->request_id);
+                            $todomodel = TodoList::findOne($transaction->todo_id);
+                            $transactionmodel = new Transactions();
+                            $transactionmodel->user_id = $bookingrequestmodel->user_id;
+                            $transactionmodel->request_id = $transaction->request_id;
+                            $transactionmodel->landlord_id = $bookingrequestmodel->landlord_id;
+                            $transactionmodel->amount = $transaction->amount;
+                            $transactionmodel->total_amount = $transaction->amount;
+                            $transactionmodel->payment_id = $transaction->id;
+                            $transactionmodel->reftype = 'Booking Fees Payment';
+                            $transactionmodel->status = 'Completed';
+                            $transactionmodel->created_at = date('Y-m-d H:i:s');
+                            if($transactionmodel->save(false)){
+                                $lastid = $transactionmodel->id;
+                                $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                                $transactionmodel->reference_no = "TR".$reference_no;
+                                if($transactionmodel->save(false)){
+                                    $bookingrequestmodel->status = 'Confirmed';
+                                    $bookingrequestmodel->updated_by = $bookingrequestmodel->user_id;
+                                    $bookingrequestmodel->updated_at = date('Y-m-d H:i:s');
+                                    if($bookingrequestmodel->save(false)){
+                                        $todomodel->status = 'Confirmed';
+                                        $todomodel->updated_at = date('Y-m-d H:i:s');
+                                        $todomodel->save(false);
+                                        $transaction1->commit();
+                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
+                                        exit;
+                                    }else{
+                                        $transaction1->rollBack();
+                                        echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again1234.</h1></body></html>';
+                                        exit;
+                                    }
+
+                                }else{
+                                    $transaction1->rollBack();
+                                    echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again1234.</h1></body></html>';
+                                    exit;
+                                }
+                            }else{
+                                $transaction1->rollBack();
+                                echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is failed, Please try again1234.</h1></body></html>';
+                                exit;
+                            }
+
+                        }else {
                             $post['amount'] = $transaction->amount;
                             $post['discount'] = $transaction->discount;
                             $post['promo_code'] = $transaction->promo_code;

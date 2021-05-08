@@ -4062,6 +4062,25 @@ class ApiusersController extends ActiveController
                         return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                     }
+                }else if((isset($_POST['request_id']) && $_POST['request_id']!='') && (isset($_POST['todo_id']) && $_POST['todo_id']!='')){
+                    $bookingrequestmodel = BookingRequests::findOne($_POST['request_id']);
+                    $payment = new Payments();
+                    $payment->user_id = $this->user_id;
+                    $payment->package_id = NULL;
+                    $payment->todo_id = $_POST['todo_id'];
+                    $payment->request_id = $_POST['request_id'];
+                    $payment->order_id = time().uniqid();
+                    $payment->amount = $bookingrequestmodel->booking_fees;
+                    $payment->total_amount = $bookingrequestmodel->booking_fees;
+                    $payment->status = 'Pending';
+                    $payment->created_at = date('Y-m-d H:i:s');
+                    if($payment->save(false)){
+                        return array('status' => 1, 'order_id' => $payment->order_id);
+
+                    }else{
+                        return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                    }
                 }else {
                     $systemaccount = Yii::$app->common->getsystemaccount();
                     $user_id = $this->user_id;
