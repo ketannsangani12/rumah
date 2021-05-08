@@ -140,7 +140,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'tenancy_fees:currency',
                     'stamp_duty:currency',
                     'keycard_deposit:currency',
-                    'rental_deposit:currency',
+                    'monthly_rental:currency',
                     'utilities_deposit:currency',
                     'security_deposit:currency',
                     'sst:currency',

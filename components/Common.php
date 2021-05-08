@@ -504,9 +504,9 @@ class Common extends Component
                 $bookingfees = $model->booking_fees;
                 $stamp_duty = $model->stamp_duty;
                 $totaldiscount = $discount+$coins_savings;
-                $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
+                $subtotal = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
                 $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
-                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
+                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
                 //$sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
                 //$totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
 
@@ -569,60 +569,74 @@ class Common extends Component
                                 $transactionitems->save(false);
                             }
                             if($model->keycard_deposit>0){
-                                $transactionitems = new TransactionsItems();
-                                $transactionitems->sender_id = $model->user_id;
-                                $transactionitems->receiver_id = $model->landlord_id;
-                                $transactionitems->amount = $model->keycard_deposit;
-                                $transactionitems->total_amount = $model->keycard_deposit;
-                                $transactionitems->oldsenderbalance = $senderbalance;
-                                $transactionitems->newsenderbalance = $senderbalance;
-                                $transactionitems->oldreceiverbalance = $receiverbalance;
-                                $transactionitems->newreceiverbalance = $receiverbalance+$model->keycard_deposit;
-                                $transactionitems->description = 'Keycard Deposit';
-                                $transactionitems->created_at = date('Y-m-d H:i:s');
-                                $transactionitems->save(false);
+                                $transactionitems1 = new TransactionsItems();
+                                $transactionitems1->sender_id = $model->user_id;
+                                $transactionitems1->receiver_id = $model->landlord_id;
+                                $transactionitems1->amount = $model->keycard_deposit;
+                                $transactionitems1->total_amount = $model->keycard_deposit;
+                                $transactionitems1->oldsenderbalance = $senderbalance;
+                                $transactionitems1->newsenderbalance = $senderbalance;
+                                $transactionitems1->oldreceiverbalance = $receiverbalance;
+                                $transactionitems1->newreceiverbalance = $receiverbalance+$model->keycard_deposit;
+                                $transactionitems1->description = 'Keycard Deposit';
+                                $transactionitems1->created_at = date('Y-m-d H:i:s');
+                                $transactionitems1->save(false);
+                            }
+                            if($model->monthly_rental>0){
+                                $transactionitems2 = new TransactionsItems();
+                                $transactionitems2->sender_id = $model->user_id;
+                                $transactionitems2->receiver_id = $model->landlord_id;
+                                $transactionitems2->amount = $model->monthly_rental;
+                                $transactionitems2->total_amount = $model->monthly_rental;
+                                $transactionitems2->oldsenderbalance = $senderbalance;
+                                $transactionitems2->newsenderbalance = $senderbalance;
+                                $transactionitems2->oldreceiverbalance = $receiverbalance;
+                                $transactionitems2->newreceiverbalance = $receiverbalance+$model->monthly_rental;
+                                $transactionitems2->description = 'Monthly Rental Deposit';
+                                $transactionitems2->created_at = date('Y-m-d H:i:s');
+                                $transactionitems2->save(false);
                             }
                             if($model->utilities_deposit>0){
-                                $transactionitems = new TransactionsItems();
-                                $transactionitems->sender_id = $model->user_id;
-                                $transactionitems->receiver_id = $model->landlord_id;
-                                $transactionitems->amount = $model->utilities_deposit;
-                                $transactionitems->total_amount = $model->utilities_deposit;
-                                $transactionitems->oldsenderbalance = $senderbalance;
-                                $transactionitems->newsenderbalance = $senderbalance;
-                                $transactionitems->oldreceiverbalance = $receiverbalance;
-                                $transactionitems->newreceiverbalance = $receiverbalance+$model->utilities_deposit;
-                                $transactionitems->description = 'Utilities Deposit';
-                                $transactionitems->created_at = date('Y-m-d H:i:s');
-                                $transactionitems->save(false);
+                                $transactionitems3 = new TransactionsItems();
+                                $transactionitems3->sender_id = $model->user_id;
+                                $transactionitems3->receiver_id = $model->landlord_id;
+                                $transactionitems3->amount = $model->utilities_deposit;
+                                $transactionitems3->total_amount = $model->utilities_deposit;
+                                $transactionitems3->oldsenderbalance = $senderbalance;
+                                $transactionitems3->newsenderbalance = $senderbalance;
+                                $transactionitems3->oldreceiverbalance = $receiverbalance;
+                                $transactionitems3->newreceiverbalance = $receiverbalance+$model->utilities_deposit;
+                                $transactionitems3->description = 'Utilities Deposit';
+                                $transactionitems3->created_at = date('Y-m-d H:i:s');
+                                $transactionitems3->save(false);
                             }
                             if($model->stamp_duty>0){
-                                $transactionitems = new TransactionsItems();
-                                $transactionitems->sender_id = $model->user_id;
-                                $transactionitems->receiver_id = $systemaccount->id;
-                                $transactionitems->amount = $model->stamp_duty;
-                                $transactionitems->total_amount = $model->stamp_duty;
-                                $transactionitems->oldsenderbalance = $senderbalance;
-                                $transactionitems->newsenderbalance = $senderbalance;
-                                $transactionitems->oldreceiverbalance = $systemaccountbalance;
-                                $transactionitems->newreceiverbalance = $systemaccountbalance+$model->stamp_duty;
-                                $transactionitems->description = 'Stamp Duty';
-                                $transactionitems->created_at = date('Y-m-d H:i:s');
-                                $transactionitems->save(false);
+                                $transactionitems4 = new TransactionsItems();
+                                $transactionitems4->sender_id = $model->user_id;
+                                $transactionitems4->receiver_id = $systemaccount->id;
+                                $transactionitems4->amount = $model->stamp_duty;
+                                $transactionitems4->total_amount = $model->stamp_duty;
+                                $transactionitems4->oldsenderbalance = $senderbalance;
+                                $transactionitems4->newsenderbalance = $senderbalance;
+                                $transactionitems4->oldreceiverbalance = $systemaccountbalance;
+                                $transactionitems4->newreceiverbalance = $systemaccountbalance+$model->stamp_duty;
+                                $transactionitems4->description = 'Stamp Duty';
+                                $transactionitems4->created_at = date('Y-m-d H:i:s');
+                                $transactionitems4->save(false);
                             }
                             if($model->tenancy_fees>0){
-                                $transactionitems = new TransactionsItems();
-                                $transactionitems->sender_id = $model->user_id;
-                                $transactionitems->receiver_id = $systemaccount->id;
-                                $transactionitems->amount = $model->tenancy_fees;
-                                $transactionitems->total_amount = $model->tenancy_fees;
-                                $transactionitems->oldsenderbalance = $senderbalance;
-                                $transactionitems->newsenderbalance = $senderbalance;
-                                $transactionitems->oldreceiverbalance = $systemaccountbalance;
-                                $transactionitems->newreceiverbalance = $systemaccountbalance+$model->tenancy_fees;
-                                $transactionitems->description = 'Tenancy Fees';
-                                $transactionitems->created_at = date('Y-m-d H:i:s');
-                                $transactionitems->save(false);
+                                $transactionitems5 = new TransactionsItems();
+                                $transactionitems5->sender_id = $model->user_id;
+                                $transactionitems5->receiver_id = $systemaccount->id;
+                                $transactionitems5->amount = $model->tenancy_fees;
+                                $transactionitems5->total_amount = $model->tenancy_fees;
+                                $transactionitems5->oldsenderbalance = $senderbalance;
+                                $transactionitems5->newsenderbalance = $senderbalance;
+                                $transactionitems5->oldreceiverbalance = $systemaccountbalance;
+                                $transactionitems5->newreceiverbalance = $systemaccountbalance+$model->tenancy_fees;
+                                $transactionitems5->description = 'Tenancy Fees';
+                                $transactionitems5->created_at = date('Y-m-d H:i:s');
+                                $transactionitems5->save(false);
                             }
                             $model->updated_by = $this->user_id;
                             $model->status = 'Rented';
@@ -685,7 +699,7 @@ class Common extends Component
                                         }
                                     }
                                     //$updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
-                                    $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
+                                    $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->monthly_rental+$model->security_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                     $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
                                     $agreementdocument = $model->agreement_document;
                                     if ($agreementdocument != '') {

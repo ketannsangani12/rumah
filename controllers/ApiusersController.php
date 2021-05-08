@@ -2305,6 +2305,14 @@ class ApiusersController extends ActiveController
                             $transaction1 = Yii::$app->db->beginTransaction();
 
                             try {
+
+                                $senderbalance = Users::getbalance($model->user_id);
+                                if($senderbalance < $model->booking_fees){
+                                    return array('status' => 0, 'message' => 'You don"t have enough wallet balance.');
+
+                                }
+                                $systemaccount = Yii::$app->common->getsystemaccount();
+                                $systemaccountbalance = $systemaccount->wallet_balance;
                                 $model->status = $_POST['status'];
                                 $model->updated_by = $this->user_id;
                                 $model->updated_at = date('Y-m-d H:i:s');
@@ -2312,8 +2320,33 @@ class ApiusersController extends ActiveController
                                     $todomodel->status = $_POST['status'];
                                     $todomodel->updated_at = date('Y-m-d H:i:s');
                                     if ($todomodel->save(false)) {
-                                        $transaction1->commit();
-                                        return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
+                                        $transaction = new Transactions();
+                                        $transaction->user_id = $this->user_id;
+                                        $transaction->request_id = $model->id;
+                                        $transaction->landlord_id = $model->landlord_id;
+                                        $transaction->amount = $model->booking_fees;
+                                        $transaction->total_amount = $model->booking_fees;
+                                        $transaction->reftype = 'Booking Fees Payment';
+                                        $transaction->status = 'Completed';
+                                        $transaction->created_at = date('Y-m-d H:i:s');
+                                        if($transaction->save(false)){
+                                            $lastid = $transaction->id;
+                                            $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
+                                            $transaction->reference_no = $reference_no;
+                                            if ($transaction->save(false)) {
+                                                $updatesenderbalance = Users::updatebalance($senderbalance-$model->booking_fees,$model->user_id);
+                                                $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->booking_fees,$systemaccount->id);
+                                                $transaction1->commit();
+                                                return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
+
+                                            }else{
+                                                $transaction1->rollBack();
+                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                            }
+                                        }else{
+                                            $transaction1->rollBack();
+                                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                        }
 
                                     } else {
                                         $transaction1->rollBack();
@@ -2347,13 +2380,42 @@ class ApiusersController extends ActiveController
                                     $todomodel->status = $_POST['status'];
                                     $todomodel->updated_at = date('Y-m-d H:i:s');
                                     if ($todomodel->save(false)) {
-                                        $transaction1->commit();
-                                        if($model->status=='Rejected'){
-                                            $subject = 'Booking Request Rejected';
-                                            $textmessage = 'You have a booking has been rejected.';
-                                            Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id,$todomodel->id);
 
-                                            Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+                                        if($model->status=='Rejected'){
+                                            $senderbalance = Users::getbalance($model->user_id);
+                                            $systemaccount = Yii::$app->common->getsystemaccount();
+                                            $systemaccountbalance = $systemaccount->wallet_balance;
+                                            $transaction = new Transactions();
+                                            $transaction->user_id = $this->user_id;
+                                            $transaction->request_id = $model->id;
+                                            $transaction->amount = $model->booking_fees;
+                                            $transaction->total_amount = $model->booking_fees;
+                                            $transaction->reftype = 'Booking Fees Refund';
+                                            $transaction->status = 'Completed';
+                                            $transaction->created_at = date('Y-m-d H:i:s');
+                                            if($transaction->save(false)) {
+                                                $lastid = $transaction->id;
+                                                $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
+                                                $transaction->reference_no = $reference_no;
+                                                if ($transaction->save(false)) {
+                                                    $updatesenderbalance = Users::updatebalance($senderbalance+$model->booking_fees,$model->user_id);
+                                                    $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance-$model->booking_fees,$systemaccount->id);
+
+                                                    $subject = 'Booking Request Rejected';
+                                                    $textmessage = 'You have a booking has been rejected.';
+                                                    Yii::$app->common->Savenotification($model->user_id, $subject, $textmessage, '', $model->property_id, $todomodel->id);
+
+                                                    Yii::$app->common->Sendpushnotification($model->user_id, $subject, $textmessage, 'User');
+                                                    $transaction1->commit();
+                                                }else{
+                                                    $transaction1->rollBack();
+                                                    return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                                }
+                                            }else{
+                                                $transaction1->rollBack();
+                                                return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                                            }
+
 
                                         }else{
                                             $subject = 'Agreement preparation';
@@ -2498,7 +2560,7 @@ class ApiusersController extends ActiveController
                                     $model->user_id = $useridtenant;
                                     $model->tenancy_fees = 99;
                                     $sstappliedamount = $model->tenancy_fees;
-                                    $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit;
+                                    $subtotal = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit;
                                     $sst =Yii::$app->common->calculatesst($sstappliedamount);
                                     $tenancyfeeswithsst = $sstappliedamount+$sst;
                                     $bookingfees = $model->booking_fees;
@@ -2614,7 +2676,27 @@ class ApiusersController extends ActiveController
                                         $todomodel->status = 'Rejected';
                                         $todomodel->updated_at = date('Y-m-d H:i:s');
                                         if ($todomodel->save(false)) {
-                                            $transaction1->commit();
+                                            $senderbalance = Users::getbalance($model->user_id);
+                                            $systemaccount = Yii::$app->common->getsystemaccount();
+                                            $systemaccountbalance = $systemaccount->wallet_balance;
+                                            $transaction = new Transactions();
+                                            $transaction->user_id = $this->user_id;
+                                            $transaction->request_id = $model->id;
+                                            $transaction->amount = $model->booking_fees;
+                                            $transaction->total_amount = $model->booking_fees;
+                                            $transaction->reftype = 'Booking Fees Refund';
+                                            $transaction->status = 'Completed';
+                                            $transaction->created_at = date('Y-m-d H:i:s');
+                                            if($transaction->save(false)) {
+                                                $lastid = $transaction->id;
+                                                $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
+                                                $transaction->reference_no = $reference_no;
+                                                if ($transaction->save(false)) {
+                                                    $updatesenderbalance = Users::updatebalance($senderbalance + $model->booking_fees, $model->user_id);
+                                                    $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance - $model->booking_fees, $systemaccount->id);
+                                                }
+                                            }
+                                                    $transaction1->commit();
 
                                             return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
 
@@ -2658,10 +2740,10 @@ class ApiusersController extends ActiveController
                         $tenancyfeeswithsst = $totaltenancyfees+$sst;
                         $bookingfees = $model->booking_fees;
                         $stamp_duty = $model->stamp_duty;
-                        $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
+                        $subtotal = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty;
 
                         $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
-                        $totalamountafterdiscount = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
+                        $totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty;
                         $receiverbalance = Users::getbalance($model->landlord_id);
                         $senderbalance = Users::getbalance($model->user_id);
                         if($senderbalance < $totalamount){
@@ -2709,6 +2791,7 @@ class ApiusersController extends ActiveController
 //                                    }
                                     if($model->security_deposit>0){
                                         $transactionitems = new TransactionsItems();
+                                        $transactionitems->transaction_id = $transaction->id;
                                         $transactionitems->sender_id = $model->user_id;
                                         $transactionitems->receiver_id = $model->landlord_id;
                                         $transactionitems->amount = $model->security_deposit;
@@ -2721,61 +2804,80 @@ class ApiusersController extends ActiveController
                                         $transactionitems->created_at = date('Y-m-d H:i:s');
                                         $transactionitems->save(false);
                                     }
+                                    if($model->monthly_rental>0){
+                                        $transactionitems1 = new TransactionsItems();
+                                        $transactionitems1->transaction_id = $transaction->id;
+                                        $transactionitems1->sender_id = $model->user_id;
+                                        $transactionitems1->receiver_id = $model->landlord_id;
+                                        $transactionitems1->amount = $model->monthly_rental;
+                                        $transactionitems1->total_amount = $model->monthly_rental;
+                                        $transactionitems1->oldsenderbalance = $senderbalance;
+                                        $transactionitems1->newsenderbalance = $senderbalance-$model->monthly_rental;
+                                        $transactionitems1->oldreceiverbalance = $receiverbalance;
+                                        $transactionitems1->newreceiverbalance = $receiverbalance+$model->monthly_rental;
+                                        $transactionitems1->description = 'Monthly Rental Deposit';
+                                        $transactionitems1->created_at = date('Y-m-d H:i:s');
+                                        $transactionitems1->save(false);
+                                    }
                                     if($model->keycard_deposit>0){
-                                        $transactionitems = new TransactionsItems();
-                                        $transactionitems->sender_id = $model->user_id;
-                                        $transactionitems->receiver_id = $model->landlord_id;
-                                        $transactionitems->amount = $model->keycard_deposit;
-                                        $transactionitems->total_amount = $model->keycard_deposit;
-                                        $transactionitems->oldsenderbalance = $senderbalance;
-                                        $transactionitems->newsenderbalance = $senderbalance-$model->keycard_deposit;
-                                        $transactionitems->oldreceiverbalance = $receiverbalance;
-                                        $transactionitems->newreceiverbalance = $receiverbalance+$model->keycard_deposit;
-                                        $transactionitems->description = 'Keycard Deposit';
-                                        $transactionitems->created_at = date('Y-m-d H:i:s');
-                                        $transactionitems->save(false);
+                                        $transactionitems2 = new TransactionsItems();
+                                        $transactionitems2->transaction_id = $transaction->id;
+                                        $transactionitems2->sender_id = $model->user_id;
+                                        $transactionitems2->receiver_id = $model->landlord_id;
+                                        $transactionitems2->amount = $model->keycard_deposit;
+                                        $transactionitems2->total_amount = $model->keycard_deposit;
+                                        $transactionitems2->oldsenderbalance = $senderbalance;
+                                        $transactionitems2->newsenderbalance = $senderbalance-$model->keycard_deposit;
+                                        $transactionitems2->oldreceiverbalance = $receiverbalance;
+                                        $transactionitems2->newreceiverbalance = $receiverbalance+$model->keycard_deposit;
+                                        $transactionitems2->description = 'Keycard Deposit';
+                                        $transactionitems2->created_at = date('Y-m-d H:i:s');
+                                        $transactionitems2->save(false);
                                     }
                                     if($model->utilities_deposit>0){
-                                        $transactionitems = new TransactionsItems();
-                                        $transactionitems->sender_id = $model->user_id;
-                                        $transactionitems->receiver_id = $model->landlord_id;
-                                        $transactionitems->amount = $model->utilities_deposit;
-                                        $transactionitems->total_amount = $model->utilities_deposit;
-                                        $transactionitems->oldsenderbalance = $senderbalance;
-                                        $transactionitems->newsenderbalance = $senderbalance-$model->utilities_deposit;
-                                        $transactionitems->oldreceiverbalance = $receiverbalance;
-                                        $transactionitems->newreceiverbalance = $receiverbalance+$model->utilities_deposit;
-                                        $transactionitems->description = 'Utilities Deposit';
-                                        $transactionitems->created_at = date('Y-m-d H:i:s');
-                                        $transactionitems->save(false);
+                                        $transactionitems3 = new TransactionsItems();
+                                        $transactionitems3->transaction_id = $transaction->id;
+                                        $transactionitems3->sender_id = $model->user_id;
+                                        $transactionitems3->receiver_id = $model->landlord_id;
+                                        $transactionitems3->amount = $model->utilities_deposit;
+                                        $transactionitems3->total_amount = $model->utilities_deposit;
+                                        $transactionitems3->oldsenderbalance = $senderbalance;
+                                        $transactionitems3->newsenderbalance = $senderbalance-$model->utilities_deposit;
+                                        $transactionitems3->oldreceiverbalance = $receiverbalance;
+                                        $transactionitems3->newreceiverbalance = $receiverbalance+$model->utilities_deposit;
+                                        $transactionitems3->description = 'Utilities Deposit';
+                                        $transactionitems3->created_at = date('Y-m-d H:i:s');
+                                        $transactionitems3->save(false);
                                     }
                                     if($model->stamp_duty>0){
-                                        $transactionitems = new TransactionsItems();
-                                        $transactionitems->sender_id = $model->user_id;
-                                        $transactionitems->receiver_id = $systemaccount->id;
-                                        $transactionitems->amount = $model->stamp_duty;
-                                        $transactionitems->total_amount = $model->stamp_duty;
-                                        $transactionitems->oldsenderbalance = $senderbalance;
-                                        $transactionitems->newsenderbalance = $senderbalance-$model->stamp_duty;
-                                        $transactionitems->oldreceiverbalance = $systemaccountbalance;
-                                        $transactionitems->newreceiverbalance = $systemaccountbalance+$model->stamp_duty;
-                                        $transactionitems->description = 'Stamp Duty';
-                                        $transactionitems->created_at = date('Y-m-d H:i:s');
-                                        $transactionitems->save(false);
+                                        $transactionitems4 = new TransactionsItems();
+                                        $transactionitems4->transaction_id = $transaction->id;
+                                        $transactionitems4->sender_id = $model->user_id;
+                                        $transactionitems4->receiver_id = $systemaccount->id;
+                                        $transactionitems4->amount = $model->stamp_duty;
+                                        $transactionitems4->total_amount = $model->stamp_duty;
+                                        $transactionitems4->oldsenderbalance = $senderbalance;
+                                        $transactionitems4->newsenderbalance = $senderbalance-$model->stamp_duty;
+                                        $transactionitems4->oldreceiverbalance = $systemaccountbalance;
+                                        $transactionitems4->newreceiverbalance = $systemaccountbalance+$model->stamp_duty;
+                                        $transactionitems4->description = 'Stamp Duty';
+                                        $transactionitems4->created_at = date('Y-m-d H:i:s');
+                                        $transactionitems4->save(false);
                                     }
                                     if($model->tenancy_fees>0){
-                                        $transactionitems = new TransactionsItems();
-                                        $transactionitems->sender_id = $model->user_id;
-                                        $transactionitems->receiver_id = $systemaccount->id;
-                                        $transactionitems->amount = $model->tenancy_fees;
-                                        $transactionitems->total_amount = $model->tenancy_fees;
-                                        $transactionitems->oldsenderbalance = $senderbalance;
-                                        $transactionitems->newsenderbalance = $senderbalance-$model->tenancy_fees;
-                                        $transactionitems->oldreceiverbalance = $systemaccountbalance;
-                                        $transactionitems->newreceiverbalance = $systemaccountbalance+$model->tenancy_fees;
-                                        $transactionitems->description = 'Tenancy Fees';
-                                        $transactionitems->created_at = date('Y-m-d H:i:s');
-                                        $transactionitems->save(false);
+                                        $transactionitems5 = new TransactionsItems();
+                                        $transactionitems5->transaction_id = $transaction->id;
+                                        $transactionitems5->sender_id = $model->user_id;
+                                        $transactionitems5->receiver_id = $systemaccount->id;
+                                        $transactionitems5->amount = $model->tenancy_fees;
+                                        $transactionitems5->total_amount = $model->tenancy_fees;
+                                        $transactionitems5->oldsenderbalance = $senderbalance;
+                                        $transactionitems5->newsenderbalance = $senderbalance-$model->tenancy_fees;
+                                        $transactionitems5->oldreceiverbalance = $systemaccountbalance;
+                                        $transactionitems5->newreceiverbalance = $systemaccountbalance+$model->tenancy_fees;
+                                        $transactionitems5->description = 'Tenancy Fees';
+                                        $transactionitems5->created_at = date('Y-m-d H:i:s');
+                                        $transactionitems5->save(false);
                                     }
                                     $model->updated_by = $this->user_id;
                                     $model->status = 'Rented';
@@ -2844,7 +2946,7 @@ class ApiusersController extends ActiveController
                                                 }
                                             }
                                             $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
-                                            $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->rental_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
+                                            $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->monthly_rental + $model->security_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                             $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
                                             $agreementdocument = $model->agreement_document;
                                             if ($agreementdocument != '') {
@@ -6409,9 +6511,14 @@ public function actionPaysuccess(){
                             case "Booking Payment";
                                 //$amountarray['rental_deposit']
                                 $mytransactions[$key]['reference_no'] = $transaction->reference_no;
-                                $mytransactions[$key]['title'] = $transaction->reftype;
+                                $mytransactions[$key]['title'] = $transaction->reftype." - ".$transaction->request->reference_no;
                                 $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
-                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                if($user_id==$transaction->landlord_id){
+                                    $mytransactions[$key]['amount'] = number_format($transaction->request->security_deposit+$transaction->request->keycard_deposit+$transaction->request->utilities_deposit, 2, '.', '');
+                                }else if($user_id==$transaction->user_id){
+                                    $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                }
+                                //$mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                                 $mytransactions[$key]['incoming'] = ($user_id==$transaction->landlord_id)?1:0;
                                 $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
                                 $items = array();
@@ -6435,6 +6542,28 @@ public function actionPaysuccess(){
                                 $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                                 $mytransactions[$key]['incoming'] = ($user_id==$transaction->landlord_id)?1:0;
                                 $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                break;
+                            case "Booking Fees Payment";
+                                if($transaction->user_id==$user_id){
+                                    $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                    $mytransactions[$key]['title'] = $transaction->reftype;
+                                    $mytransactions[$key]['property'] = $transaction->property->title;
+                                    $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                    $mytransactions[$key]['incoming'] = 0;
+                                    $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                }
+
+                                break;
+                            case "Booking Fees Refund";
+                                if($transaction->user_id==$user_id){
+                                    $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                    $mytransactions[$key]['title'] = $transaction->reftype;
+                                    $mytransactions[$key]['property'] = $transaction->property->title;
+                                    $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                    $mytransactions[$key]['incoming'] = 0;
+                                    $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                }
+
                                 break;
                             case "Package Purchase";
                                 $mytransactions[$key]['reference_no'] = $transaction->reference_no;

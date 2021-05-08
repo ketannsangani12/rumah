@@ -101,7 +101,7 @@ use yii\widgets\ActiveForm;
                 </div>
             </div>
             <div class="box-footer">
-                <?= Html::a('Print', \yii\helpers\Url::to([Yii::$app->controller->id.'/printagreement', 'id' => $model->id]),['class' => 'btn bg-orange btn-flat']) ?>
+                <?php //echo Html::a('Print', \yii\helpers\Url::to([Yii::$app->controller->id.'/printagreement', 'id' => $model->id]),['class' => 'btn bg-orange btn-flat']) ?>
 
                 <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-flat']) ?>
 

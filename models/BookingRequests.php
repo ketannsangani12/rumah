@@ -86,7 +86,7 @@ class BookingRequests extends \yii\db\ActiveRecord
             [['stampdutycertificate'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpeg,jpg,png,pdf'],
             [['pdf'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             [['report','movein','moveout'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
-            [['property_id', 'user_id', 'landlord_id', 'template_id'], 'integer'],
+            [['property_id', 'user_id', 'landlord_id', 'template_id','tenantx1','tenantx2','tenanty1','tenanty2','landlordx1','landlordx2','landlordy1','landlordy2'], 'integer'],
             [['credit_score', 'booking_fees', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'sst', 'rental_deposit', 'utilities_deposit', 'security_deposit','tenantpageno','landlordpageno'], 'number'],
             [['commencement_date', 'created_at', 'updated_at'], 'safe'],
             [['tenancy_period'], 'string', 'max' => 100],
