@@ -2440,6 +2440,7 @@ class ApiusersController extends ActiveController
                                             Yii::$app->common->Savenotification($model->user_id,$subject,$textmessage,'',$model->property_id,$todomodel->id);
 
                                             Yii::$app->common->Sendpushnotification($model->user_id,$subject,$textmessage,'User');
+                                            $transaction1->commit();
 
                                         }
                                         return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
