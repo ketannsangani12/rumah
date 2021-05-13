@@ -106,7 +106,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 // format the value
                 'value' => function ($model) {
 
-                    return date('M d,Y h:i:s a', strtotime($model->updated_at));
+                    return ($model->updated_at!='')?date('M d,Y h:i:s a', strtotime($model->updated_at)):'';
 
                 },
                 // some styling?
