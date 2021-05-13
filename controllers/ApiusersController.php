@@ -864,7 +864,6 @@ class ApiusersController extends ActiveController
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            echo date('Y-m-d H:i:s');exit;
            $packages = Packages::find()->all();
            $currentpackage = UserPackages::find()->where(['user_id'=>$this->user_id])->andWhere(['>=','end_date',date("Y-m-d")])->orderBy(['id'=>SORT_DESC])->one();
             $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
