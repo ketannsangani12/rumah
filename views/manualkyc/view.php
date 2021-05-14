@@ -36,6 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 //'user_id',
                 'type',
                 'document_no',
+                'reason',
                 [
                     'attribute' => 'document',
                     'value' => 'data:image/jpeg;base64,' . $model->document,
