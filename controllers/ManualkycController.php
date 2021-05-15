@@ -7,6 +7,7 @@ use app\models\Users;
 use Yii;
 use app\models\ManualKyc;
 use app\models\ManualKycSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -22,6 +23,17 @@ class ManualkycController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','create','view','update'],
+                'rules' => [
+                    [
+                        'actions' => ['index','view','create','update'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -88,10 +100,17 @@ class ManualkycController extends Controller
         $model = $this->findModel($id);
         $model->scenario = 'updatestatus';
         if ($model->load(Yii::$app->request->post())) {
+            $model->file = \yii\web\UploadedFile::getInstance($model, 'file');
             if($model->validate()) {
+                $newFileName = \Yii::$app->security
+                        ->generateRandomString().'.'.$model->file->extension;
+                $model->pdf = $newFileName;
                 if($model->status=='Approved'){
+
                     $model->updated_at = date('Y-m-d H:i:s');
                     if($model->save(false)){
+                        $model->file->saveAs('uploads/creditscorereports/' . $newFileName);
+
                         $usermodel = Users::findOne($model->user_id);
                         $usermodel->document_no = $model->document_no;
                         $usermodel->ekyc_document = $model->document;
@@ -107,8 +126,10 @@ class ManualkycController extends Controller
                     }
 
                 }else if($model->status=='Rejected'){
+
                     $model->updated_at = date('Y-m-d H:i:s');
                     if($model->save(false)){
+                        $model->file->saveAs('uploads/creditscorereports/' . $newFileName);
                         $model->request->status = 'Cancelled';
                         $model->request->updated_at = date('Y-m-d H:i:s');
                         $model->request->save(false);

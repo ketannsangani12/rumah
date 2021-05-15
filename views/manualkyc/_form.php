@@ -17,6 +17,7 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'status')->dropDownList([ 'Approved' => 'Approved', 'Rejected' => 'Rejected', ], ['prompt' => '']) ?>
         <?= $form->field($model, 'reason')->textarea() ?>
+        <?= $form->field($model, 'file')->fileInput() ?>
 
 
     </div>

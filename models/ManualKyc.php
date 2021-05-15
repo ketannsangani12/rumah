@@ -22,6 +22,7 @@ use Yii;
  */
 class ManualKyc extends \yii\db\ActiveRecord
 {
+    public $file;
     /**
      * {@inheritdoc}
      */
@@ -36,9 +37,10 @@ class ManualKyc extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['status'], 'required','on'=>'updatestatus'],
+            [['status','file'], 'required','on'=>'updatestatus'],
             [['request_id', 'user_id'], 'integer'],
             [['document', 'selfie', 'status','document_back','reason'], 'string'],
+            [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             [['created_at', 'updated_at'], 'safe'],
             [['type'], 'string', 'max' => 5],
             [['request_id'], 'exist', 'skipOnError' => true, 'targetClass' => BookingRequests::className(), 'targetAttribute' => ['request_id' => 'id']],
@@ -62,7 +64,8 @@ class ManualKyc extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'document_no'=>'Document No.',
-            'reason'=>'Reason'
+            'reason'=>'Reason',
+            'file'=>'PDF'
         ];
     }
 

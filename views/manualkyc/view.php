@@ -53,6 +53,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => ($model->document_back!='')?['image', ['width' => '500', 'height' => '500']]:'',
                     'visible'=>($model->document_back!='')
                 ],
+                [
+                    'attribute' => 'pdf',
+                    'label' => 'PDF',
+                    'value' => function ($model) {
+                        return ($model->pdf!='')?Html::a('Print', Yii::$app->homeUrl.'uploads/creditscorereports/'.$model->pdf):'Not Uploaded';
+                    },
+                    'format' => 'raw',
+                ],
                 //'selfie:ntext',
                 'status',
                 'created_at:datetime',
