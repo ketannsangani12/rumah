@@ -190,6 +190,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'format' => 'raw',
                         ],
                         [
+                            'label' => 'Credit Consent Letter',
+                            'value' => function ($model,$documentstenants) {
+                                return (!empty($model) && isset($model->cc_letter) && $model->cc_letter!='')?Html::a('Download', Yii::$app->homeUrl.$model->cc_letter):'Not Uploaded';
+                            },
+                            'format' => 'raw',
+                        ],
+                        [
                             'label' => 'Tenant Ekyc Document',
                             'value' => function ($model,$documentstenants) {
                                 $documentstenants = \app\models\UsersDocuments::find()->where(['user_id'=>$model->user_id,'request_id'=>$model->id])->one();

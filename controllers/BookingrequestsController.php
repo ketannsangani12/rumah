@@ -60,6 +60,7 @@ class BookingrequestsController extends Controller
     public function actionIndex()
     {
 
+
         $searchModel = new BookingRequestsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

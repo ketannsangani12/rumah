@@ -41,7 +41,7 @@ class Payments extends \yii\db\ActiveRecord
         return [
             [['user_id', 'todo_id', 'package_id', 'promo_code', 'coins'], 'integer'],
             [['amount', 'sst', 'total_amount', 'discount', 'coins_savings'], 'number'],
-            [['status'], 'string'],
+            [['status','name','document_no'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['order_id'], 'string', 'max' => 255],
         ];

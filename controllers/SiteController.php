@@ -16,6 +16,7 @@ use app\models\Transactions;
 use app\models\TransactionsItems;
 use app\models\UserPackages;
 use app\models\Users;
+use kartik\mpdf\Pdf;
 use phpDocumentor\Reflection\Types\Null_;
 use Yii;
 use yii\db\Exception;
@@ -692,6 +693,42 @@ class SiteController extends Controller
                                         $todomodel->status = 'Confirmed';
                                         $todomodel->updated_at = date('Y-m-d H:i:s');
                                         $todomodel->save(false);
+                                        $content = file_get_contents('cc-letter/cc-letter.html');
+                                        $content = str_replace("@name@",$transaction->name,$content);
+                                        $content = str_replace("@document_no@",$transaction->document_no,$content);
+                                        $content = str_replace("@date@",date('d M Y'),$content);
+                                        $pdf = new Pdf([
+                                            // set to use core fonts only
+                                            'mode' => Pdf::MODE_CORE,
+                                            // A4 paper format
+                                            'format' => Pdf::FORMAT_A4,
+                                            // portrait orientation
+                                            'orientation' => Pdf::ORIENT_PORTRAIT,
+                                            // stream to browser inline
+                                            'destination' => Pdf::DEST_BROWSER,
+                                            // your html content input
+                                            'content' => $content,
+                                            // format content from your own css file if needed or use the
+                                            // enhanced bootstrap css built by Krajee for mPDF formatting
+                                            //'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/bootstrap.css',
+
+                                            // any css to be embedded if required
+                                            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+
+                                            // any css to be embedded if required
+                                            'cssInline' => '.kv-heading-1{font-size:18px}',
+                                            // call mPDF methods on the fly
+                                            'methods' => [
+                                                'SetHeader' => [''],
+                                                'SetFooter' => [''],
+                                            ]
+                                        ]);
+                                        $filename = \Yii::$app->security
+                                                ->generateRandomString().time().".pdf";
+                                        // return the pdf output as per the destination setting
+                                        $pdf->output($content,'uploads/' .$filename,'F');
+                                        $bookingrequestmodel->cc_letter = 'uploads/' .$filename;
+                                        $bookingrequestmodel->save(false);
                                         $transaction1->commit();
                                         echo "RECEIVEOK";exit;
                                     }else{
@@ -1000,6 +1037,42 @@ class SiteController extends Controller
                                         $todomodel->status = 'Confirmed';
                                         $todomodel->updated_at = date('Y-m-d H:i:s');
                                         $todomodel->save(false);
+                                        $content = file_get_contents('cc-letter/cc-letter.html');
+                                        $content = str_replace("@name@",$transaction->name,$content);
+                                        $content = str_replace("@document_no@",$transaction->document_no,$content);
+                                        $content = str_replace("@date@",date('d M Y'),$content);
+                                        $pdf = new Pdf([
+                                            // set to use core fonts only
+                                            'mode' => Pdf::MODE_CORE,
+                                            // A4 paper format
+                                            'format' => Pdf::FORMAT_A4,
+                                            // portrait orientation
+                                            'orientation' => Pdf::ORIENT_PORTRAIT,
+                                            // stream to browser inline
+                                            'destination' => Pdf::DEST_BROWSER,
+                                            // your html content input
+                                            'content' => $content,
+                                            // format content from your own css file if needed or use the
+                                            // enhanced bootstrap css built by Krajee for mPDF formatting
+                                            //'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/bootstrap.css',
+
+                                            // any css to be embedded if required
+                                            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+
+                                            // any css to be embedded if required
+                                            'cssInline' => '.kv-heading-1{font-size:18px}',
+                                            // call mPDF methods on the fly
+                                            'methods' => [
+                                                'SetHeader' => [''],
+                                                'SetFooter' => [''],
+                                            ]
+                                        ]);
+                                        $filename = \Yii::$app->security
+                                                ->generateRandomString().time().".pdf";
+                                        // return the pdf output as per the destination setting
+                                        $pdf->output($content,'uploads/' .$filename,'F');
+                                        $bookingrequestmodel->cc_letter = 'uploads/' .$filename;
+                                        $bookingrequestmodel->save(false);
                                         $transaction1->commit();
                                         echo '<html><head></head><body><h1 style="width: 80%;height: 200px;text-align:center;font-size: 70px;position: absolute;top:0;bottom: 0;left: 0;right: 0;margin: auto;">Your payment is successful.</h1></body></html>';
                                         exit;

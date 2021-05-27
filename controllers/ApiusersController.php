@@ -37,6 +37,7 @@ use app\models\UsersDocuments;
 use app\models\VendorRatings;
 use app\models\Withdrawals;
 use Da\QrCode\QrCode;
+use kartik\mpdf\Pdf;
 use sizeg\jwt\JwtHttpBearerAuth;
 use yii\db\ActiveQuery;
 use yii\db\Exception;
@@ -2318,7 +2319,7 @@ class ApiusersController extends ActiveController
                 $user_id = $this->user_id;
                 switch ($step){
                     case "first";
-                        if ($model->status=='New' && isset($_POST['status']) && !empty($_POST['status']) && $model->user_id==$this->user_id) {
+                        if ($model->status=='New' && isset($_POST['status']) && !empty($_POST['status']) && isset($_POST['name']) && !empty($_POST['name']) && isset($_POST['document_no']) && !empty($_POST['document_no']) && $model->user_id==$this->user_id) {
                             $transaction1 = Yii::$app->db->beginTransaction();
 
                             try {
@@ -2353,6 +2354,42 @@ class ApiusersController extends ActiveController
                                             if ($transaction->save(false)) {
                                                 $updatesenderbalance = Users::updatebalance($senderbalance-$model->booking_fees,$model->user_id);
                                                 $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->booking_fees,$systemaccount->id);
+                                                $content = file_get_contents('cc-letter/cc-letter.html');
+                                                $content = str_replace("@name@","Ketan Sangani",$content);
+                                                $content = str_replace("@document_no@","2902930293023",$content);
+                                                $content = str_replace("@date@",date('d M Y'),$content);
+                                                $pdf = new Pdf([
+                                                    // set to use core fonts only
+                                                    'mode' => Pdf::MODE_CORE,
+                                                    // A4 paper format
+                                                    'format' => Pdf::FORMAT_A4,
+                                                    // portrait orientation
+                                                    'orientation' => Pdf::ORIENT_PORTRAIT,
+                                                    // stream to browser inline
+                                                    'destination' => Pdf::DEST_BROWSER,
+                                                    // your html content input
+                                                    'content' => $content,
+                                                    // format content from your own css file if needed or use the
+                                                    // enhanced bootstrap css built by Krajee for mPDF formatting
+                                                    //'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/bootstrap.css',
+
+                                                    // any css to be embedded if required
+                                                    'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+
+                                                    // any css to be embedded if required
+                                                    'cssInline' => '.kv-heading-1{font-size:18px}',
+                                                    // call mPDF methods on the fly
+                                                    'methods' => [
+                                                        'SetHeader' => [''],
+                                                        'SetFooter' => [''],
+                                                    ]
+                                                ]);
+                                                $filename = \Yii::$app->security
+                                                        ->generateRandomString().time().".pdf";
+                                                // return the pdf output as per the destination setting
+                                                $pdf->output($content,'uploads/' .$filename,'F');
+                                                $model->cc_letter = 'uploads/' .$filename;
+                                                $model->save(false);
                                                 $transaction1->commit();
                                                 return array('status' => 1, 'message' => 'You have ' . $_POST['status'] . ' of request successfully.');
 
@@ -2381,7 +2418,7 @@ class ApiusersController extends ActiveController
                                 $transaction1->rollBack();
                             }
                         }else{
-                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                            return array('status' => 0, 'message' => 'Please enter mandatory Fields.');
 
                         }
                         break;
@@ -4073,6 +4110,8 @@ class ApiusersController extends ActiveController
                     $payment->order_id = time().uniqid();
                     $payment->amount = $bookingrequestmodel->booking_fees;
                     $payment->total_amount = $bookingrequestmodel->booking_fees;
+                    $payment->name = (isset($_POST['name']))?$_POST['name']:NULL;
+                    $payment->document_no = (isset($_POST['document_no']))?$_POST['document_no']:NULL;
                     $payment->status = 'Pending';
                     $payment->created_at = date('Y-m-d H:i:s');
                     if($payment->save(false)){

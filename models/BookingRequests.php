@@ -72,7 +72,7 @@ class BookingRequests extends \yii\db\ActiveRecord
         return [
             [['tenant_id','property_id','booking_fees','commencement_date','tenancy_period'], 'required','on' => 'bookfirststep'],
             [['full_name','identification_no','kyc_document','spa_document'], 'required','on' => 'bookconfirm'],
-            [['identification_no','full_name','commencement_date','tenancy_period','monthly_rental','security_deposit','utilities_deposit','keycard_deposit','booking_fees','kyc_document','spa_document'], 'required','on' => 'bookingprocessfirststepapprove'],
+            [['identification_no','full_name','commencement_date','tenancy_period','address','monthly_rental','security_deposit','utilities_deposit','keycard_deposit','booking_fees','kyc_document','spa_document'], 'required','on' => 'bookingprocessfirststepapprove'],
             [['status'], 'required','on' => 'bookingprocessfirststepreject'],
             [['pdf','tenantx1','tenantx2','tenanty1','tenanty2','landlordx1','landlordx2','landlordy1','landlordy2','tenantpageno','landlordpageno'], 'required','on' => 'uploadtomsc'],
 
@@ -90,6 +90,7 @@ class BookingRequests extends \yii\db\ActiveRecord
             [['credit_score', 'booking_fees', 'tenancy_fees', 'stamp_duty', 'keycard_deposit', 'sst', 'rental_deposit', 'utilities_deposit', 'security_deposit','tenantpageno','landlordpageno'], 'number'],
             [['commencement_date', 'created_at', 'updated_at'], 'safe'],
             [['tenancy_period'], 'string', 'max' => 100],
+            [['address','cc_letter'], 'string'],
             [['landlord_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['landlord_id' => 'id']],
             [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Properties::className(), 'targetAttribute' => ['property_id' => 'id']],
             [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => AgreementTemplates::className(), 'targetAttribute' => ['template_id' => 'id']],
@@ -156,7 +157,9 @@ class BookingRequests extends \yii\db\ActiveRecord
             'selfie'=>'Selfie',
             'tenantpageno' => 'Page No.(For Tenant)',
             'landlordpageno' => 'Page No.(For Landlord)',
-            'signed_agreement_document'=>'Signed Agreement Document'
+            'signed_agreement_document'=>'Signed Agreement Document',
+            'address'=>'Address',
+            'cc_letter'=>'Credit Report'
 
         ];
     }
