@@ -2354,9 +2354,26 @@ class ApiusersController extends ActiveController
                                             if ($transaction->save(false)) {
                                                 $updatesenderbalance = Users::updatebalance($senderbalance-$model->booking_fees,$model->user_id);
                                                 $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->booking_fees,$systemaccount->id);
+                                                $ipaddress = '';
+
+                                                if (isset($_SERVER['HTTP_CLIENT_IP']))
+                                                    $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+                                                else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+                                                    $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                                                else if(isset($_SERVER['HTTP_X_FORWARDED']))
+                                                    $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+                                                else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+                                                    $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+                                                else if(isset($_SERVER['HTTP_FORWARDED']))
+                                                    $ipaddress = $_SERVER['HTTP_FORWARDED'];
+                                                else if(isset($_SERVER['REMOTE_ADDR']))
+                                                    $ipaddress = $_SERVER['REMOTE_ADDR'];
+                                                else
+                                                    $ipaddress = 'UNKNOWN';
                                                 $content = file_get_contents('cc-letter/cc-letter.html');
                                                 $content = str_replace("@name@",$_POST['name'],$content);
                                                 $content = str_replace("@document_no@",$_POST['document_no'],$content);
+                                                $content = str_replace("@ipaddress@",$ipaddress,$content);
                                                 $content = str_replace("@date@",date('d M Y'),$content);
                                                 $pdf = new Pdf([
                                                     // set to use core fonts only

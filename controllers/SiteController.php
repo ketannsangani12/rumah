@@ -697,6 +697,23 @@ class SiteController extends Controller
                                         $content = str_replace("@name@",$transaction->name,$content);
                                         $content = str_replace("@document_no@",$transaction->document_no,$content);
                                         $content = str_replace("@date@",date('d M Y'),$content);
+                                        $ipaddress = '';
+
+                                        if (isset($_SERVER['HTTP_CLIENT_IP']))
+                                            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+                                        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+                                            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                                        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+                                            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+                                        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+                                            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+                                        else if(isset($_SERVER['HTTP_FORWARDED']))
+                                            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+                                        else if(isset($_SERVER['REMOTE_ADDR']))
+                                            $ipaddress = $_SERVER['REMOTE_ADDR'];
+                                        else
+                                            $ipaddress = 'UNKNOWN';
+                                        $content = str_replace("@ipaddress@",$ipaddress,$content);
                                         $pdf = new Pdf([
                                             // set to use core fonts only
                                             'mode' => Pdf::MODE_CORE,
@@ -1041,6 +1058,23 @@ class SiteController extends Controller
                                         $content = str_replace("@name@",$transaction->name,$content);
                                         $content = str_replace("@document_no@",$transaction->document_no,$content);
                                         $content = str_replace("@date@",date('d M Y'),$content);
+                                        $ipaddress = '';
+
+                                        if (isset($_SERVER['HTTP_CLIENT_IP']))
+                                            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+                                        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+                                            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                                        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+                                            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+                                        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+                                            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+                                        else if(isset($_SERVER['HTTP_FORWARDED']))
+                                            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+                                        else if(isset($_SERVER['REMOTE_ADDR']))
+                                            $ipaddress = $_SERVER['REMOTE_ADDR'];
+                                        else
+                                            $ipaddress = 'UNKNOWN';
+                                        $content = str_replace("@ipaddress@",$ipaddress,$content);
                                         $pdf = new Pdf([
                                             // set to use core fonts only
                                             'mode' => Pdf::MODE_CORE,
