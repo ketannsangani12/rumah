@@ -2355,8 +2355,8 @@ class ApiusersController extends ActiveController
                                                 $updatesenderbalance = Users::updatebalance($senderbalance-$model->booking_fees,$model->user_id);
                                                 $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->booking_fees,$systemaccount->id);
                                                 $content = file_get_contents('cc-letter/cc-letter.html');
-                                                $content = str_replace("@name@","Ketan Sangani",$content);
-                                                $content = str_replace("@document_no@","2902930293023",$content);
+                                                $content = str_replace("@name@",$_POST['name'],$content);
+                                                $content = str_replace("@document_no@",$_POST['document_no'],$content);
                                                 $content = str_replace("@date@",date('d M Y'),$content);
                                                 $pdf = new Pdf([
                                                     // set to use core fonts only
