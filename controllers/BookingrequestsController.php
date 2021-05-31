@@ -187,13 +187,11 @@ class BookingrequestsController extends Controller
             if($model->validate()) {
                 $tenantmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->user_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
                 $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
-                if(empty($tenantmscmodel) || empty($landlordmscmodel)){
-                    Yii::$app->session->setFlash('error', "Verification process still in progress for this Booking request.Once its done you can move ahead.");
-                    return $this->redirect(['index']);
-                }
+               // if(empty($tenantmscmodel) || empty($landlordmscmodel)){
+                 //   Yii::$app->session->setFlash('error', "Verification process still in progress for this Booking request.Once its done you can move ahead.");
+                   // return $this->redirect(['index']);
+                //}
 //                $model->status = 'Agreement Processing';
-//                $model->subtotal = $model->subtotal + $model->stamp_duty;
-//                $model->total = $model->total + $model->stamp_duty;
                 $model->updated_at = date('Y-m-d H:i:s');
                 $model->updated_by = Yii::$app->user->id;
                 if($model->save(false)){
@@ -234,6 +232,8 @@ class BookingrequestsController extends Controller
                     $pdf->output($content,'uploads/agreements/' .$filename,'F');
                     $model->agreement_document = 'uploads/agreements/' .$filename;
                     $model->status = 'Agreement Processing';
+                    $model->subtotal = $model->subtotal + $model->stamp_duty;
+                    $model->total = $model->total + $model->stamp_duty;
                     $model->updated_at = date('Y-m-d H:i:s');
                     $model->save(false);
                     $landlordmscmodel->x1 = $model->landlordx1;
@@ -249,6 +249,7 @@ class BookingrequestsController extends Controller
                     $tenantmscmodel->y2 = $model->tenanty2;
                     $tenantmscmodel->page_no = $model->tenantpageno;
                     $tenantmscmodel->save(false);
+
                     return $this->redirect(['index']);
 
                 }else{

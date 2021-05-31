@@ -75,7 +75,7 @@ class Common extends Component
         $content = str_replace("#landlordidentitycardno#",$model->landlord->document_no,$content);
         $content = str_replace("#tenantidentitycardno#",$model->user->document_no,$content);
         $content = str_replace("#agreementcreationdate#",date('d/m/Y',strtotime($model->updated_at)),$content);
-        $property_details = $model->property->title." , ".$model->address;
+        $property_details = $model->address;
         $content = str_replace("#propertydetails#",$property_details,$content);
         $content = str_replace("#landlordcontactno#",$model->landlord->contact_no,$content);
         $content = str_replace("#tenantcontactno#",$model->user->contact_no,$content);

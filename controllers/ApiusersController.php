@@ -2677,7 +2677,6 @@ class ApiusersController extends ActiveController
                                     $documents->supporting_document = $filename1. '.' . $data1['type'];
                                     $documents->created_at = date('Y-m-d H:i:s');
                                     $documents->save(false);
-
                                 $model->status = 'Processed';
                                 $model->updated_at = date('Y-m-d H:i:s');
                                 $model->updated_by = $this->user_id;
