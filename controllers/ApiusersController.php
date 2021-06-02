@@ -4116,7 +4116,7 @@ class ApiusersController extends ActiveController
                         return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
 
                     }
-                }else if((isset($_POST['request_id']) && $_POST['request_id']!='') && (isset($_POST['todo_id']) && $_POST['todo_id']!='')){
+                }else if((isset($_POST['request_id']) && $_POST['request_id']!='') && (isset($_POST['todo_id']) && $_POST['todo_id']!='') && (isset($_POST['name']) && $_POST['name']!='') && (isset($_POST['document_no']) && $_POST['document_no']!='')){
                     $bookingrequestmodel = BookingRequests::findOne($_POST['request_id']);
                     $payment = new Payments();
                     $payment->user_id = $this->user_id;
