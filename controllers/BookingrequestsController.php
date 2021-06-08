@@ -187,10 +187,10 @@ class BookingrequestsController extends Controller
             if($model->validate()) {
                 $tenantmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->user_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
                 $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
-               // if(empty($tenantmscmodel) || empty($landlordmscmodel)){
-                 //   Yii::$app->session->setFlash('error', "Verification process still in progress for this Booking request.Once its done you can move ahead.");
-                   // return $this->redirect(['index']);
-                //}
+                if(empty($tenantmscmodel) || empty($landlordmscmodel)){
+                    Yii::$app->session->setFlash('error', "Verification process still in progress for this Booking request.Once its done you can move ahead.");
+                    return $this->redirect(['index']);
+                }
 //                $model->status = 'Agreement Processing';
                 $model->updated_at = date('Y-m-d H:i:s');
                 $model->updated_by = Yii::$app->user->id;
