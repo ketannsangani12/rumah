@@ -522,7 +522,7 @@ class Common extends Component
 
 
                     $transaction = new Transactions();
-                    $transaction->user_id = $this->user_id;
+                    $transaction->user_id = $model->user_id;
                     $transaction->request_id = $model->id;
                     $transaction->landlord_id = $model->landlord_id;
                     $transaction->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
@@ -639,7 +639,7 @@ class Common extends Component
                                 $transactionitems5->created_at = date('Y-m-d H:i:s');
                                 $transactionitems5->save(false);
                             }
-                            $model->updated_by = $this->user_id;
+                            $model->updated_by = $model->user_id;
                             $model->status = 'Rented';
                             $model->rented_at = date('Y-m-d H:i:s');
                             if ($model->save(false)) {
@@ -2552,7 +2552,7 @@ class Common extends Component
 
 
                     $transaction = new Transactions();
-                    $transaction->user_id = $this->user_id;
+                    $transaction->user_id = $model->user_id;
                     $transaction->request_id = $model->id;
                     $transaction->landlord_id = $model->landlord_id;
                     $transaction->promo_code = ($promocode!='')?$promocodedetails->id:NULL;
@@ -2655,7 +2655,7 @@ class Common extends Component
                                 $transactionitems->created_at = date('Y-m-d H:i:s');
                                 $transactionitems->save(false);
                             }
-                            $model->updated_by = $this->user_id;
+                            $model->updated_by = $model->user_id;
                             $model->status = 'Rented';
                             $model->rented_at = date('Y-m-d H:i:s');
                             if ($model->save(false)) {
