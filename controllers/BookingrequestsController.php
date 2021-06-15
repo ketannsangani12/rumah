@@ -182,6 +182,7 @@ class BookingrequestsController extends Controller
     {
         date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
+        $oldstampduty = $model->stamp_duty;
         $model->scenario = 'choosetemplate';
         if ($model->load(Yii::$app->request->post())) {
             if($model->validate()) {
@@ -196,7 +197,9 @@ class BookingrequestsController extends Controller
                 $model->updated_by = Yii::$app->user->id;
                 if($model->save(false)){
 
-
+                    $model->subtotal = $model->subtotal - $oldstampduty;
+                    $model->total = $model->total - $oldstampduty;
+                    $model->save(false);
                     $content = $model->document_content;
 
                     // setup kartik\mpdf\Pdf component
