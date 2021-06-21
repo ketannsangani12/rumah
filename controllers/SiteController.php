@@ -79,6 +79,21 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {  date_default_timezone_set("Asia/Kuala_Lumpur");
+//        $handle = fopen("file.dif", "w");
+//        fwrite($handle, "FH00013997567999PBB       20161125XXXDEBIT            20150708
+//DT112371039999        0000000000075000MUHAMMAD HASWAN BIN XXXXX               03022015P00191      000000000075397                    MBB0227   03022015P00191080715
+//DT112157089999        0000000000160000NIK FATIHAH BINTI XXXXXX                08052015P00216      000000000160878                    MBB0227   08052015P00216080715
+//FT00013997567999PBB       000000000400000000000000235000000000000001275");
+//        fclose($handle);
+//
+//        header('Content-Type: application/octet-stream');
+//        header('Content-Disposition: attachment; filename='.basename('file.dif'));
+//        header('Expires: 0');
+//        header('Cache-Control: must-revalidate');
+//        header('Pragma: public');
+//        header('Content-Length: ' . filesize('file.dif'));
+//        readfile('file.dif');
+//        exit;
         $start_date = date('Y-m-d H:i:s', strtotime('first day of january this year'));
         $last_date = date('Y-m-d 23:59:00', strtotime('last day of december this year'));
         $current_date = date("Y-m-d");

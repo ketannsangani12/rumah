@@ -1,4 +1,4 @@
-<?php
+ <?php
 namespace app\components;
 
 
@@ -557,6 +557,7 @@ class Common extends Component
 //                                    }
                             if($model->security_deposit>0){
                                 $transactionitems = new TransactionsItems();
+                                $transactionitems->transaction_id = $lastid;
                                 $transactionitems->sender_id = $model->user_id;
                                 $transactionitems->receiver_id = $model->landlord_id;
                                 $transactionitems->amount = $model->security_deposit;
@@ -571,6 +572,7 @@ class Common extends Component
                             }
                             if($model->keycard_deposit>0){
                                 $transactionitems1 = new TransactionsItems();
+                                $transactionitems1->transaction_id = $lastid;
                                 $transactionitems1->sender_id = $model->user_id;
                                 $transactionitems1->receiver_id = $model->landlord_id;
                                 $transactionitems1->amount = $model->keycard_deposit;
@@ -585,6 +587,7 @@ class Common extends Component
                             }
                             if($model->monthly_rental>0){
                                 $transactionitems2 = new TransactionsItems();
+                                $transactionitems2->transaction_id = $lastid;
                                 $transactionitems2->sender_id = $model->user_id;
                                 $transactionitems2->receiver_id = $model->landlord_id;
                                 $transactionitems2->amount = $model->monthly_rental;
@@ -599,6 +602,7 @@ class Common extends Component
                             }
                             if($model->utilities_deposit>0){
                                 $transactionitems3 = new TransactionsItems();
+                                $transactionitems3->transaction_id = $lastid;
                                 $transactionitems3->sender_id = $model->user_id;
                                 $transactionitems3->receiver_id = $model->landlord_id;
                                 $transactionitems3->amount = $model->utilities_deposit;
@@ -613,6 +617,7 @@ class Common extends Component
                             }
                             if($model->stamp_duty>0){
                                 $transactionitems4 = new TransactionsItems();
+                                $transactionitems4->transaction_id = $lastid;
                                 $transactionitems4->sender_id = $model->user_id;
                                 $transactionitems4->receiver_id = $systemaccount->id;
                                 $transactionitems4->amount = $model->stamp_duty;
@@ -627,6 +632,7 @@ class Common extends Component
                             }
                             if($model->tenancy_fees>0){
                                 $transactionitems5 = new TransactionsItems();
+                                $transactionitems5->transaction_id = $lastid;
                                 $transactionitems5->sender_id = $model->user_id;
                                 $transactionitems5->receiver_id = $systemaccount->id;
                                 $transactionitems5->amount = $model->tenancy_fees;

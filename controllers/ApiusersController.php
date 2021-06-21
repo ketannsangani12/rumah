@@ -3221,10 +3221,10 @@ class ApiusersController extends ActiveController
                         $query->select('id,property_no,title,location');
                     },
                     'user' => function ($query) {
-                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","ekyc_document_back","document_no"]);
+                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","document_type","document_front","document_back","ekyc_document","ekyc_document_back","document_no"]);
                     },
                     'landlord' => function ($query) {
-                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","ekyc_document","ekyc_document_back","document_no"]);
+                        $query->select(["id","full_name",new \yii\db\Expression("CONCAT('/uploads/users/', '', `image`) as profile_picture"),"identity_status","document_type","document_front","document_back","ekyc_document","ekyc_document_back","document_no"]);
 
                     },
                     'agent'=>function($query){
