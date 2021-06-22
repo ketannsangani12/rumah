@@ -2805,7 +2805,7 @@ class ApiusersController extends ActiveController
                         $sst = $model->sst;
                         $totalamount = $amount;
                         $tenancyfees = $model->tenancy_fees;
-                        $totaldiscount = (int)$discount-(int)$coins_savings;
+                        $totaldiscount = (float)$discount+(float)$coins_savings;
                         $totaltenancyfees = $model->tenancy_fees-$totaldiscount;
                         $sst =Yii::$app->common->calculatesst($totaltenancyfees);
                         $tenancyfeeswithsst = $totaltenancyfees+$sst;
@@ -2813,8 +2813,8 @@ class ApiusersController extends ActiveController
                         $stamp_duty = $model->stamp_duty;
                         $subtotal = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty;
 
-                        $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
-                        $totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty;
+                        $totalcoinsamountapplied = $tenancyfees - (float)$discount-(float)$coins_savings;
+                        $totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(float)$totalcoinsamountapplied+$sst+$stamp_duty;
                         $receiverbalance = Users::getbalance($model->landlord_id);
                         $senderbalance = Users::getbalance($model->user_id);
                         if($senderbalance < $totalamount){
@@ -4159,18 +4159,18 @@ class ApiusersController extends ActiveController
 //
                     if($todomodel->reftype=='Booking'){
                         $model = BookingRequests::findOne($todomodel->request_id);
-                        $amountwithoutsst = $todomodel->subtotal;
+                        $amountwithoutsst = $todomodel->request->subtotal;
                         $tenancyfees = $model->tenancy_fees;
-                        $totaldiscount = (int)$discount-(int)$coins_savings;
+                        $totaldiscount = (float)$discount+(float)$coins_savings;
                         $totaltenancyfees = $model->tenancy_fees-$totaldiscount;
                         $sstafterdiscount =Yii::$app->common->calculatesst($totaltenancyfees);
                         $tenancyfeeswithsst = $totaltenancyfees+$sstafterdiscount;
                         $bookingfees = $model->booking_fees;
                         $stamp_duty = $model->stamp_duty;
                         $totaldiscount = $discount+$coins_savings;
-                        $amountwithoutsst = $subtotal = $model->monthly_rental+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
-                        $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
-                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->monthly_rental+ $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sstafterdiscount+$stamp_duty-$bookingfees;
+                        $subtotal = $model->monthly_rental+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
+                        $totalcoinsamountapplied = $tenancyfees - ((float)$discount+(float)$coins_savings);
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->monthly_rental+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(float)$totalcoinsamountapplied+$sstafterdiscount+$stamp_duty-$bookingfees;
                     }elseif($todomodel->reftype=='Insurance'){
                         $stamp_duty = $todomodel->stamp_duty;
                         $totalamount = $amount;
@@ -4200,6 +4200,7 @@ class ApiusersController extends ActiveController
                         $sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
                         $totalamountafterdiscount = $totalamountafterdiscount + $sstafterdiscount;
                     }
+
                     $transactionmodel = new Payments();
                     $transactionmodel->user_id = $user_id;
                     $transactionmodel->todo_id = $todo_id;

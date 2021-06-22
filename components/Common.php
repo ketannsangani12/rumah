@@ -498,7 +498,7 @@ class Common extends Component
                 //$totalamountafterdiscount = (int)$totalamount-(int)$discount-(int)$coins_savings;
                 $amountwithoutsst = $todomodel->subtotal;
                 $tenancyfees = $model->tenancy_fees;
-                $totaldiscount = (int)$discount-(int)$coins_savings;
+                $totaldiscount = (float)$discount+(float)$coins_savings;
                 $totaltenancyfees = $model->tenancy_fees-$totaldiscount;
                 $sst =Yii::$app->common->calculatesst($totaltenancyfees);
                 $tenancyfeeswithsst = $totaltenancyfees+$sst;
@@ -506,8 +506,8 @@ class Common extends Component
                 $stamp_duty = $model->stamp_duty;
                 $totaldiscount = $discount+$coins_savings;
                 $subtotal = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
-                $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
-                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
+                $totalcoinsamountapplied = $tenancyfees - (float)$discount-(float)$coins_savings;
+                $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(float)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
                 //$sstafterdiscount = Yii::$app->common->calculatesst($totalamountafterdiscount);
                 //$totalamountafterdiscount = $totalamountafterdiscount+$sstafterdiscount;
 
