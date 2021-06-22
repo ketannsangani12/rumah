@@ -4168,9 +4168,9 @@ class ApiusersController extends ActiveController
                         $bookingfees = $model->booking_fees;
                         $stamp_duty = $model->stamp_duty;
                         $totaldiscount = $discount+$coins_savings;
-                        $subtotal = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
+                        $amountwithoutsst = $subtotal = $model->monthly_rental+$model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
                         $totalcoinsamountapplied = $tenancyfees - (int)$discount-(int)$coins_savings;
-                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sstafterdiscount+$stamp_duty-$bookingfees;
+                        $totalamountafterdiscountwithoutsst = $totalamountafterdiscount = $model->monthly_rental+ $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(int)$totalcoinsamountapplied+$sstafterdiscount+$stamp_duty-$bookingfees;
                     }elseif($todomodel->reftype=='Insurance'){
                         $stamp_duty = $todomodel->stamp_duty;
                         $totalamount = $amount;
