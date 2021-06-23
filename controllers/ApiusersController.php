@@ -2811,13 +2811,14 @@ class ApiusersController extends ActiveController
                         $tenancyfeeswithsst = $totaltenancyfees+$sst;
                         $bookingfees = $model->booking_fees;
                         $stamp_duty = $model->stamp_duty;
-                        $subtotal = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty;
+                        $subtotal = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+$tenancyfees+$stamp_duty-$bookingfees;
 
-                        $totalcoinsamountapplied = $tenancyfees - (float)$discount-(float)$coins_savings;
-                        $totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(float)$totalcoinsamountapplied+$sst+$stamp_duty;
+                        $totalcoinsamountapplied = $tenancyfees - ((float)$discount + (float)$coins_savings);
+                        $totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(float)$totalcoinsamountapplied+$sst+$stamp_duty-$bookingfees;
+                        //$totalamountafterdiscount = $model->monthly_rental + $model->security_deposit+$model->keycard_deposit+$model->utilities_deposit+(float)$totalcoinsamountapplied+$sst+$stamp_duty;
                         $receiverbalance = Users::getbalance($model->landlord_id);
                         $senderbalance = Users::getbalance($model->user_id);
-                        if($senderbalance < $totalamount){
+                        if($senderbalance < $totalamountafterdiscount){
                             return array('status' => 0, 'message' => 'You don"t have enough wallet balance');
 
                         }
@@ -6607,7 +6608,7 @@ public function actionPaysuccess(){
                                 $mytransactions[$key]['title'] = $transaction->reftype." - ".$transaction->request->reference_no;
                                 $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
                                 if($user_id==$transaction->landlord_id){
-                                    $mytransactions[$key]['amount'] = number_format($transaction->request->security_deposit+$transaction->request->keycard_deposit+$transaction->request->utilities_deposit, 2, '.', '');
+                                    $mytransactions[$key]['amount'] = number_format($transaction->request->monthly_rental+$transaction->request->security_deposit+$transaction->request->keycard_deposit+$transaction->request->utilities_deposit, 2, '.', '');
                                 }else if($user_id==$transaction->user_id){
                                     $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                                 }
@@ -6643,6 +6644,13 @@ public function actionPaysuccess(){
                                     $mytransactions[$key]['property'] = $transaction->request->property->title;
                                     $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                                     $mytransactions[$key]['incoming'] = 0;
+                                    $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
+                                }elseif ($transaction->landlord_id==$user_id){
+                                    $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                    $mytransactions[$key]['title'] = $transaction->reftype;
+                                    $mytransactions[$key]['property'] = $transaction->request->property->title;
+                                    $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                    $mytransactions[$key]['incoming'] = 1;
                                     $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
                                 }
 
