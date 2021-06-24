@@ -6608,7 +6608,7 @@ public function actionPaysuccess(){
                                 $mytransactions[$key]['title'] = $transaction->reftype." - ".$transaction->request->reference_no;
                                 $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
                                 if($user_id==$transaction->landlord_id){
-                                    $mytransactions[$key]['amount'] = number_format($transaction->request->monthly_rental+$transaction->request->security_deposit+$transaction->request->keycard_deposit+$transaction->request->utilities_deposit, 2, '.', '');
+                                    $mytransactions[$key]['amount'] = number_format($transaction->request->monthly_rental+$transaction->request->security_deposit+$transaction->request->keycard_deposit+$transaction->request->utilities_deposit-$transaction->request->booking_fees, 2, '.', '');
                                 }else if($user_id==$transaction->user_id){
                                     $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                                 }
