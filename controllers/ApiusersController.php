@@ -2457,7 +2457,8 @@ class ApiusersController extends ActiveController
                                             $systemaccount = Yii::$app->common->getsystemaccount();
                                             $systemaccountbalance = $systemaccount->wallet_balance;
                                             $transaction = new Transactions();
-                                            $transaction->user_id = $this->user_id;
+                                            $transaction->user_id = $model->user_id;
+                                            //$transaction->landlord_id = $model->landlord_id;
                                             $transaction->request_id = $model->id;
                                             $transaction->amount = $model->booking_fees;
                                             $transaction->total_amount = $model->booking_fees;
@@ -2513,6 +2514,7 @@ class ApiusersController extends ActiveController
                             } catch (Exception $e) {
                                 // # if error occurs then rollback all transactions
                                 $transaction1->rollBack();
+                                print_r($e);exit;
                             }
                         }else{
                             return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
@@ -2751,7 +2753,7 @@ class ApiusersController extends ActiveController
                                             $systemaccount = Yii::$app->common->getsystemaccount();
                                             $systemaccountbalance = $systemaccount->wallet_balance;
                                             $transaction = new Transactions();
-                                            $transaction->user_id = $this->user_id;
+                                            $transaction->user_id = $model->user_id;
                                             $transaction->request_id = $model->id;
                                             $transaction->amount = $model->booking_fees;
                                             $transaction->total_amount = $model->booking_fees;
@@ -3018,8 +3020,8 @@ class ApiusersController extends ActiveController
                                                 }
                                             }
                                             $updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
-                                            $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->monthly_rental + $model->security_deposit+$model->utilities_deposit+$model->keycard_deposit+$model->booking_fees,$model->landlord_id);
-                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance-$model->booking_fees+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
+                                            $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->monthly_rental + $model->security_deposit+$model->utilities_deposit+$model->keycard_deposit-$model->booking_fees,$model->landlord_id);
+                                            $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
                                             $agreementdocument = $model->agreement_document;
                                             if ($agreementdocument != '') {
 
@@ -6608,7 +6610,7 @@ public function actionPaysuccess(){
                                 $mytransactions[$key]['title'] = $transaction->reftype." - ".$transaction->request->reference_no;
                                 $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
                                 if($user_id==$transaction->landlord_id){
-                                    $mytransactions[$key]['amount'] = number_format($transaction->request->monthly_rental+$transaction->request->security_deposit+$transaction->request->keycard_deposit+$transaction->request->utilities_deposit, 2, '.', '');
+                                    $mytransactions[$key]['amount'] = number_format($transaction->request->monthly_rental+$transaction->request->security_deposit+$transaction->request->keycard_deposit+$transaction->request->utilities_deposit-$transaction->request->booking_fees, 2, '.', '');
                                 }else if($user_id==$transaction->user_id){
                                     $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
                                 }
