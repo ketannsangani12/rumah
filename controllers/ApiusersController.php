@@ -3099,6 +3099,8 @@ class ApiusersController extends ActiveController
                                                     //return $this->redirect(['index']);
 
                                                 } else {
+                                                    $transaction1->commit();
+                                                    return array('status' => 0, 'message' => 'Verification process is still in Pending.Please try after verification done from MSC');exit;
                                                     //Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
                                                 }
 
