@@ -795,7 +795,7 @@ curl_setopt_array($curl, array(
     {
         date_default_timezone_set("Asia/Kuala_Lumpur");
         $model = $this->findModel($id);
-        if($model->status!='Agreement Processed'){
+        if($model->status!='Agreement Processed' && $model->status!='Agreement Processing'){
             return $this->redirect(['index']);
         }
         $modelCustomer = new TodoList();
