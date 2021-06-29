@@ -3357,6 +3357,11 @@ class ApiusersController extends ActiveController
                                 $data[] = $todolist;
                             }
                         break;
+                        case "Cancellation Refund";
+                            if($todolist['status']=='Pending'){
+                                $data[] = $todolist;
+                            }
+                            break;
                         case "Renovation Quote";
                             if($todolist['status']=='Pending'){
                                 $data[] = $todolist;
@@ -4362,7 +4367,7 @@ public function actionPaysuccess(){
                                    $transactionmodel->property_id = $todomodel->property_id;
                                    $transactionmodel->request_id = $todomodel->request_id;
                                    $transactionmodel->todo_id = $todo_id;
-                                   $transactionmodel->amount = $todomodel->total;
+                                   $transactionmodel->amount = $todomodel->subtotal;
                                    $transactionmodel->sst = $todomodel->sst;
                                    $transactionmodel->total_amount = $todomodel->total;
                                    $transactionmodel->type = 'Refund';
@@ -4464,6 +4469,188 @@ public function actionPaysuccess(){
                                                        $todomodel->property->status = 'Active';
                                                        $todomodel->property->save(false);
                                                        $todomodel->request->status = 'Moved Out';
+                                                       $todomodel->request->updated_by = $user_id;
+                                                       $todomodel->request->save(false);
+                                                       $transaction->commit();
+                                                       return array('status' => 1, 'message' => 'You have accepted refund request successfully.');
+
+                                                   } else {
+                                                       $transaction->rollBack();
+                                                       return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                                   }
+
+                                               } else {
+                                                   $transaction->rollBack();
+                                                   return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                               }
+                                           } else {
+                                               $transaction->rollBack();
+
+                                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                                           }
+                                       }
+
+                                   } else {
+                                       $transaction->rollBack();
+                                       return array('status' => 0, 'message' => $transactionmodel->getErrors());
+
+                                   }
+
+                               } else {
+                                   return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                               }
+
+
+                           } else {
+                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                           }
+                       } else if ($status == 'Rejected') {
+                           $todomodel->status = ($status == 'Rejected') ? 'Refund Rejected' : '';
+                           if ($todomodel->save()) {
+                               $transaction->commit();
+                               return array('status' => 1, 'message' => 'You have rejected refund request successfully.');
+
+                           } else {
+                               return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+
+                           }
+                       }
+                   }else{
+                       return array('status' => 0, 'message' => 'Data not found.');
+
+                   }
+               } catch (Exception $e) {
+                   // # if error occurs then rollback all transactions
+                   $transaction->rollBack();
+               }
+               break;
+           case "Cancellation Refund";
+               $todoitems = $todomodel->todoItems;
+
+
+               $transaction = Yii::$app->db->beginTransaction();
+
+               try {
+                   if($todomodel->status=='Pending') {
+                       if ($status == 'Accepted') {
+                           $todomodel->status = $status;
+                           if ($todomodel->save()) {
+                               $todoitems = $todomodel->todoItems;
+                               if (!empty($todoitems)) {
+
+                                   $transactionmodel = new Transactions();
+                                   $transactionmodel->user_id = $user_id;
+                                   $transactionmodel->landlord_id = $todomodel->request->landlord_id;
+                                   $transactionmodel->property_id = $todomodel->property_id;
+                                   $transactionmodel->request_id = $todomodel->request_id;
+                                   $transactionmodel->todo_id = $todo_id;
+                                   $transactionmodel->amount = $todomodel->subtotal;
+                                   $transactionmodel->sst = $todomodel->sst;
+                                   $transactionmodel->total_amount = $todomodel->total;
+                                   $transactionmodel->type = 'Refund';
+                                   $transactionmodel->reftype = 'Cancellation Refund';
+                                   $transactionmodel->status = 'Completed';
+                                   $transactionmodel->created_at = date('Y-m-d H:i:s');
+                                   if ($transactionmodel->save(false)) {
+                                       $flag = false;
+                                       $lastid = $transactionmodel->id;
+                                       $reference_no = "TR" . Yii::$app->common->generatereferencenumber($lastid);
+                                       $transactionmodel->reference_no = $reference_no;
+                                       $transactionmodel->save(false);
+                                       if (!empty($todoitems)) {
+                                           $totalplatform_deductible = 0;
+                                           $totaldeductfromuser = 0;
+                                           $receiverbalance = Users::getbalance($user_id);
+                                           $senderbalance = Users::getbalance($todomodel->request->landlord_id);
+                                           foreach ($todoitems as $todoitem) {
+
+                                               if ($todoitem->platform_deductible > 0) {
+                                                   $totalplatform_deductible += $todoitem->platform_deductible;
+                                                   $transactionitemmodel = new TransactionsItems();
+                                                   $transactionitemmodel->sender_id = $systemaccount->id;
+                                                   $transactionitemmodel->transaction_id = $lastid;
+                                                   $transactionitemmodel->receiver_id = $user_id;
+                                                   $transactionitemmodel->amount = $todoitem->platform_deductible;
+                                                   $transactionitemmodel->total_amount = $todoitem->platform_deductible;
+                                                   $transactionitemmodel->oldsenderbalance = $systemaccount->wallet_balance;
+                                                   $transactionitemmodel->newsenderbalance = $systemaccount->wallet_balance - $todoitem->platform_deductible;
+                                                   $transactionitemmodel->oldreceiverbalance = $receiverbalance;
+                                                   $transactionitemmodel->newreceiverbalance = $receiverbalance + $todoitem->platform_deductible;
+                                                   $transactionitemmodel->type = 'Refund';
+                                                   $transactionitemmodel->status = 'Completed';
+                                                   $transactionitemmodel->description = $todoitem->description;
+                                                   $transactionitemmodel->created_at = date('Y-m-d H:i:s');
+                                                   if ($flag = $transactionitemmodel->save(false)) {
+                                                       $totaldeductfromuser += $todoitem->price;
+                                                       $transactionitemmodel1 = new TransactionsItems();
+                                                       $transactionitemmodel1->transaction_id = $lastid;
+                                                       $transactionitemmodel1->sender_id = $todomodel->request->landlord_id;
+                                                       $transactionitemmodel1->receiver_id = $user_id;
+                                                       $transactionitemmodel1->amount = $todoitem->price;
+                                                       $transactionitemmodel1->total_amount = $todoitem->price;
+
+                                                       $transactionitemmodel1->oldsenderbalance = $senderbalance;
+                                                       $transactionitemmodel1->newsenderbalance = $senderbalance - $todoitem->price;
+                                                       $transactionitemmodel1->oldreceiverbalance = $receiverbalance;
+                                                       $transactionitemmodel1->newreceiverbalance = $receiverbalance + $todoitem->price;
+                                                       $transactionitemmodel1->type = 'Refund';
+                                                       $transactionitemmodel1->status = 'Completed';
+
+                                                       $transactionitemmodel1->description = $todoitem->description;
+                                                       $transactionitemmodel1->created_at = date('Y-m-d H:i:s');
+                                                       $transactionitemmodel1->save(false);
+                                                       if (!($flag = $transactionitemmodel1->save(false))) {
+                                                           $transaction->rollBack();
+                                                           break;
+                                                       }
+
+
+                                                   } else {
+                                                       $transaction->rollBack();
+                                                       break;
+                                                   }
+
+                                               } else {
+                                                   $totaldeductfromuser += $todoitem->price;
+                                                   $transactionitemmodel = new TransactionsItems();
+                                                   $transactionitemmodel->transaction_id = $lastid;
+                                                   $transactionitemmodel->sender_id = $todomodel->request->landlord_id;
+                                                   $transactionitemmodel->receiver_id = $user_id;
+                                                   $transactionitemmodel->amount = $todoitem->price;
+                                                   $transactionitemmodel->total_amount = $todoitem->price;
+
+                                                   $transactionitemmodel->oldsenderbalance = $senderbalance;
+                                                   $transactionitemmodel->newsenderbalance = $senderbalance - $todoitem->price;
+                                                   $transactionitemmodel->oldreceiverbalance = $receiverbalance;
+                                                   $transactionitemmodel->newreceiverbalance = $receiverbalance + $todoitem->price;
+                                                   $transactionitemmodel->type = 'Refund';
+                                                   $transactionitemmodel->status = 'Completed';
+                                                   $transactionitemmodel->description = $todoitem->description;
+                                                   $transactionitemmodel->created_at = date('Y-m-d H:i:s');
+                                                   if (!($flag = $transactionitemmodel->save(false))) {
+                                                       $transaction->rollBack();
+                                                       break;
+                                                   }
+
+                                               }
+
+
+                                           }
+                                           if ($flag) {
+                                               $updatesenderbalance = Users::updatebalance($senderbalance - $totaldeductfromuser, $todomodel->request->landlord_id);
+                                               $updatesystembalance = Users::updatebalance($systemaccount->wallet_balance - $totalplatform_deductible - $todomodel->sst, $systemaccount->id);
+                                               $updatereceiverbalance = Users::updatebalance($receiverbalance + $totaldeductfromuser + $totalplatform_deductible + $todomodel->sst, $user_id);
+                                               if ($updatereceiverbalance && $updatesenderbalance && $updatesystembalance) {
+                                                   $todomodel->status = 'Completed';
+                                                   if ($todomodel->save(false)) {
+                                                       $todomodel->property->status = 'Active';
+                                                       $todomodel->property->save(false);
+                                                       $todomodel->request->status = 'Cancelled';
                                                        $todomodel->request->updated_by = $user_id;
                                                        $todomodel->request->save(false);
                                                        $transaction->commit();

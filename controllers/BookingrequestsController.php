@@ -831,7 +831,9 @@ curl_setopt_array($curl, array(
                     $modelCustomer->status = "Pending";
                     $modelCustomer->created_at = date('Y-m-d H:i:s');
                     if ($flag = $modelCustomer->save(false)) {
+                        $total = 0;
                         foreach ($modelsAddress as $modelAddress) {
+                            $total+=$modelAddress->price+$modelAddress->platform_deductible;
                             $modelAddress->todo_id = $modelCustomer->id;
                             $modelAddress->reftype = "Refund";
                             $modelAddress->created_at = date('Y-m-d H:i:s');
@@ -840,6 +842,13 @@ curl_setopt_array($curl, array(
                                 break;
                             }
                         }
+
+                        $sst = Yii::$app->common->calculatesst($model->tenancy_fees);
+                        $grandtotal = $total+$sst;
+                        $modelCustomer->subtotal = $total;
+                        $modelCustomer->sst = $sst;
+                        $modelCustomer->total = $grandtotal;
+                        $modelCustomer->save(false);
                     }
                     if ($flag) {
 
@@ -854,6 +863,7 @@ curl_setopt_array($curl, array(
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();
+                    print_r($e);exit;
                 }
             }
         }else {

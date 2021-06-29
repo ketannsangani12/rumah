@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value'=> function($model){
                     return Yii::$app->common->getStatus($model->status);
                 },
-                'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Processing"=>"Processing","Processed"=>"Processed","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Cancelled"=>"Cancelled","Payment Requested"=>"Payment Requested","Rented"=>"Rented","Moved Out"=>"Moved Out"),
+                'filter'=>array("New"=>"New","Pending"=>"Pending","Declined"=>"Declined","Approved"=>"Approved","Processing"=>"Processing","Processed"=>"Processed","Agreement Processed"=>"Agreement Processed","Terminated"=>"Terminated","Cancelled"=>"Cancelled","Payment Requested"=>"Payment Requested","Refund Requested"=>"Refund Requested","Rented"=>"Rented","Moved Out"=>"Moved Out"),
                 'filterInputOptions' => ['class' => 'form-control', 'id' => null, 'prompt' => 'All'],
 
             ],
@@ -164,7 +164,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return ($model->status=='Rented' && $model->moveout_document!='');
                     },
                     'cancel' => function ($model){
-                        return ($model->status=='Agreement Processed' || $model->status=='Agreement Processing' || $model->status=='Cancelled');
+                        return ($model->status=='Agreement Processed' || $model->status=='Agreement Processing' || $model->status=='Cancelled' || $model->status=='Refund Requested');
                     },
                 ],
                 'buttons'=>[
