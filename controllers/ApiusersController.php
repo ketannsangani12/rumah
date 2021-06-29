@@ -6898,29 +6898,49 @@ public function actionPaysuccess(){
                                 break;
                             case "Moveout Refund";
                                 $items = array();
-                                if(!empty($transactionitems)){
-                                    $totalamount = 0;
-                                    foreach ($transactionitems as $k=>$transactionitem){
-                                        $items[$k]['description'] = $transactionitem->description;
-                                        $items[$k]['amount'] = $transactionitem->total_amount;
-
-                                        if($transactionitem->receiver_id==$user_id){
+                                if ($user_id == $transaction->user_id) {
+                                    $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                    $mytransactions[$key]['title'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                    $mytransactions[$key]['description'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                    //$mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name)) ? $transaction->vendor->full_name : '';
+                                    $mytransactions[$key]['property'] = (isset($transaction->property->title)) ? $transaction->property->title : '';
+                                    $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                    $mytransactions[$key]['incoming'] = 1;
+                                    $mytransactions[$key]['date'] = date('Y-m-d', strtotime($transaction->created_at));
+                                    $items = array();
+                                    if (!empty($transactionitems)) {
+                                        foreach ($transactionitems as $k => $transactionitem) {
+                                            $items[$k]['description'] = $transactionitem->description;
+                                            $items[$k]['amount'] = $transactionitem->total_amount;
                                             $items[$k]['incoming'] = 1;
 
-                                        }else if($transactionitem->sender_id==$user_id){
-                                            $items[$k]['incoming'] = 0;
                                         }
-                                        $items[$k]['refund'] = 1;
-
                                     }
+                                    $mytransactions[$key]['items'] = $items;
+                                }else if($user_id==$transaction->landlord_id){
+                                    $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                    $mytransactions[$key]['title'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                    $mytransactions[$key]['description'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                   // $mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name)) ? $transaction->vendor->full_name : '';
+                                    $mytransactions[$key]['property'] = (isset($transaction->property->title)) ? $transaction->property->title : '';
+
+                                    $mytransactions[$key]['incoming'] = 0;
+                                    $mytransactions[$key]['date'] = date('Y-m-d', strtotime($transaction->created_at));
+                                    $todoitems = $transaction->todo->todoItems;
+                                    $items = array();
+                                    if (!empty($todoitems)) {
+                                        $totalam = 0;
+                                        foreach ($todoitems as $k => $todoitem) {
+                                            $items[$k]['description'] = $todoitem->description;
+                                            $items[$k]['amount'] = $todoitem->price;
+                                            $items[$k]['incoming'] = 0;
+                                            $totalam += $todoitem->price;
+
+                                        }
+                                    }
+                                    $mytransactions[$key]['items'] = $items;
+                                    $mytransactions[$key]['amount'] = number_format($totalam, 2, '.', '');
                                 }
-                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
-                                $mytransactions[$key]['title'] = $transaction->reftype;
-                                $mytransactions[$key]['property'] = $transaction->property->title;
-                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
-                                $mytransactions[$key]['incoming'] = ($user_id==$transaction->user_id)?1:0;
-                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
-                                $mytransactions[$key]['items'] = $items;
 
                                 break;
                             case "Service";
@@ -6944,24 +6964,71 @@ public function actionPaysuccess(){
                                 $mytransactions[$key]['items'] = $items;
                                 break;
                             case "Cancellation Refund";
-                                $mytransactions[$key]['reference_no'] = $transaction->reference_no;
-                                $mytransactions[$key]['title'] = $transaction->reftype;
-                                $mytransactions[$key]['description'] = $transaction->todo->service_type;
-                                $mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name))?$transaction->vendor->full_name:'';
-                                $mytransactions[$key]['property'] = (isset($transaction->property->title))?$transaction->property->title:'';
-                                $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
-                                $mytransactions[$key]['incoming'] = 1;
-                                $mytransactions[$key]['date'] = date('Y-m-d',strtotime($transaction->created_at));
-                                $items = array();
-                                if(!empty($transactionitems)){
-                                    foreach ($transactionitems as $k=>$transactionitem){
-                                        $items[$k]['description'] = $transactionitem->description;
-                                        $items[$k]['amount'] = $transactionitem->total_amount;
-                                        $items[$k]['incoming'] = 1;
+                                if($transaction->todo->service_request_id!='') {
+                                    $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                    $mytransactions[$key]['title'] = $transaction->reftype.'- Service Request';
+                                    $mytransactions[$key]['description'] = $transaction->todo->service_type;
+                                    $mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name)) ? $transaction->vendor->full_name : '';
+                                    $mytransactions[$key]['property'] = (isset($transaction->property->title)) ? $transaction->property->title : '';
+                                    $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                    $mytransactions[$key]['incoming'] = 1;
+                                    $mytransactions[$key]['date'] = date('Y-m-d', strtotime($transaction->created_at));
+                                    $items = array();
+                                    if (!empty($transactionitems)) {
+                                        foreach ($transactionitems as $k => $transactionitem) {
+                                            $items[$k]['description'] = $transactionitem->description;
+                                            $items[$k]['amount'] = $transactionitem->total_amount;
+                                            $items[$k]['incoming'] = 1;
 
+                                        }
+                                    }
+                                    $mytransactions[$key]['items'] = $items;
+                                }else {
+                                    if ($user_id == $transaction->user_id) {
+                                        $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                        $mytransactions[$key]['title'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                        $mytransactions[$key]['description'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                        //$mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name)) ? $transaction->vendor->full_name : '';
+                                        $mytransactions[$key]['property'] = (isset($transaction->property->title)) ? $transaction->property->title : '';
+                                        $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
+                                        $mytransactions[$key]['incoming'] = 1;
+                                        $mytransactions[$key]['date'] = date('Y-m-d', strtotime($transaction->created_at));
+                                        $items = array();
+                                        if (!empty($transactionitems)) {
+                                            foreach ($transactionitems as $k => $transactionitem) {
+                                                $items[$k]['description'] = $transactionitem->description;
+                                                $items[$k]['amount'] = $transactionitem->total_amount;
+                                                $items[$k]['incoming'] = 1;
+
+                                            }
+                                        }
+                                        $mytransactions[$key]['items'] = $items;
+                                    }else if($user_id==$transaction->landlord_id){
+                                        $mytransactions[$key]['reference_no'] = $transaction->reference_no;
+                                        $mytransactions[$key]['title'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                        $mytransactions[$key]['description'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                        //$mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name)) ? $transaction->vendor->full_name : '';
+                                        $mytransactions[$key]['property'] = (isset($transaction->property->title)) ? $transaction->property->title : '';
+
+                                        $mytransactions[$key]['incoming'] = 0;
+                                        $mytransactions[$key]['date'] = date('Y-m-d', strtotime($transaction->created_at));
+                                        $todoitems = $transaction->todo->todoItems;
+                                        $items = array();
+                                        $totalam = 0;
+                                        if (!empty($todoitems)) {
+
+                                            foreach ($todoitems as $k => $todoitem) {
+                                                $items[$k]['description'] = $todoitem->description;
+                                                $items[$k]['amount'] = $todoitem->price;
+                                                $items[$k]['incoming'] = 0;
+                                                $totalam += $todoitem->price;
+
+                                            }
+                                        }
+                                        $mytransactions[$key]['items'] = $items;
+                                        $mytransactions[$key]['amount'] = number_format($totalam, 2, '.', '');
                                     }
                                 }
-                                $mytransactions[$key]['items'] = $items;
                                 break;
                             case "Withdrawal";
                                     $mytransactions[$key]['reference_no'] = $transaction->reference_no;
