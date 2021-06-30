@@ -7362,7 +7362,7 @@ public function actionPaysuccess(){
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/journeyid",
+            CURLOPT_URL => "https://ekycportal.innov8tif.com/api/ekyc/journeyid",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -7370,7 +7370,7 @@ public function actionPaysuccess(){
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS =>"{\r\n    \"username\":\"Rumah-i\",\r\n    \"password\":\"Gg(8b8\"\r\n}",
+            CURLOPT_POSTFIELDS =>"{\r\n    \"username\":\"rumah_i_prod\",\r\n    \"password\":\"TbJ}6aGw\"\r\n}",
             CURLOPT_HTTPHEADER => array(
                 "Content-Type: application/json"
             ),
@@ -7399,7 +7399,7 @@ public function actionPaysuccess(){
                 $curl = curl_init();
 
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/okaydoc",
+                    CURLOPT_URL => "https://ekycportal.innov8tif.com/api/ekyc/okaydoc",
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => "",
                     CURLOPT_MAXREDIRS => 10,
@@ -7435,7 +7435,7 @@ public function actionPaysuccess(){
           $curl = curl_init();
 
           curl_setopt_array($curl, array(
-              CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/okaydoc",
+              CURLOPT_URL => "https://ekycportal.innov8tif.com/api/ekyc/okaydoc",
               CURLOPT_RETURNTRANSFER => true,
               CURLOPT_ENCODING => "",
               CURLOPT_MAXREDIRS => 10,
@@ -7472,7 +7472,7 @@ public function actionPaysuccess(){
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/okayface",
+                CURLOPT_URL => "https://ekycportal.innov8tif.com/api/ekyc/okayface/v1-1",
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => "",
                 CURLOPT_MAXREDIRS => 10,
@@ -7505,7 +7505,7 @@ public function actionPaysuccess(){
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/okayid",
+                CURLOPT_URL => "https://ekycportal.innov8tif.com/api/ekyc/okayid",
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => "",
                 CURLOPT_MAXREDIRS => 10,
@@ -7539,7 +7539,7 @@ public function actionPaysuccess(){
                 $curl = curl_init();
 
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => "https://ekycportaldemo.innov8tif.com/api/ekyc/scorecard",
+                    CURLOPT_URL => "https://ekycportal.innov8tif.com/api/ekyc/scorecard",
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => "",
                     CURLOPT_MAXREDIRS => 10,
