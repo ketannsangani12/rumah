@@ -1671,7 +1671,7 @@ class ApiusersController extends ActiveController
                             $transactionmodel->status = 'Pending';
                             if($transactionmodel->save()){
                                 $lastid = $transactionmodel->id;
-                                $reference_no = Yii::$app->common->generatereferencenumber($lastid);
+                                $reference_no = "TR".Yii::$app->common->generatereferencenumber($lastid);
                                 $transactionmodel->reference_no = $reference_no;
                                 if($transactionmodel->save()){
                                     $model->reference_no = "TR".$reference_no;
