@@ -6901,7 +6901,7 @@ public function actionPaysuccess(){
                                 if ($user_id == $transaction->user_id) {
                                     $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                                     $mytransactions[$key]['title'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
-                                    $mytransactions[$key]['description'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                    $mytransactions[$key]['description'] = '';
                                     //$mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name)) ? $transaction->vendor->full_name : '';
                                     $mytransactions[$key]['property'] = (isset($transaction->property->title)) ? $transaction->property->title : '';
                                     $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
@@ -6987,7 +6987,7 @@ public function actionPaysuccess(){
                                     if ($user_id == $transaction->user_id) {
                                         $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                                         $mytransactions[$key]['title'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
-                                        $mytransactions[$key]['description'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                        $mytransactions[$key]['description'] = '';
                                         //$mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name)) ? $transaction->vendor->full_name : '';
                                         $mytransactions[$key]['property'] = (isset($transaction->property->title)) ? $transaction->property->title : '';
                                         $mytransactions[$key]['amount'] = number_format($transaction->total_amount, 2, '.', '');
@@ -7006,7 +7006,7 @@ public function actionPaysuccess(){
                                     }else if($user_id==$transaction->landlord_id){
                                         $mytransactions[$key]['reference_no'] = $transaction->reference_no;
                                         $mytransactions[$key]['title'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
-                                        $mytransactions[$key]['description'] = $transaction->reftype . '- Booking Request - ' . $transaction->request->reference_no;
+                                        $mytransactions[$key]['description'] = '';
                                         //$mytransactions[$key]['vendor'] = (isset($transaction->vendor->full_name)) ? $transaction->vendor->full_name : '';
                                         $mytransactions[$key]['property'] = (isset($transaction->property->title)) ? $transaction->property->title : '';
 
