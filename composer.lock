@@ -290,7 +290,7 @@
             "version": "5.59.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/components/codemirror.git",
+                "url": "git@github.com:components/codemirror.git",
                 "reference": "f2b6cbaded0d9b36a683a30d827f93f436f97c56"
             },
             "dist": {
@@ -305,7 +305,7 @@
             "version": "5.15.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/FortAwesome/Font-Awesome.git",
+                "url": "git@github.com:FortAwesome/Font-Awesome.git",
                 "reference": "fcec2d1b01ff069ac10500ac42e4478d20d21f4c"
             },
             "dist": {
@@ -320,7 +320,7 @@
             "version": "3.3.11",
             "source": {
                 "type": "git",
-                "url": "git@github.com:RobinHerbots/Inputmask.git",
+                "url": "https://github.com/RobinHerbots/Inputmask.git",
                 "reference": "5e670ad62f50c738388d4dcec78d2888505ad77b"
             },
             "dist": {
@@ -341,7 +341,7 @@
             "version": "3.5.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "4c0e4becb8263bb5b3e6dadc448d8e7305ef8215"
             },
             "dist": {
@@ -416,7 +416,7 @@
             "version": "v0.8.18",
             "source": {
                 "type": "git",
-                "url": "git@github.com:summernote/summernote.git",
+                "url": "https://github.com/summernote/summernote.git",
                 "reference": "a4ef0fffde1873e80a79381df13052c4163871aa"
             },
             "dist": {

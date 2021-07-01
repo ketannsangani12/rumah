@@ -210,7 +210,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ExportMenu::FORMAT_CSV => false,
                 ExportMenu::FORMAT_PDF => false,
                 ExportMenu::FORMAT_HTML => false,
-                ExportMenu::FORMAT_TEXT => false,
+
             ]
         ]);
 

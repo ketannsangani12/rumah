@@ -684,10 +684,10 @@ curl_setopt_array($curl, array(
                             }
 
                         }
-                        $sst = Yii::$app->common->calculatesst($total);
-                        $grandtotal = $total+$sst;
+                        //$sst = Yii::$app->common->calculatesst($total);
+                        $grandtotal = $total;
                         $modelCustomer->subtotal = $total;
-                        $modelCustomer->sst = $sst;
+                        $modelCustomer->sst = NULL;
                         $modelCustomer->total = $grandtotal;
                         $modelCustomer->save(false);
 
@@ -765,10 +765,10 @@ curl_setopt_array($curl, array(
                                 break;
                             }
                         }
-                        $sst = Yii::$app->common->calculatesst($total);
-                        $grandtotal = $total+$sst;
+                        //$sst = Yii::$app->common->calculatesst($total);
+                        $grandtotal = $total;
                         $modelCustomer->subtotal = $total;
-                        $modelCustomer->sst = $sst;
+                        $modelCustomer->sst = NULL;
                         $modelCustomer->total = $grandtotal;
                         $modelCustomer->save(false);
 
@@ -843,10 +843,10 @@ curl_setopt_array($curl, array(
                             }
                         }
 
-                        $sst = Yii::$app->common->calculatesst($model->tenancy_fees);
-                        $grandtotal = $total+$sst;
+                        //$sst = Yii::$app->common->calculatesst($model->tenancy_fees);
+                        $grandtotal = $total;
                         $modelCustomer->subtotal = $total;
-                        $modelCustomer->sst = $sst;
+                       // $modelCustomer->sst = $sst;
                         $modelCustomer->total = $grandtotal;
                         $modelCustomer->save(false);
                     }
