@@ -3361,8 +3361,8 @@ class ApiusersController extends ActiveController
                             if($todolist['status']=='Pending'){
                                 if(isset($todolist['todoItems'])
                                  && !empty($todolist['todoItems'])){
-                                    foreach ($todolist['todoItems'] as $key=>$todoitems){
-                                        $todolist['todoItems'][$key]['price'] = $todolist['todoItems'][$key]['price']+$todolist['todoItems'][$key]['platform_deductible'];
+                                    foreach ($todolist['todoItems'] as $key1=>$todoitems){
+                                        $todolist['todoItems'][$key1]['price'] = $todolist['todoItems'][$key1]['price']+$todolist['todoItems'][$key1]['platform_deductible'];
                                     }
                                 }
                                 $data[] = $todolist;
