@@ -3359,6 +3359,12 @@ class ApiusersController extends ActiveController
                         break;
                         case "Cancellation Refund";
                             if($todolist['status']=='Pending'){
+                                if(isset($todolist['todoItems'])
+                                 && !empty($todolist['todoItems'])){
+                                    foreach ($todolist['todoItems'] as $key=>$todoitems){
+                                        $todolist['todoItems'][$key]['price'] = $todolist['todoItems'][$key]['price']+$todolist['todoItems'][$key]['platform_deductible'];
+                                    }
+                                }
                                 $data[] = $todolist;
                             }
                             break;
