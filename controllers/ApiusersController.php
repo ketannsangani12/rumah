@@ -3166,7 +3166,7 @@ class ApiusersController extends ActiveController
         $curl = curl_init();
 
         $sadfc=  curl_setopt_array($curl, array(
-            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_URL => "13.213.163.184/MTSA/MyTrustSignerAgentWS?wsdl",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -7860,7 +7860,8 @@ public function actionMsctrustgate()
             $nationality = 'ZZ';
         }
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            //CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_URL => "13.213.163.184/MTSA/MyTrustSignerAgentWS?wsdl",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -7906,7 +7907,7 @@ public function actionMsctrustgate()
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+                CURLOPT_URL => "13.213.163.184/MTSA/MyTrustSignerAgentWS?wsdl",
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => "",
                 CURLOPT_MAXREDIRS => 10,
@@ -7954,7 +7955,7 @@ public function actionMsctrustgate()
                 $curl = curl_init();
 
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+                    CURLOPT_URL => "13.213.163.184/MTSA/MyTrustSignerAgentWS?wsdl",
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => "",
                     CURLOPT_MAXREDIRS => 10,
@@ -8000,7 +8001,7 @@ public function actionMsctrustgate()
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+                CURLOPT_URL => "13.213.163.184/MTSA/MyTrustSignerAgentWS?wsdl",
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => "",
                 CURLOPT_MAXREDIRS => 10,
@@ -8040,7 +8041,7 @@ public function actionMsctrustgate()
          $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "ec2-13-250-42-162.ap-southeast-1.compute.amazonaws.com/MTSAPilot/MyTrustSignerAgentWS?wsdl",
+            CURLOPT_URL => "13.213.163.184/MTSA/MyTrustSignerAgentWS?wsdl",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
