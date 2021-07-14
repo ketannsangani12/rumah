@@ -3177,7 +3177,7 @@ class ApiusersController extends ActiveController
             CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:SignPDF>\n         <UserID>".$mscmodel->document_no."</UserID>\n         <FullName>".$mscmodel->full_name."</FullName>\n         <!--Optional:-->\n         <AuthFactor></AuthFactor>\n\t\t<SignatureInfo>\n            <!--Optional:-->\n            <pageNo>".$mscmodel->page_no."</pageNo>\n            <!--Optional:-->\n            <pdfInBase64>".$mscmodel->pdf."</pdfInBase64>\n            <sigImageInBase64></sigImageInBase64>\n            <!--Optional:-->\n            <visibility>true</visibility>\n            <!--Optional:-->\n            <x1>".$mscmodel->x1."</x1>\n            <!--Optional:-->\n            <x2>".$mscmodel->x2."</x2>\n            <!--Optional:-->\n            <y1>".$mscmodel->y1."</y1>\n            <!--Optional:-->\n            <y2>".$mscmodel->y2."</y2>\n         </SignatureInfo>\n      </mtsa:SignPDF>\n   </soapenv:Body>\n</soapenv:Envelope>",
             CURLOPT_HTTPHEADER => array(
                 "Username: rumahi",
-                "Password: YcuLxvMMcXWPLRaW",
+                "Password: FMRzmCYJUqmQ2Z5B",
                 "Content-Type: text/xml"
             ),
         ));
@@ -7872,7 +7872,7 @@ public function actionMsctrustgate()
             CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:RequestCertificateWithEKYC>\n        <UserID>".$userdata['identification_no']."</UserID>\n         <IDType>".$userdata['type']."</IDType>\n         <FullName>".$userdata['full_name']."</FullName>\n         <Nationality>".$nationality."</Nationality>\n         <EmailAddress>".$userdata['email']."</EmailAddress>\n         <MobileNo>".$userdata['full_name']."</MobileNo>\n         <CertValidity>".$userdata['validity']."</CertValidity>\n         <PassportImage>".$passportimage."</PassportImage>\n         <NRICFront>".$document_front."</NRICFront>\n         <NRICBack>".$document_back."</NRICBack>\n          <OrganisationInfo>\n           \n         </OrganisationInfo>\n      </mtsa:RequestCertificateWithEKYC>\n   </soapenv:Body>\n</soapenv:Envelope>",
             CURLOPT_HTTPHEADER => array(
                 "Username: rumahi",
-                "Password: YcuLxvMMcXWPLRaW",
+                "Password: FMRzmCYJUqmQ2Z5B",
                 "Content-Type: text/xml"
             ),
         ));
@@ -7918,7 +7918,7 @@ public function actionMsctrustgate()
                 CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetRequestStatus>\n         <!--1 or more repetitions:-->\n         <UserRequestList>\n            <!--Optional:-->\n            <requestID>".$certificaterequest_id."</requestID>\n            <!--Optional:-->\n            <userID>".$userID."</userID>\n         </UserRequestList>\n      </mtsa:GetRequestStatus>\n   </soapenv:Body>\n</soapenv:Envelope>",
                 CURLOPT_HTTPHEADER => array(
                     "Username: rumahi",
-                    "Password: YcuLxvMMcXWPLRaW",
+                    "Password: FMRzmCYJUqmQ2Z5B",
                     "Content-Type: text/xml"
                 ),
             ));
@@ -7966,7 +7966,7 @@ public function actionMsctrustgate()
                     CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetActivation>\n         <UserID>".$userID."</UserID>\n         <RequestID>".$certificaterequest_id."</RequestID>\n      </mtsa:GetActivation>\n   </soapenv:Body>\n</soapenv:Envelope>",
                     CURLOPT_HTTPHEADER => array(
                         "Username: rumahi",
-                        "Password: YcuLxvMMcXWPLRaW",
+                        "Password: FMRzmCYJUqmQ2Z5B",
                         "Content-Type: text/xml"
                     ),
                 ));
@@ -8012,7 +8012,7 @@ public function actionMsctrustgate()
                 CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:GetCertInfo>\n         <UserID>".$certificate_id."</UserID>\n      </mtsa:GetCertInfo>\n   </soapenv:Body>\n</soapenv:Envelope>",
                 CURLOPT_HTTPHEADER => array(
                     "Username: rumahi",
-                    "Password: YcuLxvMMcXWPLRaW",
+                    "Password: FMRzmCYJUqmQ2Z5B",
                     "Content-Type: text/xml"
                 ),
             ));
@@ -8052,7 +8052,7 @@ public function actionMsctrustgate()
             CURLOPT_POSTFIELDS =>"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:mtsa=\"http://mtsa.msctg.com/\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <mtsa:SignPDF>\n         <UserID>940827086333</UserID>\n         <FullName>thomas shelby</FullName>\n         <!--Optional:-->\n         <AuthFactor></AuthFactor>\n\t\t<SignatureInfo>\n            <!--Optional:-->\n            <pageNo>1</pageNo>\n            <!--Optional:-->\n            <pdfInBase64></sigImageInBase64>\n            <!--Optional:-->\n            <visibility>false</visibility>\n            <!--Optional:-->\n            <x1>300</x1>\n            <!--Optional:-->\n            <x2>500</x2>\n            <!--Optional:-->\n            <y1>20</y1>\n            <!--Optional:-->\n            <y2>100</y2>\n         </SignatureInfo>\n      </mtsa:SignPDF>\n   </soapenv:Body>\n</soapenv:Envelope>",
             CURLOPT_HTTPHEADER => array(
                 "Username: rumahi",
-                "Password: YcuLxvMMcXWPLRaW",
+                "Password: FMRzmCYJUqmQ2Z5B",
                 "Content-Type: text/xml"
             ),
         ));
