@@ -147,12 +147,18 @@ class ApichatController extends ActiveController
             if(isset($_POST['offset'])){
                 $query->offset($_POST['offset']);
             }
+
            //echo  $query->createCommand()->getRawSql();exit;
 
-            $data = $query->asArray()->all();
-
-
-            return array('status' => 1, 'data' => $data);
+            $messages = $query->asArray()->all();
+            if(!empty($messages)){
+                foreach ($messages as $key=>$message){
+                    $msgdetails = Chats::findOne($message['id']);
+                    $messages[$key]['created_at'] = $msgdetails->created_at;
+                }
+            }
+           // echo "<pre>";print_r($messages);exit;
+            return array('status' => 1, 'data' => $messages);
         }
     }
 
