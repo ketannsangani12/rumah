@@ -113,8 +113,11 @@ class ManualkycController extends Controller
 
                         $usermodel = Users::findOne($model->user_id);
                         $usermodel->document_no = $model->document_no;
+                        $usermodel->document_type = $model->type;
                         $usermodel->ekyc_document = $model->document;
                         $usermodel->ekyc_document_back = ($model->document_back!='')?$model->document_back:NULL;
+                        $usermodel->document_front = $model->document;
+                        $usermodel->document_back = ($model->document_back!='')?$model->document_back:NULL;
                         $usermodel->ekyc_response = 'Manual approval';
                         $usermodel->identity_status = 'Verified';
                         $usermodel->save(false);

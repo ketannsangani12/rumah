@@ -1323,16 +1323,17 @@ class ApiusersController extends ActiveController
                 'pictures'=>function ($query) use($baseurl) {
                     $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->all();
                 },
-                'views'=>function ($query) use($baseurl) {
-                    $query->select('COUNT(*) as views,property_id')->all();
-                },
-            ])->where(['user_id'=>$user_id,'status'=>'Active'])->asArray()->all();
+            ])->joinWith(['propertyviews'])->where(['rumah_properties.user_id'=>$user_id,'rumah_properties.status'=>'Active'])->asArray()->all();
+            if(!empty($vacantproperties)){
+                foreach ($vacantproperties as $key=>$vacantproperty){
+                      $vacantproperties[$key]['views'][]['views'] = count($vacantproperty['propertyviews']);
+                      unset($vacantproperties[$key]['propertyviews']);
+                }
+            }
+            //echo "<pre>";print_r($vacantproperties);exit;
             $rentedproperties = Properties::find()->with([
                 'pictures'=>function ($query) use($baseurl) {
                     $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->all();
-                },
-                'views'=>function ($query) use($baseurl) {
-                    $query->select('COUNT(*) as views,property_id')->all();
                 },
                 'request'=>function ($query) use($baseurl) {
                     $query->select('id,commencement_date,monthly_rental,tenancy_period,user_id')->all();
@@ -1340,7 +1341,7 @@ class ApiusersController extends ActiveController
                 'request.user'=>function ($query) use($baseurl) {
                     $query->select("id,full_name")->all();
                 },
-            ])->where(['user_id'=>$user_id,'status'=>'Rented'])->asArray()->all();
+            ])->joinWith(['propertyviews'])->where(['rumah_properties.user_id'=>$user_id,'rumah_properties.status'=>'Rented'])->asArray()->all();
             if(!empty($rentedproperties)){
                 foreach ($rentedproperties as $key=>$rentedproperty){
                     $commencmentdate = $rentedproperty['request']['commencement_date'];
@@ -1349,6 +1350,7 @@ class ApiusersController extends ActiveController
                     $rentedproperties[$key]['tenant'] =  $rentedproperty['request']['user']['full_name'];
                     $rentedproperties[$key]['rental'] =  $rentedproperty['request']['monthly_rental'];
                     $rentedproperties[$key]['date'] =  $effectiveDate;
+                    $rentedproperty[$key]['views'][]['views'] = count($rentedproperty['propertyviews']);
 
 
                 }
