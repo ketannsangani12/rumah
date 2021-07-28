@@ -121,7 +121,7 @@ class ApichatController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
 
-            $query = Chats::find()->select(['case when (sender_id = '.$this->userId.') then receiver_id else sender_id end as opponent_id','rumah_chats.id','msg','msg_type',
+            $query = Chats::find()->select(['case when (sender_id = '.$this->userId.') then receiver_id else sender_id end as opponent_id','MAX(rumah_chats.id) as chat_id','msg','msg_type',
                 '(select max(rc2.created_at) from rumah_chats as rc2 where (rc2.sender_id = rumah_chats.sender_id and rc2.receiver_id = rumah_chats.receiver_id) or (rc2.sender_id = rumah_chats.receiver_id and rc2.receiver_id = rumah_chats.sender_id)) as created_at','rumah_chats.property_id','rumah_chats.sender_id','rumah_chats.receiver_id'])
                 ->orderBy([
                     'created_at' => SORT_DESC
@@ -153,7 +153,7 @@ class ApichatController extends ActiveController
             $messages = $query->asArray()->all();
             if(!empty($messages)){
                 foreach ($messages as $key=>$message){
-                    $msgdetails = Chats::findOne($message['id']);
+                    $msgdetails = Chats::findOne($message['chat_id']);
                     $messages[$key]['created_at'] = $msgdetails->created_at;
                 }
             }
