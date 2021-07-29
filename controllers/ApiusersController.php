@@ -125,7 +125,7 @@ class ApiusersController extends ActiveController
         header("Access-Control-Allow-Headers: X-Requested-With,token,user");
         parent::beforeAction($action);
 
-        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp' && $action->actionMethod!='actionGooglelogin' && $action->actionMethod!='actionFacebooklogin' && $action->actionMethod!='actionSearch' && $action->actionMethod!='actionPropertydetails') {
+        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp' && $action->actionMethod!='actionGooglelogin' && $action->actionMethod!='actionFacebooklogin' && $action->actionMethod!='actionSearch' && $action->actionMethod!='actionPropertydetails' && $action->actionMethod!='actionDashboard') {
             $headers = Yii::$app->request->headers;
             if(!empty($headers) && isset($headers['token']) && $headers['token']!=''){
                 try{
@@ -1147,20 +1147,20 @@ class ApiusersController extends ActiveController
 
             if (!empty($_POST)) {
                 $baseurl = $this->baseurl;
-                $userid = $this->user_id;
+                $userid = (isset($this->user_id) && $this->user_id!='')?$this->user_id:'';
 
                 $lat = (isset($_POST['lat']) && $_POST['lat'] != '') ? $_POST['lat'] : '';
                 $long = (isset($_POST['long']) && $_POST['long'] != '') ? $_POST['long'] : '';
                 //$harvesformula = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance' : '';
 
-                $favouritemerchants = FavouriteProperties::find()->with([
+                $favouritemerchants = ($userid!='')?FavouriteProperties::find()->with([
                     'property' => function ($query) {
                         $query->select('id,property_no,title,location,property_type,type,price');
                     },
                     'property.pictures' => function ($query) use($baseurl) {
                         $query->select(['id', 'property_id', new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
                     },
-                ])->where(['user_id' => $userid])->asArray()->all();
+                ])->where(['user_id' => $userid])->asArray()->all():array();
                 $featuredproperties = Properties::find()
                     ->select('id,property_no,title,location,property_type,type,price')
                     ->with([
