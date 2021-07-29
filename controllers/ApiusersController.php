@@ -125,7 +125,7 @@ class ApiusersController extends ActiveController
         header("Access-Control-Allow-Headers: X-Requested-With,token,user");
         parent::beforeAction($action);
 
-        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp' && $action->actionMethod!='actionGooglelogin' && $action->actionMethod!='actionFacebooklogin') {
+        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp' && $action->actionMethod!='actionGooglelogin' && $action->actionMethod!='actionFacebooklogin' && $action->actionMethod!='actionSearch' && $action->actionMethod!='actionPropertydetails') {
             $headers = Yii::$app->request->headers;
             if(!empty($headers) && isset($headers['token']) && $headers['token']!=''){
                 try{
@@ -1812,7 +1812,7 @@ class ApiusersController extends ActiveController
         } else {
             $baseurl = $this->baseurl;
             if (!empty($_POST) && isset($_POST['lat']) && $_POST['lat']!='' && isset($_POST['long']) && $_POST['long']!='') {
-                $user_id = $this->user_id;
+                $user_id = (isset($this->user_id) && $this->user_id!='')?$this->user_id:'';
                 $lat = (isset($_POST['lat']) && $_POST['lat']!='')?$_POST['lat']:'';
                 $long = (isset($_POST['long']) && $_POST['long']!='')?$_POST['long']:'';
                 $furnished_status = (isset($_POST['furnished_status']) && $_POST['furnished_status']!='')?$_POST['furnished_status']:'';
@@ -1934,8 +1934,10 @@ class ApiusersController extends ActiveController
                 $properties1 = array();
                 if(!empty($properties)){
                     foreach ($properties as $key=>$property){
-                        if($property['status']=='Active' && $property['user_id']!=$user_id) {
-                            $properties[$key]['favourite'] = Properties::checkfavourite($property['id'], $user_id);
+
+                        if($property['status']=='Active' ) {
+
+                            $properties[$key]['favourite'] = (!empty($user_id) && $property['user_id']!=$user_id)?Properties::checkfavourite($property['id'], $user_id):false;
                             $properties1[] = $property;
 
                         }
@@ -1963,7 +1965,7 @@ class ApiusersController extends ActiveController
         } else {
             if (!empty($_POST) && !empty($_POST['property_id'])) {
                 $baseurl = $this->baseurl;
-                $user_id = $this->user_id;
+                $user_id = (isset($this->user_id) && $this->user_id!='')?$this->user_id:'';
                 $query1 = Properties::find()
                     ->select('id,user_id,agent_id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,carparks,amenities,commute,status,digital_tenancy')
                     ->with([
@@ -1983,7 +1985,7 @@ class ApiusersController extends ActiveController
                     return array('status' => 0, 'message' => 'No property details found.');
 
                 }
-                $propertydata['favourite'] = Properties::checkfavourite($_POST['property_id'],$user_id);
+                $propertydata['favourite'] = (!empty($user_id))?Properties::checkfavourite($_POST['property_id'],$user_id):false;
                 $lat = $propertydata['latitude'];
                 $long = $propertydata['longitude'];
                 $harvesformula = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance': '';
@@ -1997,7 +1999,12 @@ class ApiusersController extends ActiveController
                     ]);
                 $distance = 20;
                 $propertytype = $propertydata['room_type'];
-                $query1->where(['!=', 'user_id', $user_id])->andWhere(['!=', 'id', $_POST['property_id']])->andWhere(['status'=>'Active']);
+                if($user_id!=''){
+                    $query1->where(['!=', 'user_id', $user_id])->andWhere(['!=', 'id', $_POST['property_id']])->andWhere(['status'=>'Active']);
+                }else{
+                    $query1->where(['!=', 'id', $_POST['property_id']])->andWhere(['status'=>'Active']);
+                }
+
 
                 $query1->andWhere(['room_type'=>$propertytype]);
                 if($distance!='' && $lat!='' && $long!=''){
@@ -2007,7 +2014,7 @@ class ApiusersController extends ActiveController
                 $properties =  $query1->asArray()->all();
                 if(!empty($properties)){
                     foreach ($properties as $key=>$property){
-                        $properties[$key]['favourite'] = Properties::checkfavourite($property['id'],$user_id);
+                        $properties[$key]['favourite'] = (!empty($user_id))?Properties::checkfavourite($property['id'],$user_id):false;
 
                     }
                 }
@@ -2025,13 +2032,15 @@ class ApiusersController extends ActiveController
                 $propertydata['bookingexists'] = $bookingexists;
                 $data['propertydata'] = $propertydata;
                 $data['similarproperties'] = $properties;
-                $propertyviewexist = PropertyViews::find()->where(['property_id'=>$_POST['property_id'],'user_id'=>$user_id])->one();
-                if(empty($propertyviewexist)){
-                    $propertview = new PropertyViews();
-                    $propertview->user_id = $user_id;
-                    $propertview->property_id = $_POST['property_id'];
-                    $propertview->created_at = date('Y-m-d H:i:s');
-                    $propertview->save(false);
+                if($user_id!='') {
+                    $propertyviewexist = PropertyViews::find()->where(['property_id' => $_POST['property_id'], 'user_id' => $user_id])->one();
+                    if (empty($propertyviewexist)) {
+                        $propertview = new PropertyViews();
+                        $propertview->user_id = $user_id;
+                        $propertview->property_id = $_POST['property_id'];
+                        $propertview->created_at = date('Y-m-d H:i:s');
+                        $propertview->save(false);
+                    }
                 }
                 $agentratings = 0;
                 if($propertydata['agent_id']!=''){
