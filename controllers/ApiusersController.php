@@ -125,7 +125,7 @@ class ApiusersController extends ActiveController
         header("Access-Control-Allow-Headers: X-Requested-With,token,user");
         parent::beforeAction($action);
 
-        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp' && $action->actionMethod!='actionGooglelogin' && $action->actionMethod!='actionFacebooklogin' && $action->actionMethod!='actionSearch' && $action->actionMethod!='actionPropertydetails' && $action->actionMethod!='actionDashboard') {
+        if ($action->actionMethod != 'actionLogin' && $action->actionMethod != 'actionRegister' && $action->actionMethod!='actionForgotpassword' && $action->actionMethod!='actionAddrefferal' && $action->actionMethod!='actionVerifyotp' && $action->actionMethod!='actionResendotp' && $action->actionMethod!='actionGooglelogin' && $action->actionMethod!='actionFacebooklogin') {
             $headers = Yii::$app->request->headers;
             if(!empty($headers) && isset($headers['token']) && $headers['token']!=''){
                 try{
@@ -154,8 +154,12 @@ class ApiusersController extends ActiveController
 
                 //return true;
             }else{
+                if($action->actionMethod=='actionSearch' || $action->actionMethod=='actionPropertydetails' || $action->actionMethod=='actionDashboard'){
+                    return true;
+                }else{
+                    echo json_encode(array('status' => 0, 'message' => 'Authentication Failed.'));exit;
+                }
 
-                echo json_encode(array('status' => 0, 'message' => 'Authentication Failed.'));exit;
             }
             //exit;
         }
@@ -1145,12 +1149,12 @@ class ApiusersController extends ActiveController
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
 
-            if (!empty($_POST)) {
+            //if (!empty($_POST)) {
                 $baseurl = $this->baseurl;
                 $userid = (isset($this->user_id) && $this->user_id!='')?$this->user_id:'';
 
-                $lat = (isset($_POST['lat']) && $_POST['lat'] != '') ? $_POST['lat'] : '';
-                $long = (isset($_POST['long']) && $_POST['long'] != '') ? $_POST['long'] : '';
+                //$lat = (isset($_POST['lat']) && $_POST['lat'] != '') ? $_POST['lat'] : '';
+                //$long = (isset($_POST['long']) && $_POST['long'] != '') ? $_POST['long'] : '';
                 //$harvesformula = ($lat != '' && $long != '') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance' : '';
 
                 $favouritemerchants = ($userid!='')?FavouriteProperties::find()->with([
@@ -1175,11 +1179,11 @@ class ApiusersController extends ActiveController
 
                 return array('status' => 1, 'data' => $data);
 
-            }else{
-
-                return array('status' => 0, 'message' => 'Please allow location access to search property nearby.');
-
-            }
+//            }else{
+//
+//                return array('status' => 0, 'message' => 'Please allow location access to search property nearby.');
+//
+//            }
 
         }
 
