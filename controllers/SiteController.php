@@ -1652,8 +1652,8 @@ class SiteController extends Controller
 
     public function actionUploadtomsc()
     {
-        $bookingrequests = BookingRequests::find()->where(['status' => 'Rented'])->andWhere(['is', 'signed_agreement', new \yii\db\Expression('null')])->all();
-        echo "<pre>";print_r($bookingrequests);;
+        $bookingrequests = BookingRequests::find()->where(['status' => 'Rented','id'=>81])->andWhere(['is', 'signed_agreement', new \yii\db\Expression('null')])->all();
+        //echo "<pre>";print_r($bookingrequests);exit;
 
         //->andWhere(['=','signed_agreement',''])->all();
         if (!empty($bookingrequests)) {
@@ -1666,7 +1666,7 @@ class SiteController extends Controller
                     $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
 
                     if (!empty($tenantmscmodel) && !empty($landlordmscmodel)) {
-                        echo "Sdsd";exit;
+                        //echo "Sdsd";exit;
 
                         $b64Doc = chunk_split(base64_encode(file_get_contents($agreementdocument)));
 
@@ -1678,7 +1678,7 @@ class SiteController extends Controller
                             $tenantmscmodel->save(false);
                             $signpdfresponse = $this->actionSignpdf($landlordmscmodel, $model);
 
-
+                            print_r($signpdfresponse);exit;
                             if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] == '000') {
                                 $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
                                 $landlordmscmodel->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
@@ -1712,6 +1712,7 @@ class SiteController extends Controller
 
                                     } else {
                                         $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                        $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
                                         $tenantmscmodel->save(false);
 
 //
@@ -1719,6 +1720,7 @@ class SiteController extends Controller
 
                                 } else {
                                     $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                    $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
                                     $landlordmscmodel->save(false);
 
 
@@ -1726,6 +1728,7 @@ class SiteController extends Controller
 
                             } else {
                                 $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
                                 $landlordmscmodel->save(false);
 
 
