@@ -1652,8 +1652,8 @@ class SiteController extends Controller
 
     public function actionUploadtomsc()
     {
-        $bookingrequests = BookingRequests::find()->where(['status' => 'Rented','id'=>81])->andWhere(['is', 'signed_agreement', new \yii\db\Expression('null')])->all();
-        //echo "<pre>";print_r($bookingrequests);exit;
+        $bookingrequests = BookingRequests::find()->where(['status' => 'Rented'])->andWhere(['is', 'signed_agreement', new \yii\db\Expression('null')])->all();
+       // echo "<pre>";print_r($bookingrequests);exit;
 
         //->andWhere(['=','signed_agreement',''])->all();
         if (!empty($bookingrequests)) {
@@ -1678,7 +1678,6 @@ class SiteController extends Controller
                             $tenantmscmodel->save(false);
                             $signpdfresponse = $this->actionSignpdf($landlordmscmodel, $model);
 
-                            print_r($signpdfresponse);exit;
                             if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] == '000') {
                                 $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
                                 $landlordmscmodel->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
