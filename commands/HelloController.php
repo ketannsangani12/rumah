@@ -922,6 +922,7 @@ class HelloController extends Controller
 
                                     } else {
                                         $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                        $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
                                         $tenantmscmodel->save(false);
 
 //
@@ -929,6 +930,7 @@ class HelloController extends Controller
 
                                 } else {
                                     $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                    $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
                                     $landlordmscmodel->save(false);
 
 
@@ -936,6 +938,7 @@ class HelloController extends Controller
 
                             } else {
                                 $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
                                 $landlordmscmodel->save(false);
 
 
