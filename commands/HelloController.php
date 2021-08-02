@@ -876,56 +876,64 @@ class HelloController extends Controller
 
                     $tenantmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->user_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
                     $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
-                    if (!empty($tenantmscmodel) && !empty($landlordmscmodel)) {
+                    if (!empty($tenantmscmodel) || !empty($landlordmscmodel)) {
+                        if (!empty($tenantmscmodel) || !empty($landlordmscmodel)) {
+                            $b64Doc = chunk_split(base64_encode(file_get_contents($agreementdocument)));
 
-                        $b64Doc = chunk_split(base64_encode(file_get_contents($agreementdocument)));
 
+                            $landlordmscmodel->pdf = $b64Doc;
+                            $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
+                            if ($landlordmscmodel->save(false)) {
 
-                        $landlordmscmodel->pdf = $b64Doc;
-                        $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
-                        if ($landlordmscmodel->save(false)) {
+                                $tenantmscmodel->save(false);
+                                $signpdfresponse = $this->actionSignpdf($landlordmscmodel, $model);
+                                //echo "<pre>";print_r($signpdfresponse);exit;
 
-                            $tenantmscmodel->save(false);
-                            $signpdfresponse = $this->actionSignpdf($landlordmscmodel, $model);
-                            //echo "<pre>";print_r($signpdfresponse);exit;
+                                if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] == '000') {
+                                    $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                    $landlordmscmodel->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
+                                    $landlordmscmodel->status = 'Completed';
+                                    $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
+                                    $landlordmscmodel->save(false);
 
-                            if (!empty($signpdfresponse) && isset($signpdfresponse['return']) && !empty($signpdfresponse['return']) && $signpdfresponse['return']['statusCode'] == '000') {
-                                $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
-                                $landlordmscmodel->signedpdf = $signpdfresponse['return']['signedPdfInBase64'];
-                                $landlordmscmodel->status = 'Completed';
-                                $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
-                                $landlordmscmodel->save(false);
-
-                                if (isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64'] != '') {
-                                    $tenantmscmodel->pdf = $signpdfresponse['return']['signedPdfInBase64'];
-                                    $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
-                                    $tenantmscmodel->save(false);
-                                    $signpdftenantresponse = $this->actionSignpdf($tenantmscmodel, $model);
-                                    if (!empty($signpdftenantresponse) && isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode'] == '000') {
-                                        $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
-                                        $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
-                                        $tenantmscmodel->status = 'Completed';
+                                    if (isset($signpdfresponse['return']['signedPdfInBase64']) && $signpdfresponse['return']['signedPdfInBase64'] != '') {
+                                        $tenantmscmodel->pdf = $signpdfresponse['return']['signedPdfInBase64'];
                                         $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
-                                        if ($tenantmscmodel->save(false)) {
+                                        $tenantmscmodel->save(false);
+                                        $signpdftenantresponse = $this->actionSignpdf($tenantmscmodel, $model);
+                                        if (!empty($signpdftenantresponse) && isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode'] == '000') {
+                                            $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                            $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                            $tenantmscmodel->status = 'Completed';
+                                            $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                            if ($tenantmscmodel->save(false)) {
 
-                                            $model->signed_agreement = $signpdftenantresponse['return']['signedPdfInBase64'];
-                                            $model->updated_at = date('Y-m-d H:i:s');
-                                            $decoded = base64_decode($model->signed_agreement);
-                                            $filename = "signedagreement_" . time() . $model->reference_no . '.pdf';
-                                            file_put_contents('uploads/agreements/' . $filename, $decoded);
-                                            $model->signed_agreement_document = 'uploads/agreements/' . $filename;
-                                            //$model->status = 'Agreement Processed';
-                                            $model->save(false);
+                                                $model->signed_agreement = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                                $model->updated_at = date('Y-m-d H:i:s');
+                                                $decoded = base64_decode($model->signed_agreement);
+                                                $filename = "signedagreement_" . time() . $model->reference_no . '.pdf';
+                                                file_put_contents('uploads/agreements/' . $filename, $decoded);
+                                                $model->signed_agreement_document = 'uploads/agreements/' . $filename;
+                                                //$model->status = 'Agreement Processed';
+                                                $model->save(false);
 
 
+                                            }
+
+                                        } else {
+                                            $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                            $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                            $tenantmscmodel->save(false);
+
+//
                                         }
 
                                     } else {
-                                        $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
-                                        $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
-                                        $tenantmscmodel->save(false);
+                                        $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
+                                        $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
+                                        $landlordmscmodel->save(false);
 
-//
+
                                     }
 
                                 } else {
@@ -937,30 +945,50 @@ class HelloController extends Controller
                                 }
 
                             } else {
-                                $landlordmscmodel->signpdf_response = json_encode($signpdfresponse);
-                                $landlordmscmodel->updated_at = date('Y-m-d H:i:s');
-                                $landlordmscmodel->save(false);
 
+
+                                //return $this->redirect(['index']);
 
                             }
+                        } else if (empty($landlordmscmodel) && !empty($tenantmscmodel)) {
+                            $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Completed'])->orderBy(['id' => SORT_DESC])->one();
+                            if ($landlordmscmodel->signedpdf != '') {
+                                $tenantmscmodel->pdf = $landlordmscmodel->signedpdf;
+                                $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                $tenantmscmodel->save(false);
+                                $signpdftenantresponse = $this->actionSignpdf($tenantmscmodel, $model);
+                                if (!empty($signpdftenantresponse) && isset($signpdftenantresponse['return']) && !empty($signpdftenantresponse['return']) && $signpdftenantresponse['return']['statusCode'] == '000') {
+                                    $tenantmscmodel->signpdf_response = json_encode($signpdftenantresponse);
+                                    $tenantmscmodel->signedpdf = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                    $tenantmscmodel->status = 'Completed';
+                                    $tenantmscmodel->updated_at = date('Y-m-d H:i:s');
+                                    if ($tenantmscmodel->save(false)) {
 
+                                        $model->signed_agreement = $signpdftenantresponse['return']['signedPdfInBase64'];
+                                        $model->updated_at = date('Y-m-d H:i:s');
+                                        $decoded = base64_decode($model->signed_agreement);
+                                        $filename = "signedagreement_" . time() . $model->reference_no . '.pdf';
+                                        file_put_contents('uploads/agreements/' . $filename, $decoded);
+                                        $model->signed_agreement_document = 'uploads/agreements/' . $filename;
+                                        //$model->status = 'Agreement Processed';
+                                        $model->save(false);
+
+
+                                    }
+                                }
+                            }
                         } else {
-
+                            //Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
                         }
 
-                        //return $this->redirect(['index']);
 
-                    } else {
-                        //Yii::$app->session->setFlash('error', "Verification process is still in Pending.Please try after verification done from MSC");
                     }
-
-
                 }
+
             }
 
+
         }
-
-
     }
     private function actionSignpdf($mscmodel,$model){
         //echo "<pre>";  print_r($mscmodel);exit;
