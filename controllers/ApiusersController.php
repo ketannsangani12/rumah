@@ -7158,13 +7158,22 @@ public function actionPaysuccess(){
         if ($method != 'POST') {
             return array('status' => 0, 'message' => 'Bad request.');
         } else {
-            if(!empty($_POST) && isset($_POST['document']) && $_POST['document']!='' && isset($_POST['document_no']) && $_POST['document_no']!='' && isset($_POST['selfie']) && $_POST['selfie']!='' && isset($_POST['request_id']) && $_POST['request_id']!='' && isset($_POST['type']) && $_POST['type']!='') {
+            if(!empty($_POST) && isset($_POST['document']) && isset($_POST['full_name']) && $_POST['full_name']!='' && $_POST['document']!='' && isset($_POST['document_no']) && $_POST['document_no']!='' && isset($_POST['selfie']) && $_POST['selfie']!='' && isset($_POST['request_id']) && $_POST['request_id']!='' && isset($_POST['type']) && $_POST['type']!='') {
                 $requestmodel = BookingRequests::findOne($_POST['request_id']);
                 $type = $_POST['type'];
-                $document_back = (isset($_POST['document_back']) && $_POST['document_back']!='')?$_POST['document_back']:NULL;
+                $full_name = $_POST['full_name'];
+                $document_back = '';
+                if($type=='N'){
+                    $document_back = (isset($_POST['document_back']) && $_POST['document_back']!='')?$_POST['document_back']:'';
+                    if($document_back==''){
+                        return array('status' => 0, 'message' => 'Please upload Back side of document.');
+                    }
+                }
+
                 $user_id = $this->user_id;
                 $manualkyc = new ManualKyc();
                 $manualkyc->request_id =$_POST['request_id'];
+                $manualkyc->full_name = $_POST['full_name'];
                 $manualkyc->user_id = $this->user_id;
                 $manualkyc->document = $_POST['document'];
                 $manualkyc->document_no = $_POST['document_no'];

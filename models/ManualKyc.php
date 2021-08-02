@@ -39,7 +39,7 @@ class ManualKyc extends \yii\db\ActiveRecord
         return [
             [['status','file'], 'required','on'=>'updatestatus'],
             [['request_id', 'user_id'], 'integer'],
-            [['document', 'selfie', 'status','document_back','reason'], 'string'],
+            [['document', 'selfie', 'status','document_back','reason','full_name'], 'string'],
             [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'pdf'],
             [['created_at', 'updated_at'], 'safe'],
             [['type'], 'string', 'max' => 5],
@@ -58,6 +58,7 @@ class ManualKyc extends \yii\db\ActiveRecord
             'request_id' => 'Booking Request',
             'user_id' => 'User',
             'type' => 'Type',
+            'full_name'=>'Full Name',
             'document' => 'Document',
             'selfie' => 'Selfie',
             'status' => 'Status',

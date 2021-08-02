@@ -112,6 +112,7 @@ class ManualkycController extends Controller
                         $model->file->saveAs('uploads/creditscorereports/' . $newFileName);
 
                         $usermodel = Users::findOne($model->user_id);
+                        $usermodel->full_name = $model->full_name;
                         $usermodel->document_no = $model->document_no;
                         $usermodel->document_type = $model->type;
                         $usermodel->ekyc_document = $model->document;

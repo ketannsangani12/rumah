@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label'=>'User',
 
                     'value'=>function($model){
-                        return (isset($model->user->full_name))?$model->user->full_name:'';
+                        return ($model->full_name!='')?$model->full_name:$model->user->full_name;
                     }
                 ],
                 //'user_id',
