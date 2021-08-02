@@ -877,7 +877,7 @@ class HelloController extends Controller
                     $tenantmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->user_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
                     $landlordmscmodel = Msc::find()->where(['request_id' => $model->id, 'user_id' => $model->landlord_id, 'status' => 'Approved'])->orderBy(['id' => SORT_DESC])->one();
                     if (!empty($tenantmscmodel) || !empty($landlordmscmodel)) {
-                        if (!empty($tenantmscmodel) || !empty($landlordmscmodel)) {
+                        if (!empty($tenantmscmodel) && !empty($landlordmscmodel)) {
                             $b64Doc = chunk_split(base64_encode(file_get_contents($agreementdocument)));
 
 
