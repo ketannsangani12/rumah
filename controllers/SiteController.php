@@ -976,6 +976,7 @@ class SiteController extends Controller
                                     $user = Users::findOne($model->user_id);
                                     $user->membership_expire_date = date('Y-m-d', strtotime('+1 month'));
                                     $user->property_credited += $packagedetails->quantity;
+                                    $user->updated_at = date('Y-m-d H:i:s');
                                     if($user->save(false)){
                                         if($transaction->coins>0) {
                                             Yii::$app->common->deductgoldcoinspurchase($model->user_id, $transaction->coins, $lastid);

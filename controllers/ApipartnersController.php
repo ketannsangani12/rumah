@@ -1613,6 +1613,13 @@ class ApipartnersController extends ActiveController
                 //$propertymodel->commute = $propertymodel->commute;
                 //$propertymodel->pictures = $uploads = UploadedFile::getInstances('images');
                 if($propertymodel->validate()){
+                    $userdetails = Users::findOne($this->user_id);
+                    $totalpropertyadded = $userdetails->properties_posted;
+                    $currentcredit = $userdetails->property_credited;
+                    if($totalpropertyadded >= $currentcredit){
+                        return array('status' => 0, 'message' => 'You have already exceeded limit of Post Property. So Please purchase package or delete your listings');
+
+                    }
                     $pictures = $propertymodel->pictures;
                     $propertymodel->pictures = null;
                     $propertymodel->agent_id = $this->user_id;
@@ -1620,6 +1627,8 @@ class ApipartnersController extends ActiveController
                     $propertymodel->status = 'Active';
                     if($propertymodel->save(false)){
                         $property_id = $propertymodel->id;
+                        $userdetails->properties_posted = $userdetails->properties_posted+1;
+                        $userdetails->save(false);
                         if(!empty($pictures)){
                             foreach ($pictures as $picture){
                                 $filename = uniqid();
