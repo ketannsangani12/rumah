@@ -6292,7 +6292,7 @@ public function actionPaysuccess(){
                     $propertydetails->updated_at = date('Y-m-d H:i:s');
                     if($propertydetails->save(false)){
                         $usermodel = Users::findOne($user_id);
-                        $usermodel->properties_posted = $usermodel->properties_posted - 1;
+                        $usermodel->properties_posted = ($usermodel->properties_posted>1)?$usermodel->properties_posted - 1:0;
                         $usermodel->save(false);
                         return array('status' => 1, 'message' => 'You have deleted property successfully.');
 
