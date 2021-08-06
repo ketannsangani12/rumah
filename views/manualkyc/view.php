@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'document_back',
                     'value' => ($model->document_back!='')?'data:image/jpeg;base64,' . $model->document_back:'',
-                    'format' => ($model->document_back!='')?['image', ['width' => '700', 'height' => '500']]:'',
+                    'format' => ($model->document_back!='')?['image', ['width' => '900', 'height' => '500']]:'',
                     'visible'=>($model->document_back!='')
                 ],
                 [
