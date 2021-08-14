@@ -39,20 +39,36 @@ $this->params['breadcrumbs'][] = $this->title;
                 'reason',
                 [
                     'attribute' => 'document',
-                    'value' => 'data:image/jpeg;base64,' . $model->document,
-                    'format' => ['image', ['width' => '600', 'height' => '500','style'=>'object-fit: cover;']],
+                    'format'    => 'raw',
+                    'value'     => function ( $model ) {
+                        return $this->render( '_image', [
+                            'src'   => 'data:image/jpeg;base64,' . $model->document,
+                        ]);
+                    }
+                   // 'value' => ,
+                    //'format' => ['image', ['width' => '600', 'height' => '500','style'=>'object-fit: cover;']],
                     //'options'=>[ 'style'=>'object-fit: cover;' ]
                 ],
                 [
                     'attribute' => 'selfie',
-                    'value' => 'data:image/jpeg;base64,' . $model->selfie,
-                    'format' => ['image', ['width' => '600', 'height' => '500','style'=>'object-fit: cover;']],
+                    'format'    => 'raw',
+                    'value'     => function ( $model ) {
+                        return $this->render( '_image', [
+                            'src'   => 'data:image/jpeg;base64,' . $model->selfie,
+                        ]);
+                    }
+//                    'value' => 'data:image/jpeg;base64,' . $model->selfie,
+//                    'format' => ['image', ['width' => '600', 'height' => '500','style'=>'object-fit: cover;']],
 
                 ],
                 [
                     'attribute' => 'document_back',
-                    'value' => ($model->document_back!='')?'data:image/jpeg;base64,' . $model->document_back:'',
-                    'format' => ($model->document_back!='')?['image', ['width' => '900', 'height' => '500','style'=>'object-fit: cover;']]:'',
+                    'format'    => 'raw',
+                    'value'     => function ( $model ) {
+                        return ($model->document_back!='')?$this->render( '_image', [
+                            'src'   => 'data:image/jpeg;base64,' . $model->document_back,
+                        ]):'';
+                    },
                     'visible'=>($model->document_back!='')
                 ],
                 [
