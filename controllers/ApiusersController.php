@@ -1171,7 +1171,7 @@ class ApiusersController extends ActiveController
                         'pictures'=>function ($query) use($baseurl) {
                             $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
                         },
-                    ])->where(['is_featured'=>1])->asArray()->all();
+                    ])->where(['is_featured'=>1])->andWhere(['status'=>'Active'])->asArray()->all();
                 $data['isaved'] = $favouritemerchants;
                 $data['featured'] = $featuredproperties;
                 $data['istories'] = Istories::find()->select(['id','title','link','description',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->asArray()->all();
