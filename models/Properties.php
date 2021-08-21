@@ -59,7 +59,7 @@ class Properties extends \yii\db\ActiveRecord
             [['title', 'description', 'location','latitude','longitude','property_type', 'room_type', 'preference' ,'bedroom', 'bathroom', 'carparks','type','furnished_status','availability','size_of_area','price','amenities','pictures'], 'required','on'=>'addproperty'],
            // [['pictures'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 10, 'extensions' => 'png, jpg,jpeg','on'=>'addproperty'],
             [['user_id', 'pe_userid', 'bedroom', 'bathroom', 'carparks', 'digital_tenancy', 'auto_rental', 'insurance','is_featured'], 'integer'],
-            [['title', 'description', 'location', 'status','remarks'], 'string'],
+            [['title', 'description', 'location', 'status','remarks','commute'], 'string'],
             [['latitude', 'longitude', 'size_of_area', 'price'], 'number'],
             [['availability', 'created_at', 'updated_at'], 'safe'],
             [['property_type', 'room_type', 'preference'], 'string', 'max' => 255],
