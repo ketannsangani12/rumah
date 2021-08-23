@@ -1728,7 +1728,7 @@ class ApiusersController extends ActiveController
                 $propertymodel->scenario = 'addproperty';
                 $propertymodel->attributes = Yii::$app->request->post();
                 //$propertymodel->amenities = implode(',',$propertymodel->amenities);
-                //$propertymodel->commute = ($propertymodel->commute!='')?$propertymodel->commute:'';
+                $propertymodel->commute = ($propertymodel->commute!='')?implode(',',$propertymodel->commute):'';
                 if($propertymodel->validate()){
                     $mypropertiescount = Properties::find()->where(['user_id'=>$this->user_id])->count();
                     $userdetails = Users::findOne($this->user_id);
