@@ -1880,7 +1880,7 @@ class ApiusersController extends ActiveController
 
                 }
                 if($location!=''){
-                    $query1->orWhere(['like', 'location', $location]);
+                    $query1->andWhere(['like', 'location', $location]);
                 }
 
                 if($search!=''){
