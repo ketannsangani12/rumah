@@ -7210,6 +7210,7 @@ public function actionPaysuccess(){
                       $journeyid = $this->createjourneyid();
                       if($journeyid!='') {
                           $document = $_POST['document'];
+                          $document_back = (isset($_POST['document_back']) && $_POST['document_back']!='')?$_POST['document_back']:'';
                           $selfie = $_POST['selfie'];
                           $filename = 'uploads/sampleimage.jpg'; // output file name
 
@@ -7258,6 +7259,8 @@ public function actionPaysuccess(){
                                                   $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus)) ? $getscorecardresult->scorecardResultList[0]->scorecardStatus : '';
                                                   if ($status == 'clear') {
                                                       $usermodel = Users::findOne($user_id);
+                                                      $usermodel->ekyc_document = $_POST['document'];
+                                                      $usermodel->ekyc_document_back = (isset($_POST['document_back']) && $_POST['document_back']!='')?$_POST['document_back']:NULL;
                                                       $usermodel->ekyc_response = json_encode($getscorecardresult);
                                                       $usermodel->identity_status = 'Verified';
                                                       $usermodel->save(false);
@@ -7329,6 +7332,7 @@ public function actionPaysuccess(){
                                                   $status = (isset($getscorecardresult->scorecardResultList[0]) && !empty($getscorecardresult->scorecardResultList[0]) && isset($getscorecardresult->scorecardResultList[0]->scorecardStatus))?$getscorecardresult->scorecardResultList[0]->scorecardStatus:'';
                                                   if($status=='clear'){
                                                       $usermodel = Users::findOne($user_id);
+                                                      $usermodel->ekyc_document = $_POST['document'];
                                                       $usermodel->ekyc_response = json_encode($getscorecardresult);
                                                       $usermodel->identity_status = 'Verified';
                                                       $usermodel->save(false);
