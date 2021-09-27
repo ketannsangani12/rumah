@@ -7333,6 +7333,7 @@ public function actionPaysuccess(){
                                                   if($status=='clear'){
                                                       $usermodel = Users::findOne($user_id);
                                                       $usermodel->ekyc_document = $_POST['document'];
+                                                      $usermodel->ekyc_document_back = (isset($_POST['document_back']) && $_POST['document_back']!='')?$_POST['document_back']:NULL;
                                                       $usermodel->ekyc_response = json_encode($getscorecardresult);
                                                       $usermodel->identity_status = 'Verified';
                                                       $usermodel->save(false);
