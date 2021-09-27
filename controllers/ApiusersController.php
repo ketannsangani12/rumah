@@ -3307,13 +3307,14 @@ class ApiusersController extends ActiveController
                                 }
                                 if($todolist['user']['identity_status']=='Verified') {
                                     if ($todolist['user']['document_front'] != '') {
-                                        $todolists[$key]['user']['ekyc_document'] = $todolist['user']['document_front'];
-                                    } else if ($todolist['user']['document_back'] != '') {
-                                        $todolists[$key]['user']['ekyc_document_back'] = $todolist['user']['document_back'];
-                                    } else if ($todolist['user']['ekyc_document'] != '') {
-                                        $todolists[$key]['user']['document_front'] = $todolist['user']['ekyc_document'];
-                                    } else if ($todolist['user']['ekyc_document_back'] != '') {
-                                        $todolists[$key]['user']['document_back'] = $todolist['user']['ekyc_document_back'];
+                                        $todolist['user']['ekyc_document'] = $todolist['user']['document_front'];
+                                    }
+                                    if ($todolist['user']['document_back'] != '') {
+                                        $todolist['user']['ekyc_document_back'] = $todolist['user']['document_back'];
+                                    }  if ($todolist['user']['ekyc_document'] != '') {
+                                        $todolist['user']['document_front'] = $todolist['user']['ekyc_document'];
+                                    }  if ($todolist['user']['ekyc_document_back'] != '') {
+                                        $todolist['user']['document_back'] = $todolist['user']['ekyc_document_back'];
                                     }
                                     $data[] = $todolist;
                                 }
@@ -3337,15 +3338,13 @@ class ApiusersController extends ActiveController
                                 }
                                 if($todolist['landlord']['identity_status']=='Verified'){
 
-                                    if($todolist['landlord']['document_front']!=''){
-                                        $todolists[$key]['landlord']['ekyc_document'] = $todolist['landlord']['document_front'];
-                                    }else if($todolist['landlord']['document_back']!=''){
-                                        $todolists[$key]['landlord']['ekyc_document_back'] = $todolist['landlord']['document_back'];
-                                    }else if($todolist['landlord']['ekyc_document']!=''){
-                                        $todolists[$key]['landlord']['document_front'] = $todolist['landlord']['ekyc_document'];
-                                    }else if($todolist['landlord']['ekyc_document_back']!=''){
-                                        $todolists[$key]['landlord']['document_back'] = $todolist['landlord']['ekyc_document_back'];
+                                     if($todolist['landlord']['ekyc_document']!=''){
+                                        $todolist['landlord']['document_front'] = $todolist['landlord']['ekyc_document'];
                                     }
+                                    if($todolist['landlord']['ekyc_document_back']!=''){
+                                        $todolist['landlord']['document_back'] = $todolist['landlord']['ekyc_document_back'];
+                                    }
+
                                     $data[] = $todolist;
                                 }
                             }
