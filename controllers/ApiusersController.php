@@ -3281,17 +3281,7 @@ class ApiusersController extends ActiveController
                     switch ($todolist['reftype']){
                         case "Booking";
                             if($todolist['user_id']==$user_id){
-                                if($todolist['user']['identity_status']=='Verified') {
-                                    if ($todolist['user']['document_front'] != '') {
-                                        $todolist['user']['ekyc_document'] = $todolist['user']['document_front'];
-                                    } else if ($todolist['user']['document_back'] != '') {
-                                        $todolist['user']['ekyc_document_back'] = $todolist['user']['document_back'];
-                                    } else if ($todolist['user']['ekyc_document'] != '') {
-                                        $todolist['user']['document_front'] = $todolist['user']['ekyc_document'];
-                                    } else if ($todolist['user']['ekyc_document_back'] != '') {
-                                        $todolist['user']['document_back'] = $todolist['user']['ekyc_document_back'];
-                                    }
-                                }
+
                                 if(($todolist['status']=='Pending' && $todolist['request']['credit_score']=='') || $todolist['status']=='New' || $todolist['status']=='Approved' || $todolist['status']=='Unpaid'){
 
                                     if($todolist['status']=='Approved'){
@@ -3315,20 +3305,21 @@ class ApiusersController extends ActiveController
                                         $data[] = $todolist;
                                     }
                                 }
+                                if($todolist['user']['identity_status']=='Verified') {
+                                    if ($todolist['user']['document_front'] != '') {
+                                        $todolists[$key]['user']['ekyc_document'] = $todolist['user']['document_front'];
+                                    } else if ($todolist['user']['document_back'] != '') {
+                                        $todolists[$key]['user']['ekyc_document_back'] = $todolist['user']['document_back'];
+                                    } else if ($todolist['user']['ekyc_document'] != '') {
+                                        $todolists[$key]['user']['document_front'] = $todolist['user']['ekyc_document'];
+                                    } else if ($todolist['user']['ekyc_document_back'] != '') {
+                                        $todolists[$key]['user']['document_back'] = $todolist['user']['ekyc_document_back'];
+                                    }
+                                    $data[] = $todolist;
+                                }
 
                             }else if($todolist['landlord_id']==$user_id){
-                                if($todolist['landlord']['identity_status']=='Verified'){
 
-                                    if($todolist['landlord']['document_front']!=''){
-                                        $todolist['landlord']['ekyc_document'] = $todolist['landlord']['document_front'];
-                                    }else if($todolist['landlord']['document_back']!=''){
-                                        $todolist['landlord']['ekyc_document_back'] = $todolist['landlord']['document_back'];
-                                    }else if($todolist['landlord']['ekyc_document']!=''){
-                                        $todolist['landlord']['document_front'] = $todolist['landlord']['ekyc_document'];
-                                    }else if($todolist['landlord']['ekyc_document_back']!=''){
-                                        $todolist['landlord']['document_back'] = $todolist['landlord']['ekyc_document_back'];
-                                    }
-                                }
                                 if(($todolist['status']=='Pending' && $todolist['request']['credit_score']!='') ||  $todolist['status']=='Processing' || $todolist['request']['status']=='Agreement Processing'){
                                     if($todolist['status']=='Processing'){
                                         if($todolist['landlord']['identity_status']=='Verified'){
@@ -3343,6 +3334,19 @@ class ApiusersController extends ActiveController
                                     }else {
                                         $data[] = $todolist;
                                     }
+                                }
+                                if($todolist['landlord']['identity_status']=='Verified'){
+
+                                    if($todolist['landlord']['document_front']!=''){
+                                        $todolists[$key]['landlord']['ekyc_document'] = $todolist['landlord']['document_front'];
+                                    }else if($todolist['landlord']['document_back']!=''){
+                                        $todolists[$key]['landlord']['ekyc_document_back'] = $todolist['landlord']['document_back'];
+                                    }else if($todolist['landlord']['ekyc_document']!=''){
+                                        $todolists[$key]['landlord']['document_front'] = $todolist['landlord']['ekyc_document'];
+                                    }else if($todolist['landlord']['ekyc_document_back']!=''){
+                                        $todolists[$key]['landlord']['document_back'] = $todolist['landlord']['ekyc_document_back'];
+                                    }
+                                    $data[] = $todolist;
                                 }
                             }
 
