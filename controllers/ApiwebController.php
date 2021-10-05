@@ -168,9 +168,9 @@ class ApiwebController extends ActiveController
 
                 }
             }
-            if($location!=''){
-                $query1->andWhere(['like', 'location', $location]);
-            }
+//            if($location!=''){
+//                $query1->andWhere(['like', 'location', $location]);
+//            }
             if($search!=''){
                 $query1->andWhere(['like', 'title', $search]);
             }
