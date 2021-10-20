@@ -192,7 +192,7 @@ class ApiusersController extends ActiveController
                             $contact_no = $userexist['contact_no'];
                             if($contact_no!=''){
                                 $curl = curl_init();
-//60126479285
+
                                 curl_setopt_array($curl, array(
                                     CURLOPT_URL => "https://secure.etracker.cc/MobileOTPAPI/SMSOTP/OTPGenerate?user=homeplus2u&pass=$2zvDgjJ&from=RUMAH&servid=MES01&ApiReturnType=2&text=Your%20Rumah-i%20pincode%20is%20%3COTPCode%3E.&to=".$contact_no."&type=0",
                                     CURLOPT_RETURNTRANSFER => true,
