@@ -706,7 +706,7 @@ class Common extends Component
                                         }
                                     }
                                     //$updatesenderbalance = Users::updatebalance($senderbalance-$totalamountafterdiscount,$model->user_id);
-                                    $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->monthly_rental+$model->security_deposit+$model->utilities_deposit+$model->keycard_deposit-$model->booking_fees,$model->landlord_id);
+                                    $updatereceiverbalance = Users::updatebalance($receiverbalance+$model->monthly_rental+$model->security_deposit+$model->utilities_deposit+$model->keycard_deposit,$model->landlord_id);
                                     $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance+$model->tenancy_fees+$model->stamp_duty+$sst,$systemaccount->id);
                                     $agreementdocument = $model->agreement_document;
                                     if ($agreementdocument != '') {

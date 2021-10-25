@@ -79,6 +79,13 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {  date_default_timezone_set("Asia/Kuala_Lumpur");
+//        $send = Yii::$app->mailer->compose()
+//            ->setFrom('noreply@rumah-i.com.my')
+//            ->setTo('ketansangani12@gmail.com')
+//            ->setSubject('Rumah Test')
+//            ->setHtmlBody('<h1>This is test email from new smtp.</h1>')
+//            ->send();
+//        var_dump($send);exit;
 //        $handle = fopen("file.dif", "w");
 //        fwrite($handle, "FH00013997567999PBB       20161125XXXDEBIT            20150708
 //DT112371039999        0000000000075000MUHAMMAD HASWAN BIN XXXXX               03022015P00191      000000000075397                    MBB0227   03022015P00191080715
@@ -708,6 +715,9 @@ class SiteController extends Controller
                                         $todomodel->status = 'Confirmed';
                                         $todomodel->updated_at = date('Y-m-d H:i:s');
                                         $todomodel->save(false);
+                                        $systemaccount = Yii::$app->common->getsystemaccount();
+                                        $systemaccountbalance = $systemaccount->wallet_balance;
+                                        $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance + $transaction->amount, $systemaccount->id);
                                         $content = file_get_contents('cc-letter/cc-letter.html');
                                         $content = str_replace("@name@",$transaction->name,$content);
                                         $content = str_replace("@document_no@",$transaction->document_no,$content);
@@ -1070,6 +1080,9 @@ class SiteController extends Controller
                                         $todomodel->status = 'Confirmed';
                                         $todomodel->updated_at = date('Y-m-d H:i:s');
                                         $todomodel->save(false);
+                                        $systemaccount = Yii::$app->common->getsystemaccount();
+                                        $systemaccountbalance = $systemaccount->wallet_balance;
+                                        $updatesystemaccountbalance = Users::updatebalance($systemaccountbalance + $transaction->amount, $systemaccount->id);
                                         $content = file_get_contents('cc-letter/cc-letter.html');
                                         $content = str_replace("@name@",$transaction->name,$content);
                                         $content = str_replace("@document_no@",$transaction->document_no,$content);
