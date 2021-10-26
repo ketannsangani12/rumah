@@ -402,7 +402,7 @@ class Common extends Component
             $goldtransaction->status = 'Completed';
             $goldtransaction->created_at = date('Y-m-d H:i:s');
             if ($goldtransaction->save(false)){
-                $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $user_id);
+                $update = Users::updatecoinsbalance($usercoinsbalance1 + $goldcoins, $reffer_id);
 
                 if ($update) {
                     $subject = 'Gold coins earned';
