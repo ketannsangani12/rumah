@@ -1,6 +1,5 @@
 <?php
-phpinfo();
-ini_set('memory_limit', '128M');
+ini_set('memory_limit', '1024M');
 date_default_timezone_set("Asia/Kuala_Lumpur");
 
 // comment out the following two lines when deployed to production
