@@ -1,4 +1,5 @@
 <?php
+phpinfo();
 ini_set('memory_limit', '128M');
 date_default_timezone_set("Asia/Kuala_Lumpur");
 
