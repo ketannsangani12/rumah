@@ -6271,7 +6271,7 @@ class ApiusersController extends ActiveController
                 $todomodel = new TodoList();
                 $todomodel->scenario = 'transferrequest';
                 $todomodel->agent_id = $user_id;
-                $todomodel->user_id = $tenant_id;
+                //$todomodel->user_id = $tenant_id;
                 $todomodel->attributes = Yii::$app->request->post();
                 if ($todomodel->validate()) {
                     $todomodel->reftype = 'Transfer Request';

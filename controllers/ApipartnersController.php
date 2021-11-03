@@ -1914,41 +1914,41 @@ class ApipartnersController extends ActiveController
         }
     }
 
-    public function actionAccepttransferrequest()
-    {
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            return array('status' => 0, 'message' => 'Bad request.');
-        } else {
-            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='') {
-
-                $user_id = $this->user_id;
-                $auto_rental = (isset($_POST['auto_rental']) && $_POST['auto_rental']!='')?1:0;
-                $insurance = (isset($_POST['insurance']) && $_POST['insurance']!='')?1:0;
-
-                $todorequestexist = TodoList::find()->where(['landlord_id'=>$user_id,'status'=>'Pending'])->one();
-                if(empty($todorequestexist)){
-                    return array('status' => 0, 'message' => 'No trasnfer request details found.');
-                }
-                $todorequestexist->status = 'Accepted';
-                $todorequestexist->updated_at = date('Y-m-d H:i:s');
-                if($todorequestexist->save()){
-                    $todorequestexist->property->user_id = $user_id;
-                    $todorequestexist->property->auto_rental = $auto_rental;
-                    $todorequestexist->property->insurance = $insurance;
-                    $todorequestexist->property->save(false);
-                    return array('status' => 1, 'message' => 'You have accepted transfer request.');
-                }else{
-                    return array('status' => 0, 'data' => $todorequestexist->getErrors());
-
-                }
-            }else{
-                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
-
-            }
-        }
-    }
+//    public function actionAccepttransferrequest()
+//    {
+//
+//        $method = $_SERVER['REQUEST_METHOD'];
+//        if ($method != 'POST') {
+//            return array('status' => 0, 'message' => 'Bad request.');
+//        } else {
+//            if (!empty($_POST) && isset($_POST['todo_id']) && $_POST['todo_id']!='') {
+//
+//                $user_id = $this->user_id;
+//                $auto_rental = (isset($_POST['auto_rental']) && $_POST['auto_rental']!='')?1:0;
+//                $insurance = (isset($_POST['insurance']) && $_POST['insurance']!='')?1:0;
+//
+//                $todorequestexist = TodoList::find()->where(['landlord_id'=>$user_id,'status'=>'Pending'])->one();
+//                if(empty($todorequestexist)){
+//                    return array('status' => 0, 'message' => 'No trasnfer request details found.');
+//                }
+//                $todorequestexist->status = 'Accepted';
+//                $todorequestexist->updated_at = date('Y-m-d H:i:s');
+//                if($todorequestexist->save()){
+//                    $todorequestexist->property->user_id = $user_id;
+//                    $todorequestexist->property->auto_rental = $auto_rental;
+//                    $todorequestexist->property->insurance = $insurance;
+//                    $todorequestexist->property->save(false);
+//                    return array('status' => 1, 'message' => 'You have accepted transfer request.');
+//                }else{
+//                    return array('status' => 0, 'data' => $todorequestexist->getErrors());
+//
+//                }
+//            }else{
+//                return array('status' => 0, 'message' => 'Please enter mandatory fields.');
+//
+//            }
+//        }
+//    }
 
 
     public function actionRankagent()

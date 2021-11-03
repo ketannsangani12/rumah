@@ -24,7 +24,7 @@
             <div class="flex flex-dc br-5 pdl-15 pdr-15 pdt-15 pdb-15" style="width: 54%;">
               <div class="flex width-100">
                 <div class="flex flex-dc width-90" ng-click="openDetail(v.id)">
-                  <label class="font-16">{{v.title}}</label>
+                  <label class="font-16">{{v.title.length > 45 ? v.title.substr(0,45)+'...' : v.title}}</label>
                   <span class="opacity-50">{{getSimplifyLocation(v.location)}}</span>
                   <label class="fw-600 font-18 mrt-10">RM {{v.price}}</label>
                 </div>

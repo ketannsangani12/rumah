@@ -232,9 +232,9 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
       });
 
       v.location = $scope.getSimplifyLocation(v.location);
-
-      if(v.title.length > 12){
-        v.title = v.title.substr(0,10)+"..";
+      var pTitle = angular.copy(v.title);
+      if(pTitle.length > 12){
+        pTitle = pTitle.substr(0,10)+"..";
       }
 
       var content = '<div class="flex" style="width: 250px;margin-left: -10px;position: relative;">';
@@ -246,7 +246,7 @@ angular.module('app.controllers').controller('searchCtrl', ['$rootScope', '$scop
       }
 
       content += '<div class="flex flex-dc pdt-15 pdl-10 pdr-5" ng-click="openDetail('+v.id+')">' +
-            '<label class="font-16 fw-600">'+v.title+'</label>' +
+            '<label class="font-16 fw-600">'+pTitle+'</label>' +
             '<span class="opacity-50">'+v.location+'</span>' +
             '<label class="opacity-60 mrt-5 font-12">'+v.bedroomBR+' | '+ v.bathroom+'BA</label>' +
             '<label class="opacity-60">'+parseInt(v.size_of_area)+' Sq. ft.</label>' +
