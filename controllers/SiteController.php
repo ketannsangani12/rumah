@@ -856,7 +856,7 @@ class SiteController extends Controller
                     //$hashed_string = md5($secretkey . $detail . $transaction->amount . $_GET['order_id']);
                 }
 
-                $paymentUrl = "https://www.mobile88.com/epayment/entry.asp";
+                $paymentUrl = "https://payment.ipay88.com.my/epayment/entry.asp";
                 $refno = $_GET['order_id'];
                 //$merchantkey = 'QrB9d97iae';
                 ///$merchantcode = 'M04853';
@@ -1229,7 +1229,7 @@ class SiteController extends Controller
                     if ($minutes > 10) {
                         $RefNo = $transaction->order_id;
                         $Amount = $transaction->amount;
-                        $query = "https://www.mobile88.com/epayment/enquiry.asp?MerchantCode=" . $MerchantCode . "&RefNo=" . str_replace(" ", "%20", $RefNo) . "&Amount=" . $Amount;
+                        $query = "https://payment.ipay88.com.my/epayment/enquiry.asp?MerchantCode=" . $MerchantCode . "&RefNo=" . str_replace(" ", "%20", $RefNo) . "&Amount=" . $Amount;
 
 
                         $url = parse_url($query);
