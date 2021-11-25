@@ -53,7 +53,9 @@ angular.module('app.controllers').controller('propertyDetailCtrl', ['$rootScope'
     window.localStorage.chatWith = JSON.stringify(data);
     $state.go('chat');
   };
-
+  $scope.openWhatsapp = function (number) {
+    window.location.href = 'whatsapp://send?phone=' + number;
+  };
   $scope.reportProperty = function () {
     $ionicPopup.show({
       template: '<form name="ssForm" id="ssForm" novalidate angular-validator autocomplete="off">' +
