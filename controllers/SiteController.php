@@ -925,11 +925,11 @@ class SiteController extends Controller
 //close connection
 
             }else{
-                echo "Something went wrong.Please try after sometimes.";exit;
+                echo "Something went wrong.Please try after sometimes2.";exit;
             }
 
         }else{
-                echo "Something went wrong.Please try after sometimes.";exit;
+                echo "Something went wrong.Please try after sometimes1.";exit;
             }
         }
     public function actionSuccess()
