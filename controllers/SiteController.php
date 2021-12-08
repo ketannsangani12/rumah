@@ -79,12 +79,12 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {  date_default_timezone_set("Asia/Kuala_Lumpur");
-//        $send = Yii::$app->mailer->compose()
-//            ->setFrom('noreply@rumah-i.com.my')
-//            ->setTo('ketansangani12@gmail.com')
-//            ->setSubject('Rumah Test')
-//            ->setHtmlBody('<h1>This is test email from new smtp.</h1>')
-//            ->send();
+        $send = Yii::$app->mailer->compose()
+            ->setFrom('noreply@rumah-i.com.my')
+            ->setTo('ketansangani12@gmail.com')
+            ->setSubject('Rumah Test')
+            ->setHtmlBody('<h1>This is test email from new smtp.</h1>')
+            ->send();
 //        var_dump($send);exit;
 //        $handle = fopen("file.dif", "w");
 //        fwrite($handle, "FH00013997567999PBB       20161125XXXDEBIT            20150708
@@ -838,7 +838,7 @@ class SiteController extends Controller
 //
         if(isset($_GET['order_id']) && $_GET['order_id']!='')
         {
-            $transaction = Payments::find()->where(['order_id'=>$_GET['order_id'],'status'=>'Pending'])->one();
+            $transaction = Payments::find()->where(['id'=>$_GET['order_id'],'status'=>'Pending'])->one();
             if(!empty($transaction)){
                 if($transaction->package_id!=''){
                     $packagedetail = Packages::findOne($transaction->package_id);
