@@ -838,7 +838,7 @@ class SiteController extends Controller
 //
         if(isset($_GET['order_id']) && $_GET['order_id']!='')
         {
-            $transaction = Payments::find()->where(['id'=>$_GET['order_id'],'status'=>'Pending'])->one();
+            $transaction = Payments::find()->where(['order_id'=>$_GET['order_id'],'status'=>'Pending'])->one();
             if(!empty($transaction)){
                 if($transaction->package_id!=''){
                     $packagedetail = Packages::findOne($transaction->package_id);
