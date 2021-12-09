@@ -98,7 +98,7 @@ class UsersController extends Controller
                     $model->save(false);
                     Yii::$app->mailer->compose('adduser',
                         ['password'=>$password]) // a view rendering result becomes the message body here
-                    ->setFrom('rumahimy@gmail.com')
+                    ->setFrom('noreply@rumah-i.com.my')
                         ->setTo($model->email)
                         ->setSubject('Account Created')
                         ->send();

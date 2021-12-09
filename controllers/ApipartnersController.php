@@ -488,7 +488,7 @@ class ApipartnersController extends ActiveController
                     $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
 
                     $send = Yii::$app->mailer->compose()
-                        ->setFrom('rumahimy@gmail.com')
+                        ->setFrom('noreply@rumah-i.com.my')
                         ->setTo($model->email)
                         ->setSubject($emailtemplate->subject)
                         ->setHtmlBody($content)
@@ -531,7 +531,7 @@ class ApipartnersController extends ActiveController
                 $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
 
                 $send = Yii::$app->mailer->compose()
-                    ->setFrom('rumahimy@gmail.com')
+                    ->setFrom('noreply@rumah-i.com.my')
                     ->setTo($model->email)
                     ->setSubject('Your New PIN')
                     ->setHtmlBody($content)

@@ -225,7 +225,127 @@ class ApiwebController extends ActiveController
 
 
 }
+    public function actionSearchforsitemap()
+    {
 
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            return array('status' => 0, 'message' => 'Bad request.');
+        } else {
+            $baseurl = $this->baseurl;
+            if (!empty($_POST) && isset($_POST['lat']) && $_POST['lat']!='' && isset($_POST['long']) && $_POST['long']!='') {
+                $lat = (isset($_POST['lat']) && $_POST['lat']!='')?$_POST['lat']:'';
+                $long = (isset($_POST['long']) && $_POST['long']!='')?$_POST['long']:'';
+                $furnished_status = (isset($_POST['furnished_status']) && $_POST['furnished_status']!='')?$_POST['furnished_status']:'';
+
+                $property_type = (isset($_POST['property_type']) && $_POST['property_type']!='')?$_POST['property_type']:'';
+                $room_type = (isset($_POST['room_type']) && $_POST['room_type']!='')?$_POST['room_type']:'';
+                $preference = (isset($_POST['preference']) && $_POST['preference']!='')?$_POST['preference']:'';
+                $price = (isset($_POST['price']) && $_POST['price']!='')?explode(",",$_POST['price']):'';
+                $distance = (isset($_POST['distance']) && $_POST['distance']!='')?$_POST['distance']:10;
+                $commute = (isset($_POST['commute']) && $_POST['commute']!='')?explode(",",$_POST['commute']):'';
+                $amenities = (isset($_POST['amenities']) && $_POST['amenities']!='')?explode(",",$_POST['amenities']):'';
+                $rooms = (isset($_POST['rooms']) && $_POST['rooms']!='')?$_POST['rooms']:'';
+                $size = (isset($_POST['size']) && $_POST['size']!='')?$_POST['size']:'';
+                $search = (isset($_POST['search']) && $_POST['search']!='')?$_POST['search']:'';
+                $location = (isset($_POST['location']) && $_POST['location']!='')?$_POST['location']:'';
+                //print_r($price);exit;
+                // $searchword = $_POST['search'];
+
+                $baseurl = $this->baseurl;
+                $harvesformula = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) ) as distance': '';
+                $harvesformula1 = ($lat!='' && $long!='') ? '( 6371 * acos( cos( radians(' . $lat . ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' . $long . ') ) + sin( radians(' . $lat . ') ) * sin( radians(latitude) ) ) )' : '';
+
+                $query1 = Properties::find()
+                    ->select('id,latitude,longitude,property_no,title,description,location,property_type,type,room_type,preference,bedroom,bathroom,availability,size_of_area,price,'.$harvesformula)
+                    ->with([
+                        'pictures'=>function ($query) use($baseurl) {
+                            $query->select(['id','property_id',new \yii\db\Expression("CONCAT('$baseurl/', '', `image`) as image")])->one();
+                        },
+                    ]);
+                $query1->where(['status'=>'Active']);
+                if(!empty($commute)){
+                    foreach ($commute as $key=>$item){
+                        if($key==0) {
+                            $query1->andWhere(new \yii\db\Expression('FIND_IN_SET("'.$item.'",commute)'));
+                            // $query1->andWhere(['like', 'commute', $item]);
+                        }else{
+                            $query1->orWhere(new \yii\db\Expression('FIND_IN_SET("'.$item.'",commute)'));//->addParams([':commute_to_find' => $item]);
+
+                        }
+
+                    }
+                }
+                if(!empty($amenities)){
+                    foreach ($amenities as $key=>$amenity){
+                        if($key==0) {
+                            $query1->andWhere(new \yii\db\Expression('FIND_IN_SET("'.$amenity.'",amenities)'));
+
+                        }else{
+                            $query1->orWhere(new \yii\db\Expression('FIND_IN_SET("'.$amenity.'",amenities)'));//->addParams([':commute_to_find' => $item]);
+
+
+                        }
+
+                    }
+                }
+//            if($location!=''){
+//                $query1->andWhere(['like', 'location', $location]);
+//            }
+                if($search!=''){
+                    $query1->andWhere(['like', 'title', $search]);
+                }
+                if ($property_type!=''){
+                    $query1->andWhere(['property_type'=>$property_type]);
+                }
+                if($room_type!=''){
+                    $query1->andWhere(['room_type'=>$room_type]);
+                }
+                if($preference!=''){
+                    $query1->andWhere(['preference'=>$preference]);
+                }
+                if($distance!='' && $lat!='' && $long!=''){
+                    $query1->andWhere(['<=', $harvesformula1, $distance]);
+
+                }
+                if($furnished_status!=''){
+                    $query1->andWhere(['furnished_status'=>$furnished_status]);
+                }
+                if($rooms!=''){
+                    $query1->andWhere(['<=', 'bedroom', $rooms]);
+
+                }
+                if($size!=''){
+                    $query1->andWhere(['>=', 'size_of_area', $size]);
+
+                }
+                if(!empty($price)){
+                    $query1->andWhere(["between", "price", $price[0], $price[1]]);
+
+                }
+
+
+
+                if($lat!='' && $long!=''){
+                    $query1->orderBy(['distance'=>SORT_ASC]);
+                }
+
+                //$query1->all();
+
+                $properties =  $query1->asArray()->all();
+                //echo "<pre>";print_r($properties);exit;
+
+                return array('status' => 1, 'data' => $properties,'total'=>count($properties));
+
+
+            }else{
+                return array('status' => 0, 'message' => 'Please allow location access to search property nearby.');
+
+            }
+        }
+
+
+    }
     public function actionPropertydetails()
     {
 

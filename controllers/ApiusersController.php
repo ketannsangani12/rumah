@@ -712,7 +712,7 @@ class ApiusersController extends ActiveController
                     $content = EmailTemplates::getemailtemplate($emailtemplate, $model, '');
 
                     $send = Yii::$app->mailer->compose()
-                        ->setFrom('rumahimy@gmail.com')
+                        ->setFrom('noreply@rumah-i.com.my')
                         ->setTo($model->email)
                         ->setSubject($emailtemplate->subject)
                         ->setHtmlBody($content)
@@ -756,7 +756,7 @@ class ApiusersController extends ActiveController
                 $content = EmailTemplates::getemailtemplate($emailtemplate, $model, '');
 
                 $send = Yii::$app->mailer->compose()
-                    ->setFrom('rumahimy@gmail.com')
+                    ->setFrom('noreply@rumah-i.com.my')
                     ->setTo($model->email)
                     ->setSubject('Your New PIN')
                     ->setHtmlBody($content)
@@ -1126,8 +1126,8 @@ class ApiusersController extends ActiveController
                 $emailtemplate = EmailTemplates::findOne(['name' => 'Report Property']);
                 $content = EmailTemplates::getemailtemplate($emailtemplate, $model, $usermodel, '', $_POST['message']);
                 $send = Yii::$app->mailer->compose()
-                    ->setFrom('rumahimy@gmail.com')
-                    ->setTo('rumahimy@gmail.com')
+                    ->setFrom('noreply@rumah-i.com.my')
+                    ->setTo('noreply@rumah-i.com.my')
                     ->setSubject($emailtemplate->subject)
                     ->setHtmlBody($content)
                     ->send();
@@ -6457,7 +6457,7 @@ class ApiusersController extends ActiveController
                     $content = EmailTemplates::getemailtemplate($emailtemplate, $property, $usermodel, '', $_POST['message']);
 
                     $send = Yii::$app->mailer->compose()
-                        ->setFrom('rumahimy@gmail.com')
+                        ->setFrom('noreply@rumah-i.com.my')
                         ->setTo($landlordemail)
                         ->setSubject($emailtemplate->subject)
                         ->setHtmlBody($content)

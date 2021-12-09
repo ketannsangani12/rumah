@@ -121,7 +121,7 @@ class WithdrawalsController extends Controller
                     $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
 
                     $send = Yii::$app->mailer->compose()
-                        ->setFrom('rumahimy@gmail.com')
+                        ->setFrom('noreply@rumah-i.com.my')
                         ->setTo($userdetails->email)
                         ->setSubject($emailtemplate->subject)
                         ->setHtmlBody($content)
@@ -146,7 +146,7 @@ class WithdrawalsController extends Controller
                                 $content = EmailTemplates::getemailtemplate($emailtemplate,$model,'');
 
                                 $send = Yii::$app->mailer->compose()
-                                    ->setFrom('rumahimy@gmail.com')
+                                    ->setFrom('noreply@rumah-i.com.my')
                                     ->setTo($userdetails->email)
                                     ->setSubject($emailtemplate->subject)
                                     ->setHtmlBody($content)
