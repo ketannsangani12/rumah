@@ -4617,6 +4617,11 @@ class ApiusersController extends ActiveController
 
                 try {
                     if ($todomodel->status == 'Pending') {
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $todomodel->status = $status;
                             if ($todomodel->save()) {
@@ -4796,7 +4801,11 @@ class ApiusersController extends ActiveController
 
                 try {
                     if ($todomodel->status == 'Unpaid') {
-
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $totalamount = $amount;
                             $amountwithoutsst = $todomodel->subtotal;
@@ -4952,6 +4961,11 @@ class ApiusersController extends ActiveController
 
                 try {
                     if ($todomodel->status == 'Unpaid') {
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $totalpayableamount = $todomodel->total;
                             $stamp_duty = $todomodel->stamp_duty;
@@ -5088,6 +5102,11 @@ class ApiusersController extends ActiveController
 
                 try {
                     if ($todomodel->status == 'Unpaid') {
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $todomodel->status = $status;
                             if ($todomodel->save()) {
@@ -5247,6 +5266,11 @@ class ApiusersController extends ActiveController
 
                 try {
                     if ($todomodel->status == 'Unpaid') {
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $todomodel->status = $status;
                             if ($todomodel->save()) {
@@ -5497,7 +5521,11 @@ class ApiusersController extends ActiveController
                     $transaction = Yii::$app->db->beginTransaction();
 
                     try {
-
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $todoitems = $todomodel->todoItems;
                             $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
@@ -5650,7 +5678,11 @@ class ApiusersController extends ActiveController
                     $transaction = Yii::$app->db->beginTransaction();
 
                     try {
-
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $platformfees = Yii::$app->common->getplatformfees('Cleaner');
                             $otherfees = 100;
@@ -5862,7 +5894,11 @@ class ApiusersController extends ActiveController
                     $transaction = Yii::$app->db->beginTransaction();
 
                     try {
-
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $platformfees = Yii::$app->common->getplatformfees('Laundry');
                             $otherfees = 100;
@@ -6074,7 +6110,11 @@ class ApiusersController extends ActiveController
                     $transaction = Yii::$app->db->beginTransaction();
 
                     try {
-
+                        $transactionexists = Transactions::find()->where(['todo_id'=>$todo_id])->one();
+                        if(!empty($transactionexists)){
+                            $transaction->rollBack();
+                            return array('status' => 0, 'message' => 'Something went wrong.Please try after sometimes.');
+                        }
                         if ($status == 'Accepted') {
                             $todoitems = $todomodel->todoItems;
                             $servicerequestmodel = ServiceRequests::findOne($todomodel->service_request_id);
