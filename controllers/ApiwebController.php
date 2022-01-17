@@ -392,10 +392,19 @@ class ApiwebController extends ActiveController
 
                 }
                 $properties =  $query1->asArray()->all();
+                $agentratings = 0;
+                if ($propertydata['agent_id'] != '') {
+                    $ratings = AgentRatings::find()->select(['(SUM(appearance)+SUM(attitude)+SUM(knowledge))/3 AS ratings'])->where(['agent_id' => $propertydata['agent_id']])->asArray()->all();
+                    $totalratings = AgentRatings::find()->where(['agent_id' => $propertydata['agent_id']])->count();
 
+                    if ($totalratings > 0) {
+                        $ratings = $ratings[0]['ratings'];
+                        $agentratings = $ratings / $totalratings;
+                    }
+                }
                 $data['propertydata'] = $propertydata;
                 $data['similarproperties'] = $properties;
-
+                $data['agentratings'] = number_format((float)$agentratings, 2, '.', '');
                 return array('status' => 1, 'data' => $data);
 
 
